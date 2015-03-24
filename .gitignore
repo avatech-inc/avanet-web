@@ -1,0 +1,11 @@
+.DS_Store
+.nodemonignore
+.sass-cache/
+node_modules/
+_dist/
+public/_uploads/
+public/css/
+.tmp/
+public/js/routes.js
+*.sp
+*.lz4

@@ -1,0 +1,39 @@
+{
+  "name": "ment.io",
+  "main": "dist/mentio.js",
+  "version": "0.9.20",
+  "homepage": "https://github.com/jeff-collins/ment.io",
+  "authors": [
+    "jeff-collins <i.am.jeff.collins@gmail.com>",
+    "adamayres <magicaj@gmail.com>"
+  ],
+  "description": "Mentions for Angular",
+  "keywords": [
+    "angular",
+    "mentions",
+    "ment.io"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.2.18",
+    "angular-mocks": "~1.2.18",
+    "angular-ui-tinymce": "latest"
+  },
+  "_release": "0.9.20",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.9.20",
+    "commit": "4da15297cfaac58d554cfd73f668595d71c98005"
+  },
+  "_source": "git://github.com/jeff-collins/ment.io.git",
+  "_target": "~0.9.20",
+  "_originalSource": "ment.io",
+  "_direct": true
+}

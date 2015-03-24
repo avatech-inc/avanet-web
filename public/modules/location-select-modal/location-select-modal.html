@@ -1,0 +1,131 @@
+<style>
+
+    #map { z-index:999; position:absolute; top:0; bottom:0; left: 0; right: 0;  }
+    .modal-footer { margin-top: 0; }
+
+
+ /* map search */
+
+    .mapSearch {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1001;
+        height: 29px;
+        width:28px;
+    }
+    .mapSearch .btn-group >button {
+        border: 1px solid #999;
+        background: #fff;
+        border-radius: 3px;
+        box-shadow: none !important;
+        position: absolute;
+        right: 0px;
+        z-index: 1;
+        height: 29px;
+    }
+    .mapSearch .btn-group >button:hover {
+        background: #f8f8f8;
+    }
+    .mapSearch .btn-group.open >button {
+        border: 1px solid #aaa;
+        background: #f8f8f8;
+        border-radius: 0px 3px 3px 0px;
+        border-left: 0;
+        transition: border 150ms;
+    }
+    .mapSearch .btn-group ul.dropdown-menu {
+        position: absolute;
+        padding: 0;
+        top: 0;
+        right: 0;
+        margin-top: 0;
+        width: 0px;
+        min-width: 0px;
+        overflow: hidden;
+        transition: width 150ms;
+        display: block !important;
+        z-index: 0;
+        background: transparent;
+        border-radius: 0;
+        border: none;
+    }
+    .mapSearch .btn-group ul.dropdown-menu >li >a {
+        border-radius:3px;
+        border:1px solid #aaa;
+        background: #fff !important;
+        overflow: hidden;
+    }
+    .mapSearch .btn-group.open >button {
+        display: none;
+    }
+    .mapSearch .btn-group.open ul.dropdown-menu {
+        width: 220px;
+    }
+    .mapSearch input.search {
+        box-shadow: none;
+        padding-top: 1px;
+        padding-bottom: 0px;
+        padding-left: 7px;
+        font-size:13px;
+        height: 27px;
+        border: 0;
+    }
+
+    .mapSearch .results >div {
+        font-size:11px;border-top:1px solid #aaa;padding:3px;cursor:pointer;
+    }
+    .mapSearch .results >div:hover {
+        background:#f8f8f8;
+    }
+
+    .leaflet-control-attribution { display: none; }
+</style>  
+<!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
+    <div class="modalClose" ng-click="close()"><i class="fa fa-times"></i></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 style="font-size:20px;">Drag the map to select your location</h3>
+        </div>
+        <div ng-init="loadMap()" class="modal-body" style="padding:0;" ng-style="{ height: windowHeight - 200 }">
+    		
+           <input ng-model="form.location" type="text"/>
+
+           <img src="http://a.tiles.mapbox.com/v3/marker/pin-m+ffcc00@2x.png" class="leaflet-marker-icon leaflet-zoom-animated" tabindex="0" style="margin-left: -19px; left:50%; top:50%;margin-top: -45px; width:38px; z-index: 9999999;cursor:default;outline:none;">
+
+            <div id="map"></div>
+
+            <div class="mapSearch">
+                <div class="btn-group pull-right" dropdown>
+                  <button type="button" class="dropdown-toggle" >
+                    <i class="fa fa-search"></i>
+                  </button>
+                  <ul class="dropdown-menu" role="menu"><li><a style="padding:0;background:#fff !important;">
+                    <form>
+                        <input type="text" class="form-control input-sm search" ng-model="geo.query" placeholder="search for a location">
+                        <input ng-click="geoSearch()" type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+                    </form>
+
+                    <div class="results">
+                        <div ng-repeat="result in geo.results" ng-click="goTo(result)"> 
+                            <div style="font-weight:400;">{{ result.name }}</div>
+                            <div style="font-weight:100;">
+                                <span ng-show="result.adminName2">{{ result.adminName2 }}, </span>{{ result.adminName1 }} {{ result.countryCode }} <span style="float:right;color:#ccc;display:none;">{{ result.fcodeName}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    </a></li></ul>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal-footer" style="">
+
+           <button class="btn btn-primary btn-lg" ng-click="select()">Select this location</button>
+            <!--<span class="btn btn-default" ng-click="closeModal()">Close</span>-->
+        </div>
+    </div>
+
+<!--</div>-->

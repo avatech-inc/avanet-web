@@ -1,0 +1,8 @@
+<section data-ng-controller="ProfilesController" data-ng-init="findOne()" class="layout-normal">
+	<h2>{{article.title}}</h2>
+	<!-- <a data-ng-show="global.user._id == article.user._id" href="/{{resource}}/{{article._id}}/edit">edit</a> -->
+	<span>!!!{{article.created | date:'medium'}}</span> /
+	<span>{{article.user.name}}</span>
+
+	<div>{{article.content}}</div>
+</section>

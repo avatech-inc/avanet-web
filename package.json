@@ -1,0 +1,68 @@
+{
+  "name": "AvaNet",
+  "description": "AvaNet",
+  "version": "0.0.1-1",
+  "private": false,
+  "author": "AvaTech, Inc.",
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  },
+  "subdomain": "avanet",
+  "domains": [
+    "avanet.avatech.com"
+  ],
+  "scripts": {
+    "start": "server.js"
+  },
+  "dependencies": {
+    "express": "3.4.8",
+    "jade": "1.1.5",
+    "mongoose": "3.8.5",
+    "passport": "0.2.0",
+    "passport-local": "0.1.6",
+    "passport-http-bearer": "1.0.1",
+    "underscore": "1.5.2",
+    "async": "0.1.22",
+    "bower": "1.2.8",
+    "forever": "0.10.11",
+    "mandrill-api": "1.0.37",
+    "knox": "0.8.9",
+    "grunt": "0.4.2",
+    "grunt-cli": "0.1.13",
+    "grunt-env": "0.4.1",
+    "archiver": "~0.7.0",
+    "jwt-simple": "0.2.0",
+    "node-uuid":"1.4.1",
+    "hashids": "1.0.1",
+    "stripe": "2.8.0",
+    "request": "2.42.0",
+    "adm-zip": "0.4.4",
+    "lz4": "0.2.3",
+    "twilio": "1.10.0",
+    "node-zip": "1.1.0",
+    "MD5": "1.2.1",
+    "connect-multiparty": "1.1.0",
+    "view-helpers": "0.1.4"
+
+  },
+  "devDependencies": {
+    "supertest": "0.9.0",
+    "should": "3.1.2",
+    "mocha": "1.17.1",
+    "grunt": "~0.4.1",
+    "grunt-contrib-compass": "~0.3.0",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-nodemon": "0.1.2",
+    "grunt-concurrent": "~0.3.0",
+    "grunt-replace": "~0.5.1",
+    "grunt-script-link-tags": "0.0.5",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-usemin": "~2.0.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.7.0",
+    "grunt-targethtml": "~0.2.6"
+  }
+}

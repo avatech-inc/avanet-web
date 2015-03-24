@@ -1,0 +1,17 @@
+<section ng-controller="AdminController">
+	<div class="container">
+		<div class="row">
+
+			<div class="col-xs-3">
+			  	<ul class="nav nav-pills nav-stacked" style="margin-top:20px;font-size:1.2em">
+				    <li ng-repeat="page in pages" heading="{{ page.title }}" ng-class="{ active: page == selectedPage }" >
+			  			<a ng-click="selectPage(page)" href="#">{{ page.title }}</a>
+					</li>
+			  	</ul>
+			</div>
+			<div class="col-xs-9">
+				<div ng-repeat="page in pages" ng-show="selectedPage == page" ng-include="page.template"></div>
+			</div>
+		</div>
+	</div>
+</section>

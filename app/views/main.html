@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+		<meta name="keywords" content="">
+		<meta name="description" content="AvaTech">
+		<!--<link href="/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon">-->
+		<title>AvaTech</title>
+
+		<link rel="icon" type="image/png" href="/img/favicon.png">
+		
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+		<!--<link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css"> -->
+
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
+		<!--<link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
+
+    	<!-- build:css /assets/_app.css -->
+		<!--<link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">-->
+		<!--<link rel="stylesheet" href="/css/common.css">
+		<link rel="stylesheet" href="/css/views/articles.css">-->
+
+		<link rel="stylesheet" href="/lib/ngQuickDate/dist/ng-quick-date.css">
+		<link rel="stylesheet" href="/lib/ngQuickDate/dist/ng-quick-date-default-theme.css">
+
+    	<!-- Lightbox -->
+		<link rel="stylesheet" href="/lib/angular-loading-bar/build/loading-bar.css">
+		<link rel="stylesheet" href="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css">
+		
+		<!-- start app styles -->
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/font-roboto.css">
+<link rel="stylesheet" href="/css/views/articles.css">
+<link rel="stylesheet" href="/css/views/login.css">
+<link rel="stylesheet" href="/css/views/snowpit.css">
+<!-- end app styles -->
+    	<!-- endbuild -->
+
+    	<!-- ionicons -->
+    	<link href='//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' rel='stylesheet' />
+
+    	<!-- MapBox -->
+    	<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script>
+		<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+		<!--   Leaflet Cluster Plugin -->
+		<script src='//leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js'></script>
+		<!--<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+		<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />-->
+
+    	<!-- Sentry -->
+    	<script src="//cdn.ravenjs.com/1.1.11/jquery,native/raven.min.js"></script>
+
+    	<!-- AWS SDK -->
+    	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.8.min.js"></script>
+
+		<!-- google web fonts (ended up downloading roboto)-->
+		<!--<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>-->
+
+		<!--if lt IE 9-->
+		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+		<!-- Heap -->
+	    <!--<script type="text/javascript">
+	      window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+	      heap.load("416778563");
+	    </script>-->
+        <script type="text/javascript">
+	      window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+	      heap.load("894126234");
+	    </script>
+	</head>
+	<body window-resize ng-cloak>
+		<div ng-include="'/views/header.html'"></div>
+		
+		<!--<section class="content" ng-view></section>-->
+		<section class="content" ui-view></section>
+
+		
+		<!-- build:js /assets/_app.js -->
+
+		<!-- jQuery - we should really try to remove this!!! -->
+		<script src="/js/uploader/jquery.2.0.3.js"></script>
+
+		<!-- lodash
+		<script type="text/javascript" src='/lib/lodash/dist/lodash.js'></script> -->
+		<!-- underscore -->
+		<script type="text/javascript" src='/lib/underscore/underscore.js'></script> 
+
+		<!-- Angular -->
+		<script type="text/javascript" src='/lib/angular/angular.js'></script>
+		<script type="text/javascript" src='/lib/angular-cookies/angular-cookies.js'></script>
+		<script type="text/javascript" src='/lib/angular-resource/angular-resource.js'></script>
+		<script type="text/javascript" src="/lib/angular-route/angular-route.js"></script>
+		<script type="text/javascript" src="/lib/angular-touch/angular-touch.js"></script>
+
+		<!-- Restangular -->
+		<script type="text/javascript" src="/lib/restangular/dist/restangular.js"></script>
+
+		<!-- mentions input -->
+		<script type="text/javascript" src='/js/jquery.mentionsInput.js'></script>
+		<script type="text/javascript" src='/js/jquery.elastic.js'></script>
+
+		<!-- ment.io -->
+		<script type="text/javascript" src='/lib/ment.io/dist/mentio.js'></script>
+		<!--<script type="text/javascript" src='/lib/ment.io/dist/templates.js'></script>-->
+
+		<!-- moment.js time formatter -->
+		<script type="text/javascript" src='/lib/moment/moment.js'></script>
+		<!-- angular wrapper for moment.js -->
+		<script type="text/javascript" src="/lib/angular-moment/angular-moment.js"></script>
+		<!-- pikaday date picker -->
+		<script type="text/javascript" src='/lib/pikaday/pikaday.js'></script>
+
+		<!-- virtual scrolling -->
+		<script type="text/javascript" src="/lib/angular-virtual-scroll/angular-virtual-scroll.js"></script>
+
+		<!-- jQuery Knob -->
+		<script type="text/javascript" src='/lib/jquery-knob/js/jquery.knob.js'></script>
+
+		<!-- snap
+		<script type="text/javascript" src="/lib/snapjs/snap.js"></script>
+		<script type="text/javascript" src="/lib/angular-snap/angular-snap.js"></script>-->
+
+		<!-- jsPDF -->
+		<script src="/js/jsPDF/jspdf.debug.js"></script>
+
+		<!-- file uploader -->
+		<script src="/js/uploader/jquery.ui.widget.js"></script>
+		<script src="/js/uploader/jquery.fileupload.js"></script>
+		<script src="/js/uploader/jquery.fileupload-process.js"></script>
+		<script src="/js/uploader/jquery.fileupload-validate.js"></script>
+		<script src="/js/uploader/jquery.fileupload-angular.js"></script>
+		<script src="/js/uploader/md5.js"></script>
+
+		<!-- ngQuickDate -->
+		<script type="text/javascript" src="/lib/ngQuickDate/dist/ng-quick-date.min.js"></script>
+
+		<!-- Angular local storage -->
+    	<script type="text/javascript" src="/lib/angular-local-storage/angular-local-storage.js"></script>
+
+		<!-- Angular UI -->
+    	<script type="text/javascript" src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
+		<script type="text/javascript" src='/lib/angular-ui-utils/modules/route/route.js'></script>
+
+		<!-- Angular UI Bootstrap -->
+
+		<!--<script type="text/javascript" src='/lib/angular-bootstrap/ui-bootstrap.js'></script>
+		<script type="text/javascript" src='/lib/angular-bootstrap/ui-bootstrap-tpls.js'></script>-->
+
+		<script src="/js/ui-bootstrap-0.11.1.js"></script>
+		<script src="/js/ui-bootstrap-tpls-0.11.0.js"></script>
+
+		<!-- Venturocket UI slider control -->
+    	<script type="text/javascript" src="/lib/venturocket-angular-slider/build/angular-slider.js"></script>
+
+		<!-- regular ol' Bootsrap JS for tooltips -->
+		<script type="text/javascript" src='/js/bootstrap.min.js'></script>
+
+    	<!-- Lightbox -->
+		<script type="text/javascript" src="/lib/angular-loading-bar/build/loading-bar.js"></script>
+		<script type="text/javascript" src="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.min.js">	</script> 
+
+		<!-- FontLoader -->
+		<script type="text/javascript" src='/js/FontLoader.js'></script>
+
+		<!-- html2canvas -->
+		<script type="text/javascript" src='/lib/html2canvas/build/html2canvas.js'></script>
+
+		<!-- checklist-model -->
+		<script type="text/javascript" src='/lib/checklist-model/checklist-model.js'></script>
+
+
+
+		<script type="text/javascript" src='/js/jquery.nanoscroller.min.js'></script>
+		<script type="text/javascript" src='/js/scrollable.js'></script>
+
+		<!-- Angular App -->
+		<script type="text/javascript" src='/js/app.js'></script>
+		<script type="text/javascript" src='/js/routes.js'></script>
+
+		<!-- start app scripts -->
+<script src="/modules/admin/admin-invite.js"></script>
+<script src="/modules/admin/admin-orders.js"></script>
+<script src="/modules/admin/admin-orgs.js"></script>
+<script src="/modules/admin/admin-users.js"></script>
+<script src="/modules/admin/admin.js"></script>
+<script src="/modules/avalanches/observation-preview-modal.js"></script>
+<script src="/modules/avalanches/observation-preview.js"></script>
+<script src="/modules/avalanches/observations.js"></script>
+<script src="/modules/comments/comments.js"></script>
+<script src="/modules/confirm/confirm.js"></script>
+<script src="/modules/device-upload-modal/modal.js"></script>
+<script src="/modules/field-tests/field-tests.js"></script>
+<script src="/modules/location-select-modal/location-select-modal.js"></script>
+<script src="/modules/map/layers.js"></script>
+<script src="/modules/map/map.js"></script>
+<script src="/modules/organizations/organizations.js"></script>
+<script src="/modules/profiles/profile-preview-modal.js"></script>
+<script src="/modules/profiles/profile-preview.js"></script>
+<script src="/modules/profiles/profiles.js"></script>
+<script src="/modules/publish-modal/modal.js"></script>
+<script src="/modules/register-device-modal/modal.js"></script>
+<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
+<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
+<script src="/modules/snowpit-editor/snowpit-export.js"></script>
+<script src="/modules/snowpit-editor/snowpit-publish-modal.js"></script>
+<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
+<script src="/modules/snowpit-editor/snowpit-views.js"></script>
+<script src="/modules/tests/test-preview-modal.js"></script>
+<script src="/modules/tests/test-preview.js"></script>
+<script src="/modules/tests/tests.js"></script>
+<script src="/modules/user/forgot-password.js"></script>
+<script src="/modules/user/login.js"></script>
+<script src="/modules/user/register.js"></script>
+<script src="/modules/user/reset-password.js"></script>
+<script src="/modules/user/settings.js"></script>
+<script src="/js/services/field-tests.js"></script>
+<script src="/js/services/global.js"></script>
+<script src="/js/services/organizations.js"></script>
+<script src="/js/services/pathRoute.js"></script>
+<script src="/js/services/profiles-service.js"></script>
+<script src="/js/services/profiles.js"></script>
+<script src="/js/services/snowpit-constants.js"></script>
+<script src="/js/services/tests.js"></script>
+<script src="/js/services/users.js"></script>
+<script src="/js/controllers/header.js"></script>
+<script src="/js/controllers/index.js"></script>
+<script src="/js/controllers/upload.js"></script>
+<script src="/js/directives/fileupload.js"></script>
+<script src="/js/directives/grain-select.js"></script>
+<script src="/js/directives/imageupload.js"></script>
+<script src="/js/directives/input-direction.js"></script>
+<script src="/js/directives/misc.js"></script>
+<script src="/js/directives/textarea-autosize.js"></script>
+<script src="/js/directives/timeinput.js"></script>
+<script src="/js/directives/validation.js"></script>
+<!-- end app scripts -->
+
+		<!-- start app -->     
+		<script type="text/javascript" src='/js/init.js'></script>
+
+		<!-- endbuild -->
+
+<!--		
+		<script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.crosshair.js"></script>-->
+
+		<!--(if target !build)><!-->
+		  <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+		<!--<!(endif)-->
+		
+    	<script>
+
+			Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
+			    // we highly recommend restricting exceptions to a domain in order to filter out clutter
+			    //whitelistUrls: ['example.com/scripts/']
+			}).install();
+		</script>
+
+	</body>
+</html>

@@ -120,6 +120,7 @@ function saveUser(req, res, user) {
                     admin: user.admin,
                     location: user.location,
                     settings: user.settings,
+                    permissions: user.permissions,
                     student: user.student,
                     country: user.country
                 };
@@ -201,6 +202,7 @@ exports.updateUser = function(req, res) {
         delete req.body.admin;
         delete req.body.disabled;
         delete req.body.test;
+        delete req.body.permissions;
     }
 
     // remove forbidden fields that can't be edited

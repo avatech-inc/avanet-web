@@ -35,17 +35,10 @@
       <a href="/" style="text-decoration:none !important;"><div style="display: inline-block;float: left;color: #fff;font-size: 30px;font-weight: 500;padding-top: 6px;line-height:36px;">AvaNet
       <span ng-show="global.user.student === true" style='color:#ddd;font-weight:100;'>Education</span>
       </div>&nbsp;<span style='font-size:13px;text-transform:uppercase;color:#bbb;position:relative;top:14px;left:1px;font-weight:100;'>BETA</span></a>
-      <!--<ul class="nav navbar-nav" ng-if="global.user" >
-
-        <li ng-repeat="navLink in navLinks" ng-class="{ active: isActive(navLink.url) }">
-        	<a href="{{navLink.url}}">{{navLink.text}}</a>
-        </li>
-      </ul>-->
+   
 
       <ul class="nav navbar-nav navbar-right" ng-if="global.user">
-        <!--<li>
-          <a href="/profiles/new" style="font-weight:500;color:#fff;">Snowpit Editor</a>
-        </li>-->
+ 
 
         <li class="dropdown">
           <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Observation</a>
@@ -89,9 +82,10 @@
             <li><a href="/settings">User Settings</a></li>
             <li class="divider"></li>
             
+            <li><a href="/support" target="_blank">Support</a></li>
             <li><a href="#" ng-click="registerSP1()">Register your SP1</a></li>
             <li><a href="/app" target="_blank">Download AvaNet App</a></li>
-            <li><a href="/SP1manual" target="_blank">SP1 User Manual</a></li>
+            <!--<li><a href="/SP1manual" target="_blank">SP1 User Manual</a></li>-->
             <li><a href="/SP1update" target="_blank">SP1 Firmware Update</a></li>
             <li class="divider"></li>
 

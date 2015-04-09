@@ -30,8 +30,21 @@ exports.requireAdmin = function(req, res, next) {
     console.log(req.user);
     if (req.user && req.user.admin) next();
     else {
-        console.log("Admin only. 404.");
+        console.log("ACCESS DENIED: requires admin. 404.");
         res.redirect('/');
         //res.status(404).sendfile('./app/views/404.html');
+    }
+};
+
+exports.requirePermission = function(permission) {
+    return function(req, res, next) {
+        console.log("REQUIRE PERMISSION! " + permission);
+        console.log(req.user);
+        if (req.user && req.user.permissions[permission] === true) next();
+        else {
+            console.log("ACCESS DENIED: requires permission '" + permission + "'. 404.");
+            res.redirect('/');
+            //res.status(404).sendfile('./app/views/404.html');
+        }
     }
 };

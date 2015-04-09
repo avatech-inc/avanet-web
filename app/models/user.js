@@ -64,7 +64,11 @@ var UserSchema = new Schema({
 
     test: { type: Boolean, default: false },
 
-    student: { type: Boolean, default: false }
+    student: { type: Boolean, default: false },
+
+    permissions: {
+        bulkDownload: { type: Boolean, default: false }
+    }
 
 });
 

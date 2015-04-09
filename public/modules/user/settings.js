@@ -1,6 +1,6 @@
 
-angular.module('avatech').controller('SettingsController', ['$scope', '$q', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular', 'LocationSelectModal',
-function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular, LocationSelectModal) {
+angular.module('avatech').controller('SettingsController', ['$scope', '$q', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular', '$http', 'LocationSelectModal',
+function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular, $http, LocationSelectModal) {
     $scope.global = Global;
 
     $scope.loadSettings = function() { 
@@ -241,5 +241,28 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
                 });
             }
         }
+
+    $scope.downloadData = function() {
+        $scope.downloading = true;
+        $http.get("/v1/tests/downloadData", { 
+            // hashes: hashes,
+            // metaData: metaData,
+            // zipFileName: zipFileName
+        })
+        .success(function (data) { 
+            // var zipFileName = $scope.currentTest.profile.metaData.location;
+            // zipFileName += "_" + $scope.currentTest.profile.
+            // download in browser
+            // var dataUrl = data.buffer;
+            console.log(data);
+            var link = document.createElement('a');
+            angular.element(link).attr('href', data.url);//.attr('download', zipFileName + ".zip")
+            link.click();
+            $scope.downloading = false;
+        })
+        .error(function(){
+            $scope.downloading = false;
+        });
+    }
 
 }]);

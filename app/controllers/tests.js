@@ -494,22 +494,23 @@ exports.update = function(req, res) {
 exports.downloadRawData = function(req, res) {
 
     // get metadata for all tests
-    var hashes = req.body.hashes.map(function(obj){ return obj.hash });
-    Test.find({ hash: {'$in': hashes }}).select('metaData hash')
+    //var hashes = req.body.hashes.map(function(obj){ return obj.hash });
+    //Test.find({ hash: {'$in': hashes }}).select('metaData hash')
+
+    Test.find({ user: req.user, version: "v1" })
+    .select('metaData hash rows location date dateNumber')
     .exec(function(err, tests) {
         if (err) { console.log(err); } 
         else {
-            console.log("metadata loaded");
 
             var archiver = require('archiver');
             var archive = archiver('zip');
 
-            var fileCount = req.body.hashes.length;
-            var zipFileName = req.body.zipFileName;
+            var fileCount = tests.length;
+            var zipFileName = "AvaNet_SP1_Data_" + req.user._id;
             var processed = 0;
 
             console.log("TOTAL: " + fileCount);
-
 
             // zip stuff
 
@@ -545,35 +546,76 @@ exports.downloadRawData = function(req, res) {
             // pipe zip stream to buffer
             archive.pipe(zipStream);
 
-            archive.append(req.body.metaData, { name: "_fieldtest.txt" })
+            //archive.append(req.body.metaData, { name: "_fieldtest.txt" })
             
-            for (var i = 0; i < fileCount; i++) {
+            for (var i = 0; i < tests.length; i++) {
 
-                downloadFile(req.body.hashes[i].hash, req.body.hashes[i].fileName
-                    , function(hash, fileName, buffer) {
+                var test = tests[i];
 
-                    // get test
-                    var test = null;
-                    for (var t = 0; t < tests.length; t++) {
-                        if (tests[t].hash == hash) test = tests[t];
-                    }
+                // add raw data file to zip
+                //archive.append(buffer, { name: fileName + ".hex" })
 
-                    // add raw data file to zip
-                    archive.append(buffer, { name: fileName + ".hex" })
+                // add converted data file to zip
+                //archive.append(convertRaw(buffer), { name: fileName + ".csv" })
 
-                    // add converted data file to zip
-                    archive.append(convertRaw(buffer), { name: fileName + ".csv" })
+                // add metadata file to zip
+                //archive.append(JSON.stringify(test.metaData), { name: fileName + ".json" })
 
-                    // add metadata file to zip
-                    archive.append(JSON.stringify(test.metaData), { name: fileName + ".json" })
+                // todo: metadata
 
-                    processed++;
-                    if (processed == fileCount) {
-                        console.log("FINISHING!");
-                        // zip it up
-                        archive.finalize();
-                    }
-                });
+                var moment = require('moment');
+
+                var content = '';
+
+                // metadata
+
+                // url
+                // id
+                // location
+                // slope
+                // angle
+                content += "PROFILE ID:," + test._id + "\n";
+                content += "URL:," + "https://avanet.avatech.com/t/" + test._id + "\n";
+
+                content += "DATE:," + moment(test.date).format("YYYY-MM-DDTHH:mm") + "\n";
+                content += "DATE #:," + test.dateNumber + "\n";
+
+                content += "SLOPE:," + "" + "\n";
+                content += "ANGLE:," + "" + "\n";
+                content += "LOCTATION:,";
+                if (test.location) content+= test.location[1] + "," + test.location[0];
+                content += "\n";
+
+                content += "\n";
+                content += "DEPTH (mm), PRESSURE (kPa)\n";
+
+                //console.log(content);
+
+                if (test.rows) {
+                  for (var r = 0; r < test.rows.length; r++) {
+                    var pressure = test.rows[r];
+
+                    // todo: expand!
+
+                     var pressure_expanded = (.00008 * Math.pow(pressure,3));
+
+                      // var A_P4 = -194.1;
+                      // var B_P4 = .1304;
+                      // var C_P4 = -.0023124;
+                      // var D_P4 = 197.7;
+                      // var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
+
+                      content += (r + 1) + "," + pressure_expanded + "\n";
+                  }
+                  archive.append(content, { name: test._id + "_" + moment(test.date).format("YYYY-MM-DDTHH:mm") + "_" + test.dateNumber + ".csv" })
+                }
+
+                processed++;
+                if (processed == fileCount) {
+                    console.log("FINISHING!");
+                    // zip it up
+                    archive.finalize();
+                }
             }
         }
     });

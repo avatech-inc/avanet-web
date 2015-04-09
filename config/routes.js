@@ -32,6 +32,7 @@ module.exports = function(app, passport, auth) {
             admin: user.admin,
             location: user.location,
             settings: user.settings,
+            permissions: user.permissions,
             student: user.student,
             country: user.country
         };
@@ -100,8 +101,8 @@ module.exports = function(app, passport, auth) {
     app.post('/v1/tests', auth.requireLogin, tests.create);
     app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
     app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
+    app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
-    //app.post('/v1/downloadRawData', auth.requireLogin, auth.requireAdmin, tests.downloadRawData);
 
     // Field Tests
 
@@ -575,6 +576,9 @@ module.exports = function(app, passport, auth) {
     app.get('/manifest.plist', function(req,res) {
         res.sendfile('./app/views/manifest.plist'); 
     });
+    app.get('/beta.plist', function(req,res) {
+        res.sendfile('./app/views/manifest_beta.plist'); 
+    });
 
     app.get('/download-app', function(req,res) { res.sendfile('./app/views/download-app.html'); });
     app.get('/app', function(req,res) { res.sendfile('./app/views/download-app.html'); });
@@ -588,29 +592,24 @@ module.exports = function(app, passport, auth) {
     var getManual = function(req,res) {
         s3_2.list({ }, function(err, data) {
 
-            if (data.Contents && data.Contents.length > 0)
-                res.redirect("https://s3.amazonaws.com/sp1manual/" + data.Contents[0].Key);
-            else res.json({});
-          /* `data` will look roughly like:
+            var manual_en = "";
+            var manual_fr = "";
 
-          {
-            Prefix: 'my-prefix',
-            IsTruncated: true,
-            MaxKeys: 1000,
-            Contents: [
-              {
-                Key: 'whatever'
-                LastModified: new Date(2012, 11, 25, 0, 0, 0),
-                ETag: 'whatever',
-                Size: 123,
-                Owner: 'you',
-                StorageClass: 'whatever'
-              },
-              ⋮
-            ]
-          }
+            if (data.Contents && data.Contents.length > 0) {
 
-          */
+                for (var i = 0; i < data.Contents.length; i++) {
+                    if (data.Contents[i].Key.toLowerCase().indexOf("english") > -1) manual_en = data.Contents[i].Key;
+                    else if (data.Contents[i].Key.toLowerCase().indexOf("french") > -1) manual_fr = data.Contents[i].Key;
+                }
+
+                if (!req.query.l|| (manual_en != "" && req.query.l.toLowerCase() == "en")) {
+                    return res.redirect("https://s3.amazonaws.com/sp1manual/" + manual_en);
+                }
+                else if (manual_fr != "" && req.query.l.toLowerCase() == "fr") {
+                    return res.redirect("https://s3.amazonaws.com/sp1manual/" + manual_fr);
+                }
+            }
+            return res.json({});
         });
     };
     app.get('/SP1manual', getManual);

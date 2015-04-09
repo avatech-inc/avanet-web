@@ -65,6 +65,8 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                     if (!user.settings.distance) user.settings.distance = 0;
                     if (!user.settings.elevation) user.settings.elevation = 0;
                     if (!user.settings.fracture) user.settings.fracture = 0;
+
+                    if (!user.permissions) user.permissions = {};
                 }
                 _this._data.setUser(user);
                // _this._data.user = user;

@@ -3,7 +3,10 @@
  */
 var express = require('express');
 
-module.exports = function(app, config, passport) {
+var path = require('path');
+var root = path.normalize(__dirname + '/..');
+
+module.exports = function(app, passport) {
     app.set('showStackError', true);
 
     //Should be placed before express.static
@@ -16,7 +19,7 @@ module.exports = function(app, config, passport) {
 
     //Setting the fav icon and static folder
     app.use(express.favicon());
-    app.use(express.static(config.root + '/public'));
+    app.use(express.static(root + '/public'));
 
     //Don't use logger for test env
     //if (process.env.NODE_ENV !== 'test') {
@@ -24,7 +27,7 @@ module.exports = function(app, config, passport) {
     //}
 
     //Set views path, template engine and default layout
-    //app.set('views', config.root + '/app/views');
+    //app.set('views', root + '/app/views');
     //app.set('view engine', 'jade');
 
     //Enable jsonp

@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 var jwt = require('jwt-simple');
 var jwt_secret = "guyute";
 
-module.exports = function(passport, config) {
+module.exports = function(passport) {
     // // Serialize sessions
     // passport.serializeUser(function(user, done) {
     //     done(null, user.id);

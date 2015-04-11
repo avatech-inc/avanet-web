@@ -186,6 +186,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-targethtml');
     grunt.loadNpmTasks('grunt-script-link-tags');
     grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-git');
 
     // make grunt default to force in order not to break the project.
     grunt.option('force', true);
@@ -193,15 +194,15 @@ module.exports = function(grunt) {
     // register tasks
     grunt.registerTask('min',['useminPrepare','concat','uglify','cssmin','usemin']);
     //grunt.registerTask('buildMain', ['copy:routes', 'tags']);
-    grunt.registerTask('buildMain', ['tags']);
+    //grunt.registerTask('buildMain', ['tags']);
 
-    grunt.registerTask('default', ['buildMain', 'jshint', 'compass', 'concurrent:target']);
+    grunt.registerTask('default', ['tags', 'jshint', 'compass', 'concurrent:target']);
 
     grunt.registerTask('build', [
         // compile sass into css
         'compass',
         // load scripts and styles into main.html
-        'buildMain', 
+        'tags', 
         // copy files to _dist folder
         'copy:build', 
         // remove dev-specific code sections from main.html

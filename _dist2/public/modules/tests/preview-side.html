@@ -1,0 +1,345 @@
+<section ng-controller="TestPreviewController">
+<style>
+
+.sectionHeader {
+	padding-left: 14px;
+	font-size:18px;
+	font-weight:bold;
+	margin-bottom:5px;
+	margin-top:10px;
+}
+.popupHeader {
+	height: 44px;
+	position: relative;
+	padding-left: 14px;
+	background: #eee;
+	z-index:1000;
+}
+.popupHeader .title {
+	font-size: 20px;
+	font-weight:100;
+	line-height: 45px;
+	float:left;
+}
+.buttons > div {
+	display: inline-block;
+	float:left;
+}
+.buttons {
+	display: inline-block;
+	float:right;
+}
+
+
+.photos {
+	margin-top: 14px;
+	margin-bottom: 8px;
+}
+.photos .image-container {
+	position: relative;
+	cursor: pointer;
+	margin:0px 7px;
+}
+.photos .image-container img {
+	height: 130px;
+}
+.photos .image-container:before {
+    display:block;
+    content:'';
+    position:absolute;
+    width:100%;
+    height:100%;
+    -moz-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+    -webkit-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+    box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+}
+.photos .image-container:hover:before {
+    -moz-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+    -webkit-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+    box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+}
+
+.headshot {
+	background: #aaa;
+	height:40px;
+	width:40px;
+	border-radius: 100px;
+}
+
+/*--------------------------------------------------*/
+
+table.metaData {
+	margin-top:5px;
+	margin-bottom:8px;
+	float: left;
+	margin-right:15px;
+	font-size: 13px;
+	margin-left:4px;
+	table-layout: fixed;
+}
+table.metaData td {
+	padding: 0px 10px 4px 10px;
+	font-weight: normal;
+}
+table.metaData tr td:first-child {
+	color: #888;
+	padding-right:3px;
+	font-weight:normal;
+	text-align: right;
+}
+table.metaData td span {
+	color: #888;
+}
+
+</style>
+
+<div class="popupHeader">
+
+	<div class="title">SP1 Profile<span ng-show="discussMode" style="color:#999;">&nbsp;&nbsp;/&nbsp;&nbsp;Discuss</span></div>
+	<div class="buttons">
+		<div ng-show="profile">
+
+			<div class="btn-group filter right" ng-if="global.user._id == profile.user._id" ng-hide="discussMode">
+		      <button type="button" ng-click="publish()">
+			       <i ng-if="profile.sharingLevel == 'pros'" class="fa fa-globe"></i> 
+			       <i ng-if="profile.sharingLevel == 'org'" class="fa fa-group"></i>
+			       <i ng-if="profile.sharingLevel == 'private'" class="fa fa-lock" style="margin-top:1px;"></i>
+			       <i ng-if="!profile.sharingLevel" class="ion-upload"></i>
+			       
+			       <span style="padding-left:5px;" ng-if="profile.sharingLevel">Published</span>
+			       <span style="padding-left:5px;" ng-if="!profile.sharingLevel">Publish</span>
+		      </button>
+	      	</div>
+
+			<div class="btn-group filter right" ng-if="global.user._id == profile.user._id" ng-hide="discussMode">
+		      <button type="button" ng-click="delete()"><i class="ion-trash-a"></i>&nbsp;&nbsp;Delete
+		      </button>
+	      	</div>
+
+			<div class="btn-group filter right" ng-hide="discussMode">
+		      <button type="button" ng-click="toggleDetail()"><i class="ion-eye"></i>&nbsp;&nbsp;Detail:&nbsp;&nbsp;{{ detailLevel }}
+		      </button>
+	      	</div>
+			<div class="btn-group filter right" ng-hide="discussMode">
+		      <button type="button" ng-click="discussMode = !discussMode"><i class="ion-chatboxes"></i>&nbsp;&nbsp;Discuss
+		      </button>
+	      	</div>
+			<div class="btn-group filter right" ng-show="discussMode">
+		      <button type="button" ng-click="discussMode = !discussMode"><i class="ion-ios-arrow-back"></i>&nbsp;&nbsp;Back to profile
+		      </button>
+	      	</div>
+
+			<!--<div class="btn-group filter right" dropdown ng-if="global.user._id == profile.user._id" ng-hide="discussMode">
+		      <button type="button" ng-click="go('/profiles/' + profile._id)"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit</button>
+		    </div>-->
+
+			<!--<div class="btn-group filter right" dropdown ng-hide="discussMode">
+			  <button type="button" class="dropdown-toggle">
+			    <i class="fa fa-download"></i>&nbsp;&nbsp;Download
+			  </button>
+			    <ul class="dropdown-menu" role="menu">
+			      	<li><a href="#" ng-click="exportPDF()" close-dropdown-on-click><i class="fa fa-file-pdf-o"></i>Download PDF</a></li>
+			      	<li><a href="#" ng-click="exportJPEG()" close-dropdown-on-click><i class="fa fa-file-image-o"></i>Download JPEG</a></li>
+			      	<li><a href="#" ng-click="exportCSV()" close-dropdown-on-click><i class="fa fa-file-excel-o"></i>Download CSV</a></li>
+		      	</ul>
+			</div>-->
+		</div>
+
+		<div class="btn-group filter right">
+		  <button type="button" ng-click="close()">
+			<i class="ion-close-round"></i>
+		  </button>
+		</div>
+
+	</div>
+
+</div>
+
+<div ng-hide="profile" style="padding:15px;">
+Loading...
+</div>
+
+<div style="font-size:14px;line-height:20px; background:#fff; position:absolute; top:44px; bottom:0; right:0; left:0; box-shadow: 0px 0px 8px rgba(0,0,0,.25); z-index:999;" ng-show="profile"
+scrollable always-visible="true">
+
+
+<div ng-hide="discussMode">
+	<div style="background:#fff;padding:6px;height:52px;border-bottom:1px solid #eee;">
+		<div class="headshot" style="float:left;margin-right:9px;"></div>
+		<div style="font-size:17px;margin-top:2px;">{{ profile.user.fullName }}</div>
+		<div style="font-size:14px;color:#888;">{{ formatters.formatOrg(profile.organization) }}</div>
+	</div>
+
+	<div style="font-size:13px;padding-left:12px;display:inline-block;padding-right:14px;border-right:1px solid #eee;padding-top:4px;padding-bottom:4px;">
+		<!--<i class="fa fa-clock-o" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>-->
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		<b>Date & Time</b><br/>
+		{{profile.date | date:'M/d/yy h:mm a'}}
+		</div>
+	</div>
+
+	<!--<div style="font-size:13px;display:inline-block;padding-left:8px;padding-top:4px;padding-bottom:4px;padding-right:14px;border-right:1px solid #eee;">
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		<b>Elevation</b><br/>
+		{{ formatters.formatElevation(profile.metaData.elevation) }}
+		</div>
+	</div>-->
+
+	<div style="font-size:13px;display:inline-block;padding-left:8px;padding-top:4px;padding-bottom:4px;padding-right:14px;border-right:1px solid #eee;">
+		<!--<i class="fa fa-compass" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>-->
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		<b>Slope</b><br/>
+		{{ formatters.formatSlope(profile.slope) }}
+		</div>
+	</div>
+	<div style="font-size:13px;display:inline-block;padding-left:8px;padding-top:4px;padding-bottom:4px;border-right:1px solid #eee;padding-right:14px;">
+		<!--<i class="fa fa-compass" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>-->
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		<b>Aspect</b><br/>
+		{{ formatters.formatDirection(profile.aspect) }}
+		</div>
+	</div>
+
+	<div style="font-size:13px;display:inline-block;padding-left:8px;padding-top:4px;padding-bottom:4px;padding-right:14px;border-right:0px solid #eee;">
+		<!--<i class="fa fa-location-arrow" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>-->
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		<b>Location</b><br/>
+		{{ formatters.formatLatLng(profile.location) }}<br/>
+		<!--{{ formatters.formatLatLng(profile.location) }}-->
+		</div>
+	</div>
+
+	<!--<div style="font-size:13px;display:inline-block;padding-left:8px;padding-top:4px;padding-bottom:4px;">
+		<i class="ion-chatboxes" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>
+		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
+		Slope: {{ formatters.formatSlope(profile.metaData.slope) }}<br/>
+		Aspect: {{ formatters.formatDirection(profile.metaData.aspect) }}
+		</div>
+	</div>-->
+
+	<!--<table class="metaData">
+		<tr>
+			<td>Date:</td>
+			<td>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</td>
+		</tr>
+		<tr>
+			<td style="width:58px">Location:</td>
+			<td>{{ formatters.format(profile.metaData.location) }}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>{{ formatters.formatLatLng(profile.location) }}</td>
+		</tr>
+	</table>-->
+
+	<!--<table class="metaData">
+		<tr>
+			<td style="width:100px">Snowpit depth:</td>
+			<td>{{ formatters.formatCm(profile.depth) }}</td>
+		</tr>
+		<tr>
+			<td>Snowpack depth:</td>
+			<td>{{ formatters.formatCm(profile.metaData.snowpackHeight) }}</td>
+		</tr>
+	</table>-->
+
+	<div style="clear:both;border-bottom:1px solid #eee;"></div>
+
+	<!-- snowpit -->
+	<div class="snowpit-container" style="background:#f4f4f4;padding-left:8px;padding-bottom:20px;padding-top:4px;">
+		
+		<div style="position:relative;padding-top:20px;padding-left:30px;">
+			<div ng-repeat="pressure in [60,250,1000]" ng-style="{ left: ($index + 1) * (520 / 3) - 30 + 30 }" style="color:#666;width:30px;display:inline-block;position:absolute;text-align:right;font-size:11px;top:2px;"> 
+			{{ pressure }}
+			</div>
+
+			<div ng-style="{ top: ($index + 1) * (440 / 15) - 17 }" style="color:#666;width:26px;display:inline-block;position:absolute;text-align:right;font-size:11px;height:15px;line-height:15px;left:0;" ng-repeat="depth in [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]">
+			{{ depth }}
+			</div>
+			<canvas graph-big="profile.rows_compressed" detail="detailLevel" width="1040" height="880" style="width:520px;height:440px;background:white;"></canvas>
+		</div>
+
+	</div>
+
+	<!-- weather -->
+	<!--
+	<div style="clear:both;border-bottom:1px solid #eee;"></div>
+	<div class="sectionHeader">Weather</div>
+	<table class="metaData">
+		<tr>
+			<td>Air temp.</td>
+			<td>{{ formatters.formatTemp(profile.metaData.airTemp) }}</td>
+		</tr>
+		<tr>
+			<td>Sky</td>
+			<td>{{ formatters.formatSky(profile.metaData.sky) }}
+				<img ng-show="profile.metaData.sky" src="{{ formatters.getSkyIcon(profile.metaData.sky) }}" style="height:12px;width:12px;position:relative;bottom: 2px;left: 4px;"/>
+			</td>
+		</tr>
+		<tr>
+			<td>Wind</td>
+			<td style="width:130px">{{ formatters.formatWind(profile.metaData.windSpeed,profile.metaData.windDirection) }}</td>
+		</tr>
+		<tr>
+			<td>Precip.</td>
+			<td>{{ formatters.formatPrecip(profile.metaData.precipType) }}</td>
+		</tr>
+	</table>
+	<table class="metaData">
+		<tr>
+			<td>Snowpit depth</td>
+			<td>{{ formatters.formatCm(profile.depth) }}</td>
+		</tr>
+		<tr>
+			<td>Snowpack height</td>
+			<td>{{ formatters.formatCm(profile.metaData.snowpackHeight) }}</td>
+		</tr>
+		<tr>
+			<td>Blowing snow</td>
+			<td>{{ formatters.formatBlowingSnow(profile.metaData.blowingSnow,profile.metaData.blowingSnowDirection) }}</td>
+		</tr>
+		<tr style="width:200px;">
+			<td>Surface Pen.</td>
+			<td>
+			<div ng-show="profile.metaData.PS" style="display:inline-block;padding-right:10px;"><span>Ski:</span>
+			{{ formatters.formatCm(profile.metaData.PS) }}</div>
+			<div ng-show="profile.metaData.PS" style="display:inline-block;padding-right:10px;"><span>Foot:</span>
+			{{ formatters.formatCm(profile.metaData.PF) }}</div></td>
+		</tr>
+	</table>
+	-->
+
+	<!-- notes -->
+	<div ng-show="profile.metaData.notes && profile.metaData.notes != ''">
+		<div style="clear:both;border-bottom:1px solid #eee;"></div>
+		<div class="sectionHeader">Notes</div>
+		<div style="font-size:13px;padding:5px 20px 14px 14px;font-weight:100;line-height:16px;">{{ profile.metaData.notes }}</div>
+	</div>
+
+	<!-- photos -->
+	<div ng-show="profile.photos && profile.photos.length > 0">
+	<div style="clear:both;border-bottom:1px solid #eee;"></div>
+		<div class="sectionHeader">Photos</div>
+		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
+			<div ng-repeat="photo in profile.photos" style="vertical-align:top;display:inline-block;" ng-click="showPhoto($index)">
+				<div class="image-container">
+					<img src="{{ photo.url }}"/>
+				</div>
+
+				<!--<span style='font-size:11px;'>{{ photo.caption }}</span>-->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div ng-show="discussMode">
+
+	<div style="position:relative;margin-left:14px;margin-right:20px;margin-bottom:12px;padding-top:6px;">
+		<comments-new ng-show="profile" owner-type="'test'" owner-id="testId"></comments-new>
+	</div>
+
+</div>
+
+</div>
+
+</section>

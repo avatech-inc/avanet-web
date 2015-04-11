@@ -1,0 +1,284 @@
+<style>
+
+    .modal-footer { margin-top: 0; }
+
+    .share {
+        display: inline-block;
+        width: 95%;
+        margin: 5px;
+        background: #fff;
+        vertical-align: top;
+        margin-top: 5px;
+        border-radius: 6px;
+        padding: 10px;
+        opacity: .5;
+        border:2px solid #999;
+        cursor: pointer;
+    }
+    .share.selected {
+        opacity: 1;
+        border-color:#4d90fe;
+    }
+    .share:hover {
+        border-color:#4d90fe;
+
+    }
+    .share i.icon {
+      font-size: 37px;
+      margin-top: 5px;
+      float: left;
+      width: 50px;
+    }
+    .share .title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 0px;
+      text-align: left;
+      padding-left: 60px;
+    }
+    .share .desc {
+        text-align: left;
+        padding-left: 60px;
+        font-size:13px;
+        font-weight: 300;
+    }
+
+    .share-long {
+        width: 95%;
+        margin-top: 5px;
+        margin-bottom: 6px;
+        border-radius: 4px;
+        background: #eee;
+        display:inline-block;
+        padding:12px;
+        font-size: 16px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    ul.selectedOrgs {
+      clear:both;
+      margin: 0; padding: 0;
+      padding-top:9px;
+      list-style-type: none;
+    }
+    ul.selectedOrgs li {
+      text-align: left;
+      padding-bottom: 1px;
+    }
+    ul.selectedOrgs li i.x {
+      margin-right:5px;
+      margin-left:2px;
+      opacity: .3;
+    }
+    ul.selectedOrgs li i.x:hover {
+      opacity: 1;
+    }
+
+    /* org select dropdown */
+
+    .userSelect .message {
+      margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
+    }
+    .userSelect .no-results {
+      margin-top: 10px;
+      font-weight: 400;
+      color: #777;
+      font-size: 15px;
+      text-align: center;
+    }
+    ul.results {
+      list-style-type: none;
+      margin: 0; padding: 0;
+      margin-top: 3px;
+    }
+    ul.results li {
+      cursor: pointer;
+      padding: 3px 12px;
+      font-weight: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    ul.results li.isMember {
+      pointer-events: none;
+      cursor: pointer;
+      opacity: .5;
+    }
+    ul.results li.isMember:hover {
+      background: transparent !important;
+    }
+    ul.results li:hover {
+      list-style-type: none;
+      background: #f5f5f5;
+    }
+
+    ul.results li .arrow { 
+      transition: opacity 150ms;
+      opacity: 0;
+      float: right;
+    }
+    ul.results li:hover .arrow{
+      opacity: 1;
+    }
+
+    .subheader {
+      padding-left: 11px;
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+      font-weight:bold;
+      position: relative;
+    }
+    .subheader.mid {
+      border-top: 1px solid #ddd;
+      padding-top: 4px;
+      margin-top: 4px;
+      margin-bottom: 5px;
+    }
+
+    .selectAll {
+      position: absolute;
+      display: inline-block;
+      vertical-align: top;
+      right: 12px;
+      font-weight: normal;
+      opacity: .5;
+    }
+    .selectAll i { margin-left: 3px; }
+    .selectAll:hover {
+      opacity: 1;
+    }
+
+</style>  
+<!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
+    <!--<div class="modalClose" ng-click="close()"><i class="fa fa-times"></i></div>-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 style="font-size:22px;font-weight:100;padding-top:3px;">Publish</h3>
+        </div>
+        <div class="modal-body" style="margin-top:8px;margin-bottom:8px;padding:0;text-align:center;">
+
+          <div ng-if="global.user.student === true" style="text-align:left;padding:4px 14px 19px 14px;font-size:18px;">
+            Publishing this observation will make it available to all AvaNet students and professionals. Before publishing, please make certain that this observation is accurate to the best of your ability.<br/><br/>
+            <b>Are you sure you're ready to publish?</b>
+          </div>
+
+          <div ng-if="global.user.student === false">
+
+            <div class="share" ng-class="{ 'selected':sharing.level == 'pros' }" ng-click="sharing.level='pros'">
+                <i class="icon fa fa-globe"></i>
+                <div class="title">All Professionals</div>
+                <div class="desc">Viewable by all professionals on AvaNet.</div>
+            </div>
+
+            <!--<div class="share" style="pointer-events:none;position:relative;">
+                <img src="/img/comingsoon.png" style="position: absolute;width: 90px;height: 90px;top: -2px;right: -2px;"/>
+                <i class="fa fa-group"></i>
+                <div class="title">Organization</div>
+                <div class="desc">All members of your organization will be able to see this profile.</div>
+            </div>
+            <div class="share" style="pointer-events:none;position:relative;">
+                <img src="/img/comingsoon.png" style="position: absolute;width: 90px;height: 90px;top: -2px;right: -2px;"/>
+                <i class="fa fa-globe"></i>
+                <div class="title">All Professionals</div>
+                <div class="desc">All professionals on AvaNet will be able to see this profile.</div>
+            </div>-->
+
+            <div class="share" ng-class="{ 'selected':sharing.level == 'org' }" ng-click="sharing.level='org'">
+                <i class="icon fa fa-group"></i>
+                <div class="title">Organization</div>
+                <div class="desc">Viewable by the selected organizations.</div>
+
+                <div style="padding-top:10px;border-top:1px solid #ccc;margin-top:10px;text-align:left;padding-left:4px;">
+                  <!--<label ng-repeat="org in global.orgs" style="width:100%;display:block;font-weight:500;">
+                    <input type="checkbox" checklist-model="sharing.selectedOrgs" checklist-value="org._id">&nbsp;&nbsp;{{ org.name }}
+                  </label>-->
+                </div>
+
+                <div class="btn-group userSelect" dropdown style="float:left;">
+                  <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
+                    <i class="fa fa-plus"></i> Add Organization
+                  </button>
+                  <ul class="dropdown-menu" role="menu" style="width:260px;min-height:54px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+                  
+                  <div ng-show="global.orgs && global.orgs.length > 0" class='subheader'>My Organizations
+
+                    <div class="selectAll" ng-click="selectAllOrgs()" close-dropdown-on-click>Select All
+                    <span class="arrow"><i class="fa fa-plus"></i></span>
+                    </div>
+                  </div>
+                  <ul ng-show="global.orgs && global.orgs.length > 0" class="results">
+                    <li ng-repeat="org in global.orgs" ng-click="addOrg(org)" close-dropdown-on-click ng-class="{ isMember: isSelected(org._id) }">
+                      {{ org.name }} 
+                      <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+
+                      <span class="arrow"><i class="fa fa-plus"></i></span>
+                    </li>
+                  </ul>
+
+                  <div class='subheader mid'>Outside Organizations</div>
+
+                  <div style="padding:3px 12px;">
+
+                      <div class="form-group" style="margin-bottom:0;position:relative;">
+                        <input type="text" class="form-control" placeholder="Search for an organization by name" ng-model="search.query" ng-change="doSearch()">
+                        <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
+                      </div>
+
+                      <div class="no-results" ng-show="search.results.length == 0 && !search.email">
+                        No results
+                      </div>
+                    </div>
+
+                    <ul ng-show="search.results.length > 0" class="results">
+                      <li ng-repeat="result in search.results" ng-click="addOrg(result)" close-dropdown-on-click ng-class="{ isMember: isSelected(result._id) }">
+                        {{ result.name }} 
+                        <span ng-show="result.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+
+                        <span class="arrow"><i class="fa fa-plus"></i></span>
+                      </li>
+                    </ul>
+                    <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
+
+                    </a></li></ul>
+                </div>
+
+                <ul class="selectedOrgs" ng-show="sharing.selectedOrgs && sharing.selectedOrgs.length > 0">
+                  <li ng-repeat="org in sharing.selectedOrgs">
+                    <i class="fa fa-times x" ng-click="removeOrg(org)" title="remove this organization"></i>
+                    {{ org.name }}
+                    <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+                  </li>
+                </ul>
+
+            </div>
+
+            <div class="share" ng-class="{ 'selected':sharing.level == 'private' }" ng-click="sharing.level='private'">
+                <i class="icon fa fa-lock"></i>
+                <div class="title">Private</div>
+                <div class="desc">Viewable only by you.</div>
+            </div>
+
+            <div class="share-long" style="margin-bottom:4px;" ng-show="sharing.level == 'pros'">
+            <label style="font-weight:500;margin:0;padding:0;">
+              <input type="checkbox" ng-model="sharing.students">&nbsp;&nbsp;
+              Share with avalanche education students</label>
+            </div>
+            <div class="share-long" ng-show="sharing.level == 'pros'">
+            <label style="font-weight:500;margin:0;padding:0;" >
+              <input type="checkbox" ng-model="sharing.avyCenter">&nbsp;&nbsp;
+              Share with local and regional forecast centers</label>
+            </div>
+
+          </div>
+
+
+
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-default btn-lg" ng-click="close()" style="float:left;">Cancel</button>
+
+           <button class="btn btn-primary btn-lg" ng-click="publish()">Publish</button>
+        </div>
+    </div>

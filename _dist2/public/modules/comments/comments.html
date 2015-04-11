@@ -1,0 +1,132 @@
+<style>
+.comments {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	background: #f9f9f9;
+}
+.comments li {
+	vertical-align: top;
+	border-bottom:1px solid #eaeaea;
+	padding-top:5px;
+	min-height:48px;
+	font-size: 13px;
+	padding-left: 45px;
+	padding-left: 10px; /* change back to 45 when photos are back */
+	position: relative;
+}
+.comments li.commentBox {
+	padding-top:6px;
+	//border-top: none;
+	//transition: height 100ms;
+}
+@-webkit-keyframes animateBg {
+  from { background: #ffffcc; }
+  90% { background: #ffffcc; }
+  to { background: transparent; }
+}
+.comments li.justAdded {
+  -webkit-animation-name: animateBg;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: 1;
+}
+.comments li textarea.comment {
+	width: 97%;
+	padding: 6px 8px;
+	position: relative;
+	top: 2px;
+	height:32px;
+	resize:none;
+	font-weight: 100;
+	margin-bottom: 5px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.comments li textarea.comment:focus {
+	background: #fff;
+}
+.comments .photo {
+	background: #67bf74;
+	color: rgba(255,255,255,.9);
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	border-radius: 99px;
+	text-align: center;
+	font-size: 13px;
+	letter-spacing: .03em;
+	font-weight: 100;
+	float: left;
+	margin-top: 2px;
+	margin-left: -40px;
+	display:none;
+}
+.comments .name {
+	font-weight: 500;
+	color: #333;
+	font-weight: 12px;
+}
+.comments .time {
+	color: #aaa;
+	display:inline-block;
+	margin-left: 0px;
+	font-weight: 100;
+	font-weight: 12px;
+}
+.comments .content {
+	font-weight: 100;
+	color: #000;
+	margin-top: 0px;
+	display:inline-block;
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+.comments li:hover button.delete {
+	opacity: 1;
+}
+.comments button.delete {
+	opacity: 0;
+	transition: opacity .2s;
+	position: absolute;
+	right: 14px;
+	top: 5px;
+	background: transparent;
+	border: none;
+	color: #aaa;
+	font-size: 12px;
+	padding: 0px 2px;
+}
+.comments button.delete:hover {
+	color: #777;
+}
+
+ul.comments.list {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	top: 48px;
+	//transition: top 100ms;
+}
+</style>
+<ul class="comments">
+	<li class="commentBox">
+		<div class="photo">
+			{{  }}
+		</div>
+		<textarea onenter="saveComment()" autosize ng-change="adjustHeight()" class="comment" ng-disabled="saving" type="text" ng-model="newComment" placeholder="Type your comment here, then press enter"></textarea>
+	</li>
+</ul>
+<ul class="comments list" scrollable>
+	<li ng-repeat="comment in comments" ng-class="{ 'justAdded': comment.new }">
+		<div class="photo">
+			{{  }}
+		</div>
+		<span class="name">{{ comment.user.fullName}}</span>
+		<span class="time"> &#8729;&nbsp;<span am-time-ago="comment.created"></span></span>
+		<br/>
+		<span class="content">{{ comment.content }}</span>
+		
+		<button class="delete" ng-show="comment.user._id == global.user._id" ng-click="deleteComment(comment._id, $index)"><i class="fa fa-times"></i></button>
+	</li>
+</ul>

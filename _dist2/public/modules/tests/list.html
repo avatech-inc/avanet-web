@@ -1,0 +1,28 @@
+<section ng-controller="TestsController" ng-init="find()" class="layout-normal">
+	<div class="container topPadding">
+		<div class="row">
+			<div class="col-sm-4 col-xs-12" style="height:{{ windowHeight - 60 }}px;overflow:scroll;">
+				<!--<button class="btn btn-primary" ng-click="open()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Upload</button>-->
+
+				<ul class="list-group">
+					<li data-ng-repeat="article in articles" class="list-group-item">
+						<!--<a data-ng-href="/{{resource}}/{{article._id}}" style="padding:5px;">-->
+						<a ng-click="loadPreview(article._id)" style="padding:5px;">
+							<canvas graph="article.rows_small" width="120" height="120" style="width:60px;height:60px;float:left;margin-right:14px;background:#eee;"></canvas>
+
+							<span style="font-size:12px;font-weight:300;">{{article.created | date:'M/d/yy h:mm a'}} | {{article.user.fullName}}</span>
+							<h2 style="font-size:18px;">{{article.title}}</h2>
+						</a>
+					</li>
+				</ul>
+				<h1 data-ng-hide="!articles || articles.length">No tests uploaded.</h1>
+
+			</div>
+			<div class="col-sm-8 col-xs-12" ng-include="'/views/tests/preview.html'">
+
+
+
+			</div>
+		</div>
+	</div>
+</section>

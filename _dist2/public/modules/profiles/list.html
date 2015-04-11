@@ -1,0 +1,25 @@
+<section data-ng-controller="ProfilesController" ng-init="find()" class="layout-normal">
+	<div class="container topPadding">
+		<div class="row"><div class="col-sm-6 col-xs-12">
+			<a class="btn btn-primary" href="/profiles/new"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Profile</a>
+
+			<ul class="list-group" style="margin-top:14px;">
+				<li data-ng-repeat="profile in articles" class="list-group-item">
+					<a data-ng-href="/{{resource}}/{{profile._id}}" style="padding:5px;">
+						<canvas profile="profile" width="300" height="300" style="width:60px;height:60px;float:left;margin-right:14px;background:#eee;"></canvas>
+
+						<span>{{profile.created | date:'M/d/yy h:mm a'}} | {{profile.user.fullName}}</span>
+						<h2><i class="fa fa-map-marker"></i>
+						{{ (profile.metaData.location ? profile.metaData.location : profile.title) }}
+						</h2>
+
+
+							
+					</a>
+				</li>
+			</ul>
+			<h1 data-ng-hide="!articles || articles.length">No profiles available.</h1>
+
+		</div></div>
+	</div>
+</section>

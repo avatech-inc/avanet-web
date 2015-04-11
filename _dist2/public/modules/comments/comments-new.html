@@ -1,0 +1,290 @@
+<style>
+.comments {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	/*background: #f9f9f9;*/
+}
+.comments li {
+	vertical-align: top;
+	border-bottom:1px solid #eaeaea;
+	padding-top:5px;
+	min-height:48px;
+	font-size: 13px;
+	padding-left: 45px;
+	padding-left: 0px; /* change back to 45 when photos are back */
+	position: relative;
+}
+.comments li.commentBox {
+	padding-top:6px;
+	border-bottom: 0px;
+	//border-top: none;
+	//transition: height 100ms;
+}
+@-webkit-keyframes animateBg {
+  from { background: #ffffcc; }
+  90% { background: #ffffcc; }
+  to { background: transparent; }
+}
+.comments li.justAdded {
+  -webkit-animation-name: animateBg;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: 1;
+}
+/*.comments li textarea.comment {
+	width: 100%;
+	padding: 6px 8px;
+	position: relative;
+	top: 2px;
+	height:32px;
+	resize:none;
+	font-weight: 100;
+	margin-bottom: 5px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.comments li textarea.comment:focus {
+	background: #fff;
+}*/
+
+.comments .photo {
+	background: #67bf74;
+	color: rgba(255,255,255,.9);
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	border-radius: 99px;
+	text-align: center;
+	font-size: 13px;
+	letter-spacing: .03em;
+	font-weight: 100;
+	float: left;
+	margin-top: 2px;
+	margin-left: -40px;
+	display:none;
+}
+.comments .name {
+	font-weight: 500;
+	color: #333;
+	font-weight: 12px;
+}
+.comments .time {
+	color: #aaa;
+	display:inline-block;
+	margin-left: 0px;
+	font-weight: 100;
+	font-weight: 12px;
+}
+.comments .content {
+	font-weight: 100;
+	color: #000;
+	margin-top: 0px;
+	display:inline-block;
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+.comments li:hover button.delete {
+	opacity: 1;
+}
+.comments button.delete {
+	opacity: 0;
+	transition: opacity .2s;
+	position: absolute;
+	right: 2px;
+	top: 5px;
+	background: transparent;
+	border: none;
+	color: #aaa;
+	font-size: 12px;
+	padding: 0px 2px;
+	outline:none;
+}
+.comments button.delete:hover {
+	color: #777;
+}
+
+ul.comments.list {
+	/*position: absolute;
+	bottom: 0;
+	width: 100%;
+	top: 48px;*/
+	//transition: top 100ms;
+}
+
+
+/* MENT.IO */
+
+mentio-menu { z-index: 2000 !important; }
+
+.menu-highlighted {
+    font-weight: bold;
+}
+
+.product-search, .user-search {
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    background-clip: padding-box;
+    outline: 0;
+}
+
+.product-search {
+    max-width: 500px;
+}
+
+.product-search .list-group-item.active {
+    background-color: #f5f5f5;
+}
+
+.product-search:hover, .user-search:hover {
+    cursor: pointer;
+}
+
+.product-search .product-photo-container {
+    float: left;
+    width: 100px;
+}
+
+.product-search .product-photo {
+    max-width: 80px;
+    max-height: 50px;
+    border-radius: 3px;
+    margin: auto;
+}
+
+.product-search .list-group-item-heading, .product-search .list-group-item-text {
+    margin-left: 10px;
+}
+
+.user-search .list-group-item.active {
+    color: #fff;
+    background-color: #428bca;
+    border-color: #428bca;
+}
+
+.user-search .list-group-item.active .text-muted {
+    color: #ccc;
+}
+
+.user-search .list-group-item.active .text-primary {
+    color: #fff;
+}
+
+.user-search .list-group-item {
+    padding: 5px;
+}
+
+.user-search .user-photo {
+    max-width: 30px;
+    max-height: 30px;
+    border-radius: 15px;
+}
+
+.demo-scrollable-menu {
+    height: auto;
+    max-height: 300px;
+    overflow-y: auto;
+}
+</style>
+
+<!--<mentio-menu mentio-for="'theTextArea'" mentio-trigger-char="'@'" mentio-items="products" mentio-template-url="/product-mentions.tpl" mentio-search="searchProducts(term)" mentio-select="getProductTextRaw(item)" class="ng-isolate-scope" style="display: none;">
+        <ul class="list-group product-search demo-scrollable-menu">
+        </ul>
+</mentio-menu>-->
+
+<ul class="comments">
+	<li class="commentBox">
+		<div class="photo">
+			{{  }}
+		</div>
+		<!--<textarea mentio="" mentio-macros="macros" mentio-trigger-char="'@'" mentio-items="people" mentio-template-url="/people-mentions.tpl" mentio-search="searchPeople(term)" mentio-select="getPeopleTextRaw(item)" mentio-typed-term="typedTerm2" class="editor form-control ng-isolate-scope ng-pristine ng-valid" mentio-id="'theTextArea'" ng-model="theTextArea" ng-trim="false" rows="6" autocomplete="off">                        </textarea>-->
+
+		<!--<textarea 
+			onenter="saveComment()" 
+
+			test-autosize 
+			test-ng-change="adjustHeight()" 
+
+			class="comment" 
+			ng-disabled="saving" 
+			type="text" 
+			autocomplete="off"
+			ng-model="newComment" 
+			placeholder="Type your comment here, then press enter"
+		></textarea>-->
+
+	    <script type="text/ng-template" id="/people-mentions.tpl">
+	        <ul class="list-group user-search">
+	            <li mentio-menu-item="person" ng-repeat="person in items" class="list-group-item">
+	                <img ng-src="{{person.imageUrl}}" class="user-photo">
+	                <span class="text-primary" ng-bind-html="person.name | mentioHighlight:typedTerm:'menu-highlighted' | unsafe"></span>
+	                <em class="text-muted" ng-bind="person.bio | words:5"></em>
+	            </li>
+	        </ul>
+	    </script>
+
+		<!--<mentio-menu
+	        mentio-for="'htmlContent'"
+	        mentio-trigger-char="'@'"
+	        mentio-items="people"
+	        mentio-template-url="/people-mentions.tpl"
+	        mentio-search="searchPeople(term)"
+	        mentio-select="getPeopleText(item)"
+	        ></mentio-menu>-->
+
+		<textarea 
+			onenter="saveComment()" 
+
+			test-autosize
+			test-ng-change="adjustHeight()"
+
+			ng-disabled="saving"
+			autocomplete="off"
+	        placeholder="Type your comment here, then press enter"
+
+	        class="comment"
+
+	        style="height:42px;min-height:42px !important;overflow: hidden;margin-bottom:5px;"
+	        >
+        </textarea>
+
+        <!--<div contenteditable
+
+			test-autosize
+			test-ng-change="adjustHeight()" 
+
+			ng-disabled="saving"
+			autocomplete="off"
+	        ng-model="newComment"
+	        placeholder="Type your comment here, then press enter"
+
+			mentio
+	        mentio-typed-term="typedTerm"
+	        test-mentio-macros="macros"
+	        mentio-require-leading-space="true"
+	        mentio-select-not-found="true"
+	        class="editor form-control"
+	        mentio-id="'htmlContent'"
+	        id="htmlContent"
+	        >
+        </div>-->
+
+        <!--<button ng-click="saveComment()">Submit</button>-->
+
+	</li>
+</ul>
+<ul class="comments list">
+	<li ng-repeat="comment in comments" ng-class="{ 'justAdded': comment.new }">
+		<div class="photo">
+			{{  }}
+		</div>
+		<span class="name">{{ comment.user.fullName}}</span>
+		<span class="time"> &#8729;&nbsp;<span am-time-ago="comment.created"></span></span>
+		<br/>
+		<span class="content" ng-bind-html="parseComment(comment.content)"></span>
+		
+		<button class="delete" ng-show="comment.user._id == global.user._id" ng-click="deleteComment(comment._id, $index)"><i class="fa fa-times"></i></button>
+	</li>
+</ul>

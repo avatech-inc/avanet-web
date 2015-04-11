@@ -1,0 +1,229 @@
+<style>
+ul.members {
+	list-style-type: none;
+	border-top: 1px solid #ddd;
+	margin: 0;
+	padding: 0;
+	margin-top:10px;
+	margin-bottom: 25px;
+}
+ul.members >li {
+	border-bottom: 1px solid #ddd;
+	margin: 0;
+	height: 51px;
+}
+ul.members >li .name {
+	font-size: 19px;
+	font-weight: 500;
+	float: left;
+	line-height: 50px;
+}
+ul.members >li.pending .name {
+	opacity: .6;
+}
+ul.members >li .right {
+	float:right;
+	vertical-align: top;
+}
+ul.members >li .right >.btn-group,
+ul.members >li .right >button {
+	vertical-align: top;
+	margin-top: 8px;
+}
+
+/* member menu */
+
+.memberMenu ul {
+	width: 224px; 
+}
+
+.memberMenu li a {
+	white-space:normal !important;
+}
+
+.memberMenu ul li a .check {
+	opacity: 0;
+	margin-left: 2px;
+}
+.memberMenu ul li a.selected,
+.memberMenu ul li a.disable {
+	opacity: .5;
+	pointer-events: none;
+}
+.memberMenu ul li a.selected .check {
+	opacity: 1;
+}
+
+.memberMenu li .desc {
+	font-size: 13px; 
+	margin-top: 2px; margin-bottom: 2px;
+	font-weight: 400;
+}
+
+/* add member */
+
+.userSelect .message {
+	margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
+}
+.userSelect .no-results {
+	margin-top: 18px;
+	font-weight: 400;
+	color: #777;
+	font-size: 15px;
+	text-align: center;
+}
+ul.results {
+	list-style-type: none;
+	margin: 0; padding: 0;
+	margin-top: 3px;
+}
+ul.results li {
+	cursor: pointer;
+	padding: 3px 12px;
+	font-weight: 14px;
+	font-weight: 500;
+}
+ul.results li.isMember {
+	pointer-events: none;
+	cursor: pointer;
+	opacity: .5;
+}
+ul.results li.isMember:hover {
+	background: transparent !important;
+}
+ul.results li:hover {
+	list-style-type: none;
+	background: #f5f5f5;
+}
+
+ul.results li .arrow { 
+	transition: opacity 150ms;
+	opacity: 0;
+	float: right;
+}
+ul.results li:hover .arrow{
+	opacity: 1;
+}
+
+</style>
+
+<section ng-controller="OrganizationsController" ng-init="loadOrg()">
+	<div class="container topPadding">
+
+		<div style="max-width:600px;margin:auto;">
+			<div style="font-weight:700;font-size:12px;color:#aaa;">
+			ORGANIZATION
+			</div>
+			<div style="font-size:36px;">
+				{{ org.name }}
+			</div>
+			<!--<div style="color:#444;">
+				{{ org.location }}
+			</div>-->
+
+			<div style="text-align:right;">
+
+				<div ng-if="userIsAdmin()"  class="btn-group userSelect" dropdown>
+			      <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
+			        <i class="fa fa-plus"></i> Add Member
+			      </button>
+			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+			    	
+			    	<div style="padding:3px 12px;">
+				        <div class="form-group" style="margin-bottom:0;position:relative;">
+				          <input focus-on="focusSearch" type="text" class="form-control" placeholder="" ng-model="search.query" ng-change="doSearch()">
+				          <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
+				        </div>
+
+				        <div class="message" ng-show="!search.results">
+				        	Search for a user by name or email, or enter an email address to invite someone new.
+				        </div>
+
+				        <div class="no-results" ng-show="search.results.length == 0 && !search.email">
+				        	No results
+				        </div>
+
+				        <div class="message" ng-show="search.results.length == 0 && search.email">
+					        <b>{{ search.email }}</b> isn't in our system. Would you like to invite them via email?<br/>
+					        <button ng-click="inviteEmail()" style="margin-top:10px;" class="btn btn-primary btn-block" close-dropdown-on-click>Invite</button>
+				        </div>
+			        </div>
+
+			        <ul ng-show="search.results.length > 0" class="results">
+			        	<li ng-repeat="result in search.results" ng-click="addMember(result)" ng-class="{ isMember: result.isMember }" close-dropdown-on-click>
+			        		{{ result.fullName }} <span ng-show="result.isMember">(joined)</span>
+
+			        		<span class="arrow"><i class="fa fa-plus"></i></span>
+		        		</li>
+			        </ul>
+			        <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
+
+			        </a></li></ul>
+			    </div>
+
+		    </div>
+
+			<ul class="members">
+				<li ng-repeat="member in members" ng-class="{ pending: member.user.pending }"
+				 ng-hide="!userIsAdmin() && member.user.pending">
+					<div class="name">{{ member.user.fullName }}
+					<span ng-show="member.user._id == global.user._id">(you)</span>
+					</div>
+
+
+					<div class="right">
+						<div class="btn-group memberMenu" dropdown>
+
+						<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
+							<span ng-hide="member.user.pending">
+						        {{ member.admin ? "Admin" : "Member" }}
+					        </span>
+						</div>
+
+					      <button ng-if="userIsAdmin()" type="button" class="dropdown-toggle btn btn-default" style="width:86px;text-align:left;">
+					      	<span ng-hide="member.user.pending">
+						        {{ member.admin ? "Admin" : "Member" }}
+					        </span>
+					        <span ng-show="member.user.pending">
+					        	Pending
+					        </span>
+						        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
+					      </button>
+					      <ul class="dropdown-menu pull-right" role="menu">
+
+
+					      	<li ng-hide="member.user.pending"><a ng-class="{ disable: !member.admin || isOnlyAdmin(member), selected: !member.admin }" href="#" ng-click="setMemberAdmin(member, false)" close-dropdown-on-click>
+						      	<b>Member</b> <i class="fa fa-check check"></i><br/>
+					      		<div class='desc'>Can view members and access data shared across the organization.</div>
+					      	</a></li>
+
+					      	<li ng-hide="member.user.pending"><a ng-class="{ disable: member.admin, selected: member.admin }" href="#" ng-click="setMemberAdmin(member, true)" close-dropdown-on-click>
+					      		<b>Admin</b> <i class="fa fa-check check"></i><br/>
+					      		<div class='desc'>Can also add/remove members and change organization settings.</div>
+					      	</a></li>
+
+					      	<li ng-show="member.user.pending"><a href="#" style="pointer-events:none;">
+					      		<div class='desc'>This user has recieved an email invitation but hasn't yet created an account.</div>
+					      	</a></li>
+
+					      	<li class="divider"></li>
+					      	<li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeMember(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove member</a></li>
+
+					      	<li ng-show="!allowMemberRemove(member)"><a class="disable" href="#"><i class="fa fa-times"></i>Remove member</a></li>
+
+			      		  </ul>
+					    </div>
+
+					    <!--<button type="button" class="btn btn-default" ng-click="removeMember(member, $index)"
+					    ng-disabled="!allowMemberRemove(member)" style="width:86px;">
+				        	<i class="fa fa-times"></i>&nbsp;&nbsp;{{ member.user._id == global.user._id ? "Leave" : "Remove" }}
+					    	
+				      	</button>-->
+
+					</div>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+</section>

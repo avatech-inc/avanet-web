@@ -1,0 +1,61 @@
+<section ng-controller="RegisterController" ng-cloak>
+	<div class="login-form" style="width:380px;">
+		<a href="/"><img class="logo" src="/img/logo_horizontal.png"/></a>
+
+		<div class="fade in alert alert-block alert-danger" ng-show="validToken == false || error == 'invalid token'">
+			Your invitation has expired.<br/>Please <a href='mailto:support@avatechsafety.com'>contact support</a> for assistance.
+		</div>
+		<div class="fade in alert alert-block alert-danger" ng-show="validationError">
+			{{validationError}}
+		</div>
+
+		<form class="signin ng-pristine ng-valid" ng-show="validToken" ng-hide="!validToken || successfulReset">
+			<div class="form-group">
+				<label for="password" class="control-label">Email</label>
+				<div class="controls">
+					<input id="password" class="form-control" type="text" disabled="disabled" value="{{email}}">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label for="password" class="control-label">First name</label>
+						<div class="controls">
+							<input id="password" ng-model="firstName" class="form-control" type="text" name="firstName" autofocus>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label for="password" class="control-label">Last name</label>
+						<div class="controls">
+							<input id="password" ng-model="lastName" class="form-control" type="text" name="lastName">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label for="password" class="control-label">Password</label>
+						<div class="controls">
+							<input id="password" ng-model="password" class="form-control" type="password" name="password">
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label for="passwordConfirm" class="control-label">Confirm password</label>
+						<div class="controls">
+							<input id="password" ng-model="passwordConfirm" class="form-control" type="password" name="passwordConfirm">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div style="padding-top:10px;text-align:right;">
+				<button ng-click="register()" class="btn btn-black btn-lg">Continue</button>
+			</div>
+		</form>
+	</div>
+</section>

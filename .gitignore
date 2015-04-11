@@ -3,6 +3,7 @@
 .sass-cache/
 node_modules/
 _dist/
+_dist2/
 public/_uploads/
 public/css/
 .tmp/

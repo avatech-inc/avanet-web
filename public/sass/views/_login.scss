@@ -1,8 +1,8 @@
 body.login {
 
-  background-color: #444;
-  background-image: url(/img/bg_dark.png);
-  background-size:400px 400px; //336px 261px
+  background-color: #222;
+  /*background-image: url(/img/bg_dark.png);
+  background-size:400px 400px; //336px 261px*/
   text-align:center;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -19,12 +19,12 @@ body.login {
 
   button.btn-black {
     border-color:#ccc;
-    background:#191919;
+    background:transparent;
     color:#eee;
 
     &:hover {
       border-color:#fff;
-      background:#222;
+      background:#111;
       color:#fff;
     }
   }

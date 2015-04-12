@@ -23,8 +23,7 @@
     "method-override": "~2.0.0",
     "serve-favicon": "~2.0.0",
     "compression": "~1.0.0",
-    "multiparty":"~4.0.0",
-
+    "multiparty": "~4.0.0",
     "mongoose": "4.0.x",
     "passport": "0.2.0",
     "passport-local": "0.1.6",
@@ -81,6 +80,7 @@
     "gulp-nodemon": "^2.0.2",
     "gulp-rev": "^3.0.1",
     "gulp-rev-replace": "^0.4.0",
+    "gulp-s3": "^0.3.0",
     "gulp-uglify": "^1.2.0",
     "gulp-useref": "^1.1.2",
     "mocha": "1.17.1",

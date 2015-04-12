@@ -14,6 +14,29 @@ var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var jshint = require('gulp-jshint');
 var nodemon = require('gulp-nodemon');
+
+var s3 = require("gulp-s3");
+var aws = {
+    key: 'AKIAIQFLR4EQC63ZZTNQ'
+  , secret: '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'
+  , bucket: 'avanet'
+};
+
+gulp.task('upload-s3', function() {
+  return gulp.src('app/views/503-maint.html', { read: true})
+    .pipe(s3(aws, { headers: { 'x-amz-acl': 'public-read' } }));
+});
+gulp.task('push-error-pages', ['upload-s3'], function(done){
+    var error_url = "//s3.amazonaws.com/avanet/503-maint.html";
+    var maint_url = "//s3.amazonaws.com/avanet/503-maint.html";
+
+  exec("heroku config:set ERROR_PAGE_URL=" + error_url + " MAINTENANCE_PAGE_URL=" + maint_url + " --app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
+
+      console.log(stderr);
+      console.log(stdout);
+      done();
+     });
+});
  
 gulp.task('compass', function() {
   return gulp.src('public/sass/**/*.scss')
@@ -150,12 +173,12 @@ gulp.task('deploy', function(done){
 	       		//console.log(stdout);
 	   			console.log("git remote added");
 
-					exec("heroku config:set NODE_ENV=production", {cwd: process.cwd }, function(err, stdout, stderr){
+					exec("heroku config:set NODE_ENV=production -app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
 
 		       		console.log(stdout);
 		       		console.log("Pushing...")
 
-					var heroku = spawn("git",["push" ,"heroku", "master", "-f"], { cwd: process.cwd })
+					var heroku = spawn("git",["push" ,remoteName, "master", "-f"], { cwd: process.cwd })
 
 					heroku.stdout.on('data', function (data) { console.log("" + data); });
 					heroku.stderr.on('data', function (data) { console.log("" + data); });
@@ -191,12 +214,13 @@ gulp.task('deploy', function(done){
 // heroku utils
 gulp.task('logs', function(done){
     process.chdir('_dist2');
-	exec("heroku logs", {cwd: process.cwd }, function(err, stdout, stderr){
+	exec("heroku logs -app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
 
    		console.log(stdout);
    		done();
      });
 });
+
 
 gulp.task('build', function(done) {
   runSequence('compass','buildMain','clean', 'copy','combine-minify', 'git',

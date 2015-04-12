@@ -176,6 +176,7 @@ module.exports = function(app, passport, auth) {
 
     // Snowpit Editor File Upload
 
+    var multiparty = require('multiparty');
     var uuid = require('node-uuid');
     var knox = require('knox');
     var s3 = knox.createClient({
@@ -186,21 +187,25 @@ module.exports = function(app, passport, auth) {
 
     app.post('/upload', function(req, res) {
         console.log("UPLAODING!");
-        console.log(req.files);
 
-        var file = req.files.fileData;
-        if (!file) return;
+        var form = new multiparty.Form();
+     
+        form.parse(req, function(err, fields, files) {
+            var file = files.fileData[0];
+            if (!file) return;
 
-        var fileName = uuid.v1().toString().replace(/-/g, "");
-        fileName = '/snowpit-files/' + fileName + ".jpg";
+            var fileName = uuid.v1().toString().replace(/-/g, "");
+            fileName = '/snowpit-files/' + fileName + ".jpg";
 
-        // upload to s3
-        s3.putFile(file.path, fileName, 
-            { 'Content-Type': 'image/jpeg', 'x-amz-acl': 'public-read' }, function(err, _res) {
-            if (err) console.log(err);
-            else console.log("file uploaded!");
-            _res.resume();
-            res.json({ url: "https://s3.amazonaws.com/avatech-uploads" + fileName });
+            // upload to s3
+            s3.putFile(file.path, fileName,
+                { 'Content-Type': 'image/jpeg', 'x-amz-acl': 'public-read' }, function(err, _res) {
+                if (err) console.log(err);
+                else console.log("file uploaded!");
+                _res.resume();
+                res.json({ url: "https://s3.amazonaws.com/avatech-uploads" + fileName });
+            });
+
         });
 
     });

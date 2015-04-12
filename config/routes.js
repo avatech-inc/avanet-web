@@ -828,9 +828,6 @@ module.exports = function(app, passport) {
         //     }
         // });
 
-        var test;
-        test.substr();
-
         // console.log("IS AJAX?");
         // console.log(req.xhr ); // <-- why is this always false?
         res.sendfile('./app/views/main.html'); 

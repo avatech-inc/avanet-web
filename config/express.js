@@ -50,6 +50,20 @@ module.exports = function(app, passport) {
     app.use(methodOverride());
     app.use(passport.initialize());
 
+    // register routes
+    require('./routes')(app, passport);
+
+    // error handling
+    app.use(function(err, req, res, next) {
+      console.error(err.stack);
+      if (req.xhr) {
+        res.status(500).send({ error: '500 Error' });
+      } else {
+        //next(err);
+        res.status(500).sendfile('./app/views/500.html'); 
+      }
+    });
+
 
     // //Assume "not found" in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
     // app.use(function(err, req, res, next) {

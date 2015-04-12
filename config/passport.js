@@ -2,9 +2,6 @@ var mongoose = require('mongoose'),
     LocalStrategy = require('passport-local').Strategy,
     User = mongoose.model('User');
 
-var jwt = require('jwt-simple');
-var jwt_secret = "guyute";
-
 module.exports = function(passport) {
     // // Serialize sessions
     // passport.serializeUser(function(user, done) {

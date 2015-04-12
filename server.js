@@ -12,7 +12,6 @@ fs.readdirSync(models_path).forEach(function(file) {
 });
 
 var env = process.env.NODE_ENV || 'development',
-    auth = require('./config/authorization'),
     mongoose = require('mongoose');
 
 // connect to db
@@ -24,15 +23,12 @@ require('./config/passport')(passport);
 
 var app = express();
 
-// express settings
+// configure Express
 require('./config/express')(app, passport);
-
-// register routes
-require('./config/routes')(app, passport, auth);
 
 // start it up
 var port = process.env.PORT || 3000;
 app.listen(port);
-console.log('AvaTech is up and running on port ' + port);
+console.log('AvaNet is now running on port ' + port);
 
 exports = module.exports = app;

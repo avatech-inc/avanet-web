@@ -1,6 +1,7 @@
 var async = require('async');
+var auth = require('./auth');
 
-module.exports = function(app, passport, auth) {
+module.exports = function(app, passport) {
 
     var users = require('../app/controllers/users');
     var tests = require('../app/controllers/tests');
@@ -827,7 +828,8 @@ module.exports = function(app, passport, auth) {
         //     }
         // });
 
-
+        var test;
+        test.substr();
 
         // console.log("IS AJAX?");
         // console.log(req.xhr ); // <-- why is this always false?

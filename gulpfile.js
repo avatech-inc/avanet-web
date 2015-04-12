@@ -26,6 +26,7 @@ gulp.task('upload-s3', function() {
   return gulp.src('app/views/503-maint.html', { read: true})
     .pipe(s3(aws, { headers: { 'x-amz-acl': 'public-read' } }));
 });
+// https://devcenter.heroku.com/articles/error-pages#customize-pages
 gulp.task('push-error-pages', ['upload-s3'], function(done){
     var error_url = "//s3.amazonaws.com/avanet/503-maint.html";
     var maint_url = "//s3.amazonaws.com/avanet/503-maint.html";

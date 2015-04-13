@@ -46,8 +46,8 @@
 		<!--<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
 		<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />-->
 
-    	<!-- Sentry -->
-    	<script src="//cdn.ravenjs.com/1.1.11/jquery,native/raven.min.js"></script>
+    	<!-- Sentry / Raven -->
+    	<script src="//cdn.ravenjs.com/1.1.18/jquery,native/raven.min.js"></script>
 
     	<!-- AWS SDK -->
     	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.8.min.js"></script>
@@ -58,7 +58,7 @@
 		<!--if lt IE 9-->
 		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 
-		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+		<!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>-->
 
 		<!-- Heap -->
 	    <!--<script type="text/javascript">
@@ -180,40 +180,40 @@
 		<script type="text/javascript" src='/js/routes.js'></script>
 
 		<!-- inject:js -->
+  		<script src="/modules/avalanches/observation-preview-modal.js"></script>
+  		<script src="/modules/avalanches/observation-preview.js"></script>
+  		<script src="/modules/avalanches/observations.js"></script>
+  		<script src="/modules/comments/comments.js"></script>
   		<script src="/modules/confirm/confirm.js"></script>
-  		<script src="/modules/device-upload-modal/modal.js"></script>
+  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/admin/admin-invite.js"></script>
   		<script src="/modules/admin/admin-orders.js"></script>
   		<script src="/modules/admin/admin-orgs.js"></script>
   		<script src="/modules/admin/admin-users.js"></script>
   		<script src="/modules/admin/admin.js"></script>
-  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
-  		<script src="/modules/avalanches/observation-preview-modal.js"></script>
-  		<script src="/modules/avalanches/observation-preview.js"></script>
-  		<script src="/modules/avalanches/observations.js"></script>
-  		<script src="/modules/comments/comments.js"></script>
+  		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/field-tests/field-tests.js"></script>
-  		<script src="/modules/publish-modal/modal.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
+  		<script src="/modules/publish-modal/modal.js"></script>
+  		<script src="/modules/profiles/profile-preview-modal.js"></script>
+  		<script src="/modules/profiles/profile-preview.js"></script>
+  		<script src="/modules/profiles/profiles.js"></script>
+  		<script src="/modules/tests/test-preview-modal.js"></script>
+  		<script src="/modules/tests/test-preview.js"></script>
+  		<script src="/modules/tests/tests.js"></script>
+  		<script src="/modules/user/forgot-password.js"></script>
+  		<script src="/modules/user/login.js"></script>
+  		<script src="/modules/user/register.js"></script>
+  		<script src="/modules/user/reset-password.js"></script>
+  		<script src="/modules/user/settings.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-export.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-publish-modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-views.js"></script>
-  		<script src="/modules/tests/test-preview-modal.js"></script>
-  		<script src="/modules/tests/test-preview.js"></script>
-  		<script src="/modules/tests/tests.js"></script>
-  		<script src="/modules/profiles/profile-preview-modal.js"></script>
-  		<script src="/modules/profiles/profile-preview.js"></script>
-  		<script src="/modules/profiles/profiles.js"></script>
-  		<script src="/modules/user/forgot-password.js"></script>
-  		<script src="/modules/user/login.js"></script>
-  		<script src="/modules/user/register.js"></script>
-  		<script src="/modules/user/reset-password.js"></script>
-  		<script src="/modules/user/settings.js"></script>
   		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/js/services/field-tests.js"></script>
   		<script src="/js/services/global.js"></script>

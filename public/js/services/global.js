@@ -30,6 +30,12 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 				_this._data.user = user;
 				$http.defaults.headers.common['Auth-Token'] = token;
 
+                Raven.setUserContext({
+                    name: user.fullName,
+                    email: user.email,
+                    id: user._id
+                });
+
                 // if redirectUrl available, go
                 if (_this._data.redirectUrl) {
                 	var redirectUrl = _this._data.redirectUrl;
@@ -46,17 +52,27 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
             	localStorageService.remove('token');
                 delete $http.defaults.headers.common['Auth-Token'];
 
+                Raven.setUserContext();
+
 	            $state.transitionTo("login", null, {location:'replace'});
             },
 
 
 	    	init: function() {
 
-
 	    		var user = localStorageService.get('user');
 
                 console.log("local storage user:");
                 console.log(user);
+
+                if (user) {
+                    Raven.setUserContext({
+                        name: user.fullName,
+                        email: user.email,
+                        id: user._id
+                    });
+                }
+                else Raven.setUserContext();
 
                 // temporary? need it just in case
                 if (user) {
@@ -69,7 +85,6 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                     if (!user.permissions) user.permissions = {};
                 }
                 _this._data.setUser(user);
-               // _this._data.user = user;
 
                 var token = localStorageService.get('token');
                 if (token) $http.defaults.headers.common['Auth-Token'] = token;

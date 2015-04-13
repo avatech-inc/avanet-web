@@ -8,6 +8,7 @@ var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
 var favicon = require('serve-favicon');
 var compression = require('compression')
+var raven = require('raven');
 
 var path = require('path');
 var root = path.normalize(__dirname + '/..');
@@ -54,6 +55,8 @@ module.exports = function(app, passport) {
     require('./routes')(app, passport);
 
     // error handling
+    app.use(raven.middleware.express('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540'));
+
     app.use(function(err, req, res, next) {
       console.error(err.stack);
       if (req.xhr) {

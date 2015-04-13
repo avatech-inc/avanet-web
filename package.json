@@ -51,7 +51,8 @@
     "connect-multiparty": "1.1.0",
     "view-helpers": "0.1.4",
     "moment": "2.9.0",
-    "newrelic": "1.18.2"
+    "newrelic": "1.18.2",
+    "raven": "0.7.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

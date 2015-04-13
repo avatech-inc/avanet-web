@@ -14,6 +14,8 @@ var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var jshint = require('gulp-jshint');
 var nodemon = require('gulp-nodemon');
+var sourcemaps = require('gulp-sourcemaps');
+var ngAnnotate = require('gulp-ng-annotate');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -56,17 +58,23 @@ gulp.task('combine-minify', function() {
   return gulp.src('_dist2/app/views/main.html')
     .pipe(assets)
     .pipe(gulpif('*.css', minifyCSS()))
+
+    //.pipe(gulpif('*.js', sourcemaps.init()))
+
+    .pipe(gulpif('*.js', ngAnnotate()))
+
     .pipe(gulpif('*.js', uglify()))
-    //.pipe(assets.restore())
-    //.pipe(useref())
 
     .pipe(rev())                // Rename the concatenated files
     .pipe(assets.restore())
     .pipe(useref())
     .pipe(revReplace())         // Substitute in new filenames
 
+    //.pipe(gulpif('*.js', sourcemaps.write('./')))
+
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
+    .pipe(gulpif('*.map', gulp.dest('_dist2/public')))
 
     .pipe(gulpif('*.html', gulp.dest('_dist2/app/views')))
 
@@ -236,7 +244,18 @@ gulp.task('start', function(done) {
 
    nodemon({
     script: 'server.js'
-  //, ext: 'js html'
+  , ext: 'js html'
+  , env: { 'NODE_ENV': 'development' }
+  })
+});
+
+gulp.task('start-dist', function(done) {
+    process.chdir('_dist2');
+  gulp.watch('public/sass/**/*', ['compass']);
+
+   nodemon({
+    script: 'server.js'
+  , ext: 'js html'
   , env: { 'NODE_ENV': 'development' }
   })
 });

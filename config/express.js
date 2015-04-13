@@ -17,15 +17,18 @@ var root = path.normalize(__dirname + '/..');
 module.exports = function(app, passport) {
     app.set('showStackError', true);
 
+    // compress
     app.use(compression({
         filter: function(req, res) {
-            return (/json|text|javascript|css/).test(res.getHeader('Content-Type'));
+            return (/json|text|javascript|css|html/).test(res.getHeader('Content-Type'));
         },
         level: 9
     }));
 
+    // favicon
     app.use(favicon(root + '/public/img/favicon.png'));
 
+    // serve static content
     app.use(express.static(root + '/public'));
 
     //Don't use logger for test env
@@ -33,22 +36,23 @@ module.exports = function(app, passport) {
        app.use(morgan('dev'));
     //}
 
-    //Enable jsonp
+    // enable jsonp
     app.enable("jsonp callback");
 
-    // always HTTPS when in production (not guaranteed to work outside of nodejitsu, might work on heroku)
+    // force HTTPS when in production (not guaranteed to work outside of nodejitsu, might work on heroku)
     app.use(function(req, res, next) {
         if (process.env.NODE_ENV && process.env.NODE_ENV == "production" && req.headers['x-forwarded-proto'] == 'http') {
-            console.log("REDIRECTING TO HTTPS");
-            console.log("https://" + req.get('host') + req.url);
+            console.log("REDIRECTING TO HTTPS: https://" + req.get('host') + req.url);
             res.redirect("https://" + req.get('host') + req.url);
         }
         else next();
     });
 
-    app.use(cookieParser());
+    //app.use(cookieParser());
     app.use(bodyParser());
     app.use(methodOverride());
+
+    // init passport for local auth
     app.use(passport.initialize());
 
     // register routes

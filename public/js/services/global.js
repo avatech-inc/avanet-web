@@ -30,11 +30,13 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 				_this._data.user = user;
 				$http.defaults.headers.common['Auth-Token'] = token;
 
-                Raven.setUserContext({
+                var tracking_user ={
                     name: user.fullName,
                     email: user.email,
                     id: user._id
-                });
+                };
+                Raven.setUserContext(tracking_user);
+                heap.identify(tracking_user);
 
                 // if redirectUrl available, go
                 if (_this._data.redirectUrl) {
@@ -53,6 +55,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 delete $http.defaults.headers.common['Auth-Token'];
 
                 Raven.setUserContext();
+                heap.identify();
 
 	            $state.transitionTo("login", null, {location:'replace'});
             },
@@ -66,13 +69,18 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 console.log(user);
 
                 if (user) {
-                    Raven.setUserContext({
+                    var tracking_user ={
                         name: user.fullName,
                         email: user.email,
                         id: user._id
-                    });
+                    };
+                    Raven.setUserContext(tracking_user);
+                    heap.identify(tracking_user);
                 }
-                else Raven.setUserContext();
+                else {
+                    Raven.setUserContext();
+                    heap.identify();
+                }
 
                 // temporary? need it just in case
                 if (user) {

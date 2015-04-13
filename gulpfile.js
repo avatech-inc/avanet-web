@@ -16,6 +16,7 @@ var jshint = require('gulp-jshint');
 var nodemon = require('gulp-nodemon');
 var sourcemaps = require('gulp-sourcemaps');
 var ngAnnotate = require('gulp-ng-annotate');
+var replace = require('gulp-replace-task');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -56,6 +57,10 @@ gulp.task('combine-minify', function() {
     var assets = useref.assets({ searchPath: 'public' });
 
   return gulp.src('_dist2/app/views/main.html')
+    .pipe(replace({
+        patterns: [{ match: 'env', replacement: 'production' }]
+    }))
+
     .pipe(assets)
     .pipe(gulpif('*.css', minifyCSS()))
 
@@ -84,6 +89,7 @@ gulp.task('combine-minify', function() {
 
 gulp.task('buildMain', function () {
   var target = gulp.src('app/views/main.html');
+
   var sources = gulp.src([
 	'public/modules/**/*.js',
     'public/js/services/*.js',
@@ -96,12 +102,11 @@ gulp.task('buildMain', function () {
   {read: false});
  
   return target.pipe(inject(sources,{
-       ignorePath: 'public/',
+        ignorePath: 'public/',
         addRootSlash: true,
     }))
     .pipe(gulp.dest('app/views'));
 });
-
 
 gulp.task('clean', function() {
 	return gulp.src('_dist2', {read: false})

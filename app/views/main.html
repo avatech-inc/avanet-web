@@ -61,13 +61,12 @@
 		<!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>-->
 
 		<!-- Heap -->
-	    <!--<script type="text/javascript">
-	      window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-	      heap.load("416778563");
-	    </script>-->
         <script type="text/javascript">
 	      window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-	      heap.load("894126234");
+
+	      var window.env = "@@env";
+	      if (window.env == "production") heap.load("416778563"); // production
+	      else heap.load("894126234"); // dev
 	    </script>
 	</head>
 	<body window-resize ng-cloak>
@@ -180,26 +179,26 @@
 		<script type="text/javascript" src='/js/routes.js'></script>
 
 		<!-- inject:js -->
+  		<script src="/modules/confirm/confirm.js"></script>
   		<script src="/modules/avalanches/observation-preview-modal.js"></script>
   		<script src="/modules/avalanches/observation-preview.js"></script>
   		<script src="/modules/avalanches/observations.js"></script>
-  		<script src="/modules/comments/comments.js"></script>
-  		<script src="/modules/confirm/confirm.js"></script>
-  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+  		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/admin/admin-invite.js"></script>
   		<script src="/modules/admin/admin-orders.js"></script>
   		<script src="/modules/admin/admin-orgs.js"></script>
   		<script src="/modules/admin/admin-users.js"></script>
   		<script src="/modules/admin/admin.js"></script>
+  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+  		<script src="/modules/comments/comments.js"></script>
+  		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
-  		<script src="/modules/device-upload-modal/modal.js"></script>
-  		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
-  		<script src="/modules/publish-modal/modal.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>
   		<script src="/modules/profiles/profiles.js"></script>
+  		<script src="/modules/publish-modal/modal.js"></script>
   		<script src="/modules/tests/test-preview-modal.js"></script>
   		<script src="/modules/tests/test-preview.js"></script>
   		<script src="/modules/tests/tests.js"></script>
@@ -208,13 +207,13 @@
   		<script src="/modules/user/register.js"></script>
   		<script src="/modules/user/reset-password.js"></script>
   		<script src="/modules/user/settings.js"></script>
+  		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-export.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-publish-modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-views.js"></script>
-  		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/js/services/field-tests.js"></script>
   		<script src="/js/services/global.js"></script>
   		<script src="/js/services/organizations.js"></script>

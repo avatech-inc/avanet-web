@@ -11,7 +11,7 @@ angular.module('avatech.profiles', []);
 angular.module('avatech.upload', []);
 
 
-angular.module('avatech').factory('httpRequestInterceptor', ['$q','$location', function ($q, $location) {
+angular.module('avatech').factory('httpRequestInterceptor', function ($q, $location) {
     return {
         'responseError': function(rejection) {
             // do something on error
@@ -24,7 +24,7 @@ angular.module('avatech').factory('httpRequestInterceptor', ['$q','$location', f
             // }
          }
      };
-}]);
+});
 
 
 
@@ -42,21 +42,21 @@ angular.module('avatech').factory('httpRequestInterceptor', ['$q','$location', f
 // });
 
 // configure Restangular
-angular.module('avatech').config(['RestangularProvider',function(RestangularProvider) {
+angular.module('avatech').config(function(RestangularProvider) {
     // api url prefix
     RestangularProvider.setBaseUrl('/v1/');
     // support mongodb "_id" format
     RestangularProvider.setRestangularFields({ id: "_id" });
-}]);
+});
 
 // enable html5 pushstate
-angular.module('avatech').config(['$locationProvider', function($locationProvider) {
+angular.module('avatech').config(function($locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
-}]);
+});
 
 // define additional triggers on Tooltip and Popover 
 // (show this be in this file? doesn't feel totally right to have it here)
-angular.module('avatech').config(['$tooltipProvider', function($tooltipProvider){
+angular.module('avatech').config(function($tooltipProvider){
     $tooltipProvider.setTriggers({
         'mouseenter': 'mouseleave',
         'click': 'click',
@@ -64,12 +64,12 @@ angular.module('avatech').config(['$tooltipProvider', function($tooltipProvider)
         'never': 'mouseleave',
         'show': 'hide'
     });
-}]);
+});
 
-angular.module('avatech').config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+angular.module('avatech').config(function(cfpLoadingBarProvider) {
     cfpLoadingBarProvider.includeSpinner = false;
     cfpLoadingBarProvider.includeBar = false;
-}]);
+});
 
 // catch angular errors
 // angular.module('avatech').config(['$provide',
@@ -95,7 +95,7 @@ angular.module('avatech').config(['cfpLoadingBarProvider', function(cfpLoadingBa
 //     });
 // }]);
 
-angular.module('avatech').run(["$rootScope","$cookies","$route","$location","$state","$stateParams","$document","$http","pathRoute", "$modalStack", "Observations", "Global",
+angular.module('avatech').run(
  function($rootScope, $cookies, $route, $location, $state, $stateParams, $document, $http, pathRoute, $modalStack, Observations, Global) {
         
     // the first thing that gets run:
@@ -107,7 +107,6 @@ angular.module('avatech').run(["$rootScope","$cookies","$route","$location","$st
 
     // init
     Observations.init();
-
 
     // todo: this should throw a 404
     // since the app matches * and returns the angular page for everything, this will return 200
@@ -188,4 +187,4 @@ angular.module('avatech').run(["$rootScope","$cookies","$route","$location","$st
         $document[0].body.className = (toState.data && toState.data.bodyCssClass ? toState.data.bodyCssClass : "");
     });
 
-}]);
+});

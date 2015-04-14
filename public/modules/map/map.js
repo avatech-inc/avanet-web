@@ -150,7 +150,7 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
 
             });
 
-        },100);
+        }, 300);
 
     },true);
 
@@ -368,16 +368,6 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
         .then(function (sharing) {
 
             angular.forEach($scope.selectedProfiles,function(profile) {
-
-                // get profile from array
-                // todo: clean this up, not very angular-y...
-                // this needs to be done since updating myProfiles replaces the references
-                // should really implement a central store like in the app, with the same
-                // replace-or-add type functionality
-                // for (var i = 0; i < $scope.myProfiles.length; i++) {
-                //     var _profile = $scope.myProfiles[i];
-                //     if (_profile.type == profile.type && _profile._id == profile._id)  profile = _profile;
-                // }
 
                 profile.published = true;
                 profile.sharingLevel = sharing.sharingLevel;
@@ -672,6 +662,19 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
 
         html += '<a href=\'/{{ profile.type.substr(0,1) }}/{{ profile._id }}\' style="color:#222;">'
 
+        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
+
+        if (profile.type == 'profile') {
+            html += '<canvas profile="profile" width="200" height="200" class="thumb"></canvas>';
+        }
+        else if (profile.type == 'test') {
+            html += '<canvas graph="profile.rows_tiny" width="200" height="200" class="thumb"></canvas>';
+        }
+        else if (profile.type == 'avy') {
+            html += "<div ng-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ profile.photos[0].url }}\")'>"
+            html += "</div>";
+        }
+
         html += '<div class="popup-content">';
 
         html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{profile.user.fullName}} <span ng-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
@@ -687,19 +690,7 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
             html += "<div><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ profile.locationName }}</div>";
         }
 
-        if (profile.type == 'profile') {
-            html += '<canvas profile="profile" width="360" height="320" style="margin-top:5px;margin-bottom:-4px;width:180px;height:160px;background:#eee;"></canvas>';
-        }
-        else if (profile.type == 'test') {
-            html += '<canvas graph="profile.rows_tiny" width="360" height="320" style="margin-top:5px;margin-bottom:-4px;width:180px;height:160px;background:#eee;"></canvas>';
-        }
-        else if (profile.type == 'avy') {
-            html += "<div ng-show='profile.photos.length' style='text-align:center;background:#eee;width:97%;margin-top:4px;''>"
-            html += "<img src='{{ profile.photos[0].url }}' style='max-height:140px;max-width:100%;margin:auto;' />";
-            html += "</div>";
-        }
-
-        html += "<div style='margin-top:6px;'><button class='btn btn-sm btn-default' style='width:100%;'>More Details&nbsp;&nbsp;<i class='fa fa-angle-right'></i></button>";
+        //html += "<div style='margin-top:6px;'><button class='btn btn-sm btn-default' style='width:100%;'>More Details&nbsp;&nbsp;<i class='fa fa-angle-right'></i></button>";
 
         html += "</div>";
         html += "</a>";
@@ -712,9 +703,22 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
 
         marker.bindPopup(str, {
             className: 'popup-' + profile.type,
-            minWidth: 180,
+            //minWidth: 180,
         });
+        marker.profile = profile;
         marker._id = profile._id;
+
+        // marker.on('click', function (e) {
+        //         var linkFunction = $compile(angular.element(html));
+        //         var newScope = $scope.$new();
+        //         newScope.profile =  profile;
+        //         var str = linkFunction(newScope)[0];
+
+        //         this.bindPopup(str, {
+        //             className: 'popup-' + profile.type,
+        //             minWidth: 180,
+        //         });
+        // });
 
         marker.addTo($scope.mapLayer);
     }
@@ -1117,27 +1121,14 @@ $scope.goTo = function(result) {
           }, 
           timeout: $scope.canceler.promise
         }).success(function(profiles) {
+
             $scope.loadingProfiles = false;
+            // todo: make this like the "observations" service (i.e. addorreplace)
             $scope.profiles = profiles;
             $scope.loadingNew = false;
+
             $timeout(function() { $scope.$apply(); });
         });
-
-        // Profiles.query({ 
-        //     nelat: bounds._northEast.lat, 
-        //     nelng: bounds._northEast.lng, 
-        //     swlat: bounds._southWest.lat, 
-        //     swlng: bounds._southWest.lng, 
-        // }, function(profiles) {
-        //     $scope.loadingProfiles = false;
-        //     $scope.profiles = profiles;
-        //     console.log("loaded!");
-        //     console.log(profiles.length);
-
-        //     // sync with new
-
-        // });
-
     }
     $scope.loadingProfiles = true;
     $scope.loadProfiles(false);
@@ -1146,21 +1137,21 @@ $scope.goTo = function(result) {
         setInterval(function(){
             $scope.loadProfiles(false);
             $scope.loadMyProfiles();
-        }, 30000);
-    }, 30000);
+        }, 60000);
+    }, 60000);
 
     $scope.map.on('moveend', function() {
         $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
-        }, 500);
+        }, 2000);
     });
 
-    $scope.map.on('zoomstart', function() {
+    $scope.map.on('zoomend', function() {
         $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
-        }, 500);
+        }, 2000);
         
         // here's where you decided what zoom levels the layer should and should
         // not be available for: use javascript comparisons like < and > if

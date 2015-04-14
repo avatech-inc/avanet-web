@@ -24,7 +24,8 @@ var ObservationSchema = new Schema({
 
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User', 
+        index: true
     },
 
     organization: {
@@ -60,7 +61,7 @@ var ObservationSchema = new Schema({
 
     // sharing
     
-    published: { type: Boolean, default: false },
+    published: { type: Boolean, default: false, index: true },
     sharingLevel: { type: String },
     shareWithAvyCenter: { type: Boolean, default: true },
     shareWithStudents: { type: Boolean, default: true },

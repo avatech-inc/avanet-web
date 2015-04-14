@@ -14,7 +14,8 @@ var schema = new Schema({
     date: { type: Date, index: true },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User', 
+        index: true
     },
     organization: {
         type: Schema.Types.ObjectId,
@@ -23,8 +24,7 @@ var schema = new Schema({
     title: {
         type: String,
         default: '',
-        trim: true,
-        index: true
+        trim: true
     },
 
     location: {
@@ -71,7 +71,7 @@ var schema = new Schema({
     
     // sharing
 
-    published: { type: Boolean, default: false },
+    published: { type: Boolean, default: false, index: true },
     sharingLevel: { type: String },
     shareWithAvyCenter: { type: Boolean, default: true },
     shareWithStudents: { type: Boolean, default: true },

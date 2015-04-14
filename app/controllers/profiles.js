@@ -281,13 +281,19 @@ exports.allMine = function(req, res) {
 
             Test.find(query2).
             select('type organization created updated location date user location elevation aspect slope rows_small published sharingLevel') 
-            //.sort('-date')
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
-            //.lean()
-            .exec(function(err, profiles) {
+            .lean()
+            .exec(function(err, obs) {
                 if (err) callback(err);
-                else callback(null, profiles);
+                else  {
+                    for (var i = 0; i < obs.length; i++) {
+                        var rows = obs[i].rows_small;
+                        obs[i].rows_tiny = compressRows(rows);
+                        delete obs[i].rows_small;
+                    }
+                    callback(null, obs);
+                }
             });
         },
 
@@ -296,13 +302,12 @@ exports.allMine = function(req, res) {
 
             Profile.find(query).
             select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
-            //.sort('-date')
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
-            //.lean()
-            .exec(function(err, profiles) {
+            .lean()
+            .exec(function(err, obs) {
                 if (err) callback(err);
-                else callback(null, profiles);
+                else callback(null, obs);
             });
         },
 
@@ -311,10 +316,9 @@ exports.allMine = function(req, res) {
 
             Observation.find(query)
             .select('type organization created updated location date time locationName user elevation aspect photos slope published sharingLevel') 
-            //.sort('-date')
             .populate('user', 'fullName')
             .populate('organization','name type logoUrl')
-            //.lean()
+            .lean()
             .exec(function(err, obs) {
                 if (err) callback(err);
                 else callback(null, obs);
@@ -617,7 +621,7 @@ exports.all = function(req, res) {
         }
         // if not a student
         else {
-            // normal user, only their own data (no drafts)
+            // always show user's own data (no drafts)
             queries.push({ published: true, user: req.user });
 
             // orgs
@@ -641,11 +645,6 @@ exports.all = function(req, res) {
 
         // "AND" QUERIES
         var andQueries = [];
-
-        // don't show demo account data (unless user is demo account)
-        if (req.user.id != '5416c4bf56a8a90000fba00d') {
-            andQueries.push({ user: { '$ne': '5416c4bf56a8a90000fba00d' } });
-        }
 
         // search only within specified lat/lng map bounds
         if (req.query.nelat && req.query.nelng && req.query.swlat && req.query.swlng) {
@@ -671,7 +670,6 @@ exports.all = function(req, res) {
 
                 Test.find(query2).
                 select('type organization created updated location date user published location elevation aspect slope rows_small') 
-                //.sort('-date')
                 .populate('user', 'fullName student')
                 .populate('organization','name type logoUrl')
                 .lean()
@@ -695,7 +693,6 @@ exports.all = function(req, res) {
 
                 Profile.find(query).
                 select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
-                //.sort('-date')
                 .populate('user', 'fullName student')
                 .populate('organization','name type logoUrl')
                 .lean()
@@ -712,7 +709,6 @@ exports.all = function(req, res) {
 
                 Observation.find(query)
                 .select('type organization created updated location date time published locationName user elevation aspect photos slope') 
-                //.sort('-date')
                 .populate('user', 'fullName')
                 .populate('organization','name type logoUrl')
                 .lean()

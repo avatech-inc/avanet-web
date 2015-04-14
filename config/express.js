@@ -62,7 +62,7 @@ module.exports = function(app, passport) {
     app.use(raven.middleware.express('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540'));
 
     app.use(function(err, req, res, next) {
-      console.error(err.stack);
+      //console.error(err.stack); // already done automatically?
       if (req.xhr) {
         res.status(500).send({ error: '500 Error' });
       } else {

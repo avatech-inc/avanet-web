@@ -17,6 +17,7 @@ var nodemon = require('gulp-nodemon');
 var sourcemaps = require('gulp-sourcemaps');
 var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
+var gutil = require('gulp-util');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -36,8 +37,8 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
 
   exec("heroku config:set ERROR_PAGE_URL=" + error_url + " MAINTENANCE_PAGE_URL=" + maint_url + " --app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
 
-      console.log(stderr);
-      console.log(stdout);
+      gutil.log(stderr);
+      gutil.error(stdout);
       done();
      });
 });
@@ -149,15 +150,15 @@ gulp.task('git', ['remove-git'], function(done){
     process.chdir('_dist2');
 
 	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr){
-   		console.log("Git: repository initialized");
+   		gutil.log("Git: repository initialized");
 
 		exec("git add .", {cwd: process.cwd }, function(err, stdout, stderr){
        		//console.log(stdout);
-       		console.log("Git: files added");
+       		gutil.log("Git: files added");
 
 			exec("git commit -m '-'", {cwd: process.cwd }, function(err, stdout, stderr) {
 	       		//console.log(stdout);
-	       		console.log("Git: files committed");
+	       		gutil.log("Git: files committed");
 
     			process.chdir('../');
 
@@ -172,7 +173,7 @@ gulp.task('deploy', function(done){
 	fs.exists("_dist2",function(exists){
 
 		if (!exists) {
-			console.error("dist folder does not exist. run 'gulp build' first.");
+			gutil.error(gutil.colors.red("dist folder does not exist. run 'gulp build' first."));
     		done();
     		return;
 		}
@@ -185,17 +186,21 @@ gulp.task('deploy', function(done){
 	    exec("git remote rm " + remoteName, {cwd: process.cwd }, function(err, stdout, stderr){
 			exec("git remote add " + remoteName + " " + remoteUrl, {cwd: process.cwd }, function(err, stdout, stderr){
 	       		//console.log(stdout);
-	   			console.log("git remote added");
+	   			gutil.log("git remote added");
 
 					exec("heroku config:set NODE_ENV=production -app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
 
-		       		console.log(stdout);
-		       		console.log("Pushing...")
+		       		gutil.log(stdout);
+		       		gutil.log("Pushing...")
 
 					var heroku = spawn("git",["push" ,remoteName, "master", "-f"], { cwd: process.cwd })
 
-					heroku.stdout.on('data', function (data) { console.log("" + data); });
-					heroku.stderr.on('data', function (data) { console.log("" + data); });
+					heroku.stdout.on('data', function (data) { 
+            gutil.log("" + data); 
+            if (data.indexOf("deployed to Heroku") != -1)
+              gutil.log(gutil.colors.green('DEPLOY SUCCESS!'));
+          });
+					heroku.stderr.on('data', function (data) { gutil.log("" + data); });
 
 					heroku.on('exit', function (code) { done(); });
 				});
@@ -230,7 +235,7 @@ gulp.task('logs', function(done){
     process.chdir('_dist2');
 	exec("heroku logs -app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
 
-   		console.log(stdout);
+   		gutil.log(stdout);
    		done();
      });
 });

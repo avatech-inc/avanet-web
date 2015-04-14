@@ -281,9 +281,10 @@ exports.allMine = function(req, res) {
 
             Test.find(query2).
             select('type organization created updated location date user location elevation aspect slope rows_small published sharingLevel') 
-            .sort('-date')
+            //.sort('-date')
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
+            //.lean()
             .exec(function(err, profiles) {
                 if (err) callback(err);
                 else callback(null, profiles);
@@ -295,9 +296,10 @@ exports.allMine = function(req, res) {
 
             Profile.find(query).
             select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
-            .sort('-date')
+            //.sort('-date')
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
+            //.lean()
             .exec(function(err, profiles) {
                 if (err) callback(err);
                 else callback(null, profiles);
@@ -309,9 +311,10 @@ exports.allMine = function(req, res) {
 
             Observation.find(query)
             .select('type organization created updated location date time locationName user elevation aspect photos slope published sharingLevel') 
-            .sort('-date')
+            //.sort('-date')
             .populate('user', 'fullName')
             .populate('organization','name type logoUrl')
+            //.lean()
             .exec(function(err, obs) {
                 if (err) callback(err);
                 else callback(null, obs);
@@ -329,6 +332,81 @@ exports.allMine = function(req, res) {
         if (err) res.render('error', { status: 500 });
         else res.json(_results);
     });
+}
+
+var compressRows = function(rows) {
+
+    function splitInt(streak) {
+        var streak1, streak2, streak3;
+        if (streak > 188) {
+          streak1 = streak2 = 94;
+          streak3 = streak - 188;
+        }
+        else if (streak > 94) {
+          streak1 = 94;
+          streak2 = streak - 94;
+          streak3 = 0;
+        }
+        else {
+          streak1 = streak;
+          streak2 = streak3 = 0;
+        }
+        return  String.fromCharCode(32 + streak1) +
+                String.fromCharCode(32 + streak2);
+                //+ String.fromCharCode(32 + streak3);
+    }
+    function unsplitInt(str) {
+        if (str.length != 2) return null; // 3
+        return  (str[0].charCodeAt(0) - 32) +
+                (str[1].charCodeAt(0) - 32);
+                // + (str[2].charCodeAt(0) - 32);
+    }
+
+    for (var r = 0; r < rows.length; r++) {
+      rows[r] = Math.floor(rows[r] / 2.69) + 32; // 32 is offset for ascii printable chars
+    }
+
+    var str = String.fromCharCode.apply(String, rows);
+    var chars = [];
+    var prev = null;
+    var streak = 1;
+    for (var s = 0; s < str.length; s++) {
+        var ch = str[s];
+        if (ch == prev) streak++;
+        else if (prev != null) {
+            chars.push([prev, streak]);
+            streak = 1;
+        }
+        prev = ch;
+    }
+    chars.push([prev, streak]);
+
+    var str2 = "";
+    for (var c = 0; c < chars.length; c++) {
+        var ch = chars[c][0];
+        var streak = chars[c][1];
+        if (streak > 4) {
+            str2 += "\n" + splitInt(streak) + ch; 
+        }
+        else {
+            for (var k = 0; k < streak; k++) str2 += ch;
+        };
+    }
+    return str2;
+
+    // expand
+    // var str3 = "";
+    // for (var e = 0; e < str2.length; e++) {
+    //     var ch = str2[e];
+    //     if (ch != "\n") str3 += ch;
+    //     else {
+    //         var streak = str2.substr(e + 1, 2); //3
+    //         streak = unsplitInt(streak);
+    //         var _ch = str2[e+3]; //4
+    //         for (var k = 0; k < streak; k++) str3 += _ch;
+    //         e += 3; //4
+    //     }
+    // }
 }
 
 exports.all = function(req, res) {
@@ -495,26 +573,28 @@ exports.all = function(req, res) {
 
 
 
-
+    
+    var e = new Date().getTime();
 
     // get user's organizations
-    Organization.find({}).exec(function(err, orgs) {
+    Organization.find({})
+    .select('members type')
+    .exec(function(err, orgs) {
         var _orgs = [];
+        var _eduOrgs = [];
         for (var i = 0; i < orgs.length; i++) {
+            // is educational org?
+            if (orgs[i].type == 'Avalanche education') _eduOrgs.push(orgs[i]._id);
+
             // is user a member
             for (var m = 0; m < orgs[i].members.length; m++) {
-                if (orgs[i].members[m].user.equals(req.user._id)) _orgs.push(orgs[i]._id);
+                if (orgs[i].members[m].user.equals(req.user._id)) {
+                    _orgs.push(orgs[i]._id); break;
+                }
             }
         }
 
-        // get educational orgs
-        var _eduOrgs = [];
-        for (var i = 0; i < orgs.length; i++) {
-            // is user a member
-            for (var m = 0; m < orgs[i].members.length; m++) {
-                if (orgs[i].type == 'Avalanche education')  _eduOrgs.push(orgs[i]._id);
-            }
-        }
+        console.log("TIME -: " + (new Date().getTime() - e) + " ms");
 
         // Build Query
         var query = {};
@@ -541,7 +621,6 @@ exports.all = function(req, res) {
             queries.push({ published: true, user: req.user });
 
             // orgs
-            //queries.push({ user: { '$in': orgUsers }, published: true, sharingLevel: 'org' });
             queries.push({  published: true, sharedOrganizations: { '$in': _orgs }, sharingLevel: 'org' });
 
             // all pros
@@ -584,117 +663,80 @@ exports.all = function(req, res) {
         Async.parallel([
 
             // SP1 profiles
-
             function(callback) {
+            var d = new Date().getTime();
 
                 var query2 = util._extend({}, query);
                 query2['$and'].push({ removed: { "$ne": true } });
-                
-                //query2['$and'].push({ 'version': 'v1' });
 
                 Test.find(query2).
-                select('type organization created updated location date user location elevation aspect slope rows_small') 
-                .sort('-date')
+                select('type organization created updated location date user published location elevation aspect slope rows_small') 
+                //.sort('-date')
                 .populate('user', 'fullName student')
                 .populate('organization','name type logoUrl')
-                //.lean()
-                .exec(function(err, profiles) {
-                    if (err) {
-                        //res.render('error', { status: 500 });
-                        callback(err);
-                    } else {
-                        //for(var i = 0; i < profiles.length; i++) { profiles[i].type = "test"; }
-                        //res.json(profiles);
-                        callback(null, profiles);
+                .lean()
+                .exec(function(err, obs) {
+                    console.log("TIME S: " + (new Date().getTime() - d) + " ms");
+                    if (err) callback(err);
+                    else  {
+                        for (var i = 0; i < obs.length; i++) {
+                            var rows = obs[i].rows_small;
+                            obs[i].rows_tiny = compressRows(rows);
+                            delete obs[i].rows_small;
+                        }
+                        callback(null, obs);
                     }
                 });
             },
 
-            // manual profiles - published
-
+            // manual profiles
             function(callback) {
+            var d = new Date().getTime();
 
                 Profile.find(query).
                 select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
-                .sort('-date')
+                //.sort('-date')
                 .populate('user', 'fullName student')
                 .populate('organization','name type logoUrl')
-                //.lean()
-                .exec(function(err, profiles) {
-                    if (err) {
-                        //res.render('error', { status: 500 });
-                        callback(err);
-                    } else {
-                        //for(var i = 0; i < profiles.length; i++) { profiles[i].type = "profile"; }
-                        //res.json(profiles);
-                        callback(null, profiles);
-                    }
-                });
-            },
-
-            // manual profiles - drafts
-
-            function(callback) {
-
-                Profile.find({ published: false, user: req.user }).
-                select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
-                .sort('-date')
-                .populate('user', 'fullName student')
-                .populate('organization','name type logoUrl')
-                //.lean()
-                .exec(function(err, profiles) {
-                    if (err) {
-                        //res.render('error', { status: 500 });
-                        callback(err);
-                    } else {
-                        //for(var i = 0; i < profiles.length; i++) { profiles[i].type = "profile"; }
-                        //res.json(profiles);
-                        callback(null, profiles);
-                    }
+                .lean()
+                .exec(function(err, obs) {
+                    console.log("TIME M: " + (new Date().getTime() - d) + " ms");
+                    if (err) callback(err);
+                    else callback(null, obs);
                 });
             },
 
             // avalanches
-
             function(callback) {
+            var d = new Date().getTime();
 
                 Observation.find(query)
-                .select('type organization created updated location date time locationName user elevation aspect photos slope') 
-                .sort('-date')
+                .select('type organization created updated location date time published locationName user elevation aspect photos slope') 
+                //.sort('-date')
                 .populate('user', 'fullName')
                 .populate('organization','name type logoUrl')
-                //.lean()
+                .lean()
                 .exec(function(err, obs) {
-                    if (err) {
-                        //res.render('error', { status: 500 });
-                        callback(err);
-                    } else {
-                        //res.json([]);
-
-                        callback(null, obs);
-                    }
+                    console.log("TIME A: " + (new Date().getTime() - d) + " ms");
+                    if (err) callback(err);
+                    else callback(null, obs);
                 });
             }
         ],
         function(err, results) {
-            // console.log("0: " + results[0].length);
-            // console.log("1: " + results[1].length);
-            // console.log("2: " + results[2].length);
+
+            var d = new Date().getTime();
 
             var _results = [];
-            // combine manual profiles - published
-            _results = _results.concat(results[1]);
-            // combine manual profiles - drafts
-            _results = _results.concat(results[2]);
             // combine SP1 profiles 
             _results = _results.concat(results[0]);
+            // combine manual profiles - published
+            _results = _results.concat(results[1]);
             // combine avalanches
-            _results = _results.concat(results[3]);
+            _results = _results.concat(results[2]);
 
-
-            // combine SP1 data ONLY for demo account
-            //if (req.user.id == '5416c4bf56a8a90000fba00d')
-            //   _results = _results.concat(results[0]);
+            console.log("TOTAL ITEMS: " + _results.length);
+            console.log("TIME: " + (new Date().getTime() - d) + " ms");
 
             if (err) res.render('error', { status: 500 });
             else res.json(_results);

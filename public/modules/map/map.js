@@ -691,7 +691,7 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
             html += '<canvas profile="profile" width="360" height="320" style="margin-top:5px;margin-bottom:-4px;width:180px;height:160px;background:#eee;"></canvas>';
         }
         else if (profile.type == 'test') {
-            html += '<canvas graph="profile.rows_small" width="360" height="320" style="margin-top:5px;margin-bottom:-4px;width:180px;height:160px;background:#eee;"></canvas>';
+            html += '<canvas graph="profile.rows_tiny" width="360" height="320" style="margin-top:5px;margin-bottom:-4px;width:180px;height:160px;background:#eee;"></canvas>';
         }
         else if (profile.type == 'avy') {
             html += "<div ng-show='profile.photos.length' style='text-align:center;background:#eee;width:97%;margin-top:4px;''>"
@@ -1094,22 +1094,8 @@ $scope.goTo = function(result) {
     else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], 12); //8
 
     $scope.loadMyProfiles = function() {
-
         //Observations
         $scope.myProfiles = Observations.observations;
-
-        // $http.get('/v1/profiles/mine', {}
-        // // { params: { 
-        // //     nelat: bounds._northEast.lat, 
-        // //     nelng: bounds._northEast.lng, 
-        // //     swlat: bounds._southWest.lat, 
-        // //     swlng: bounds._southWest.lng, 
-        // //   }, 
-        // //   timeout: $scope.canceler.promise
-        // // }
-        // ).success(function(profiles) {
-        //     $scope.myProfiles = profiles;
-        // });
     }
 
     // load profiles
@@ -1121,6 +1107,7 @@ $scope.goTo = function(result) {
         // abort previous profile requests
         if ($scope.canceler) $scope.canceler.resolve();
         $scope.canceler = $q.defer();
+
         $http.get('/v1/profiles', 
         { params: { 
             nelat: bounds._northEast.lat, 
@@ -1166,14 +1153,14 @@ $scope.goTo = function(result) {
         $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
-        },10);
+        }, 500);
     });
 
     $scope.map.on('zoomstart', function() {
         $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
-        },10);
+        }, 500);
         
         // here's where you decided what zoom levels the layer should and should
         // not be available for: use javascript comparisons like < and > if

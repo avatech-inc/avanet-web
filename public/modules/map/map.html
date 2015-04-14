@@ -1482,7 +1482,9 @@
 					<div class="bar {{ profile.type }}"></div>
 
 					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-					<canvas ng-if="profile.type=='test'" graph="profile.rows_small" width="120" height="136"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_tiny" width="120" height="136"></canvas>
+					<!--<canvas ng-if="profile.type=='test'" graph="profile.rows_small" width="120" height="136"></canvas>-->
+
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 					<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 
@@ -1544,7 +1546,7 @@
 					<div class="bar {{ profile.type }}"></div>
 
 					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-					<canvas ng-if="profile.type=='test'" graph="profile.rows_small" width="120" height="136"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_tiny" width="120" height="136"></canvas>
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 					<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 
@@ -1602,7 +1604,7 @@
 					<!--<div class="bar {{ profile.type }}"></div>-->
 
 					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-					<canvas ng-if="profile.type=='test'" graph="profile.rows_small" width="120" height="136"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_tiny" width="120" height="136"></canvas>
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 					<div>

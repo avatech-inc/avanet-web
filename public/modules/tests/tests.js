@@ -203,8 +203,7 @@ angular.module('avatech').directive('graphBig', function() {
                 var D_P4 = 197.7;
                 var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
 
-                //var canvasScale = (.00008 * Math.pow(rows[i],3));
-                pressure_graph = pressure_graph * (canvas.width / 212);
+                pressure_graph = pressure_graph * (canvas.width / 214);
 
                 graphRows.push(pressure_graph);
             }
@@ -275,116 +274,97 @@ angular.module('avatech').directive('graph', function() {
     //scope: { rows: '=graph' },
     link: function(scope, element, attrs) {
 
-        //return;
+        // expand
+        function expand(str) {
+            var unsplitInt = function(_str) {
+                if (_str.length != 2) return null; // 3
+                return  (_str[0].charCodeAt(0) - 32) +
+                        (_str[1].charCodeAt(0) - 32);
+                        // + (str[2].charCodeAt(0) - 32);
+            }
+            var expanded = "";
+            for (var e = 0; e < str.length; e++) {
+                var ch = str[e];
+                if (ch != "\n") expanded += ch;
+                else {
+                    var streak = str.substr(e + 1, 2); //3
+                    streak = unsplitInt(streak);
+                    var _ch = str[e+3]; //4
+                    for (var k = 0; k < streak; k++) expanded += _ch;
+                    e += 3; //4
+                }
+            }
+            return expanded;
+        }
+
+        function convertRange( value, r1, r2 ) { 
+            return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
+        }
 
         var rows = scope.$eval(attrs.graph);
         if (!rows) return;
 
-        // using '$watch' allows the canvas to be redrawn
-        //scope.$watch('rows', function(rows) {
-
-            var threshold = 5;
-
-            var canvas = element[0];
-            var context = element[0].getContext('2d');
-
-
-            // empty bottom depth area
-            var emptyDepth = (rows.length) * (canvas.height / 1500);
-            emptyDepth *= threshold;
-            context.fillStyle = "#d0d0d0";
-            context.beginPath();
-            context.moveTo(0,emptyDepth);
-            context.lineTo(canvas.width,emptyDepth);
-            context.lineTo(canvas.width,canvas.height);
-            context.lineTo(0,canvas.height);
-            context.closePath();
-            context.fill();
-            
-            // graph
-            context.beginPath();
-            context.fillStyle = 'rgba(50,50,50,.9)';
-            context.moveTo(-1,0);
-            var canvasDepth;
+        // expand if string
+        if (typeof rows === 'string') {
+            rows = expand(rows);
+            var _rows = [];
             for (var i = 0; i < rows.length; i++) {
-
-                canvasDepth = (i+1) * (canvas.height / 1500);
-                canvasDepth *= threshold;
-
-                var pressure_expanded = (.00008 * Math.pow(rows[i],3));
-
-                var A_P4 = -194.1;
-                var B_P4 = .1304;
-                var C_P4 = -.0023124;
-                var D_P4 = 197.7;
-                var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
-
-                //var canvasScale = (.00008 * Math.pow(rows[i],3));
-                pressure_graph = pressure_graph * (canvas.width / 212);
-
-                context.lineTo(pressure_graph, canvasDepth);
+                var val = rows[i].charCodeAt(0) - 32;
+                var multiplier = convertRange((255-val),[0,900],[.5,5.4]);
+                _rows.push(val * multiplier);
             }
-            // finish up
-            if (canvasDepth != null) {
-                context.lineTo(-1, canvasDepth);
-                context.lineTo(-1,0);
-                context.fill();
-            }
+            rows = _rows;
+        }
 
-            // clear canvas
-            //context.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // data
+        var threshold = 5;
 
-            // if no data, don't continue
+        var canvas = element[0];
+        var context = element[0].getContext('2d');
 
-            //var rows = scope.rows.sort(function(a,b){return b[1]-a[1]});
-            //var rows = scope.rows;
+        // empty bottom depth area
+        var emptyDepth = (rows.length) * (canvas.height / 1500);
+        emptyDepth *= threshold;
+        context.fillStyle = "#d0d0d0";
+        context.beginPath();
+        context.moveTo(0,emptyDepth);
+        context.lineTo(canvas.width,emptyDepth);
+        context.lineTo(canvas.width,canvas.height);
+        context.lineTo(0,canvas.height);
+        context.closePath();
+        context.fill();
+        
+        // graph
+        context.beginPath();
+        context.fillStyle = 'rgba(50,50,50,.9)';
+        context.moveTo(-1,0);
+        var canvasDepth;
+        for (var i = 0; i < rows.length; i++) {
 
-            // for (var i = 0; i < rows.length; i++) {
-            //     var _scale = parseFloat(rows[i][0]);
+            canvasDepth = (i+1) * (canvas.height / 1500);
+            canvasDepth *= threshold;
 
+            var pressure_expanded = (.00008 * Math.pow(rows[i],3));
+            // no idea why this is needed... is it a coincidence that it's similar to threshold?
+            // without this, the graph doesn't stretch for the full width. don't know enough about
+            // how this algorithm is supposed to work (todo: ask sam)
+            pressure_expanded *= 5.5;
 
-            //     //console.log(rows.length);
+            var A_P4 = -194.1;
+            var B_P4 = .1304;
+            var C_P4 = -.0023124;
+            var D_P4 = 197.7;
+            var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
 
-            //     if (rows.length == 1500) {
+            pressure_graph = pressure_graph * (canvas.width / 212);
 
-            //         var canvasDepth = (i+1) * (canvas.height / 1500);
-            //         var canvasScale = (.00008 * Math.pow(rows[i],3));
-            //         canvasScale = canvasScale * (canvas.width / 200);
-
-            //         //console.log(canvasScale);
-            //     }
-            //     else {
-                    
-
-            //         var _depth = Math.abs(parseInt(rows[i][1]));
-            //         var s = _scale;
-            //         var canvasDepth = _depth * (canvas.height / 1500);
-
-            //         //var canvasScale = Math.log(s) * 140;
-            //         //canvasScale = canvasScale * (canvas.width / 1000);
-
-            //         var A_P4 = -194.1;
-            //         var B_P4 = .1304;
-            //         var C_P4 = -.002314;
-            //         var D_P4 = 197.7;
-            //         var canvasScale = A_P4 * (Math.pow(B_P4 , -C_P4 * s)) + D_P4;
-            //         canvasScale = canvasScale * (canvas.width / 200);
-
-            //     }
-
-            //     //if (_depth > 0) {
-
-            //         context.beginPath();
-            //         context.moveTo(0, canvasDepth);
-            //         context.lineTo(canvasScale, canvasDepth);
-            //         context.lineWidth = 3;
-            //         context.strokeStyle = '#444';
-            //         context.stroke();
-            //     //}
-            // }
-        //});
+            context.lineTo(pressure_graph, canvasDepth);
+        }
+        // finish up
+        if (canvasDepth != null) {
+            context.lineTo(-1, canvasDepth);
+            context.lineTo(-1,0);
+            context.fill();
+        }
     }
   };
 });

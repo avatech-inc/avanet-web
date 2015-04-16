@@ -78,7 +78,7 @@ module.exports = function(app, passport) {
     // // create invite
     // app.post('/admin/invites', auth.requireLogin, auth.requireAdmin, users.invite);
     // // delete invite
-    // app.del('/admin/invites/:inviteToken', auth.requireLogin, auth.requireAdmin, users.deleteInvite);
+    // app.delete('/admin/invites/:inviteToken', auth.requireLogin, auth.requireAdmin, users.deleteInvite);
 
 
     // Manual Profiles
@@ -93,7 +93,7 @@ module.exports = function(app, passport) {
     app.post('/v1/profiles', auth.requireLogin, profiles.create);
     app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
-    app.del('/v1/profiles/:profileId', auth.requireLogin, profiles.destroy);
+    app.delete('/v1/profiles/:profileId', auth.requireLogin, profiles.destroy);
 
     // Device Profiles
 
@@ -129,7 +129,7 @@ module.exports = function(app, passport) {
     app.get('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_all);
     app.post('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_add);
     app.put('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_update);
-    app.del('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
+    app.delete('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
 
     // Observations
 
@@ -137,13 +137,13 @@ module.exports = function(app, passport) {
     app.get('/v1/observations', auth.requireLogin, obs.all);
     app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
-    app.del('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
+    app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
 
     // Comments
 
     app.get('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.all);
     app.post('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.create);
-    app.del('/v1/comments/:commentId', auth.requireLogin, comments.destroy);
+    app.delete('/v1/comments/:commentId', auth.requireLogin, comments.destroy);
 
     // Devices
 

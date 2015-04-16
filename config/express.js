@@ -49,7 +49,8 @@ module.exports = function(app, passport) {
     });
 
     //app.use(cookieParser());
-    app.use(bodyParser());
+    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(bodyParser.json());
     app.use(methodOverride());
 
     // init passport for local auth

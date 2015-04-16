@@ -75,28 +75,6 @@ angular.module('avatech').controller('TestPreviewController', [ '$scope', '$root
         // formatters
         $scope.formatters = snowpitExport.formatters;
         
-        // snowpit canvas settings
-        // $scope.graphWidth = 180;
-        // $scope.columns = [
-        //     { width: 125 },
-        //     { width: 25 },
-        //     { width: $scope.graphWidth },
-        //     { width: 240 }
-        // ];
-        // $scope.snowpitWidth = $scope.columns.reduce(function(a,b){ return { width: a.width + b.width}; }).width;
-        // $scope.snowpitHeight = 500;
-        // $scope.canvasOptions = { labelColor: "#222", commentLineColor: "#aaa", dashedLineColor: "#ddd", showDepth: true, showDensity: true };
-        // $scope.settings = {
-        //     selectedLayer: null,
-        //     dragging: null,
-        //     hoverDragLayer: null,
-        //     view: null,
-        //     depthDescending: true,
-        //     fontsLoaded: false,
-        //     tempMode: false,
-        //     tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
-        // }
-
 
         if ($stateParams.testId) {
             $scope.testId = $stateParams.testId;

@@ -39,8 +39,13 @@
     	<link href='//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' rel='stylesheet' />
 
     	<!-- MapBox -->
-    	<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script>
-		<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+    	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.js'></script>
+    	<script type="text/javascript">
+    		L.mapbox.accessToken = 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg';
+      		L.mapbox.config.FORCE_HTTPS = true;
+    	</script>
+		<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.css' rel='stylesheet' />
+
 		<!--   Leaflet Cluster Plugin -->
 		<script src='//leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js'></script>
 		<!--<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
@@ -190,15 +195,15 @@
   		<script src="/modules/comments/comments.js"></script>
   		<script src="/modules/confirm/confirm.js"></script>
   		<script src="/modules/device-upload-modal/modal.js"></script>
-  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
+  		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>
   		<script src="/modules/profiles/profiles.js"></script>
   		<script src="/modules/publish-modal/modal.js"></script>
-  		<script src="/modules/field-tests/field-tests.js"></script>
+  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-export.js"></script>
@@ -248,7 +253,6 @@
 		<!--<!(endif)-->
 		
     	<script>
-
 			Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
 			    // we highly recommend restricting exceptions to a domain in order to filter out clutter
 			    //whitelistUrls: ['example.com/scripts/']

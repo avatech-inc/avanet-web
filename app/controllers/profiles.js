@@ -581,22 +581,14 @@ exports.all = function(req, res) {
     var e = new Date().getTime();
 
     // get user's organizations
-    Organization.find({})
-    .select('members type')
-    .exec(function(err, orgs) {
-        var _orgs = [];
-        var _eduOrgs = [];
-        for (var i = 0; i < orgs.length; i++) {
-            // is educational org?
-            if (orgs[i].type == 'Avalanche education') _eduOrgs.push(orgs[i]._id);
+    // (for students, get all edu orgs)
+    var orgQuery = { members: { '$elemMatch': { user: req.user._id } } };
+    if (req.user.student === true) orgQuery = { type: 'Avalanche education' };
 
-            // is user a member
-            for (var m = 0; m < orgs[i].members.length; m++) {
-                if (orgs[i].members[m].user.equals(req.user._id)) {
-                    _orgs.push(orgs[i]._id); break;
-                }
-            }
-        }
+    Organization.find(orgQuery)
+    .select('_id')
+    .exec(function(err, orgs) {
+        var _orgs = []; for (var i = 0; i < orgs.length; i++)  _orgs.push(orgs[i]._id);
 
         console.log("TIME -: " + (new Date().getTime() - e) + " ms");
 
@@ -613,7 +605,8 @@ exports.all = function(req, res) {
             queries.push({ published: true, sharingLevel: 'student' });
 
             // if shared with educational orgs
-            queries.push({ published: true, sharedOrganizations: { '$in': _eduOrgs }, sharingLevel: 'org' });
+            // (for students, the _orgs variable is all education orgs)
+            queries.push({ published: true, sharedOrganizations: { '$in': _orgs }, sharingLevel: 'org' });
 
             // if 'share with students' is selected
             queries.push({ published: true, sharingLevel: 'pros', shareWithStudents: true });

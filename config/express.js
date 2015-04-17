@@ -33,7 +33,7 @@ module.exports = function(app, passport) {
 
     //Don't use logger for test env
     //if (process.env.NODE_ENV !== 'test') {
-       app.use(morgan('dev'));
+    app.use(morgan('dev'));
     //}
 
     // enable jsonp
@@ -63,12 +63,13 @@ module.exports = function(app, passport) {
     app.use(raven.middleware.express('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540'));
 
     app.use(function(err, req, res, next) {
-      //console.error(err.stack); // already done automatically?
+      console.error(err.stack);
       if (req.xhr) {
         res.status(500).send({ error: '500 Error' });
       } else {
         //next(err);
-        res.status(500).sendfile('./app/views/500.html'); 
+        //res.status(500).sendFile('../app/views/500.html', { root: __dirname });
+        res.status(500).sendFile(path.join(__dirname, '../app/views', '500.html'));
       }
     });
 

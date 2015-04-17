@@ -1,5 +1,6 @@
 var async = require('async');
 var auth = require('./auth');
+var path = require('path');
 
 module.exports = function(app, passport) {
 
@@ -274,10 +275,12 @@ module.exports = function(app, passport) {
     
     //     // console.log("IS AJAX?");
     //     // console.log(req.xhr ); // <-- why is this always false?
-    //     res.sendfile('./app/views/shop.html'); 
+    //    // res.sendFile('./app/views/shop.html'); 
+    //    res.sendFile(path.join(__dirname, '../app/views', 'shop.html'));
     // });
     // app.get('/:code', function(req,res) { 
-    //     res.sendfile('./app/views/shop.html'); 
+    ////     res.sendFile('./app/views/shop.html'); 
+    //    res.sendFile(path.join(__dirname, '../app/views', 'shop.html'));
     // });
     // //var stripe = require("stripe")("sk_test_4aIRRVQxRx3O7AdeJDRyUJxm");
     // var stripe = require("stripe")("sk_live_4aIR5CxiSGOosXIEtZgxCUFi");
@@ -575,19 +578,27 @@ module.exports = function(app, passport) {
     
     //catch all 404
     // app.get('*', function(req, res) {
-    //     res.status(404).sendfile('./app/views/404.html');
+    //     res.status(404).sendFile('./app/views/404.html');
     // });
     app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 
     app.get('/manifest.plist', function(req,res) {
-        res.sendfile('./app/views/manifest.plist'); 
+        //res.sendfile('./app/views/manifest.plist'); 
+        res.sendFile(path.join(__dirname, '../app/views', 'manifest.plist'));
     });
     app.get('/beta.plist', function(req,res) {
-        res.sendfile('./app/views/manifest_beta.plist'); 
+        //res.sendfile('./app/views/manifest_beta.plist'); 
+        res.sendFile(path.join(__dirname, '../app/views', 'manifest_beta.plist'));
     });
 
-    app.get('/download-app', function(req,res) { res.sendfile('./app/views/download-app.html'); });
-    app.get('/app', function(req,res) { res.sendfile('./app/views/download-app.html'); });
+    app.get('/download-app', function(req,res) { 
+        //res.sendFile('./app/views/download-app.html'); 
+        res.sendFile(path.join(__dirname, '../app/views', 'download-app.hyml'));
+    });
+    app.get('/app', function(req,res) { 
+        //res.sendFile('./app/views/download-app.html'); 
+        res.sendFile(path.join(__dirname, '../app/views', 'download-app.html'));
+    });
 
     var s3_2 = knox.createClient({
         key: 'AKIAIQFLR4EQC63ZZTNQ'
@@ -830,6 +841,7 @@ module.exports = function(app, passport) {
 
         // console.log("IS AJAX?");
         // console.log(req.xhr ); // <-- why is this always false?
-        res.sendfile('./app/views/main.html'); 
+        //res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
+        res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
     });
 };

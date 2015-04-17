@@ -302,7 +302,8 @@ exports.resetPassword = function (req, res) {
     });
 }
 exports.changePassword = function (req, res) {
-    User.findOne({ _id: req.params.userId }, function(err, user) {
+    //User.findOne({ _id: req.params.userId }, function(err, user) {
+    User.findOne({ _id: req.user._id }, function(err, user) {
         if (!user) return res.json({ error: "error saving password"});
 
         if (user.authenticate(req.body.currentPassword)) {

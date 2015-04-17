@@ -31,6 +31,7 @@ var schema = new Schema({
         type: [Number],
         index: '2dsphere'
     },
+    locationName: { type: String },
 
     hash: { type: String, index: true },
     metaData: { type: Schema.Types.Mixed },
@@ -66,6 +67,8 @@ var schema = new Schema({
     dateNumber: { type: Number },
 
     deviceProfileId: { type: Number },
+
+    notes: { type: String },
 
     removed: { type: Boolean, default: false},
     

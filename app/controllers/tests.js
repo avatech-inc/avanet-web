@@ -387,6 +387,14 @@ exports.create = function(req, res) {
                 updateField(test, "shareWithAvyCenter", req.body.shareWithAvyCenter);
                 updateField(test, "shareWithStudents ", req.body.shareWithStudents);
                 updateField(test, "sharedOrganizations", req.body.sharedOrganizations);
+
+                updateField(test, "slope", req.body.slope);
+                updateField(test, "aspect", req.body.aspect);
+                updateField(test, "elevation", req.body.elevation);
+                updateField(test, "location", req.body.location);
+                updateField(test, "locationName", req.body.locationName);
+                updateField(test, "notes", req.body.notes);
+
                 test.updated = new Date();
 
                 test.save();
@@ -697,10 +705,12 @@ exports.show = function(req, res) {
     //     res.jsonp(test);
     // });
 
-    Test.findOne({ _id: id, removed: { "$ne": true } }).select('-rows')
-    //.sort('-created')
+    Test.findOne({ _id: id, removed: { "$ne": true } })
+    // only return rows_compressed
+    .select('-rows -rows_small')
     .populate('user', 'fullName student')
     .populate('organization','name type logoUrl')
+    .lean()
     .exec(function(err, test) {
         if (err) {
             res.render('error', {

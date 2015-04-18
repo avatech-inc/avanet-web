@@ -1,5 +1,4 @@
-angular.module('avatech.system').controller('MapController', ['$rootScope', '$q', '$scope', '$state', '$location', '$modal', '$http', '$timeout','$compile','Profiles','Observations', 'Global', 'Restangular', 'mapLayers', 'PublishModal'
-    , function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal) {
     $scope.global = Global;
     $scope.showPreviewPane = function(){ return ($state.current.name.indexOf("index.") != -1) };
 
@@ -19,6 +18,9 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
 
         return false;
     }
+
+    mixpanel.track("home");
+
 
     // ====== NEW VERSION MODAL ========
 
@@ -517,10 +519,9 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
     // ======= END SEARCH =======
 
 
-    $scope.setBaseLayer = function(layer) {
+    $scope.setBaseLayer = function(layer, clicked) {
 
-        // remove old base layer
-        //if ($scope.previousLayer) $scope.map.removeLayer($scope.previousLayer);
+        if (clicked) mixpanel.track("set base layer", { alias: layer.alias, name: layer.name });
 
         $scope.selectedBaseLayer = layer;
 
@@ -651,6 +652,9 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
             })
         });
 
+        marker.profile = profile;
+        marker._id = profile._id;
+
 
         var html = '<div>';
 
@@ -705,8 +709,13 @@ angular.module('avatech.system').controller('MapController', ['$rootScope', '$q'
             className: 'popup-' + profile.type,
             //minWidth: 180,
         });
-        marker.profile = profile;
-        marker._id = profile._id;
+
+        // marker.on('mouseover', function(e) {
+        //     e.layer.openPopup();
+        // });
+        // marker.on('mouseout', function(e) {
+        //     e.layer.closePopup();
+        // });
 
         // marker.on('click', function (e) {
         //         var linkFunction = $compile(angular.element(html));
@@ -1074,7 +1083,6 @@ $scope.geoSearch = function() {
     });
 }
 $scope.focusLocationSearchInput = function() {
-    console.log("!");
     $(".location-search-input").focus();
 }
 $scope.goTo = function(result) {
@@ -1212,4 +1220,4 @@ $scope.goTo = function(result) {
     //     maxZoom: 16
     // }).addTo($scope.map);
 
-}]);
+});

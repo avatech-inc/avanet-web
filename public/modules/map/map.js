@@ -1120,12 +1120,16 @@ $scope.goTo = function(result) {
         if ($scope.canceler) $scope.canceler.resolve();
         $scope.canceler = $q.defer();
 
-        $http.get('/v1/profiles', 
+        // zoom level
+        var verbose = ($scope.map.getZoom() > 7); 
+
+        $http.get('/v1/all-observations', 
         { params: { 
             nelat: bounds._northEast.lat, 
             nelng: bounds._northEast.lng, 
             swlat: bounds._southWest.lat, 
             swlng: bounds._southWest.lng, 
+            verbose: verbose
           }, 
           timeout: $scope.canceler.promise
         }).success(function(profiles) {
@@ -1168,8 +1172,7 @@ $scope.goTo = function(result) {
         // you want something other than just one zoom level, like
         // (map.getZoom > 10)
 
-        var zoom = $scope.map.getZoom();
-        console.log(zoom);
+        //console.log(zoom);
         // if (zoom < 9) {
 
         //     //$scope.mapLayer.setFilter(function() { return false; });

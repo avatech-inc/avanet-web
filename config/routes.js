@@ -88,9 +88,9 @@ module.exports = function(app, passport) {
 
     // todo: these return ALL observation types - maybe replace this with "observations"
     // and rename "observations" to "avalanches"?
-    app.get('/v1/profiles', auth.requireLogin, profiles.all);
-    app.get('/v1/profiles/mine', auth.requireLogin, profiles.allMine);
-
+    app.get('/v1/all-observations', auth.requireLogin, profiles.all);
+    app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
+    
     app.post('/v1/profiles', auth.requireLogin, profiles.create);
     app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);

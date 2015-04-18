@@ -1078,7 +1078,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 context.fillRect(0, paddingTop - surfaceLayerHeight, column.width - 70, surfaceLayerHeight);
 
                 // draw surface grain type and size
-                if (scope.profile.metaData.surfaceGrainType) {
+                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainType) {
                     drawGrainType({
                         grainType: scope.profile.metaData.surfaceGrainType,
                         grainType2: scope.profile.metaData.surfaceGrainType2,
@@ -1086,7 +1086,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     }, paddingTop);
                 }
                 // draw surface grain size
-                if (scope.profile.metaData.surfaceGrainSize) {
+                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainSize) {
                     drawGrainSize({
                         grainSize: scope.profile.metaData.surfaceGrainSize,
                         grainSize2: scope.profile.metaData.surfaceGrainSize2,

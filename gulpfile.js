@@ -246,11 +246,12 @@ gulp.task('build', function(done) {
               done);
 });
 
-gulp.task('start', function(done) {
+gulp.task('start', ['buildMain'], function(done) {
   gulp.watch('public/sass/**/*', ['compass']);
 
   // todo:
   // - livereload when public changes 'public/**/*'
+  // - buildMain when js folder changes?
 
    nodemon({
     script: 'server.js'

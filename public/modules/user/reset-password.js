@@ -29,6 +29,7 @@ angular.module('avatech.system').controller('ResetPasswordController',
         	console.log(data);
             if (data.success) {
             	$scope.successfulReset = true;
+                mixpanel.track("password reset");
         	}
         	else $scope.error = data.error;
             //console.log(data);

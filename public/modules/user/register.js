@@ -87,6 +87,8 @@ angular.module('avatech.system').controller('RegisterController',
                 if (data.success == true) { 
                   Global.login(data.user, data.token);
 
+                  mixpanel.track("registered");
+
                   $rootScope.initPromise = Global.init();
                   if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
                       $rootScope.orgsLoaded = true;

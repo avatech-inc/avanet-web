@@ -12,6 +12,9 @@ angular.module('avatech.system').controller('ForgotPasswordController',
         	if (!data.success) {
         		$scope.validationError = "Oops! We couldn't find a user with that email."
     		}
+            else {
+                mixpanel.track("forgot password", { email: $scope.email });
+            }
             $scope.resetSuccess = data.success;
         });
     };

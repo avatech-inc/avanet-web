@@ -1160,6 +1160,8 @@ $scope.goTo = function(result) {
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
         }, 2000);
+        mixpanel.track("zoom", $scope.map.getZoom());
+
         
         // here's where you decided what zoom levels the layer should and should
         // not be available for: use javascript comparisons like < and > if

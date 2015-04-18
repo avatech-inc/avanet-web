@@ -38,6 +38,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 Raven.setUserContext(tracking_user);
                 heap.identify(tracking_user);
                 mixpanel.identify(user._id);
+                tracking_user.$email = tracking_user.email; // for mixpanel
                 mixpanel.people.set(tracking_user);
                 mixpanel.track('login');
 
@@ -82,6 +83,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                     Raven.setUserContext(tracking_user);
                     heap.identify(tracking_user);
                     mixpanel.identify(user._id);
+                    tracking_user.$email = tracking_user.email; // for mixpanel
                     mixpanel.people.set(tracking_user);
                 }
                 else {

@@ -73,6 +73,13 @@
 	      if (_env == "production") heap.load("894126234"); // production
 	      else heap.load("416778563"); // dev
 	    </script>
+	    
+	    <!-- start Mixpanel -->
+	    <script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+			for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+			mixpanel.init("2c3bc97e77c92d7706fe7a743a0afb6a");
+		</script><!-- end Mixpanel -->
+
 	</head>
 	<body window-resize ng-cloak>
 		<div ng-include="'/views/header.html'"></div>
@@ -184,26 +191,27 @@
 		<script type="text/javascript" src='/js/routes.js'></script>
 
 		<!-- inject:js -->
-  		<script src="/modules/avalanches/observation-preview-modal.js"></script>
-  		<script src="/modules/avalanches/observation-preview.js"></script>
-  		<script src="/modules/avalanches/observations.js"></script>
   		<script src="/modules/admin/admin-invite.js"></script>
   		<script src="/modules/admin/admin-orders.js"></script>
   		<script src="/modules/admin/admin-orgs.js"></script>
   		<script src="/modules/admin/admin-users.js"></script>
   		<script src="/modules/admin/admin.js"></script>
+  		<script src="/modules/avalanches/observation-preview-modal.js"></script>
+  		<script src="/modules/avalanches/observation-preview.js"></script>
+  		<script src="/modules/avalanches/observations.js"></script>
   		<script src="/modules/comments/comments.js"></script>
   		<script src="/modules/confirm/confirm.js"></script>
   		<script src="/modules/device-upload-modal/modal.js"></script>
+  		<script src="/modules/field-tests/field-tests.js"></script>
+  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
-  		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>
   		<script src="/modules/profiles/profiles.js"></script>
   		<script src="/modules/publish-modal/modal.js"></script>
-  		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+  		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-export.js"></script>
@@ -218,7 +226,6 @@
   		<script src="/modules/user/register.js"></script>
   		<script src="/modules/user/reset-password.js"></script>
   		<script src="/modules/user/settings.js"></script>
-  		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/js/services/field-tests.js"></script>
   		<script src="/js/services/global.js"></script>
   		<script src="/js/services/organizations.js"></script>

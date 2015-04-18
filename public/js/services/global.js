@@ -37,6 +37,9 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 };
                 Raven.setUserContext(tracking_user);
                 heap.identify(tracking_user);
+                mixpanel.identify(user._id);
+                mixpanel.people.set(tracking_user);
+                mixpanel.track('login');
 
                 // if redirectUrl available, go
                 if (_this._data.redirectUrl) {
@@ -56,6 +59,8 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 
                 Raven.setUserContext();
                 heap.identify();
+                mixpanel.track('logout');
+                mixpanel.identify();
 
 	            $state.transitionTo("login", null, {location:'replace'});
             },
@@ -76,10 +81,13 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                     };
                     Raven.setUserContext(tracking_user);
                     heap.identify(tracking_user);
+                    mixpanel.identify(user._id);
+                    mixpanel.people.set(tracking_user);
                 }
                 else {
                     Raven.setUserContext();
                     heap.identify();
+                    mixpanel.identify();
                 }
 
                 // temporary? need it just in case

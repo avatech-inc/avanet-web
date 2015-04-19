@@ -14,11 +14,6 @@ var ProfileSchema = new Schema({
         default: '',
         trim: true
     },
-    // content: {
-    //     type: String,
-    //     default: '',
-    //     trim: true
-    // },
 
     location: {
         type: [Number],

@@ -272,21 +272,11 @@ exports.members_remove = function(req, res) {
 };
 
 exports.getUserOrgs = function(req, res) {
-    Organization.find({}).exec(function(err, orgs) {
-        var _orgs = [];
-        for (var i = 0; i < orgs.length; i++) {
-            // is user a member
-            for (var m = 0; m < orgs[i].members.length; m++) {
-                if (orgs[i].members[m].user.equals(req.user._id))
-                    _orgs.push({ 
-                        _id: orgs[i]._id,
-                        name: orgs[i].name,
-                        type: orgs[i].type,
-                        logoUrl: orgs[i].logoUrl
-                    });
-            }
-        }
-        res.json(_orgs);
+    
+    Organization.find({ members: { '$elemMatch': { user: req.user._id } } })
+    .select('name type logoUrl')
+    .exec(function(err, orgs) {
+        res.json(orgs);
     });
 }
 

@@ -90,7 +90,7 @@ module.exports = function(app, passport) {
     // and rename "observations" to "avalanches"?
     app.get('/v1/all-observations', auth.requireLogin, profiles.all);
     app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
-    
+
     app.post('/v1/profiles', auth.requireLogin, profiles.create);
     app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
@@ -105,6 +105,8 @@ module.exports = function(app, passport) {
     app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
     app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
+    //app.get('/v1/tests/:testId/thumb.jpg', tests.thumb);
+    //app.get('/fornow', tests.fornow);
 
     // Field Tests
 

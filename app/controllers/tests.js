@@ -52,33 +52,10 @@ exports.checkUpload = function(req, res) {
     });
 }
 
-// convert processed profile
+ // convert processed profile
  function convertProfile(fileData) {
 
-    // downsampling
-
-    function findAverage(data) {
-        var total = 0;
-        for (var i = 0; i < data.length; i++) {
-            total += data[i];
-        }
-        return (total / data.length).toFixed(0);
-    }
-    function downsample(rows, threshold) {
-        var newRows = [];
-        var samples = [];
-        for (var i = 0; i < rows.length; i++) {
-            samples.push(rows[i]);
-            if (samples.length == threshold) {
-                newRows.push(findAverage(samples));
-                samples = [];
-            }
-        }
-        if (samples.length) newRows.push(findAverage(samples));
-        return newRows;
-    }
-
-    // utils
+  // utils
 
   function convertToString(uint8arr) {
     return String.fromCharCode.apply(null,uint8arr).replace(/\0/g, '');
@@ -230,7 +207,6 @@ exports.checkUpload = function(req, res) {
   if (lastRow != null) rows = rows.slice(0,lastRow);
 
   profile.rows = rows;
-  //profile.rows_compressed = downsample(rows, 3);
 
   profile.published = false;
   //profile.sharingLevel: 'private',
@@ -270,8 +246,11 @@ exports.upload = function(req, res) {
                 test.version = 'v1';
                 test.appVersion = 'web';
                 test.depth = test.rows.length;
+                
                 test.rows_compressed = downsample(test.rows, 3);
                 test.rows_small = downsample(test.rows, 5);
+                test.rows_mini = downsample(test.rows, 10);
+                test.rows_micro = compressRows(test.rows_mini, 4);
 
                 console.log("saving! " + test.hash);
                 test.save(function(err){
@@ -285,14 +264,15 @@ exports.upload = function(req, res) {
     });
 }
 
-function findAverage(data) {
-    var total = 0;
-    for (var i = 0; i < data.length; i++) {
-        total += data[i];
-    }
-    return (total / data.length).toFixed(0);
-}
 function downsample(rows, threshold) {
+    var findAverage = function(data) {
+      var total = 0;
+      for (var i = 0; i < data.length; i++) {
+          total += data[i];
+      }
+      return (total / data.length).toFixed(0);
+    }
+
     var newRows = [];
     var samples = [];
     for (var i = 0; i < rows.length; i++) {
@@ -419,6 +399,8 @@ exports.create = function(req, res) {
                 if (!req.body.removed) {
                   test.rows_compressed = downsample(test.rows,3);
                   test.rows_small = downsample(test.rows,5);
+                  test.rows_mini = downsample(test.rows, 10);
+                  test.rows_micro = compressRows(test.rows_mini, 4);
                 }
 
                 //console.log(test);
@@ -436,6 +418,147 @@ exports.create = function(req, res) {
     // test.save(function(err) {
     //     res.jsonp(test);
     // });
+};
+
+
+var compressRows = function(rows, n) {
+
+    function splitInt(streak) {
+        var streak1, streak2;//, streak3;
+        // if (streak > 188) {
+        //   streak1 = streak2 = 94;
+        //   streak3 = streak - 188;
+        // }
+        // else 
+        if (streak > 94) { // 94 = max ASCII printable values
+          streak1 = 94;
+          streak2 = streak - 94;
+          //streak3 = 0;
+        }
+        else {
+          streak1 = streak;
+          streak2 = 0;
+          //streak3 = 0;
+        }
+        return  String.fromCharCode(32 + streak1) +
+                String.fromCharCode(32 + streak2);
+                //+ String.fromCharCode(32 + streak3);
+    }
+    function unsplitInt(str) {
+        if (str.length != 2) return null; // 3
+        return  (str[0].charCodeAt(0) - 32) +
+                (str[1].charCodeAt(0) - 32);
+                // + (str[2].charCodeAt(0) - 32);
+    }
+
+    for (var r = 0; r < rows.length; r++) {
+      rows[r] = Math.floor(rows[r] / n) + 32; // 32 is offset for ASCII printable chars
+    }
+
+    var str = String.fromCharCode.apply(String, rows);
+    var chars = [];
+    var prev = null;
+    var streak = 1;
+    for (var s = 0; s < str.length; s++) {
+        var ch = str[s];
+        if (ch == prev) streak++;
+        else if (prev != null) {
+            chars.push([prev, streak]);
+            streak = 1;
+        }
+        prev = ch;
+    }
+    chars.push([prev, streak]);
+
+    var str2 = "";
+    for (var c = 0; c < chars.length; c++) {
+        var ch = chars[c][0];
+        var streak = chars[c][1];
+        if (streak > 4) {
+            // - newline = start
+            // - int < 188 encoded as 2-char ascii
+            // - ascii char
+            str2 += "\n" + splitInt(streak) + ch; 
+        }
+        else {
+            for (var k = 0; k < streak; k++) str2 += ch;
+        };
+    }
+    return str2;
+
+    // expand
+    // var str3 = "";
+    // for (var e = 0; e < str2.length; e++) {
+    //     var ch = str2[e];
+    //     if (ch != "\n") str3 += ch;
+    //     else {
+    //         var streak = str2.substr(e + 1, 2); //3
+    //         streak = unsplitInt(streak);
+    //         var _ch = str2[e+3]; //4
+    //         for (var k = 0; k < streak; k++) str3 += _ch;
+    //         e += 3; //4
+    //     }
+    // }
+}
+
+exports.fornow = function(req, res) {
+
+  var stream = Test.find({ version: 'v1' }).stream();
+
+  stream.on('data', function (test) {
+
+    test.rows_mini = downsample(test.rows, 10);
+    test.rows_micro = compressRows(test.rows_mini, 4);
+    //test.rows_micro = compressRows(test.rows_mini, 3);
+
+    test.save(function(err) {
+      if (err) console.log(err);
+      else console.log("SAVED!");
+    });
+
+    console.log("LEN : " + test.rows.length + "/" + test.rows_mini.length + "/" + test.rows_micro.length);
+  
+  }).on('error', function (err) {
+    // handle the error
+  }).on('close', function () {
+    // the stream is closed
+  });
+
+    // Test.find({ version: 'v1' })
+    // //.select('-rows')
+    // .exec(function(err, tests) {
+
+    //    console.log("TESTS: " + tests.length)
+
+    //     for (var i = 0; i < tests.length; i++) {
+
+    //       //(function(test) {
+    //          //var test = tests[i];
+    //         if (tests[i].rows.length > 0) {
+
+    //           // tests[i].rows_mini = downsample(tests[i].rows, 10);
+    //           // tests[i].rows_micro = compressRows(tests[i].rows_mini, 4);
+    //           //test.rows_micro = compressRows(test.rows_mini, 3);
+
+    //           tests[i].save(function(err) {
+    //             console.log(err);
+    //             console.log("hey?");
+    //             if (err) console.log(err);
+    //             else console.log("SAVED!");
+    //           });
+
+    //           //console.log(tests[i].save);
+
+    //           //console.log("LEN  " + i + ": " + tests[i].rows.length + "/" + tests[i].rows_mini.length + "/" + tests[i].rows_micro.length);
+
+    //         }
+
+    //       //})(tests[i]);
+         
+    //     }
+
+    // });
+    res.json({});
 };
 
 exports.getAll = function(req, res) {
@@ -746,3 +869,88 @@ exports.all = function(req, res) {
         }
     });
 };
+
+// var jpeg = require('jpeg-js');
+// exports.thumb = function(req, res) {
+
+//     var id = req.params.testId;
+//     Test.findOne({ _id: id, removed: { "$ne": true } })
+//     // only return rows_compressed
+//     .select('rows_small')
+//     .lean()
+//     .exec(function(err, test) {
+//         if (err) {
+//             res.render('error', {
+//                 status: 500
+//             });
+//         } else {
+
+//             var width = 300, height = 300;
+//             var frameData = new Buffer(width * height * 4);
+
+//             var color_on = [51,51,51];
+//             var color_off = [238,238,238];
+//             var color_none = [190,190,190];
+
+//             var pixels = [];
+//             for (var y = 0; y < height; y++) {
+//                 for (var x = 0; x < width; x++) {
+
+//                     if (y >= test.rows_small.length) {
+//                       pixels.push(color_none);
+//                       continue;
+//                     }
+
+//                     var pressure_expanded = (.00008 * Math.pow(test.rows_small[y],3));
+
+//                     var A_P4 = -194.1;
+//                     var B_P4 = .1304;
+//                     var C_P4 = -.0023124;
+//                     var D_P4 = 197.7;
+//                     var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
+
+//                     pressure_graph = pressure_graph * (width / 212);
+
+//                     if (x > pressure_graph) pixels.push(color_off);
+//                     else pixels.push(color_on);
+//                 }
+//             }
+
+//             // plot pixels
+//             var f = 0;
+//             for (var p = 0; p < pixels.length; p++) {
+//                 frameData[f + 0] = pixels[p][0];
+//                 frameData[f + 1] = pixels[p][1];
+//                 frameData[f + 2] = pixels[p][2];
+//                 frameData[f + 3] = 0;
+//                 f += 4;
+//             } 
+
+
+//             // var f = 0;
+//             // for (var i = 0; i < pixels.length; i++) {
+
+//             // }
+
+//             // var i = 0;
+//             // while (i < frameData.length) {
+//             //   frameData[i++] = pixels[i][0]; // red
+//             //   frameData[i++] = pixels[i][1]; // green
+//             //   frameData[i++] = pixels[i][2]; // blue
+
+//             //   frameData[i++] = 0xFF; // alpha - ignored in JPEGs
+//             // }
+
+//             var rawImageData = {
+//               data: frameData,
+//               width: width,
+//               height: height
+//             };
+//             var jpegImageData = jpeg.encode(rawImageData, 50);
+
+//             res.set('Content-Type', 'image/jpeg');
+//             res.send(jpegImageData.data);
+
+//         }
+//     });
+// }

@@ -279,29 +279,22 @@ exports.allMine = function(req, res) {
             var query2 = util._extend({}, query);
             query2.version = 'v1';
 
-            Test.find(query2).
-            select('type organization created updated location date user location elevation aspect slope rows_small published sharingLevel') 
+            Test.find(query2)
+            .select('type organization created updated location date user location elevation aspect slope rows_micro published sharingLevel') 
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
             .lean()
             .exec(function(err, obs) {
                 if (err) callback(err);
-                else  {
-                    for (var i = 0; i < obs.length; i++) {
-                        var rows = obs[i].rows_small;
-                        obs[i].rows_tiny = compressRows(rows);
-                        delete obs[i].rows_small;
-                    }
-                    callback(null, obs);
-                }
+                callback(null, obs);
             });
         },
 
         // manual profiles
         function(callback) {
 
-            Profile.find(query).
-            select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
+            Profile.find(query)
+            .select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
             .populate('user', 'fullName student')
             .populate('organization','name type logoUrl')
             .lean()
@@ -338,244 +331,10 @@ exports.allMine = function(req, res) {
     });
 }
 
-var compressRows = function(rows) {
-
-    function splitInt(streak) {
-        var streak1, streak2, streak3;
-        if (streak > 188) {
-          streak1 = streak2 = 94;
-          streak3 = streak - 188;
-        }
-        else if (streak > 94) {
-          streak1 = 94;
-          streak2 = streak - 94;
-          streak3 = 0;
-        }
-        else {
-          streak1 = streak;
-          streak2 = streak3 = 0;
-        }
-        return  String.fromCharCode(32 + streak1) +
-                String.fromCharCode(32 + streak2);
-                //+ String.fromCharCode(32 + streak3);
-    }
-    function unsplitInt(str) {
-        if (str.length != 2) return null; // 3
-        return  (str[0].charCodeAt(0) - 32) +
-                (str[1].charCodeAt(0) - 32);
-                // + (str[2].charCodeAt(0) - 32);
-    }
-
-    for (var r = 0; r < rows.length; r++) {
-      rows[r] = Math.floor(rows[r] / 2.69) + 32; // 32 is offset for ascii printable chars
-    }
-
-    var str = String.fromCharCode.apply(String, rows);
-    var chars = [];
-    var prev = null;
-    var streak = 1;
-    for (var s = 0; s < str.length; s++) {
-        var ch = str[s];
-        if (ch == prev) streak++;
-        else if (prev != null) {
-            chars.push([prev, streak]);
-            streak = 1;
-        }
-        prev = ch;
-    }
-    chars.push([prev, streak]);
-
-    var str2 = "";
-    for (var c = 0; c < chars.length; c++) {
-        var ch = chars[c][0];
-        var streak = chars[c][1];
-        if (streak > 4) {
-            str2 += "\n" + splitInt(streak) + ch; 
-        }
-        else {
-            for (var k = 0; k < streak; k++) str2 += ch;
-        };
-    }
-    return str2;
-
-    // expand
-    // var str3 = "";
-    // for (var e = 0; e < str2.length; e++) {
-    //     var ch = str2[e];
-    //     if (ch != "\n") str3 += ch;
-    //     else {
-    //         var streak = str2.substr(e + 1, 2); //3
-    //         streak = unsplitInt(streak);
-    //         var _ch = str2[e+3]; //4
-    //         for (var k = 0; k < streak; k++) str3 += _ch;
-    //         e += 3; //4
-    //     }
-    // }
-}
-
 exports.all = function(req, res) {
 
-    //  Profile.find({})
-    // //select('created title location date time depth layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.incline') 
-    // //.sort('-created')
-    // //.populate('user', 'fullName')
-    // .exec(function(err, profiles) {
-    //     if (err) {
-    //        // res.render('error', { status: 500 });
-    //     } else {
-
-    //         for (var i = 0; i < profiles.length; i++) {
-    //             var p = profiles[i];
-
-    //             //p.updated = p.created;
-
-    //             //p.save();
-
-    //             //console.log(p.updated)
-
-    //             //if (!p.metaData) p.metaData = {};
-
-    //             // if (p.sharingLevel) {
-    //             //     console.log(p.sharingLevel);
-    //             //     p.published = true;
-    //             //     p.save();
-    //             // }
-
-    //             // var elev = p.metaData.elevation;
-
-    //             // if (elev != null && elev != undefined) console.log(elev);
-
-    //             // if ((elev != null || elev != undefined) && typeof elev == 'string' && p.created < new Date('9/24/14')) {
-
-
-    //             //     var isFeet = null;
-
-    //             //     if (elev == "") elev = null;
-    //             //     else if (elev.indexOf("-") == 0) elev = null;
-    //             //     else if (elev == "1") elev = null;
-
-    //             //     // // else if (aspect.toLowerCase() == "n") aspect = 0;
-    //             //     // // else if (aspect.toLowerCase() == "ne") aspect = 45;
-    //             //     // // else if (aspect.toLowerCase() == "ssw") aspect = 202;
-    //             //     // // else if (aspect.toLowerCase() == "nw") aspect = 315;
-    //             //     // // else if (aspect.toLowerCase() == "se") aspect = 135;
-    //             //     // // else if (aspect.toLowerCase() == "sw") aspect = 225;
-    //             //     // else if (slope.toLowerCase() == "w") slope = 270;
-    //             //     // // else if (aspect.toLowerCase() == "wsw") aspect = 247;
-    //             //     // // else if (aspect.toLowerCase() == "ene") aspect = 67;
-    //             //     // // else if (aspect.toLowerCase() == "360") aspect = 0;
-
-    //             //     // // else if (aspect == "195 (S)") aspect = 195;
-    //             //     // // else if (aspect == "278 W") aspect = 278;
-
-    //             //     else if (elev.toLowerCase().indexOf("ft") != -1) {
-    //             //         //elev = elev.substr(0,elev.length-2);
-    //             //         isFeet = true;
-    //             //     }
-
-    //             //     if (elev != null) elev = elev.replace(/\D/g,'');
-
-    //             //     if (parseInt(elev) > 6800) isFeet = true;
-
-
-    //             //     if (p.metaData.location) {
-    //             //         if (p.metaData.location.toLowerCase().indexOf("cambridge") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("snyderville") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("snyderville") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf(", or") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("heber, ut") != -1) {
-    //             //             isFeet = false;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("joachim") != -1) {
-    //             //             isFeet = false;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("triple") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("forecaster") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("mores") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("truckee") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("revelstoke") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("revelstoke") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("castle") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("chile") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("nevados") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("furcl") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("abbot") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //         else if (p.metaData.location.toLowerCase().indexOf("cottonwood") != -1) {
-    //             //             isFeet = true;
-    //             //         }
-    //             //     }
-
-
-    //             //     if (p.metaData.elevation.toLowerCase().indexOf("m") != -1) {
-    //             //         isFeet = false;
-    //             //     }
-    //             //     // //if (aspect != null) aspect = parseInt(aspect);
-
-    //             //     //if (isFeet == null)
-    //             //     //    console.log(p.metaData.location + " - " + p.metaData.elevation +","+ elev + "..." + isFeet);
-
-    //             //     if (isFeet == true) {
-    //             //         elev = parseInt(elev * 0.3048).toFixed(0);
-    //             //     }
-
-    //             //     p.metaData.elevation = elev;
-                    
-    //             //     //console.log(p.metaData.elevation +","+ elev);
-    //             //     //console.log(p.metaData.elevation);
-    //             //     // p.metaData.slope = slope;
-
-    //             //     p.markModified('metaData');
-
-    //             //     p.save(function(err){ console.log(err); });
-    //             // }
-    //             //console.log(p.metaData.slope);
-
-    //             //if (p.metaData.aspect) p.date = p.metaData.date;
-
-    //             // if (!p.date) p.date = p.created;
-
-    //             //console.log(p.date);
-
-    //             //p.save(function(){ console.log("saved!"); });
-    //         }
-    //         //console.log(profiles.length);
-
-    //         //res.json(profiles);
-    //     }
-    // });
-
-
-
+    var verbose = req.query.verbose === 'true';
+    verbose = false;
 
     
     var e = new Date().getTime();
@@ -587,6 +346,7 @@ exports.all = function(req, res) {
 
     Organization.find(orgQuery)
     .select('_id')
+    .lean()
     .exec(function(err, orgs) {
         var _orgs = []; for (var i = 0; i < orgs.length; i++)  _orgs.push(orgs[i]._id);
 
@@ -618,7 +378,7 @@ exports.all = function(req, res) {
             queries.push({ published: true, user: req.user });
 
             // orgs
-            queries.push({  published: true, sharedOrganizations: { '$in': _orgs }, sharingLevel: 'org' });
+            queries.push({ published: true, sharedOrganizations: { '$in': _orgs }, sharingLevel: 'org' });
 
             // all pros
             queries.push({ published: true, sharingLevel: 'pros' });
@@ -652,42 +412,46 @@ exports.all = function(req, res) {
         // combine "and" queries
         query['$and'] = andQueries;
 
+        // get data asynchronously
         Async.parallel([
 
             // SP1 profiles
             function(callback) {
-            var d = new Date().getTime();
+                var d = new Date().getTime();
 
                 var query2 = util._extend({}, query);
                 query2['$and'].push({ removed: { "$ne": true } });
 
-                Test.find(query2).
-                select('type organization created updated location date user published location elevation aspect slope rows_small') 
+                // var verboseFields = "";
+                // if (verbose) {
+                    verboseFields = "rows_micro";
+                //}
+
+                Test.find(query2)
+                .select('type location organization created updated date user published elevation aspect slope ' + verboseFields) 
                 .populate('user', 'fullName student')
-                .populate('organization','name type logoUrl')
+                .populate('organization','name type') // logoUrl
                 .lean()
                 .exec(function(err, obs) {
                     console.log("TIME S: " + (new Date().getTime() - d) + " ms");
                     if (err) callback(err);
-                    else  {
-                        for (var i = 0; i < obs.length; i++) {
-                            var rows = obs[i].rows_small;
-                            obs[i].rows_tiny = compressRows(rows);
-                            delete obs[i].rows_small;
-                        }
-                        callback(null, obs);
-                    }
+                    callback(null, obs);
                 });
             },
 
             // manual profiles
             function(callback) {
-            var d = new Date().getTime();
+                var d = new Date().getTime();
 
-                Profile.find(query).
-                select('type organization created updated location date time depth published sharingLevel layers.depth layers.hardness2 layers.hardness layers.height user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope') 
+                //var verboseFields = "";
+                //if (verbose) {
+                    verboseFields = "layers.depth layers.hardness2 layers.hardness layers.height";
+                //}
+
+                Profile.find(query)
+                .select('type location organization created updated date time depth published sharingLevel  user metaData.location metaData.elevation metaData.date metaData.time metaData.aspect metaData.slope ' + verboseFields) 
                 .populate('user', 'fullName student')
-                .populate('organization','name type logoUrl')
+                .populate('organization','name type') //logoUrl
                 .lean()
                 .exec(function(err, obs) {
                     console.log("TIME M: " + (new Date().getTime() - d) + " ms");
@@ -698,12 +462,17 @@ exports.all = function(req, res) {
 
             // avalanches
             function(callback) {
-            var d = new Date().getTime();
+                var d = new Date().getTime();
+
+                var verboseFields = "";
+                // if (verbose) {
+                //     verboseFields = "";
+                // }
 
                 Observation.find(query)
-                .select('type organization created updated location date time published locationName user elevation aspect photos slope') 
+                .select('type location organization created updated date time published locationName user elevation aspect slope photos ' + verboseFields) 
                 .populate('user', 'fullName')
-                .populate('organization','name type logoUrl')
+                .populate('organization','name type') //logoUrl
                 .lean()
                 .exec(function(err, obs) {
                     console.log("TIME A: " + (new Date().getTime() - d) + " ms");
@@ -714,8 +483,6 @@ exports.all = function(req, res) {
         ],
         function(err, results) {
 
-            var d = new Date().getTime();
-
             var _results = [];
             // combine SP1 profiles 
             _results = _results.concat(results[0]);
@@ -725,7 +492,6 @@ exports.all = function(req, res) {
             _results = _results.concat(results[2]);
 
             console.log("TOTAL ITEMS: " + _results.length);
-            console.log("TIME: " + (new Date().getTime() - d) + " ms");
 
             if (err) res.render('error', { status: 500 });
             else res.json(_results);

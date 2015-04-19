@@ -18,7 +18,6 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants'
     template += '    <li ng-show="selectedCategory" class="divider"></li>';
     template += '    <li ng-repeat-start="category in grainTypes"></li>';
     template += '    <li ng-show="selectedCategory == category.legacyCode" ng-repeat="type in category.types"><a href="#" ng-click="setGrainType(category.legacyCode,type.code)" close-dropdown-on-click style="padding-top:0px;padding-bottom:0px;"><span class="snowsym" style="font-size:19px;position:relative;right:7px;"><span ng-style="type.style">{{ type.symbol }}</span></span> {{ type.desc }}</a></li>';
-    //$parent.selectedCategory
     template += '    <li ng-repeat-end></li>';
     template += '  </ul>';
     template += '</div>';

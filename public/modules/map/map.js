@@ -118,7 +118,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
             var allMarkers = {};
             $scope.mapLayer.eachLayer(function(marker) { 
-                allMarkers[marker._id] = marker;
+                allMarkers[marker.profile._id] = marker;
             });
 
             var allProfileIds = [];
@@ -138,17 +138,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
             // if not in list, make invisible
             $scope.mapLayer.eachLayer(function(marker) {
-                if(allProfileIds.indexOf(marker._id) == - 1 && marker.options && marker.options.icon && marker.options.icon.options &&
+                if(allProfileIds.indexOf(marker.profile._id) == - 1 && marker.options && marker.options.icon && marker.options.icon.options &&
                     marker.options.icon.options.className) {
 
                     marker.setOpacity(0);
                     marker._icon.style.pointerEvents = "none";
                 }
-                // open popup automatically if new_id is specified (from querystring)
-                if ($scope.new_id && marker._id == $scope.new_id) {
-                    $scope.new_id = null;
-                    marker.openPopup();
-                }
+                // // open popup automatically if new_id is specified (from querystring)
+                // if ($scope.new_id && marker.profile._id == $scope.new_id) {
+                //     $scope.new_id = null;
+                //     marker.openPopup();
+                // }
 
             });
 
@@ -633,6 +633,52 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // add scale control to map
     //new L.control.scale().addTo($scope.map);
 
+    // pre-compile map popup
+    // todo: move this into a standalone template file
+    $scope.compiledPopup;
+    (function(){
+
+        var html = '<div>';
+
+        html += '<div class="popup-title">';
+        html += "<span ng-if='profile.type==\"profile\"'>Snowpit</span>";
+        html += "<span ng-if='profile.type==\"test\"'>SP1 Profile</span>";
+        html += "<span ng-if='profile.type==\"avy\"'>Avalanche</span>";
+
+        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
+        html += '</div>';
+
+        html += '<a href=\'/{{ profile.type.substr(0,1) }}/{{ profile._id }}\' style="color:#222;">'
+
+        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
+
+        // profile
+        html += '<canvas ng-if="profile.type==\'profile\'" profile="profile" width="200" height="200" class="thumb"></canvas>';
+        // test
+        html += '<canvas ng-if="profile.type==\'test\'" graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
+        // avy
+        html += "<div ng-if='profile.type==\"avy\"' ng-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ ::profile.photos[0].url }}\")'></div>";
+
+        html += '<div class="popup-content">';
+
+        html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{ ::profile.user.fullName}} <span ng-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
+
+        html += "<div ng-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ ::profile.organization.name }}</div>";
+
+        html += "<div><i style='margin-right:3px;' class='fa fa-clock-o'></i>  {{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>";
+
+        // profile or test
+        html += "<div ng-if='profile.type==\"profile\" || profile.type==\"test\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.metaData.location }}</div>";
+        // avy
+        html += "<div ng-if='profile.type==\"avy\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.locationName }}</div>";
+        
+        html += "</div>";
+        html += "</a>";
+        html += "</div>";
+
+        $scope.compiledPopup = $compile(angular.element(html));
+
+    })();
 
     $scope.addToMap = function(profile) {
         if (!profile.location) return;
@@ -640,74 +686,29 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         var point = [profile.location[1],profile.location[0]];
 
         // todo: check if point is within map bounds
-
+        
         var marker = L.marker(point, {
-            type: profile.type,
             icon: L.divIcon({
                 className: 'count-icon-' + profile.type,
-                // Define what HTML goes inside each marker.
                 html: "",
-                // Set a markers width and height.
                 iconSize: [14, 14]
             })
         });
 
+        // associate profile with marker
         marker.profile = profile;
-        marker._id = profile._id;
 
+        // create scope for popup (true indicates isolate scope)
+        var newScope = $scope.$new(true);
+        newScope.profile = profile;
 
-        var html = '<div>';
+        // bind scope to pre-compiled popup template
+        $scope.compiledPopup(newScope, function(clonedElement) {
 
-        html += '<div class="popup-title">';
-        if (profile.type == 'profile') html += 'Snowpit';
-        else if (profile.type == 'test') html += 'SP1 Profile';
-        else if (profile.type == 'avy') html += 'Avalanche';
-        html += '</div>';
-
-        html += '<a href=\'/{{ profile.type.substr(0,1) }}/{{ profile._id }}\' style="color:#222;">'
-
-        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
-
-        if (profile.type == 'profile') {
-            html += '<canvas profile="profile" width="200" height="200" class="thumb"></canvas>';
-        }
-        else if (profile.type == 'test') {
-            html += '<canvas graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
-        }
-        else if (profile.type == 'avy') {
-            html += "<div ng-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ profile.photos[0].url }}\")'>"
-            html += "</div>";
-        }
-
-        html += '<div class="popup-content">';
-
-        html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{profile.user.fullName}} <span ng-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
-
-        html += "<div ng-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ profile.organization.name }}</div>";
-
-        html += "<div><i style='margin-right:3px;' class='fa fa-clock-o'></i>  {{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>";
-
-        if (profile.type == 'profile' || profile.type == 'test') {
-            html += "<div><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ profile.metaData.location }}</div>";
-        }
-        else if (profile.type == 'avy') {
-            html += "<div><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ profile.locationName }}</div>";
-        }
-
-        html += "</div>";
-        html += "</a>";
-        html += "</div>";
-
-        var d = new Date().getTime();
-        var linkFunction = $compile(angular.element(html));
-        var newScope = $scope.$new();
-        newScope.profile =  profile;
-        var str = linkFunction(newScope)[0];
-        console.log("TIME: " + (new Date().getTime() - d));
-
-        marker.bindPopup(str, {
-            className: 'popup-' + profile.type,
-            //minWidth: 180,
+            marker.bindPopup(clonedElement[0], {
+                className: 'popup-' + profile.type,
+                //minWidth: 180,
+            });
         });
 
         // marker.on('mouseover', function(e) {
@@ -748,7 +749,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
             $scope.mapLayer.eachLayer(function(marker) {
 
-                var className = "count-icon-" + marker.options.type;
+                var className = "count-icon-" + marker.profile.type;
                 if (profile) className += ' inactive';
 
                 if (marker.options.icon.options.className.indexOf("selected") == -1) {
@@ -760,7 +761,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                     marker.setZIndexOffset(-1000);
                 }
 
-                if(profile && marker.options.type == profile.type && marker._id == profile._id && 
+                if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id && 
 
                     marker.options.icon && 
                     marker.options.icon.options &&
@@ -768,7 +769,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                     marker.options.icon.options.className.indexOf("selected") == -1) {
 
                     marker.setIcon(L.divIcon({
-                        className: "count-icon-" + marker.options.type + ' active',
+                        className: "count-icon-" + marker.profile.type + ' active',
                         html: "",
                         iconSize: [14, 14]
                     }));
@@ -805,20 +806,20 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.mapLayer.eachLayer(function(marker) {
                 
                 marker.setIcon(L.divIcon({
-                    className: "count-icon-" + marker.options.type,
+                    className: "count-icon-" + marker.profile.type,
                     html: "",
                     iconSize: [14, 14]
                 }));
                 marker.setZIndexOffset(-1000);
 
-                console.log(marker.options.type + "," + profile.type);
+                console.log(marker.profile.type + "," + profile.type);
 
-                if(profile && marker.options.type == profile.type && marker._id == profile._id &&
+                if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id &&
                     marker.options && marker.options.icon && marker.options.icon.options &&
                     marker.options.icon.options.className) {
 
                     marker.setIcon(L.divIcon({
-                        className: "count-icon-" + marker.options.type + ' selected',
+                        className: "count-icon-" + marker.profile.type + ' selected',
                         html: "",
                         iconSize: [14, 14]
                     }));
@@ -1189,7 +1190,7 @@ $scope.goTo = function(result) {
         //     //console.log($scope.mapLayer);
         //     //$scope.mapLayer.setOpacity(0);
         //     $scope.mapLayer.eachLayer(function(marker) {
-        //         //if(allProfileIds.indexOf(marker._id) == - 1) {
+        //         //if(allProfileIds.indexOf(marker.profile._id) == - 1) {
         //             //$scope.mapLayer.removeLayer(marker);
         //             //marker.setOpacity(.2);
         //             console.log(marker);
@@ -1198,7 +1199,7 @@ $scope.goTo = function(result) {
         //             marker.options.icon.options.iconSize = [10, 10];
         //         //}
         //         // // open popup automatically if new_id is specified (from querystring)
-        //         // if ($scope.new_id && marker._id == $scope.new_id) {
+        //         // if ($scope.new_id && marker.profile._id == $scope.new_id) {
         //         //     $scope.new_id = null;
         //         //     marker.openPopup();
         //         // }

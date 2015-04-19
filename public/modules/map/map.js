@@ -694,16 +694,16 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             html += "<div><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ profile.locationName }}</div>";
         }
 
-        //html += "<div style='margin-top:6px;'><button class='btn btn-sm btn-default' style='width:100%;'>More Details&nbsp;&nbsp;<i class='fa fa-angle-right'></i></button>";
-
         html += "</div>";
         html += "</a>";
         html += "</div>";
 
+        var d = new Date().getTime();
         var linkFunction = $compile(angular.element(html));
         var newScope = $scope.$new();
         newScope.profile =  profile;
         var str = linkFunction(newScope)[0];
+        console.log("TIME: " + (new Date().getTime() - d));
 
         marker.bindPopup(str, {
             className: 'popup-' + profile.type,
@@ -739,34 +739,44 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         el.data().$dropdownController.toggle()
     };
 
+    var hoverDelay;
     $scope.hoverProfile = function(profile) {
-        $scope.mapLayer.eachLayer(function(marker) {
+        // debounce
+        if (hoverDelay) $timeout.cancel(hoverDelay);
+        hoverDelay = $timeout(function(){
+            $scope.hideMapButtons = !!profile;
 
-            if (marker.options.icon.options.className.indexOf("selected") == -1) {
-                marker.setIcon(L.divIcon({
-                    className: "count-icon-" + marker.options.type,
-                    html: "",
-                    iconSize: [14, 14]
-                }));
-                marker.setZIndexOffset(-1000);
-            }
+            $scope.mapLayer.eachLayer(function(marker) {
 
-            if(profile && marker.options.type == profile.type && marker._id == profile._id && 
+                var className = "count-icon-" + marker.options.type;
+                if (profile) className += ' inactive';
 
-                marker.options.icon && 
-                marker.options.icon.options &&
-                marker.options.icon.options.className && 
-                marker.options.icon.options.className.indexOf("selected") == -1) {
+                if (marker.options.icon.options.className.indexOf("selected") == -1) {
+                    marker.setIcon(L.divIcon({
+                        className: className,
+                        html: "",
+                        iconSize: [14, 14]
+                    }));
+                    marker.setZIndexOffset(-1000);
+                }
 
-                marker.setIcon(L.divIcon({
-                    className: "count-icon-" + marker.options.type + ' active',
-                    html: "",
-                    iconSize: [14, 14]
-                }));
-                marker.setZIndexOffset(1000);
-            }
+                if(profile && marker.options.type == profile.type && marker._id == profile._id && 
 
-        });
+                    marker.options.icon && 
+                    marker.options.icon.options &&
+                    marker.options.icon.options.className && 
+                    marker.options.icon.options.className.indexOf("selected") == -1) {
+
+                    marker.setIcon(L.divIcon({
+                        className: "count-icon-" + marker.options.type + ' active',
+                        html: "",
+                        iconSize: [14, 14]
+                    }));
+                    marker.setZIndexOffset(1000);
+                }
+
+            });
+        }, 120);
     }
 
 
@@ -1213,6 +1223,10 @@ $scope.goTo = function(result) {
         //     map.featureLayer.setFilter(function() { return false; });
         // }
     });
+
+    $scope.href = function (path) {
+      $location.path(path);
+    };
 
     // terrain shading
 

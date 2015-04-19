@@ -108,8 +108,8 @@
 .leaflet-popup-content .thumb {
 	  margin-top: 5px;
 	  margin-bottom: 0;
-	  width: 90px;
-	  height: 90px;
+	  width: 77px;
+	  height: 77px;
 	  background: #eee;
 	  margin-left: 5px;
 	  margin-right: 6px;
@@ -129,9 +129,10 @@
 	border-top-left-radius: 3px;
 }
 .leaflet-popup-content .popup-content {
-	padding: 6px;
+	padding-left: 6px;
 	padding-top: 3px;
 	padding-right: 12px;
+	padding-bottom: 1px;
 	display:inline-block;
 	vertical-align: top;
 	font-weight:100;
@@ -546,6 +547,12 @@
   box-shadow: 0px 0px 1px rgba(0,0,0,1) !important;
 }
 
+.count-icon-profile.inactive,
+.count-icon-test.inactive,
+.count-icon-avy.inactive {
+  opacity:  .3;
+}
+
 .count-icon-profile,
 .count-icon-test,
 .count-icon-avy {
@@ -834,8 +841,11 @@
 		color: #000;
 	}
 
-	.side-list-item a {
+	.side-list-item {
 		text-decoration: none;
+		color:#666;
+		font-weight:100;
+		cursor: pointer;
 	}
 
 	.side-list-item {
@@ -1229,7 +1239,7 @@
 			<i class="ion-map"></i>
 		</div>-->
 
-		<div class="mapLayers" ng-show="selectedBaseLayer">
+		<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
 		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
 		    <div class="btn-group dropup" dropdown>
 		      <button type="button" class="dropdown-toggle">
@@ -1253,7 +1263,7 @@
 		    </div>
 		</div>
 
-		<div class="mapSearch">
+		<div class="mapSearch" ng-hide="hideMapButtons">
 		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
 		    <div class="btn-group pull-right" dropdown>
 		      <button type="button" class="dropdown-toggle" ng-click="focusLocationSearchInput()">
@@ -1511,13 +1521,13 @@
 			</div>
 			<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
 
-			<div ng-repeat="profile in $parent.filteredProfiles = (profiles | filter: doSearch) | orderBy: '-date' track by profile._id" class="side-list-item">
+			<div ng-repeat="profile in $parent.filteredProfiles = (profiles | filter: doSearch) | orderBy: '-date' track by profile._id" class="side-list-item"
 
-				<a style="padding:0px;color:#666;font-weight:100;" 
-				href="/{{ profile.type[0] }}/{{ profile._id }}" 
+				ng-click="href('/' + profile.type[0] + '/' + profile._id)" 
+
 				ng-mouseover="hoverProfile(profile)"
 				ng-mouseout="hoverProfile()"
-				old-ng-click="openProfile(profile)">
+				>
 
 					<div class="bar {{ profile.type }}"></div>
 
@@ -1549,8 +1559,6 @@
 						profile.location[1] + ', ' + profile.location[0] :
 						'NO LOCATION'
 						 }}</div>
-
-				</a>
 
 			</div>
 			<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">

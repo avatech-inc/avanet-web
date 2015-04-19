@@ -63,7 +63,8 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 mixpanel.track('logout');
                 mixpanel.identify();
 
-	            $state.transitionTo("login", null, {location:'replace'});
+	            //$state.transitionTo("login", null, {location:'replace'});
+                window.location.href = "/login";
             },
 
 

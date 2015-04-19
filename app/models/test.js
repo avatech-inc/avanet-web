@@ -40,6 +40,8 @@ var schema = new Schema({
     rows: [{ type: Schema.Types.Mixed }],
     rows_compressed: [{ type: Schema.Types.Mixed }],
     rows_small: [{ type: Schema.Types.Mixed }],
+    rows_mini: [{ type: Schema.Types.Mixed }],
+    rows_micro: { type: String },
 
     version: { type: String },
 

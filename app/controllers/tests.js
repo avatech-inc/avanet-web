@@ -246,7 +246,7 @@ exports.upload = function(req, res) {
                 test.version = 'v1';
                 test.appVersion = 'web';
                 test.depth = test.rows.length;
-                
+
                 test.rows_compressed = downsample(test.rows, 3);
                 test.rows_small = downsample(test.rows, 5);
                 test.rows_mini = downsample(test.rows, 10);
@@ -821,13 +821,7 @@ exports.destroy = function(req, res) {
 
 exports.show = function(req, res) {
     var id = req.params.testId;
-
-    // Test.load(id, function(err, test) {
-    //     if (err) return next(err);
-    //     if (!test) return next(new Error('Failed to load test ' + id));
-    //     res.jsonp(test);
-    // });
-
+    
     Test.findOne({ _id: id, removed: { "$ne": true } })
     // only return rows_compressed
     .select('-rows -rows_small')

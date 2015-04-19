@@ -686,7 +686,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         var point = [profile.location[1],profile.location[0]];
 
         // todo: check if point is within map bounds
-        
+
         var marker = L.marker(point, {
             icon: L.divIcon({
                 className: 'count-icon-' + profile.type,
@@ -1134,12 +1134,22 @@ $scope.goTo = function(result) {
         // zoom level
         var verbose = ($scope.map.getZoom() > 7); 
 
+        // padding in pixels (so we don't get cut-off map points)
+        var padding = 8;
+
+        var point_ne = $scope.map.latLngToContainerPoint(bounds._northEast);
+        point_ne.y += padding; point_ne.x -= padding;
+        point_ne = $scope.map.containerPointToLatLng(point_ne);
+
+        var point_sw = $scope.map.latLngToContainerPoint(bounds._southWest);
+        point_sw.y -= padding; point_sw.x += padding;
+        point_sw = $scope.map.containerPointToLatLng(point_sw);
+
+        // get obs from server
         $http.get('/v1/all-observations', 
         { params: { 
-            nelat: bounds._northEast.lat, 
-            nelng: bounds._northEast.lng, 
-            swlat: bounds._southWest.lat, 
-            swlng: bounds._southWest.lng, 
+            nelat: point_ne.lat, nelng: point_ne.lng, 
+            swlat: point_sw.lat, swlng: point_sw.lng, 
             verbose: verbose
           }, 
           timeout: $scope.canceler.promise

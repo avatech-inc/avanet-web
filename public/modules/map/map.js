@@ -672,7 +672,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             html += '<canvas profile="profile" width="200" height="200" class="thumb"></canvas>';
         }
         else if (profile.type == 'test') {
-            html += '<canvas graph="profile.rows_tiny" width="200" height="200" class="thumb"></canvas>';
+            html += '<canvas graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
         }
         else if (profile.type == 'avy') {
             html += "<div ng-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ profile.photos[0].url }}\")'>"

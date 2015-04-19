@@ -115,32 +115,32 @@ UserSchema.path('hashed_password').validate(function(hashed_password) {
 /**
  * Pre-save hook
  */
-UserSchema.pre('save', function(next) {
-    //if (!this.isNew) return next();
+// UserSchema.pre('save', function(next) {
+//     //if (!this.isNew) return next();
 
-    console.log("PRE SAVE:");
-    // console.log(this._id);
-    // console.log(this.hashedId);
+//     console.log("PRE SAVE:");
+//     // console.log(this._id);
+//     // console.log(this.hashedId);
 
-    // set hashedId
-    // if (!this.hashedId) {
-    //     var Hashids = require("hashids"),
-    //     hashids = new Hashids("isaidnosalt");
-    //     this.hashedId = hashids.encryptHex(this._id);
+//     // set hashedId
+//     // if (!this.hashedId) {
+//     //     var Hashids = require("hashids"),
+//     //     hashids = new Hashids("isaidnosalt");
+//     //     this.hashedId = hashids.encryptHex(this._id);
 
-    //     console.log("IDs:");
-    //     console.log(this._id);
-    //     console.log(this.hashedId);
-    //     //var objectId = hashids.decryptHex(hash);
-    // }
+//     //     console.log("IDs:");
+//     //     console.log(this._id);
+//     //     console.log(this.hashedId);
+//     //     //var objectId = hashids.decryptHex(hash);
+//     // }
 
-    next();
+//     next();
 
-    // if (!validatePresenceOf(this.password) && authTypes.indexOf(this.provider) === -1)
-    //     next(new Error('Invalid password'));
-    // else
-    //     next();
-});
+//     // if (!validatePresenceOf(this.password) && authTypes.indexOf(this.provider) === -1)
+//     //     next(new Error('Invalid password'));
+//     // else
+//     //     next();
+// });
 
 /**
  * Methods

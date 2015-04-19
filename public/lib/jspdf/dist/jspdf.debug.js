@@ -830,7 +830,6 @@ var jsPDF = (function(global) {
 				case undefined:
 					return buildDocument();
 				case 'save':
-					console.log("export 1");
 					if (navigator.getUserMedia) {
 						if (global.URL === undefined
 						|| global.URL.createObjectURL === undefined) {
@@ -838,8 +837,6 @@ var jsPDF = (function(global) {
 						}
 					}
 					saveAs(getBlob(), options);
-					console.log("OPTIONS:");
-					console.log(options);
 					if(typeof saveAs.unload === 'function') {
 						if(global.setTimeout) {
 							setTimeout(saveAs.unload,911);
@@ -847,28 +844,22 @@ var jsPDF = (function(global) {
 					}
 					break;
 				case 'arraybuffer':
-					console.log("export 2");
 					return getArrayBuffer();
 				case 'blob':
-					console.log("export 3");
 					return getBlob();
 				case 'bloburi':
 				case 'bloburl':
-					console.log("export 4");
 					// User is responsible of calling revokeObjectURL
 					return global.URL && global.URL.createObjectURL(getBlob()) || void 0;
 				case 'datauristring':
 				case 'dataurlstring':
-					console.log("export 5");
 					return datauri;
 				case 'dataurlnewwindow':
-					console.log("export 6");
 					var nW = global.open(datauri);
 					if (nW || typeof safari === "undefined") return nW;
 					/* pass through */
 				case 'datauri':
 				case 'dataurl':
-					console.log("export 7");
 					return global.document.location.href = datauri;
 				default:
 					throw new Error('Output type "' + type + '" is not supported.');
@@ -5756,7 +5747,7 @@ jsPDFAPI.putTotalPages = function(pageExpression) {
 }(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this.content || this));
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
- * 2014-11-29
+ * 2014-08-29
  *
  * By Eli Grey, http://eligrey.com
  * License: X11/MIT
@@ -5805,10 +5796,9 @@ var saveAs = saveAs
 		}
 		, force_saveable_type = "application/octet-stream"
 		, fs_min_size = 0
-		// See https://code.google.com/p/chromium/issues/detail?id=375297#c7 and
-		// https://github.com/eligrey/FileSaver.js/commit/485930a#commitcomment-8768047
-		// for the reasoning behind the timeout and revocation flow
-		, arbitrary_revoke_timeout = 500 // in ms
+		// See https://code.google.com/p/chromium/issues/detail?id=375297#c7 for
+		// the reasoning behind the timeout and revocation flow
+		, arbitrary_revoke_timeout = 10
 		, revoke = function(file) {
 			var revoker = function() {
 				if (typeof file === "string") { // file is an object URL
@@ -5860,7 +5850,7 @@ var saveAs = saveAs
 						var new_tab = view.open(object_url, "_blank");
 						if (new_tab == undefined && typeof safari !== "undefined") {
 							//Apple do not allow window.open, see http://bit.ly/1kZffRI
-							view.location.href = object_url;
+							view.location.href = object_url
 						}
 					}
 					filesaver.readyState = filesaver.DONE;
@@ -5993,7 +5983,7 @@ var saveAs = saveAs
 
 if (typeof module !== "undefined" && module !== null) {
   module.exports = saveAs;
-} else if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
+} else if ((typeof define !== "undefined" && 0)) {
   define([], function() {
     return saveAs;
   });
@@ -9367,111 +9357,3 @@ var FlateStream = (function() {
 	}
 
 })(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this);
-
-/* canvas-toBlob.js
- * A canvas.toBlob() implementation.
- * 2011-07-13
- * 
- * By Eli Grey, http://eligrey.com and Devin Samarin, https://github.com/eboyjr
- * License: X11/MIT
- *   See LICENSE.md
- */
-
-/*global self */
-/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
-  plusplus: true */
-
-/*! @source http://purl.eligrey.com/github/canvas-toBlob.js/blob/master/canvas-toBlob.js */
-
-(function(view) {
-"use strict";
-var
-	  Uint8Array = view.Uint8Array
-	, HTMLCanvasElement = view.HTMLCanvasElement
-	, is_base64_regex = /\s*;\s*base64\s*(?:;|$)/i
-	, base64_ranks
-	, decode_base64 = function(base64) {
-		var
-			  len = base64.length
-			, buffer = new Uint8Array(len / 4 * 3 | 0)
-			, i = 0
-			, outptr = 0
-			, last = [0, 0]
-			, state = 0
-			, save = 0
-			, rank
-			, code
-			, undef
-		;
-		while (len--) {
-			code = base64.charCodeAt(i++);
-			rank = base64_ranks[code-43];
-			if (rank !== 255 && rank !== undef) {
-				last[1] = last[0];
-				last[0] = code;
-				save = (save << 6) | rank;
-				state++;
-				if (state === 4) {
-					buffer[outptr++] = save >>> 16;
-					if (last[1] !== 61 /* padding character */) {
-						buffer[outptr++] = save >>> 8;
-					}
-					if (last[0] !== 61 /* padding character */) {
-						buffer[outptr++] = save;
-					}
-					state = 0;
-				}
-			}
-		}
-		// 2/3 chance there's going to be some null bytes at the end, but that
-		// doesn't really matter with most image formats.
-		// If it somehow matters for you, truncate the buffer up outptr.
-		return buffer.buffer;
-	}
-;
-if (Uint8Array) {
-	base64_ranks = new Uint8Array([
-		  62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1
-		, -1, -1,  0, -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9
-		, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
-		, -1, -1, -1, -1, -1, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
-		, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
-	]);
-}
-if (HTMLCanvasElement && !HTMLCanvasElement.prototype.toBlob) {
-	HTMLCanvasElement.prototype.toBlob = function(callback, type /*, ...args*/) {
-		  if (!type) {
-			type = "image/png";
-		} if (this.mozGetAsFile) {
-			callback(this.mozGetAsFile("canvas", type));
-			return;
-		}
-		var
-			  args = Array.prototype.slice.call(arguments, 1)
-			, dataURI = this.toDataURL.apply(this, args)
-			, header_end = dataURI.indexOf(",")
-			, data = dataURI.substring(header_end + 1)
-			, is_base64 = is_base64_regex.test(dataURI.substring(0, header_end))
-			, blob
-		;
-		if (Blob.fake) {
-			// no reason to decode a data: URI that's just going to become a data URI again
-			blob = new Blob
-			if (is_base64) {
-				blob.encoding = "base64";
-			} else {
-				blob.encoding = "URI";
-			}
-			blob.data = data;
-			blob.size = data.length;
-		} else if (Uint8Array) {
-			if (is_base64) {
-				blob = new Blob([decode_base64(data)], {type: type});
-			} else {
-				blob = new Blob([decodeURIComponent(data)], {type: type});
-			}
-		}
-		callback(blob);
-	};
-}
-}(self));

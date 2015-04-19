@@ -270,10 +270,9 @@ angular.module('avatech').directive('graphBig', function() {
 angular.module('avatech').directive('graph', function() {
   return {
     restrict: 'A',
-    //scope: { rows: '=graph' },
     link: function(scope, element, attrs) {
 
-        // expand
+        // expand compressed ascii string
         function expand(str) {
             var unsplitInt = function(_str) {
                 if (_str.length != 2) return null; // 3
@@ -281,7 +280,7 @@ angular.module('avatech').directive('graph', function() {
                         (_str[1].charCodeAt(0) - 32);
                         // + (str[2].charCodeAt(0) - 32);
             }
-            // expand ASCII string
+            // expand ascii string
             var expanded = "";
             for (var e = 0; e < str.length; e++) {
                 var ch = str[e];
@@ -294,10 +293,10 @@ angular.module('avatech').directive('graph', function() {
                     e += 3; //4
                 }
             }
-            // convert ASCII string into array of numbers
+            // convert ascii string into array of numbers
             var _rows = [];
             for (var i = 0; i < expanded.length; i++) {
-                // adjust for ASCII offset and multiply by 4 (decompress)
+                // adjust for ascii offset and multiply by 4 (decompress)
                 _rows.push((expanded[i].charCodeAt(0) - 32) * 3.9);
             }
             return _rows;
@@ -306,7 +305,7 @@ angular.module('avatech').directive('graph', function() {
         var rows = scope.$eval(attrs.graph);
         if (!rows) return;
 
-        // expand if string
+        // expand if compressed ascii string
         if (typeof rows === 'string') {
             rows = expand(rows);
         }

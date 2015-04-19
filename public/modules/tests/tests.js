@@ -185,7 +185,6 @@ angular.module('avatech').directive('graphBig', function() {
             // if no data, don't continue
             if (!rows) return;
 
-
             var threshold = 3;
 
             var canvas = element[0];
@@ -203,7 +202,7 @@ angular.module('avatech').directive('graphBig', function() {
                 var D_P4 = 197.7;
                 var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
 
-                pressure_graph = pressure_graph * (canvas.width / 214);
+                pressure_graph = pressure_graph * (canvas.width / 215);
 
                 graphRows.push(pressure_graph);
             }
@@ -282,6 +281,7 @@ angular.module('avatech').directive('graph', function() {
                         (_str[1].charCodeAt(0) - 32);
                         // + (str[2].charCodeAt(0) - 32);
             }
+            // expand ASCII string
             var expanded = "";
             for (var e = 0; e < str.length; e++) {
                 var ch = str[e];
@@ -294,11 +294,13 @@ angular.module('avatech').directive('graph', function() {
                     e += 3; //4
                 }
             }
-            return expanded;
-        }
-
-        function convertRange( value, r1, r2 ) { 
-            return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
+            // convert ASCII string into array of numbers
+            var _rows = [];
+            for (var i = 0; i < expanded.length; i++) {
+                // adjust for ASCII offset and multiply by 4 (decompress)
+                _rows.push((expanded[i].charCodeAt(0) - 32) * 3.9);
+            }
+            return _rows;
         }
 
         var rows = scope.$eval(attrs.graph);
@@ -307,16 +309,9 @@ angular.module('avatech').directive('graph', function() {
         // expand if string
         if (typeof rows === 'string') {
             rows = expand(rows);
-            var _rows = [];
-            for (var i = 0; i < rows.length; i++) {
-                var val = rows[i].charCodeAt(0) - 32;
-                var multiplier = convertRange((255-val),[0,900],[.5,5.4]);
-                _rows.push(val * multiplier);
-            }
-            rows = _rows;
         }
 
-        var threshold = 5;
+        var threshold = 10;
 
         var canvas = element[0];
         var context = element[0].getContext('2d');
@@ -344,10 +339,6 @@ angular.module('avatech').directive('graph', function() {
             canvasDepth *= threshold;
 
             var pressure_expanded = (.00008 * Math.pow(rows[i],3));
-            // no idea why this is needed... is it a coincidence that it's similar to threshold?
-            // without this, the graph doesn't stretch for the full width. don't know enough about
-            // how this algorithm is supposed to work (todo: ask sam)
-            pressure_expanded *= 5.5;
 
             var A_P4 = -194.1;
             var B_P4 = .1304;

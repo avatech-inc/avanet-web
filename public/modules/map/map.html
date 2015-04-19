@@ -71,7 +71,7 @@
 	border-radius:3px;
 }
 .leaflet-popup:hover .expand {
-	opacity: 1;
+	//opacity: 1;
 }
 .leaflet-popup:hover .popup-content {
 	//color: #fff;
@@ -1243,23 +1243,15 @@
 		      		
 		      		<div style="font-weight:bold;margin-bottom:2px;">Terrain</div>
 					
-					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
 
 					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">Aerial</div>
 					
-					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
 
 		        </a></li></ul>
 		    </div>
 		</div>
-
-		<!--<div style="position:absolute;top:44px;right:10px;width:150px;background:#fff;z-index:2000;"> 
-
-			<div style="font-weight:bold;">Terrain</div>
-				<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer)" style="font-size:11px;white-space:nowrap;">{{ layer.name }}</div>
-			<div style="font-weight:bold;">Aerial</div>
-				<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer)" style="font-size:11px;white-space:nowrap;">{{ layer.name }}</div>
-		</div>-->
 
 		<div class="mapSearch">
 		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
@@ -1519,7 +1511,7 @@
 			</div>
 			<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
 
-			<div ng-repeat="profile in $parent.filteredProfiles = (profiles | filter: doSearch) | orderBy : '-date' track by profile._id" class="side-list-item">
+			<div ng-repeat="profile in $parent.filteredProfiles = (profiles | filter: doSearch) | orderBy: '-date' track by profile._id" class="side-list-item">
 
 				<a style="padding:0px;color:#666;font-weight:100;" 
 				href="/{{ profile.type[0] }}/{{ profile._id }}" 
@@ -1529,9 +1521,8 @@
 
 					<div class="bar {{ profile.type }}"></div>
 
-					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-					<canvas ng-if="profile.type=='test'" graph="profile.rows_tiny" width="120" height="136"></canvas>
-					<!--<canvas ng-if="profile.type=='test'" graph="profile.rows_small" width="120" height="136"></canvas>-->
+					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
 
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
@@ -1593,8 +1584,8 @@
 
 					<div class="bar {{ profile.type }}"></div>
 
-					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-					<canvas ng-if="profile.type=='test'" graph="profile.rows_tiny" width="120" height="136"></canvas>
+					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 					<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 

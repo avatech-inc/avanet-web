@@ -76,7 +76,6 @@ module.exports = function(app, passport) {
         };
       }
       ravenClient.captureError(err, ravenOptions);
-      console.log("HEADERS: " + req.headers.accept);
       console.error(err);
       if (req.xhr) {
         res.status(500).send({ error: '500 Error' });

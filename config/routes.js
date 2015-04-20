@@ -534,21 +534,6 @@ module.exports = function(app, passport) {
     //--------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------
 
-    var Organization = require('mongoose').model('Organization');
-    function getOrgs(profile, callback) {
-         Organization.find({}).exec(function(err, orgs) {
-            var _orgs = [];
-            for (var i = 0; i < orgs.length; i++) {
-                // is user a member
-                for (var m = 0; m < orgs[i].members.length; m++) {
-                    if (orgs[i].members[m].user.equals(profile.user))
-                        _orgs.push(orgs[i]._id);
-                }
-            }
-            callback(profile, _orgs);
-        });
-    }
-
     var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');
     app.get('/send-app-sms', function(req,res) {
         console.log("hey!");
@@ -569,8 +554,8 @@ module.exports = function(app, passport) {
                 // A sample response from sending an SMS message is here (click "JSON" to see how the data appears in JavaScript):
                 // http://www.twilio.com/docs/api/rest/sending-sms#example-1
 
-                console.log(responseData.from); // outputs "+14506667788"
-                console.log(responseData.body); // outputs "word to your mother."
+                // console.log(responseData.from); // outputs "+14506667788"
+                // console.log(responseData.body); // outputs "word to your mother."
 
             }
         });
@@ -578,10 +563,6 @@ module.exports = function(app, passport) {
         res.json({});
     });
     
-    //catch all 404
-    // app.get('*', function(req, res) {
-    //     res.status(404).sendFile('./app/views/404.html');
-    // });
     app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 
     app.get('/manifest.plist', function(req,res) {
@@ -635,214 +616,10 @@ module.exports = function(app, passport) {
     app.get('/sp1manual', getManual);
     app.get('/manual', getManual);
 
-    // app.get('/go',function(){
-
-    //     var devices = [
-    //         ];
-
-    //     var Device = require('mongoose').model('Device');
-
-    //     for (var i = 0; i < devices.length; i++) {
-
-    //         var device = new Device();
-    //         device.serial = devices[i];
-    //         device.save();
-    //     }
-
-    // });
     app.get('*', function(req,res) { 
 
-        // var Device = require('mongoose').model('Device');
-        // Device.find({ user: { "$ne": null } })
-        // .populate('user')
-        // .exec(function(err, devices) {
-        //     for(var i = 0; i < devices.length; i++) {
-        //         console.log(devices[i].user.fullName + "," + devices[i].serial);
-        //     }
-        //     //console.log(profiles);
-        //     // for (var i = 0; i < profiles.length; i++) {
-        //     //     // console.log(tests[i].published);
-        //     //     // tests[i].published = true;
-        //     //     // tests[i].save();
-
-        //     //     var longLat = profiles[i].location;
-        //     //     var target = profiles[i].metaData.aspect;
-
-        //     //     getAspect(longLat[1],longLat[0], target);
-
-        //     // }
-        // });
-
-        // var Profile = require('mongoose').model('Profile');
-        // Profile.find({ "metaData.aspect": {"$exists": true,"$ne": null},location: {"$ne": null} })
-        // //.select('published')
-        // //.populate('user')
-        // .exec(function(err, profiles) {
-        //     //console.log(profiles);
-        //     for (var i = 0; i < profiles.length; i++) {
-        //         // console.log(tests[i].published);
-        //         // tests[i].published = true;
-        //         // tests[i].save();
-
-        //         var longLat = profiles[i].location;
-        //         var target = profiles[i].metaData.aspect;
-
-        //         getAspect(longLat[1],longLat[0], target);
-
-        //     }
-        // });
-
-// -111.539985, 40.6982722 ], aspect: 315 }
-        var longLat = [
--120.589371, 48.604425
-  ];
-
-  //getAspect(longLat[1],longLat[0], 180);
-
-   function getAspect(lat, lng, target) {
-
-    var type = "srtm3";
-
-        var unit = .0001;
-
-      var _a = [lat+unit,lng+unit]; // 51.20345,-115.99709
-      var _b = [lat+unit,lng];        // 51.20345,-115.99708
-      var _c = [lat+unit,lng-unit]; // 51.20345,-115.99707
-      var _d = [lat,lng+unit];        // 51.20344,-115.99709
-      var _e = [lat,lng];               // 51.20344,-115.99708
-      var _f = [lat,lng-unit];        // 51.20344,-115.99707
-      var _g = [lat-unit,lng+unit]; // 51.20343,-115.99709
-      var _h = [lat-unit,lng];        // 51.20343,-115.99708
-      var _i = [lat-unit,lng-unit]; // 51.20343,-115.99707
-
-        var request = require("request");
-
-        function getElevation(latLong, callback) {
-            var url = "http://api.geonames.org/" + type + "JSON?lat=" + latLong[0] + "&lng=" + latLong[1] + "&&username=avatech";
-            request({ url: url, json: true }, function (error, response, body) {
-               callback(null, body[type]);
-            });
-            // var url = "https://maps.googleapis.com/maps/api/elevation/json?locations=" + latLong[0] + "," + latLong[1] + "&keyAIzaSyB0lXUhJOLakpWwKm5mmYKHAHDcsYcVCZM";
-            // request({ url: url, json: true }, function (error, response, body) {
-            //    console.log(body.results[0].resolution);
-            //    callback(null, body.results[0].elevation);
-            // });
-        }
-
-            var Async = require("async");
-        Async.parallel([
-            function(callback) { getElevation(_a, callback) },
-            function(callback) { getElevation(_b, callback) },
-            function(callback) { getElevation(_c, callback) },
-            function(callback) { getElevation(_d, callback) },
-            function(callback) { getElevation(_e, callback) },
-            function(callback) { getElevation(_f, callback) },
-            function(callback) { getElevation(_g, callback) },
-            function(callback) { getElevation(_h, callback) },
-            function(callback) { getElevation(_i, callback) }
-        ],
-        function(err, results) {
-            var a = results[0];
-            var b = results[1];
-            var c = results[2];
-            var d = results[3];
-            var e = results[4];
-            var f = results[5];
-            var g = results[6];
-            var h = results[7];
-            var i = results[8];
-
-            var dz_dx = ((c + (f * 2) + i) - (a + (d * 2) + g)) / 8 ;
-            var dz_dy = ((g + (h * 2) + i) - (a + (b * 2) + c)) / 8 ;
-
-           
-            var aspect_raw = (180/Math.PI) * Math.atan2(dz_dy, -dz_dx); //57.29578
-
-            var aspect;
-            if (aspect_raw < 0) {
-                aspect = 90.0 - aspect_raw;
-            }
-            else if (aspect_raw > 90.0) {
-                aspect = 360.0 - aspect_raw + 90.0;
-            }
-            else {
-                aspect = 90.0 - aspect_raw;
-            }
-
-            // console.log("dz/dx: " + dz_dx);
-            // console.log("dz/dy: " + dz_dy);
-            // console.log("aspect raw: " + aspect_raw);
-            console.log("aspect: " + aspect.toFixed(0) + "; " + target + " = " + Math.abs(aspect - target).toFixed(0));
-        });
-    }
-    
-
-
-        // Profile.find({})
-        // //.populate('user')
-        // .exec(function(err, profiles) {
-        //     //console.log(profiles);
-        //     for (var i = 0; i < profiles.length; i++) {
-        //         var profile = profiles[i];
-        //         //console.log(profile.sharingLevel);
-        //         if (profile.sharingLevel == "pros" && profile.published) {
-
-        //             //console.log(profile.sharedOrganizations);
-        //              // User.findOne({ _id: profile.user }).exec(function(error, user){
-        //              //    console.log(user._id);
-        //              //            console.log(user.fullName);
-        //              //        });
-
-        //         // if (profile.user.equals("5416c4bf56a8a90000fba00d")) {
-        //         //     //console.log("yay!");
-        //         //     profile.sharingLevel = "private";
-        //         //     profile.save();
-        //         // }
-
-
-        //             // getOrgs(profile,function(_profile, orgs){
-        //             //     //console.log(orgs.length);
-
-        //             //     // _profile.sharedOrganizations = [orgs[0]];
-        //             //     // _profile.organization = orgs[0];
-        //             //     // _profile.save();
-
-        //             //     // if (orgs.length > 1) {
-
-        //             //     //     console.log(orgs.length);
-
-        //             //     //     // User.findOne({ _id: _profile.user }).exec(function(error, user){
-        //             //     //     //     console.log(user.fullName);
-        //             //     //     // });
-
-        //             //     //     //console.log(_profile.user);
-
-        //             //     //     // _profile.sharingLevel = "private";
-        //             //     //     // // _profile.sharedOrganizations.push(orgs[0]);
-        //             //     //     // // //console.log(_profile);
-        //             //     //     // _profile.save();
-        //             //     // }
-        //             // });
-
-        //             // var orgUsers = [];
-        //             // for (var x = 0; x < _orgs.length; x++) {
-        //             //     for (var i = 0; i < orgs.length; i++) {
-        //             //         if (orgs[i]._id.equals(_orgs[x])) {
-        //             //             for (var m = 0; m < orgs[i].members.length; m++) {
-        //             //                 orgUsers.push(orgs[i].members[m].user);
-        //             //             }
-        //             //         }
-        //             //     }
-        //             // }
-
-        //             //console.log(profile.user);
-        //             //console.log(profile.sharedOrganizations);
-        //         }
-        //     }
-        // });
-
-        // console.log("IS AJAX?");
-        // console.log(req.xhr ); // <-- why is this always false?
+        console.log("ACCEPT HEADERS: " + req.headers.accept);
+        //console.log("IS AJAX: " + req.xhr ); // <-- why is this always false?
         //res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
         res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
     });

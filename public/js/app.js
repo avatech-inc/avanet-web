@@ -1,5 +1,6 @@
 // define app
 angular.module('avatech', ['ngCookies', 'ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'ngQuickDate', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
+    'pasvaz.bindonce',
     'bootstrapLightbox',
     'angulartics', 'angulartics.mixpanel',
     'avatech.system',

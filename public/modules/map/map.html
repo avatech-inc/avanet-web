@@ -1,0 +1,490 @@
+<section ng-controller="MapController">
+	<div id="map-header">
+
+			<div class="btn-group filter" dropdown style=""
+				ng-hide="selectedList == 'my_unpublished'">
+			  <button type="button" class="btn btn-default dropdown-toggle">
+			  	<span>
+			  		<span style="margin-right:10px;">Type</span>
+			    	<div ng-repeat="type in ['profile','test','avy']" class="circle {{type}} {{ searchQuery.type[type] ? '' : 'empty' }}" style="position:relative;top:1px;"></div>
+			    </span>
+			    <span class="caret"></span>
+			  </button>
+		      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+		    			
+			    	<li ng-click="type_select('profile')"><a>
+			    	<div class="circle profile {{ searchQuery.type.profile ? '' : 'empty' }}"></div> Snowpit</a></li>
+
+			    	<li ng-click="type_select('test')"><a>
+			    	<div class="circle test {{ searchQuery.type.test ? '' : 'empty' }}"></div> SP1 Profile</a></li>
+
+			    	<li ng-click="type_select('avy')"><a>
+			    	<div class="circle avy {{ searchQuery.type.avy ? '' : 'empty' }}"></div> Avalanche</a></li>
+			 	</ul>
+			</div>
+
+			<div class="btn-group filter" dropdown style="">
+			  <button type="button" class="btn btn-default dropdown-toggle">
+			  	<span style="padding-right:3px;">
+				    <span ng-show="searchQuery.days == 1">Today</span>
+				    <span ng-show="searchQuery.days == 7">Past Week</span>
+				    <span ng-show="searchQuery.days == 31">Past Month</span>
+				    <span ng-show="searchQuery.days == 91">Past 3 Months</span>
+				    <span ng-show="searchQuery.days == 183">Past 6 Months</span>
+				    <span ng-show="searchQuery.days == 365">Past Year</span>
+			    </span>
+			    <span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu list" role="menu">
+			     <li ng-click="searchQuery.days = 1">Today</li>
+			     <li ng-click="searchQuery.days = 7">Past Week</li>
+			     <li ng-click="searchQuery.days = 31">Past Month</li>
+			     <li ng-click="searchQuery.days = 91">Past 3 Months</li>
+			     <li ng-click="searchQuery.days = 183">Past 6 Months</li>
+			     <li ng-click="searchQuery.days = 365">Past Year</li>
+			  </ul>
+			</div>
+
+			<div class="btn-group filter" dropdown 
+				ng-show="profile.user.student !== true && selectedList == 'published'">
+		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+		        <span style="padding-right:3px;">Publisher</span> 
+
+		        <span class="caret" ng-show="isDefaultPublisher()"></span>
+		        <span style="color:#999;" ng-hide="isDefaultPublisher()">...</span>
+
+		        <span class="removeFilter" ng-hide="isDefaultPublisher()"
+		        	ng-mousedown="setDefaultPublisher()">
+		        	<i class="ion-close-round"></i>
+		        </span>
+		      </button>
+		      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+
+			    	<li ng-click="publisher_selectMe()"
+			    		ng-dblclick="publisher_selectMe(true)"><a><i class="fa {{ searchQuery.publisher.me || searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o' }}"></i>Me</a></li>
+
+			    	<li ng-show="global.orgs && global.orgs.length > 1"
+			    		ng-click="publisher_selectMyOrgs()"
+		    			ng-dblclick="publisher_selectMyOrgs(true)"><a><i class="fa {{ searchQuery.publisher.orgs == null || (searchQuery.publisher.orgs && searchQuery.publisher.orgs.length == global.orgs.length) ? 'fa-check-square' : 'fa-square-o' }}"></i>My Organizations</a></li>
+
+			    	<li ng-repeat="org in global.orgs" 
+			    		ng-click="publisher_selectOrg(org._id)"
+			    		ng-dblclick="publisher_selectOrg(org._id, true)"><a><i ng-style="{ 'padding-left': (global.orgs && global.orgs.length > 1 ? '26px' :''), 'margin-right': (global.orgs && global.orgs.length > 1 ? '20px' :'') }" class="fa {{ publisher_isOrgSelected(org._id) ? 'fa-check-square' : 'fa-square-o' }}"></i>{{ org.name }}</a></li>
+
+		    		<li ng-click="publisher_selectOutsideOrgs()"
+		    			ng-dblclick="publisher_selectOutsideOrgs(true)"><a><i class="fa {{ searchQuery.publisher.outsideOrgs || searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o' }}"></i>Outside Organizations</a></li>
+		    			
+			    	<li ng-click="publisher_selectStudents()"
+			    		ng-dblclick="publisher_selectStudents(true)"><a><i class="fa {{ searchQuery.publisher.students || searchQuery.publisher.students == null ? 'fa-check-square' : 'fa-square-o' }}"></i>Students</a></li>
+			    </ul>
+		    </div>
+
+			<div class="btn-group filter" dropdown style="">
+		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+		        <span style="padding-right:3px;">Elevation</span>
+		        <span class="caret" ng-show="searchQuery.elev_low == 0 && searchQuery.elev_high == elevationMax"></span>
+		        <span style="color:#999;" ng-show="(searchQuery.elev_low != 0 || searchQuery.elev_high != elevationMax) && searchQuery.elev_low != searchQuery.elev_high">
+		        	{{ formatTempRange(searchQuery.elev_low, searchQuery.elev_high) }}
+		        </span>
+		        <span style="color:#999;" ng-show="searchQuery.elev_low == searchQuery.elev_high">
+		        	{{ formatTemp(searchQuery.elev_high) }}
+		        </span>
+		        <span class="removeFilter" ng-hide="searchQuery.elev_low == 0 && searchQuery.elev_high == elevationMax"
+		        	ng-mousedown="clearSearchElevation($event)">
+		        	<i class="ion-close-round"></i>
+		        </span>
+		      </button>
+		      <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+		      	<slider-new style="width:340px"
+				    ng-model="searchQuery.elev_low"
+				    ng-model-range="searchQuery.elev_high"
+				    translate-fn="formatTemp"
+				    floor="0"
+				    ceiling="{{ elevationMax }}"
+				    buffer="10"
+				    step="10">
+				</slider-new>
+		        </a></li></ul>
+		    </div>
+
+			<div class="btn-group filter" dropdown style="">
+		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+		        <span style="padding-right:3px;">Aspect</span> 
+		        <span class="caret" ng-show="searchQuery.aspect_low == 0 && searchQuery.aspect_high == 359"></span>
+		        <span style="color:#999;" ng-show="(searchQuery.aspect_low != 0 || searchQuery.aspect_high != 359) && searchQuery.aspect_low != searchQuery.aspect_high">
+		        	{{ searchQuery.aspect_low }}-{{ searchQuery.aspect_high }}&deg;
+		        </span>
+		        <span style="color:#999;" ng-show="searchQuery.aspect_low == searchQuery.aspect_high">
+		        	{{ searchQuery.aspect_high }}&deg;
+		        </span>
+		        <span class="removeFilter" ng-hide="searchQuery.aspect_low == 0 && searchQuery.aspect_high == 359"
+		        	ng-mousedown="clearSearchAspect($event)">
+		        	<i class="ion-close-round"></i>
+		        </span>
+		      </button>
+		      <ul class="dropdown-menu" role="menu" style="height:114px;width:auto;"><li><a>
+
+		  		<input-direction-range input-class="form-control" ng-model="searchQuery.aspect_low" angle-low="searchQuery.aspect_low" angle-high="searchQuery.aspect_high"></input-direction-range>
+
+		  		<input-direction-range input-class="form-control" ng-model="searchQuery.aspect_high" angle-low="searchQuery.aspect_low" angle-high="searchQuery.aspect_high"></input-direction-range>
+		      	
+		        </a></li></ul>
+		    </div>
+
+		    <div class="btn-group filter" dropdown style="">
+		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+		        <span style="padding-right:3px;">Slope</span> 
+		        <span class="caret" ng-show="searchQuery.slope_low == 0 && searchQuery.slope_high == 70"></span>
+		        <span style="color:#999;" ng-show="(searchQuery.slope_low != 0 || searchQuery.slope_high != 70) && searchQuery.slope_low != searchQuery.slope_high">
+		        	{{ searchQuery.slope_low }}-{{ searchQuery.slope_high }}&deg;
+		        </span>
+		        <span style="color:#999;" ng-show="searchQuery.slope_low == searchQuery.slope_high">
+		        	{{ searchQuery.slope_high }}&deg;
+		        </span>
+		        <span class="removeFilter" ng-hide="searchQuery.slope_low == 0 && searchQuery.slope_high == 70"
+		        	ng-mousedown="clearSearchSlope($event)">
+		        	<i class="ion-close-round"></i>
+		        </span>
+		      </button>
+		      <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+		      	<slider-new style="width:240px"
+				    ng-model="searchQuery.slope_low"
+				    ng-model-range="searchQuery.slope_high"
+				    translate-fn="formatDegSlider"
+				    floor="0"
+				    ceiling="70"
+				    buffer="0"
+				    step="1">
+		        </a></li></ul>
+		    </div>
+
+			<!--<div class="btn-group filter search">
+			  <button type="button">
+					<i class="fa fa-search search"></i>
+					<input class="searchbox" type="text" style="width:200px;" ng-model="searchQuery.text" ng-model-options="{ debounce: 300 }"/>
+
+			        <span class="removeFilter" ng-show="searchQuery.text != ''"
+			        	ng-mousedown="searchQuery.text = ''">
+			        	<i class="ion-close-round"></i>
+			        </span>
+
+			  </button>
+			</div>-->
+
+	</div>
+
+	<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : 0) }">
+		<div id="map"></div>
+
+
+    
+
+		<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
+		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
+		    <div class="btn-group dropup" dropdown>
+		      <button type="button" class="dropdown-toggle">
+		        <i class="ion-map"></i> <span><b>Map:</b> {{ selectedBaseLayer.name }}</span>
+		      </button>
+		      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
+
+		      		<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
+
+		      		<div class="layers-header">Select Map Layer</div>
+		      		
+		      		<div style="font-weight:bold;margin-bottom:2px;">Terrain</div>
+					
+					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+
+					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">Aerial</div>
+					
+					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+
+		        </a></li></ul>
+		    </div>
+		</div>
+
+		<div class="mapSearch" ng-hide="hideMapButtons">
+		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
+		    <div class="btn-group pull-right" dropdown>
+		      <button type="button" class="dropdown-toggle" ng-click="focusLocationSearchInput()">
+		        <i class="fa fa-search"></i>
+		      </button>
+		      <ul class="dropdown-menu" role="menu"><li><a style="padding:0;background:#fff !important;">
+		      	<form>
+			      	<input type="text" class="form-control input-sm search location-search-input" ng-model="geo.query" placeholder="search for a location">
+			        <input ng-click="geoSearch()" type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+		       	</form>
+
+		        <div class="results">
+		        	<div ng-repeat="result in geo.results" ng-click="goTo(result)">	
+		        		<div style="font-weight:400;">{{ result.name }}</div>
+		        		<div style="font-weight:100;">
+		        			<span ng-show="result.adminName2">{{ result.adminName2 }}, </span>{{ result.adminName1 }} {{ result.countryCode }} <span style="float:right;color:#ccc;display:none;">{{ result.fcodeName}}</span>
+		        		</div>
+		        	</div>
+		        </div>
+
+		        </a></li></ul>
+		    </div>
+		</div>
+	</div>
+
+	<div class="side-bar">
+
+		<div class="toggle-list">
+
+			<div class="list-header">
+				<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;All Observations</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;My Observations</button>
+			</div>
+
+		</div>
+
+		<div class="list-subheader">
+			<div style="position:relative;font-weight:100;text-align:center;line-height:38px;color:#ccc;"
+				ng-show="selectedList == 'published'">
+				<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 0:1) }">pan & zoom the map to see more observations</span>
+
+				<span style="position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 1:0) }" > <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;&nbsp;Loading</span>
+			</div>
+
+			<div ng-show="(selectedList == 'my_published' || selectedList == 'my_unpublished')">
+				<div style="display:inline-block;float:left;">
+					<button ng-mousedown="selectList('my_published',$event)" class="sub-btn"
+						ng-class="{ selected: selectedList == 'my_published' }">Published</button>
+					<button ng-mousedown="selectList('my_unpublished',$event)" class="sub-btn"
+						ng-class="{ selected: selectedList == 'my_unpublished' }"
+						>Unpublished</button>
+				</div>
+
+				<div class="btn-group filter" dropdown 
+				style="float:left;"
+				ng-show="selectedList == 'my_unpublished'">
+				  <button type="button" class="btn btn-default dropdown-toggle" style="border: none; color: #fff; padding: 0; font-size: 11px; font-weight: 500; background: #444; height: 26px; margin-top: 6px; line-height: 26px; border-top-right-radius: 99px; border-bottom-right-radius: 99px; padding-right: 10px;">
+				  	<span style="padding-left:4px;">
+
+				    	<span ng-show="type_unpublished == 'profile'">
+				    	<div style="position:relative;top:1px;" class="circle profile"></div> Snowpits</span>
+
+				    	<span ng-show="type_unpublished == 'test'">
+				    	<div style="position:relative;top:1px;" class="circle test"></div> SP1 Profiles</span>
+
+				    	<span ng-show="type_unpublished == 'avy'">
+				    	<div style="position:relative;top:1px;" class="circle avy"></div> Avalanches</span>
+
+				    </span>
+				    <span class="caret"></span>
+				  </button>
+			      	<ul class="dropdown-menu listSelect" role="menu" style="min-width:120px !important;height:auto;z-index:2000;">
+			    			
+				    	<li ng-click="set_type_unpublished('profile')" close-dropdown-on-click><a>
+				    	<div class="circle profile"></div> Snowpits</a></li>
+
+				    	<li ng-click="set_type_unpublished('test')" close-dropdown-on-click><a>
+				    	<div class="circle test"></div> SP1 Profiles</a></li>
+
+				    	<li ng-click="set_type_unpublished('avy')" close-dropdown-on-click><a>
+				    	<div class="circle avy"></div> Avalanches</a></li>
+				 	</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="list-bottom">
+			<!--<div style="font-style:italic;font-weight:100;text-align:center;"
+				ng-show="selectedList == 'published'">
+				Pan & zoom the map to see more observations
+			</div>-->
+			<div ng-show="selectedList == 'my_unpublished' && type_unpublished == 'test'">
+				<div style="float:left;font-weight:100;margin-left:10px;" ng-show="selectedProfiles.length">
+				 {{ selectedProfiles.length }} profile{{ selectedProfiles.length == 1 ? '' : 's' }}  selected
+				</div>
+
+				<div style="float:right;" class="action-buttons" ng-show="selectedProfiles.length">
+					<button ng-click="publishProfiles()" class="btn btn-primary"><i class="ion-upload"></i>&nbsp;&nbsp;Publish</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="loading-overlay" ng-show="loadingNew"></div>
+
+		<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published'"
+			>
+
+			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+			Loading<br/>
+			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+			</div>
+
+			<div ng-show="profiles.length == 0" style="text-align:center;font-size:16px;color:#333;padding:14px;padding-top:30px;">
+				See how easy it is to record your manual snow profiles with <b>Snowpit Editor</b>
+				<br/><br/>
+				<a class="btn btn-lg btn-primary" href="/profiles/new">
+				Create A Manual Profile
+				</a>
+			</div>
+			<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+
+			<div bindonce ng-repeat="profile in $parent.filteredProfiles | orderBy: '-date' track by profile._id" 
+
+				class="side-list-item"
+
+				ng-click="href('/' + profile.type[0] + '/' + profile._id)" 
+
+				ng-mouseover="hoverProfile(profile)"
+				ng-mouseout="hoverProfile()"
+				>
+
+					<div class="bar" bo-class="profile.type"></div>
+
+					<canvas bo-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
+					<canvas bo-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
+
+					<div bo-if="profile.type=='avy'" class="thumb"></div>
+
+					<div class='lineItem'><i class="fa fa-user"></i>{{ ::profile.user.fullName}} 
+                  		<span bo-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span>
+
+						<!--<span style="padding-left:3px;" ng-show="profile.sharingLevel=='org'">({{ profile.organization.name }})</span>
+
+						<span style="padding-left:3px;" ng-show="profile.sharingLevel=='private'">
+						<i class="fa fa-lock"></i></span>
+
+						<span style="padding-left:3px;" ng-show="profile.sharingLevel=='pros'">
+						<i class="fa fa-globe"></i></span>-->
+
+					</div>
+
+					<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>
+
+					<div bo-if="profile.type=='profile' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
+					<div bo-if="profile.type=='test'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
+
+					<div class='lineItem' bo-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>
+						<span bo-if="profile.type == 'avy'">{{ ::profile.locationName }}</span>
+						<span bo-if="profile.metaData.location">{{ ::profile.metaData.location }}</span>
+					</div>
+					<div class="lineItem" bo-show="profile.type=='test'"><i class="fa fa-map-marker"></i>
+						<span bo-if="profile.location.length">{{ ::profile.location[1] }}, {{ ::profile.location[0] }}</span>
+						<span bo-if="!profile.location || profile.location.length == 0">NO LOCATION</span>
+					</div>
+
+			</div>
+
+			<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
+			<div style="text-align:center;padding:30px;font-weight:100;font-size:16px;">No observations found matching<br/>your search criteria and within<br/>your current map view.</div>
+			</div>
+		</div>
+
+		<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
+
+			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+			Loading<br/>
+			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+			</div>
+
+			<div ng-show="profiles.length == 0" style="text-align:center;font-size:16px;color:#333;padding:14px;padding-top:30px;">
+				See how easy it is to record your manual snow profiles with <b>Snowpit Editor</b>
+				<br/><br/>
+				<a class="btn btn-lg btn-primary" href="/profiles/new">
+				Create A Manual Profile
+				</a>
+			</div>
+			<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+
+			<div ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id" class="side-list-item">
+
+				<a style="padding:0px;color:#666;font-weight:100;" 
+				href="/{{ profile.type[0] }}/{{ profile._id }}" 
+				ng-mouseover="hoverProfile(profile)"
+				ng-mouseout="hoverProfile()"
+				old-ng-click="openProfile(profile)">
+
+					<div class="bar {{ profile.type }}"></div>
+
+					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
+					<div ng-if="profile.type=='avy'" class="thumb"></div>
+
+					<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 
+                  		<span ng-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span>
+
+						<!--<span style="padding-left:3px;" ng-show="profile.sharingLevel=='org'">({{ profile.organization.name }})</span>
+
+						<span style="padding-left:3px;" ng-show="profile.sharingLevel=='private'">
+						<i class="fa fa-lock"></i></span>
+
+						<span style="padding-left:3px;" ng-show="profile.sharingLevel=='pros'">
+						<i class="fa fa-globe"></i></span>-->
+
+					</div>
+
+					<div class='lineItem'><i class="fa fa-group"></i>{{profile.organization.name}}</div>
+
+					<div ng-if="profile.type=='profile' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
+					<div ng-if="profile.type=='test'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+
+					<div class='lineItem' ng-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.type == 'avy' ? profile.locationName : profile.metaData.location }}</div>
+					<div class="lineItem" ng-show="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+						profile.location[1] + ', ' + profile.location[0] :
+						'NO LOCATION'
+						 }}</div>
+
+				</a>
+
+			</div>
+			<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
+			<div style="text-align:center;padding:30px;font-weight:100;font-size:16px;">No observations found matching<br/>your search criteria and within<br/>your current map view.</div>
+			</div>
+		</div>
+
+		<div class="list-holder marginTop" scrollable 
+		ng-class="{ 'marginBottom': selectedProfiles.length > 0 }"
+		ng-show="selectedList == 'my_unpublished'" always-visible="true">
+
+			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+			Loading<br/>
+			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+			</div>
+
+			<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item">
+				<a href="{{ profile.type == 'test' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
+
+					<div class="check" onclick="return false;">
+						<i class="fa" 
+						ng-class="{ 
+						'fa-square-o': !isProfileSelected(profile),
+						'fa-check-square-o checked': isProfileSelected(profile) }"
+						ng-click="selectProfile(profile);" ></i>
+					</div>
+
+					<!--<div class="bar {{ profile.type }}"></div>-->
+
+					<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
+					<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="136"></canvas>
+					<div ng-if="profile.type=='avy'" class="thumb"></div>
+
+					<div>
+						<div ng-hide="profile.type=='test'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Last edited <span am-time-ago="profile.updated"></span></div>
+						<div ng-show="profile.type=='test'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Uploaded <span am-time-ago="profile.created"></span></div>
+
+						<div class="lineItem" ng-hide="profile.type=='test'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
+						<div class="lineItem" ng-show="profile.type=='test'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+
+						<div class="lineItem" ng-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
+
+						<div class="lineItem" ng-show="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+						profile.location[1] + ', ' + profile.location[0] :
+						'NO LOCATION'
+						 }}</div>
+					</div>
+
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="showPreviewPane()" class="preview-pane" >
+		<div ui-view></div>
+	</div>
+
+</section>

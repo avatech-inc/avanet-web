@@ -2,7 +2,7 @@ var gulp = require('gulp');
 
 var path = require('path');
 var fs = require("fs");
-var compass = require('gulp-compass');
+var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var inject = require('gulp-inject');
 var useref = require('gulp-useref');
@@ -19,6 +19,9 @@ var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
 var gutil = require('gulp-util');
 var argv = require('yargs').argv;
+var rollbar = require('gulp-rollbar');
+var stripDebug = require('gulp-strip-debug');
+//var flatten = require('gulp-flatten');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -44,20 +47,21 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
      });
 });
  
-gulp.task('compass', function() {
-  return gulp.src('public/sass/**/*.scss')
-    .pipe(compass({
-      css: 'public/css',
-      sass: 'public/sass',
-      //image: 'app/assets/images'
-    }))
-    //.pipe(minifyCSS())
-    .pipe(gulp.dest('public/css'));
+
+gulp.task('clean-css', function() {
+  return gulp.src('public/css', {read: false})
+        .pipe(clean({ force: true }));
+})
+gulp.task('compass', ['clean-css'], function() {
+  return gulp.src(['public/sass/**/*.scss','public/modules/**/*.scss'])
+        .pipe(sass({ errLogToConsole: true }))
+        .pipe(gulp.dest('public/css'));
 });
 
 gulp.task('combine-minify', function() {
     var assets = useref.assets({ searchPath: 'public' });
 
+    // todo: does this have to be _dist?
   return gulp.src('_dist2/app/views/main.html')
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
@@ -66,39 +70,57 @@ gulp.task('combine-minify', function() {
     .pipe(assets)
     .pipe(gulpif('*.css', minifyCSS()))
 
-    //.pipe(gulpif('*.js', sourcemaps.init()))
+    // string console.log statements
+    .pipe(gulpif('*.js', stripDebug()))
 
+    // sourcemaps
+    .pipe(gulpif('*.js', sourcemaps.init()))
+
+    // ng-anneotate (add [] style annotations to controllers for minifcation)
     .pipe(gulpif('*.js', ngAnnotate()))
 
+    // uglify
     .pipe(gulpif('*.js', uglify()))
 
-    .pipe(rev())                // Rename the concatenated files
+    .pipe(rev())             // rename the concatenated files for cache-busting
     .pipe(assets.restore())
     .pipe(useref())
-    .pipe(revReplace())         // Substitute in new filenames
+    .pipe(revReplace())      // substitute in new filenames
 
+    // sourcemaps
+    .pipe(rollbar({
+      accessToken: '887db6d480c74bab9cee4ab6376f1545',
+      version: 'version_test',
+      sourceMappingURLPrefix: 'https://avanet.avatech.com'
+    }))
     //.pipe(gulpif('*.js', sourcemaps.write('./')))
 
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
-    .pipe(gulpif('*.map', gulp.dest('_dist2/public')))
+    //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))
 
     .pipe(gulpif('*.html', gulp.dest('_dist2/app/views')))
 
     //.on('end', done);
     //.pipe(gulp.dest('_dist4/app/views'));
 });
+gulp.task('clean-dist', function() {
+  return gulp.src('_dist2/public/js', {read: false})
+        .pipe(clean({ force: true }));
+})
 
 gulp.task('buildMain', function () {
   var target = gulp.src('app/views/main.html');
 
   var sources = gulp.src([
-	'public/modules/**/*.js',
+	  'public/modules/**/*.js',
     'public/js/services/*.js',
     'public/js/controllers/*.js',
     'public/js/controllers/*/*.js',
     'public/js/directives/*.js',
-    'public/js/directives/*/*.js'
+    'public/js/directives/*/*.js',
+
+    'public/css/**/*.css'
   ],
   // don't read the file contents - we only need filenames
   {read: false});
@@ -121,7 +143,7 @@ gulp.task('copy', function() {
     'public/*.txt',
    	'public/fonts/**',
    	'public/img/**',
-   	'public/js/**',
+    'public/js/**',
    	'public/modules/**/*.html',
    	'public/views/**'
    	]
@@ -242,12 +264,15 @@ gulp.task('deploy', function(done){
 // })
 
 gulp.task('build', function(done) {
-  runSequence('compass','buildMain','clean', 'copy','combine-minify', 'git',
+  runSequence('compass','buildMain','clean', 'copy','combine-minify', 'clean-dist', 'git',
               done);
 });
 
-gulp.task('start', ['buildMain'], function(done) {
-  gulp.watch('public/sass/**/*', ['compass']);
+gulp.task('start', function(done) {
+  runSequence('compass','buildMain','start2', done);
+});
+gulp.task('start2', function(done) {
+  gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss'], ['compass']);
 
   // todo:
   // - livereload when public changes 'public/**/*'
@@ -262,7 +287,6 @@ gulp.task('start', ['buildMain'], function(done) {
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist2');
-  gulp.watch('public/sass/**/*', ['compass']);
 
    nodemon({
     script: 'server.js'

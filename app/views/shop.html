@@ -177,7 +177,15 @@
 						shipping_state: $scope.order.shipping_state
 			    	}
 
-			    	$.post("/newOrder", { token: token, order: order }, function(data) {
+
+			    	$.ajax({
+					  url:"/newOrder",
+					  type:"POST",
+					  data: JSON.stringify({ token: token, order: order }),
+					  contentType: "application/json; charset=utf-8",
+					  dataType: "json",
+					  success: function(data) {
+			    	// $.post("/newOrder", JSON.stringify({ token: token, order: order }), function(data) {
 			    		//setTimeout(function(){
 			    			console.log(data);
 			    			// todo: hook this up on the backend
@@ -201,7 +209,7 @@
 			    			$scope.$apply();
 
 			    		//}, 1000);
-			    	});
+			    	}});
 					// Use the token to create the charge with a server-side script.
 					// You can access the token ID with `token.id`
 			    },
@@ -533,8 +541,7 @@
 				    		<b style="font-size:22px;">Have you tried AvaNet yet?</b><br/>
 
 				    		<div style="width:340px;margin:auto;margin-top:20px;margin-bottom:20px;font-size:17px;">
-				    			AvaNet is free until 1/1/15. Before your SP1 ships, you'll be able to browse and create
-				    			manual snow profiles using our Snowpit Editor.
+				    			AvaNet is free for the first year with your SP1 purchase.
 				    		</div>
 
 				    		<form role="form">

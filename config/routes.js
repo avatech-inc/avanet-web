@@ -281,12 +281,14 @@ module.exports = function(app, passport) {
     //    res.sendFile(path.join(__dirname, '../app/views', 'shop.html'));
     // });
     // app.get('/:code', function(req,res) { 
-    ////     res.sendFile('./app/views/shop.html'); 
+    // //     res.sendFile('./app/views/shop.html'); 
     //    res.sendFile(path.join(__dirname, '../app/views', 'shop.html'));
     // });
     // //var stripe = require("stripe")("sk_test_4aIRRVQxRx3O7AdeJDRyUJxm");
     // var stripe = require("stripe")("sk_live_4aIR5CxiSGOosXIEtZgxCUFi");
     // app.post('/newOrder', function(req,res) {
+
+    //     console.log(req.body);
 
     //     if (req.body.order.coupon && req.body.order.coupon != "") {
     //         OrderCoupon.findOne({ code: req.body.order.coupon }, '', function(err, coupon) {
@@ -314,8 +316,8 @@ module.exports = function(app, passport) {
 
 
     //     order.quantity = parseInt(order.quantity);
-    //     order.shippingSameAsBilling = (order.shippingSameAsBilling == 'true' ? true : false);
-    //     order.payInFull = (order.payInFull == 'true' ? true : false);
+    //     //order.shippingSameAsBilling = (order.shippingSameAsBilling == 'true' ? true : false);
+    //     //order.payInFull = (order.payInFull == 'true' ? true : false);
 
     //     // if shipping same as billing, keep track
     //     if (order.shippingSameAsBilling) {
@@ -330,7 +332,6 @@ module.exports = function(app, passport) {
     //         order.shipping_country = order.billing_country;
     //     }
     //     else {
-
     //         console.log("shipping IS NOT same as billing!")
     //     }
 

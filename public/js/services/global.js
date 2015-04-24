@@ -32,11 +32,13 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 
                 var tracking_user ={
                     name: user.fullName,
+                    username: user.fullName,
                     email: user.email,
                     id: user._id
                 };
                 Raven.setUserContext(tracking_user);
                 heap.identify(tracking_user);
+                Rollbar.configure({ payload: { person: tracking_user }});
                 mixpanel.identify(user._id);
                 tracking_user.$email = tracking_user.email; // for mixpanel
                 mixpanel.people.set(tracking_user);
@@ -62,6 +64,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 heap.identify();
                 mixpanel.track('logout');
                 mixpanel.identify();
+                Rollbar.configure({ payload: { person: { } } });
 
 	            //$state.transitionTo("login", null, {location:'replace'});
                 window.location.href = "/login";
@@ -72,18 +75,23 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 
 	    		var user = localStorageService.get('user');
 
+                //var test = hey;
+                Rollbar.critical("test error!");
+
                 console.log("local storage user:");
                 console.log(user);
 
                 if (user) {
                     var tracking_user ={
                         name: user.fullName,
+                        username: user.fullName,
                         email: user.email,
                         id: user._id
                     };
                     Raven.setUserContext(tracking_user);
                     heap.identify(tracking_user);
                     mixpanel.identify(user._id);
+                    Rollbar.configure({ payload: { person: tracking_user }});
                     tracking_user.$email = tracking_user.email; // for mixpanel
                     mixpanel.people.set(tracking_user);
                 }
@@ -91,6 +99,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                     Raven.setUserContext();
                     heap.identify();
                     mixpanel.identify();
+                    Rollbar.configure({ payload: { person: { } } });
                 }
 
                 // temporary? need it just in case

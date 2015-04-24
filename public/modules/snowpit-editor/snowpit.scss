@@ -503,6 +503,96 @@ grain-select .grainTypeSelect {
 }
 
 
+.loading-screen {
+	padding: 14px;
+	opacity: 0;
+
+	-webkit-animation-name: fadeIn;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 800ms;
+	-webkit-animation-fill-mode:forwards;
+}
+.loading-screen i {
+	font-size: 22px;
+	//display: none;
+}
+.loading-screen span {
+	text-transform: uppercase;
+	font-size: 16px;
+	margin-left: 3px;
+	font-weight: 300;
+	position: relative;
+	bottom: 1px;
+	display: none;
+}
+@-webkit-keyframes pulse {
+  from { text-shadow: 0 0 14px #ffcc00; }
+  40% { text-shadow: 0 0 0px rgba(255,255,255,0); }
+  60% { text-shadow: 0 0 0px rgba(255,255,255,0); }
+  to { text-shadow: 0 0 14px #ffcc00; }
+}
+.pulse {
+  -webkit-animation-name: pulse;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+}
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tooltip { z-index: 1050 !important; }
+.tooltip-inner {
+	padding: 6px 12px;
+	font-size: 14px;
+	background:#1fa67a;
+}
+.tooltip.right .tooltip-arrow { border-right-color:#1fa67a !important; } 
+.tooltip.left .tooltip-arrow { border-left-color:#1fa67a !important; } 
+.tooltip.bottom .tooltip-arrow { border-bottom-color:#1fa67a !important; }
+.tooltip.top .tooltop-arrow { border-top-color:#1fa67a !important; }
+
+.hardnessBar .innerBar {
+	height:100%;width:1px;background:transparent;margin-left:7px;
+}
+.hardnessBar:hover .innerBar {
+	background:#ffcc00;
+}
+
+li.disabled {
+	pointer-events:none;opacity:.3;
+}
+
+
+			.upload-area {
+				position: relative;
+				width: 94%;
+				height: 70px;
+				border: 2px dashed #aaa;
+				border-radius: 5px;
+				margin: 7px;
+				text-align: center;
+				color: #777;
+				padding-top: 6px;
+				font-size: 20px;
+			}
+			.upoad-area .big { margin-top: 1px; }
+			.upload-area .small {
+				font-size: 13px;
+				margin-top: 4px;
+				font-weight: 100;
+			}
+			.upload-area input {
+				opacity: 0;
+				top: 0;
+				width: 100%;
+				left: 0;
+				bottom: 0;
+				position: absolute;
+				cursor: pointer;
+			}
+
+
 
 
 

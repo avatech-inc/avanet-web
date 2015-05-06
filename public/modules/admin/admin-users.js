@@ -13,7 +13,7 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
     $scope.totalUsersThisWeek = 0;
     $scope.totalUsersThisMonth = 0;
     $scope.totalCountries = 0;
-    $scope.totalOrgs = 0;
+    //$scope.totalOrgs = 0;
 
     var countries = {};
     var orgs = {};
@@ -86,8 +86,16 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
 
             var emails = {};
 
+          var _orgs = {};
+
             //$scope.totalUsers = users.length;
             for (var i = 0; i < users.length; i++) {
+
+                if (!users[i].admin && !users[i].test && users[i].org && users[i].org.length > 2 && users[i].org.toLowerCase() != "n/a" && users[i].org.toLowerCase() != "test"  && users[i].org != "/" && users[i].org.toLowerCase() != "avatech" && users[i].org != "ski patrol" && users[i].org != "pc" && users[i].org != "none" && users[i].org != "public" ) {
+                    var normalized = users[i].org.toLowerCase().trim().replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                    _orgs[normalized] = null;
+                }
+
 
                 // if (!users[i].admin && !users[i].test) {
                 //     if (!countries[users[i].country]) countries[users[i].country] = 1;
@@ -126,6 +134,9 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
                         });
                 }
             }
+
+
+            $scope.totalOrgs = Object.keys(_orgs).length;
             
             // $http.get('/fizblix')
             // .success(function(data){
@@ -179,7 +190,7 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
             //console.log(orgs);
 
             // $scope.totalCountries = Object.keys(countries).length;
-            // $scope.totalOrgs = Object.keys(orgs).length;
+            //$scope.totalOrgs = Object.keys(orgs).length;
             // console.log(countries);
             // console.log(Object.keys(countries).length)
         });

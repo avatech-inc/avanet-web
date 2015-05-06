@@ -87,10 +87,7 @@ angular.module('avatech.system').controller('AdminOrgsController', ['$scope', '$
             console.log(orgs);
             $scope.orgs = orgs;
 
-
-            for (var i = 0; i < orgs.length; i++) {
-                console.log(orgs[i].created + "}" + orgs[i].city + "," + orgs[i].country + "}" + orgs[i].name)
-            }
+          
 
             // var emails = {};
 

@@ -420,7 +420,8 @@ exports.all = function(req, res) {
                 var d = new Date().getTime();
 
                 var query2 = util._extend({}, query);
-                query2['$and'].push({ removed: { "$ne": true } });
+                // todo: this is NOT a deep copy!!!! fix! (i.e., version is applied to all queries, not just sp1)
+                query2['$and'].push({ removed: { "$ne": true } }); //version: 'v1', 
 
                 // var verboseFields = "";
                 // if (verbose) {

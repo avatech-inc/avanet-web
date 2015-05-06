@@ -138,7 +138,8 @@ gulp.task('clean', function() {
 })
 gulp.task('copy', function() {
    return gulp.src(
-   	['app/**/*','config/**/*','package.json','server.js','Procfile','newrelic.js',
+   	['app/**/*','config/**/*',
+    'package.json','server.js','Procfile','newrelic.js',
      
     'public/*.txt',
    	'public/fonts/**',

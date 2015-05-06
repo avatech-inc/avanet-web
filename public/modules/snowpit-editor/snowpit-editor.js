@@ -743,10 +743,7 @@ angular.module('avatech')
 
                 $scope.update();
 
-                $location.path('/')
-                    .search('lat', $scope.profile.location[1])
-                    .search('lng', $scope.profile.location[0])
-                    .search('_', $scope.profile._id);
+                $location.path('/p/' + $scope.profile._id);
 
             }, function () {
                 // on dismiss

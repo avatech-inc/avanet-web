@@ -177,7 +177,22 @@
 		<div id="map"></div>
 
 
-    
+    <fieldset id="controls" style="position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 272px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
+
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>
+    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>
+
+        <div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
+        {{ sunDate | amDateFormat:'h:mm a' }}
+        <!--
+        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
+        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
+        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
+    </fieldset>
 
 		<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
 		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
@@ -203,30 +218,7 @@
 		    </div>
 		</div>
 
-		<div class="mapSearch" ng-hide="hideMapButtons">
-		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
-		    <div class="btn-group pull-right" dropdown>
-		      <button type="button" class="dropdown-toggle" ng-click="focusLocationSearchInput()">
-		        <i class="fa fa-search"></i>
-		      </button>
-		      <ul class="dropdown-menu" role="menu"><li><a style="padding:0;background:#fff !important;">
-		      	<form>
-			      	<input type="text" class="form-control input-sm search location-search-input" ng-model="geo.query" placeholder="search for a location">
-			        <input ng-click="geoSearch()" type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
-		       	</form>
-
-		        <div class="results">
-		        	<div ng-repeat="result in geo.results" ng-click="goTo(result)">	
-		        		<div style="font-weight:400;">{{ result.name }}</div>
-		        		<div style="font-weight:100;">
-		        			<span ng-show="result.adminName2">{{ result.adminName2 }}, </span>{{ result.adminName1 }} {{ result.countryCode }} <span style="float:right;color:#ccc;display:none;">{{ result.fcodeName}}</span>
-		        		</div>
-		        	</div>
-		        </div>
-
-		        </a></li></ul>
-		    </div>
-		</div>
+		<map-search location-select="mapSearchSelect(location)"></map-search>
 	</div>
 
 	<div class="side-bar">

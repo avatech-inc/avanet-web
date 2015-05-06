@@ -21,22 +21,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     mixpanel.track("home");
 
-
-    // ====== NEW VERSION MODAL ========
-
-   // var modalInstance = $modal.open({
-   //      templateUrl: '/modules/location-select-modal/location-select-modal.html',
-   //      controller: 'LocationSelectModalController',
-   //      backdrop: 'static',
-   //      // resolve: {
-   //      //     initialLocation: function () {
-   //      //       return options.initialLocation
-   //      //     }
-   //      // }
-   //  }).then(function (location) {
-
-   //  });
-
     // ======= SEARCH =======
 
     $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
@@ -82,6 +66,15 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.setDefaultPublisher = function() {
         $scope.searchQuery.publisher = angular.copy(defaultPublisher);
     }
+
+    // filtering
+    $scope.filteredProfiles = [];
+    $scope.filterProfiles = function() {
+        $scope.filteredProfiles = [];
+        angular.forEach($scope.profiles, function(profile) {
+            if ($scope.doSearch(profile)) $scope.filteredProfiles.push(profile);
+        });
+    }
     
     // debounce search
     var _searchTimeout;
@@ -89,6 +82,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if (_searchTimeout) $timeout.cancel(_searchTimeout);
         _searchTimeout = $timeout(function(){
             $scope._searchQuery = angular.copy($scope.searchQuery);
+            $scope.filterProfiles();
         },100);
     }, true);
 
@@ -97,7 +91,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         // only search through published profiles 
         if (profile.type == 'profile' && !profile.published) return false;
-        // todo: for SP1 profiles make sure "published" field is added
 
         if ($scope.search_type(profile) === false) ok = false;
         if ($scope.search_date(profile) === false) ok = false;
@@ -110,7 +103,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return ok;
     }
 
-    // debounce plotting of map
+
+    // debounce plotting of filteredProfiles on map
     var _mapTimeout;
     $scope.$watch('filteredProfiles',function(){
         if (_mapTimeout) $timeout.cancel(_mapTimeout);
@@ -144,19 +138,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                     marker.setOpacity(0);
                     marker._icon.style.pointerEvents = "none";
                 }
-                // // open popup automatically if new_id is specified (from querystring)
-                // if ($scope.new_id && marker.profile._id == $scope.new_id) {
-                //     $scope.new_id = null;
-                //     marker.openPopup();
-                // }
-
             });
 
         }, 300);
 
     },true);
-
-    var dateOnLoad = new Date();
+    
+    // filters
 
     $scope.my_unpublished = function(profile) {
         if (profile.type != $scope.type_unpublished) return false;
@@ -336,60 +324,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.type_select = function(type) {
         $scope.searchQuery.type[type] = !$scope.searchQuery.type[type];
     }
-    $scope.type_unpublished = 'test';
-    $scope.set_type_unpublished = function(type) {
-        $scope.type_unpublished = type;
-        // clear selected profiles
-        $scope.selectedProfiles = [];
-    }
-
-    $scope.selectedProfiles = [];
-    $scope.selectProfile = function(profile) {
-        var index = $scope.getProfileSelectedIndex(profile);
-        if (index > -1) {
-            $scope.selectedProfiles.splice(index, 1);
-            return false;
-        }
-
-        $scope.selectedProfiles.push(profile);
-
-        return false;
-    }
-    $scope.getProfileSelectedIndex = function(profile) {
-        for (var i = 0; i < $scope.selectedProfiles.length; i++) {
-            if ($scope.selectedProfiles[i]._id == profile._id) { return i; break; }
-        }
-        return -1;
-    }
-    $scope.isProfileSelected = function(profile) {
-        return ($scope.getProfileSelectedIndex(profile) != -1);
-    }
-    $scope.publishProfiles = function() {
-
-        PublishModal.open({ initialSharing: null })
-        .then(function (sharing) {
-
-            angular.forEach($scope.selectedProfiles,function(profile) {
-
-                profile.published = true;
-                profile.sharingLevel = sharing.sharingLevel;
-                profile.shareWithAvyCenter = sharing.shareWithAvyCenter;
-                profile.sharedOrganizations = sharing.sharedOrganizations;
-                profile.shareWithStudents = sharing.shareWithStudents;
-
-                console.log(sharing);
-
-                Observations.save(profile);
-
-            });
-    
-            // clear selected profiles
-            $scope.selectedProfiles = [];
-
-        }, function () {
-            // on dismiss
-        });
-    }
 
     $scope.search_type = function(val) { 
         // var d = new Date();
@@ -485,7 +419,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     $scope.formatTemp = function(val) {
-        // todo: temp while settings issue is figured out
         if (!Global.user.settings) return;
         // meters
         if (Global.user.settings.elevation == 0)
@@ -496,7 +429,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     }
     $scope.formatTempRange = function(val1,val2) {
-        // todo: temp while settings issue is figured out
         if (!Global.user.settings) return;
         // meters
         if (Global.user.settings.elevation == 0)
@@ -517,6 +449,62 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     // ======= END SEARCH =======
+
+
+    $scope.type_unpublished = 'test';
+    $scope.set_type_unpublished = function(type) {
+        $scope.type_unpublished = type;
+        // clear selected profiles
+        $scope.selectedProfiles = [];
+    }
+
+    $scope.selectedProfiles = [];
+    $scope.selectProfile = function(profile) {
+        var index = $scope.getProfileSelectedIndex(profile);
+        if (index > -1) {
+            $scope.selectedProfiles.splice(index, 1);
+            return false;
+        }
+
+        $scope.selectedProfiles.push(profile);
+
+        return false;
+    }
+    $scope.getProfileSelectedIndex = function(profile) {
+        for (var i = 0; i < $scope.selectedProfiles.length; i++) {
+            if ($scope.selectedProfiles[i]._id == profile._id) { return i; break; }
+        }
+        return -1;
+    }
+    $scope.isProfileSelected = function(profile) {
+        return ($scope.getProfileSelectedIndex(profile) != -1);
+    }
+    $scope.publishProfiles = function() {
+
+        PublishModal.open({ initialSharing: null })
+        .then(function (sharing) {
+
+            angular.forEach($scope.selectedProfiles,function(profile) {
+
+                profile.published = true;
+                profile.sharingLevel = sharing.sharingLevel;
+                profile.shareWithAvyCenter = sharing.shareWithAvyCenter;
+                profile.sharedOrganizations = sharing.sharedOrganizations;
+                profile.shareWithStudents = sharing.shareWithStudents;
+
+                console.log(sharing);
+
+                Observations.save(profile);
+
+            });
+    
+            // clear selected profiles
+            $scope.selectedProfiles = [];
+
+        }, function () {
+            // on dismiss
+        });
+    }
 
 
     $scope.setBaseLayer = function(layer, clicked) {
@@ -567,19 +555,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // add new layer to map
         if (newBaseLayer) {
             newBaseLayer.addTo($scope.map);
-            newBaseLayer.bringToFront();
+            //newBaseLayer.bringToFront();
         }
+
+        if ($scope.baseLayer) $scope.map.removeLayer($scope.baseLayer);
+        $scope.baseLayer = newBaseLayer;
 
         // save to user settings
         $scope.global.setUserSetting("defaultMap", layer.alias);
-
-        //if ($scope.baseLayer) $scope.previousLayer = $scope.baseLayer;
-        if ($scope.baseLayer) $scope.map.removeLayer($scope.baseLayer);
-        $scope.baseLayer = newBaseLayer;
     }
 
     // init mapbox
-    //$scope.map = L.mapbox.map('map', '', { //andrewsohn.e9ef13ee
     $scope.map = L.map('map', {
         zoomControl: false,
         worldCopyJump: true,
@@ -638,12 +624,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.compiledPopup;
     (function(){
 
-        var html = '<div>';
+        var html = '<div bindonce="profile">';
 
         html += '<div class="popup-title">';
-        html += "<span ng-if='profile.type==\"profile\"'>Snowpit</span>";
-        html += "<span ng-if='profile.type==\"test\"'>SP1 Profile</span>";
-        html += "<span ng-if='profile.type==\"avy\"'>Avalanche</span>";
+        html += "<span bo-if='profile.type==\"profile\"'>Snowpit</span>";
+        html += "<span bo-if='profile.type==\"test\"'>SP1 Profile</span>";
+        html += "<span bo-if='profile.type==\"avy\"'>Avalanche</span>";
 
         html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
         html += '</div>';
@@ -653,24 +639,24 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
 
         // profile
-        html += '<canvas ng-if="profile.type==\'profile\'" profile="profile" width="200" height="200" class="thumb"></canvas>';
+        html += '<canvas bo-if="profile.type==\'profile\'" profile="profile" width="200" height="200" class="thumb"></canvas>';
         // test
-        html += '<canvas ng-if="profile.type==\'test\'" graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
+        html += '<canvas bo-if="profile.type==\'test\'" graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
         // avy
-        html += "<div ng-if='profile.type==\"avy\"' ng-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ ::profile.photos[0].url }}\")'></div>";
+        html += "<div bo-if='profile.type==\"avy\"' bo-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ ::profile.photos[0].url }}\")'></div>";
 
         html += '<div class="popup-content">';
 
-        html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{ ::profile.user.fullName}} <span ng-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
+        html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{ ::profile.user.fullName}} <span bo-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
 
-        html += "<div ng-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ ::profile.organization.name }}</div>";
+        html += "<div bo-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ ::profile.organization.name }}</div>";
 
         html += "<div><i style='margin-right:3px;' class='fa fa-clock-o'></i>  {{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>";
 
         // profile or test
-        html += "<div ng-if='profile.type==\"profile\" || profile.type==\"test\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.metaData.location }}</div>";
+        html += "<div bo-if='profile.type==\"profile\" || profile.type==\"test\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.metaData.location }}</div>";
         // avy
-        html += "<div ng-if='profile.type==\"avy\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.locationName }}</div>";
+        html += "<div bo-if='profile.type==\"avy\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.locationName }}</div>";
         
         html += "</div>";
         html += "</a>";
@@ -829,296 +815,21 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         });
     });
-    
-
-// simple lat/lng distance sorting
-function geoSort(locations, pos) {
-  function dist(l) {
-    return (l.lat - pos.lat) * (l.lat - pos.lat) +
-      (l.lng - pos.lng) * (l.lng - pos.lng);
-  }
-  locations.sort(function(l1, l2) {
-    return dist(l1) - dist(l2);
-  });
-}
-function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-    var deg2rad = function(deg) {
-      return deg * (Math.PI/180)
-    }
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));  //Math.asin(Math.sqrt(a))
-  var d = R * c; // Distance in km
-  return d;
-}
-var levDist = function(s, t) {
-    var d = []; //2d matrix
-
-    // Step 1
-    var n = s.length;
-    var m = t.length;
-
-    if (n == 0) return m;
-    if (m == 0) return n;
-
-    //Create an array of arrays in javascript (a descending loop is quicker)
-    for (var i = n; i >= 0; i--) d[i] = [];
-
-    // Step 2
-    for (var i = n; i >= 0; i--) d[i][0] = i;
-    for (var j = m; j >= 0; j--) d[0][j] = j;
-
-    // Step 3
-    for (var i = 1; i <= n; i++) {
-        var s_i = s.charAt(i - 1);
-
-        // Step 4
-        for (var j = 1; j <= m; j++) {
-
-            //Check the jagged ld total so far
-            if (i == j && d[i][j] > 4) return n;
-
-            var t_j = t.charAt(j - 1);
-            var cost = (s_i == t_j) ? 0 : 1; // Step 5
-
-            //Calculate the minimum
-            var mi = d[i - 1][j] + 1;
-            var b = d[i][j - 1] + 1;
-            var c = d[i - 1][j - 1] + cost;
-
-            if (b < mi) mi = b;
-            if (c < mi) mi = c;
-
-            d[i][j] = mi; // Step 6
-
-            //Damerau transposition
-            if (i > 1 && j > 1 && s_i == t.charAt(j - 2) && s.charAt(i - 2) == t_j) {
-                d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + cost);
-            }
-        }
-    }
-
-    // Step 7
-    return d[n][m];
-}
-
-$scope.geo = { query: '', results: [] }
-$scope.geoSearch = function() {
-    console.log($scope.geo.query);
-
-    // clear current results
-    $scope.geo.results = [];
-    $scope.geo.query = $scope.geo.query.trim();
-    if ($scope.geo.query == "") return;
-    //codeAddress($scope.geo.geoQuery);
-
-    $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
-    .success(function(data, status, headers, config) {
-
-    // geoSort(data.geonames, 40.633052, -111.5658795);
-
-    var states = {
-        // primary
-        "CO": 200,
-        "UT": 200,
-        "WA": 100,
-        "NV": 100,
-        "MT": 100,
-        "WY": 100,
-        "AK": 100,
-        "CA": 100,
-        "ID": 100,
-        "OR": 100,
-
-        // secondary
-        "NH": 50,
-        "ME": 50,
-        "NM": 30,
-        "VT": 20,
-        "NY": 20,
-
-        // mostly flat
-        "AZ": 10,
-        "MA": 10,
-        "MN": 10,
-        "NJ": 10,
-        "NC": 10,
-        "ND": 10,
-        "PA": 10,
-        "SD": 10,
-        "TN": 10,
-        "VA": 10,
-        "WV": 10,
-        "MI": 10,
-
-        // flat places
-        "NE": 0,
-        "AL": 0,
-        "AS": 0,
-        "AR": 0,
-        "CT": 0,
-        "DE": 0,
-        "DC": 0,
-        "FM": 0,
-        "FL": 0,
-        "GA": 0,
-        "GU": 0,
-        "HI": 0,
-        "IL": 0,
-        "IN": 0,
-        "IA": 0,
-        "PR": 0,
-        "RI": 0,
-        "SC": 0,
-        "PW": 0,
-        "MP": 0,
-        "MH": 0,
-        "KS": 0,
-        "MD": 0,
-        "OH": 0,
-        "OK": 0,
-        "VI": 0,
-        "MS": 0,
-        "MO": 0,
-        "TX": 0,
-        "WI": 0,
-        "KY": 0,
-        "LA": 0,
-    }
-
-    // remove
-    var exlcude = ['church','cemetery','mine(s)','tower','golf course','island','mall','museum','library'];
-    data.geonames = data.geonames.filter(function(a) {
-        var code = a.fcodeName;
-        console.log(a.countryCode);
-        if (exlcude.indexOf(code) == -1 && a.countryCode != undefined) return a;
-    });
-
-    // // sort by location weight
-    // for (var i = 0; i < data.geonames.length; i++) {
-    //     var result = data.geonames[i];
-    //     result.weight = states[result.adminCode1.trim().toUpperCase()];
-    //     if (result.weight == null) { console.log("NOT FOUND (" + result.adminCode1 + ")"); result.weight = 100; }
-    // }
-
-    //   data.geonames.sort(function(a,b) {
-    //     return b.weight - a.weight;
-    //   });
-    
-    // filter out only the "flat" areas
-      // data.geonames = data.geonames.filter(function(a) {
-      //   return a.weight > 0;
-      // });
-
-        // merge "neighbors"
-        var merged = [];
-        for (var i = 0; i < data.geonames.length; i++) {
-            var neighbors = [];
-            var result = data.geonames[i];
-            // go through others
-            (function() {
-                for (var j = 0; j < data.geonames.length; j++) {
-                    var result2 = data.geonames[j];
-                    if (result2.merged) continue;
-                    //if (result == result2) continue;
-                    var distance = getDistanceFromLatLonInKm(
-                        parseFloat(result.lat),
-                        parseFloat(result.lng),
-                        parseFloat(result2.lat),
-                        parseFloat(result2.lng)
-                    );
-                    //console.log(distance);
-                    //console.log(result2.merged);
-                    if (distance < 2) {
-                        result.merged = true;
-                        result2.merged = true;
-                        neighbors.push(result2);
-                    }
-                }
-            })();
-
-            //console.log(neighbors.length);
-            if (neighbors.length != 0) merged.push(neighbors);
-            //break;
-        }
-
-        // find the "best" of the merged
-        var finalResults = [];
-        for (var i = 0; i < merged.length; i++) {
-            var _merged = merged[i];
-            if (_merged.length == 1) { finalResults.push(_merged[0]); continue; }
-
-            console.log("----------------------- " + i);
-            // for (var m = 0; m < _merged.length; m++) {
-            //     var result = _merged[m];
-            //     var name = result.name.toLowerCase().trim();
-            //     var query = $scope.geo.query.toLowerCase().trim();
-
-            //     // if (name == query) result.quality = 3;
-            //     // else if (name.indexOf(query) == 0) result.quality = 2;
-            //     // else if (name.indexOf(query) != -1) result.quality = 1;
-            //     // else result.quality = 0;
-
-            //     //if (name == query) result.quality = 5;
-            //     //else 
-            //     result.quality = result.score;
-            // }
-
-            // sort by quality
-            _merged.sort(function(a,b) { return b.score - a.score });
-
-            for (var m = 0; m < _merged.length; m++) {
-                var result = _merged[m];
-                console.log(result.name + ": " + result.quality + " / " + result.score);
-            }
-
-            // pick first
-            finalResults.push(_merged[0]);
-        }
 
 
-    // sort final results by quality
-    //finalResults.sort(function(a,b) { return b.score - a.score });
+    var defaultZoom = 12;
+    if (!$scope.global.user.location) $scope.map.setView([40.633052,-111.7111795], defaultZoom); //8
+    else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], defaultZoom); //8
 
-      data.geonames = data.geonames.slice(0,8);
-      //finalResults = finalResults.slice(0,8);
-
-      $scope.geo.results = data.geonames;
-      $scope.$apply();
-    });
-}
-$scope.focusLocationSearchInput = function() {
-    $(".location-search-input").focus();
-}
-$scope.goTo = function(result) {
-    console.log(result);
-    //$scope.map.panTo([parseFloat(result.lat),parseFloat(result.lng)]);
-    $scope.map.setView([parseFloat(result.lat),parseFloat(result.lng)], 12,{ animate: true});
-}
-
-    // disable this for demo
-    if ($location.search().lat && $location.search().lng) {
-        $scope.new_id = $location.search()["_"];
-        try {
-            $scope.map.setView([$location.search().lat,$location.search().lng], 15);
-            $location.search('lat', null);
-            $location.search('lng', null);
-            $location.search('_', null);
-        }
-        catch(e) { console.log(e); }
-    }
-    else if (!$scope.global.user.location) $scope.map.setView([40.633052,-111.7111795], 12); //8
-    else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], 12); //8
 
     $scope.loadMyProfiles = function() {
-        //Observations
         $scope.myProfiles = Observations.observations;
+    }
+
+    // on map search select
+    $scope.mapSearchSelect = function(location) {
+        if (location.lat && location.lng)
+            $scope.map.setView([location.lat,location.lng], 12,{ animate: true});
     }
 
     // load profiles
@@ -1135,7 +846,7 @@ $scope.goTo = function(result) {
         var verbose = ($scope.map.getZoom() > 7); 
 
         // padding in pixels (so we don't get cut-off map points)
-        var padding = 8;
+        var padding = 5;
 
         var point_ne = $scope.map.latLngToContainerPoint(bounds._northEast);
         point_ne.y += padding; point_ne.x -= padding;
@@ -1155,12 +866,18 @@ $scope.goTo = function(result) {
           timeout: $scope.canceler.promise
         }).success(function(profiles) {
 
-            $scope.loadingProfiles = false;
-            // todo: make this like the "observations" service (i.e. addorreplace)
+            var d = new Date().getTime();
+            console.log("LOADED!");
+            // todo: make this like the "observations" service? (i.e. addorreplace)
             $scope.profiles = profiles;
+            $scope.filterProfiles();
+
+            console.log("LOADED 2! " + (new Date().getTime() - d) + " ms");
+
+            $scope.loadingProfiles = false;
             $scope.loadingNew = false;
 
-            $timeout(function() { $scope.$apply(); });
+            //$timeout(function() { $scope.$apply(); });
         });
     }
     $scope.loadingProfiles = true;
@@ -1180,12 +897,19 @@ $scope.goTo = function(result) {
         }, 2000);
     });
 
+    //$scope.highLevelMap = false;
     $scope.map.on('zoomend', function() {
         $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
         }, 2000);
         mixpanel.track("zoom", $scope.map.getZoom());
+
+        console.log("ZOOM: " + $scope.map.getZoom());
+
+        // if ($scope.map.getZoom() < 8) {
+        //     $scope.highLevelMap = true;
+        // }
 
         
         // here's where you decided what zoom levels the layer should and should
@@ -1239,15 +963,213 @@ $scope.goTo = function(result) {
       $location.path(path);
     };
 
-    // terrain shading
+    // -------------------------------------------------------------------------
 
-     //http://basemap.nationalmap.gov/arcgis/services/USGSShadedReliefOnly/MapServer/WMSServer
-    // L.tileLayer("http://s3-us-west-1.amazonaws.com/ctrelief/relief/{z}/{x}/{y}.png", {
-    //     layers: 0,
-    //     zIndex: 3,
-    //     opacity: .2,
-    //     detectRetina: true,
-    //     maxZoom: 16
-    // }).addTo($scope.map);
+    L.TileLayer.prototype._getTileSize = function () {
+        var map = this._map,
+            options = this.options,
+            zoom = map.getZoom() + options.zoomOffset,
+            zoomN = options.maxNativeZoom;
+
+        // increase tile size when overscaling
+        return zoomN !== null && zoom > zoomN ?
+                Math.round(options.tileSize / map.getZoomScale(zoomN, zoom)) : 
+                options.tileSize;
+    };
+
+    var maxNativeZoom = 14;
+    var hills = L.tileLayer.canvas({
+        zIndex: 999,
+        opacity: .4,
+        maxNativeZoom: maxNativeZoom
+    });
+    var altitude, azimuth, shadows, highlights;
+    var zFactor = .12;
+
+    hills.redrawQueue = [];
+
+    var uniqueId = (function () {
+        var lastId = 0;
+        return function () {
+            return ++lastId;
+        };
+    })();
+
+    var workers = [];
+
+    function updateTile(e) {
+        var ctx = contexts[e.data.id];
+        var tileSize = ctx.canvas.width;
+
+        if (tileSize == 256) {
+            var imgData = ctx.createImageData(256, 256);
+            imgData.data.set(new Uint8ClampedArray(e.data.shades));
+            ctx.putImageData(imgData, 0, 0);
+        }
+        else {
+            var temp_canvas = document.createElement('canvas');
+            temp_canvas.width = temp_canvas.height = 256;
+            var temp_context = temp_canvas.getContext('2d');
+            var imgData = temp_context.createImageData(256, 256);
+            imgData.data.set(new Uint8ClampedArray(e.data.shades));
+            temp_context.putImageData(imgData, 0, 0);
+
+            var imageObject=new Image();
+            imageObject.onload=function(){
+                ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+                ctx.drawImage(imageObject,0,0, 256, 256, 0, 0, tileSize, tileSize);
+            }
+            imageObject.src=temp_canvas.toDataURL();
+        }
+    }
+
+    for (var i = 0; i < 20; i++) {
+        workers[i] = new Worker('js/worker.js');
+        workers[i].onmessage = updateTile;
+    }
+
+    $scope.map.on('viewreset', function () {
+        hills.redrawQueue = [];
+        workers.forEach(function (worker) {
+            worker.postMessage('clear');
+        });
+    });
+
+
+    var contexts = {};
+    hills.drawTile = function(canvas, tilePoint, zoom) {
+        var tileSize = hills._getTileSize();
+        canvas.width = canvas.height = tileSize;
+
+        var renderedZFactor;
+        var context_id = uniqueId();
+
+        var PNG_data;
+
+         if (zoom > maxNativeZoom) zoom = maxNativeZoom;
+        contexts[context_id] = canvas.getContext('2d');
+
+        function redraw() {
+            // if no terrain overlay specified, clear canvas
+            if (!$scope.terrainOverlay) {
+                var context = canvas.getContext('2d');
+                context.clearRect ( 0 , 0 , canvas.width, canvas.height );
+                return;
+            }
+
+            var transferable = [];
+            var data = { id: context_id };
+
+            if (renderedZFactor !== zFactor) {
+                data.raster = PNG_data;
+                data.zFactor = zFactor;
+                data.url = url;
+                transferable.push(data.raster);
+            }
+            data.processType = $scope.terrainOverlay;
+
+            // sun location
+            if ($scope.terrainOverlay == "sun") {
+                var mapCenter = $scope.map.getCenter();
+                var _date = new Date($scope.sunDate);
+                _date.setHours(_date.getHours() - 1 - 1); // adjust for 0-23, adjust to match CalTopo
+                var pos = SunCalc.getPosition(_date, mapCenter.lat, mapCenter.lng);
+                data.altitude = pos.altitude * (180 / Math.PI);
+                data.azimuth = pos.azimuth * (180 / Math.PI);
+            }
+
+            var workerIndex = (tilePoint.x + tilePoint.y) % workers.length;
+            workers[workerIndex].postMessage(data, transferable);
+
+            renderedZFactor = zFactor;
+        }
+
+        var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+        
+        var xhr = new XMLHttpRequest;
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function() {
+            if (xhr.status != 200) return;
+            var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+
+            var png = new PNG(data);
+            if (png) {
+                var pixels = png.decodePixels();
+                PNG_data = new Uint8ClampedArray(pixels).buffer;
+
+                redraw();
+                hills.redrawQueue.push(redraw);
+            }
+        };
+        return xhr.send(null);
+
+        // PNG.load(url, function(png) {
+        //     var pixels = png.decodePixels();
+        //     PNG_data = new Uint8ClampedArray(pixels).buffer;
+
+        //     redraw();
+        //     hills.redrawQueue.push(redraw);
+        // });
+    }
+
+    hills.redrawTiles = function () {
+        hills.redrawQueue.forEach(function(redraw) { redraw(); });
+    };
+    setTimeout(function(){
+        hills.addTo($scope.map);
+    }, 100);
+
+    // --------
+
+    $scope.sunHours = 17;
+    var _debounce;
+    $scope.$watch('sunHours', function() {
+        if (_debounce) $timeout.cancel(_debounce);
+        _debounce = $timeout(function(){
+            needsRedraw = true;
+
+            $scope.sunDate = new Date(); 
+            $scope.sunDate.setTime(Date.parse("2015 01 01"));
+            $scope.sunDate.setHours($scope.sunHours);
+            if ($scope.sunHours % 1 == .5) $scope.sunDate.setMinutes(30);
+        }, 50);
+
+    },true);
+
+    var needsRedraw = false;
+    function redraw() {
+        if (needsRedraw) hills.redrawTiles();
+        needsRedraw = false;
+        window.requestAnimationFrame(redraw);
+    }
+    redraw();
+
+    $scope.terrainOverlay = "";
+    $scope.changeTerrainOverlay = function(overlay) {
+        $scope.terrainOverlay = overlay;
+        needsRedraw = true;
+        //redraw();
+    }
+
+
+    // ---------- DRAWING -----------
+
+    // var featureGroup = L.featureGroup().addTo($scope.map);
+    //  var drawControl = new L.Control.Draw({
+    //     edit: {
+    //       featureGroup: featureGroup
+    //     }
+    //   }).addTo($scope.map);
+
+    //   $scope.map.on('draw:created', function(e) {
+    //       featureGroup.addLayer(e.layer);
+    //       //console.log(e.layer);
+
+    //       for (var i = 0; i < e.layer._latlngs.length; i++) {
+    //         var point = e.layer._latlngs[i];
+
+    //       }
+    //   });
 
 });

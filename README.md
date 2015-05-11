@@ -14,12 +14,8 @@ The AvaTech web platform. Runs on the "MEAN" stack:
 
 ## Development
 
-1. To run locally: ```grunt```
-
-## Deployment
-
-1. Run ```grunt build```
-1. Deploy '_dist' folder to nodejitsu ```jitsu deploy```
+1. To run locally: ```gulp start```
+2. Run in browser: ```http://localhost:3000/```
 
 
 

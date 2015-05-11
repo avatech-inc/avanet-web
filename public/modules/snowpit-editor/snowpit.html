@@ -615,15 +615,19 @@
 					{{ upload.name }}
 				</div>
 
-				<div ng-repeat="photo in profile.photos" style="vertical-align:top;height:145px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
-					<div ng-style="{ 'background-image': 'url(' + photo.url + ')' }" style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
+				<div ng-repeat="photo in profile.photos" class="photo-thumb" style="position:relative; vertical-align:top;height:145px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
+
+					<div ng-style="{ 'background-image': 'url(' + getPhotoUrl(photo) + ')' }" 
+
+					style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
 
 						<!--<div ng-show="photo.uploading" style="padding-top:22px;font-size:40px;"><i class="fa fa-circle-o-notch fa-spin"></i></div>-->
 
 					</div>
 
-					<button ng-click="deletePhoto($index)" class="btn btn-sm btn-default" style="float:left;"><i class="fa fa-trash-o"></i></button>
-					<input ng-model="photo.caption" class="form-control input-sm" style="width:105px;float:right;" />
+					<input ng-model="photo.caption" class="photo=caption form-control input-sm" />
+
+					<button ng-click="deletePhoto($index)" class="photo-delete"><i class="fa fa-trash-o"></i></button>
 				</div>
 			</div>
 

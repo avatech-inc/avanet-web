@@ -768,10 +768,6 @@ angular.module('avatech')
         }
 
         $scope.onFileUpload = function(file) {
-            // console.log("ON UPLOAD!");
-            // file.uploading = false;
-            // $scope.$apply();
-           
             if ($scope.profile.photos == null) $scope.profile.photos = [];
             file.uploading = false;
             file.caption = file.name;
@@ -782,6 +778,13 @@ angular.module('avatech')
 
         $scope.showPhoto = function(index) {
             Lightbox.openModal($scope.profile.photos, index);
+        }
+
+        $scope.getPhotoUrl = function(photo) {
+            if (photo.cloudinary_id && photo.cloudinary_format) 
+                return "https://res.cloudinary.com/avatech/image/upload/w_200/" + photo.cloudinary_id + "." + photo.cloudinary_format;
+            else 
+                return photo.url;
         }
 
         // UTILITIES

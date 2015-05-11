@@ -1,5 +1,5 @@
 angular.module('avatech')
-.controller('SnowpitController', ['$scope', '$state', '$stateParams', '$location', '$http', '$timeout', '$modal', 'Profiles', 'snowpitConstants', 'snowpitViews', 'snowpitExport','FontLoader', 'Global', 'Confirm', 'LocationSelectModal', 'Lightbox',
+.controller('SnowpitController', 
     function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, Profiles, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox) {
 
         $scope.global = Global;
@@ -780,13 +780,6 @@ angular.module('avatech')
             Lightbox.openModal($scope.profile.photos, index);
         }
 
-        $scope.getPhotoUrl = function(photo) {
-            if (photo.cloudinary_id && photo.cloudinary_format) 
-                return "https://res.cloudinary.com/avatech/image/upload/w_200/" + photo.cloudinary_id + "." + photo.cloudinary_format;
-            else 
-                return photo.url;
-        }
-
         // UTILITIES
 
         $scope.round = function(num) {
@@ -810,9 +803,9 @@ angular.module('avatech')
                 picker.setMoment(moment(document.getElementById('datepicker').value));
             },500);
         },1);
-    }])
+    })
 
-.directive('draggable', ['$document','$timeout' , function($document, $timeout) {
+.directive('draggable', function($document, $timeout) {
     return {
       restrict: 'A',
       scope: { layer: '=draggable' },
@@ -863,9 +856,9 @@ angular.module('avatech')
         }
       }
     };
-  }])
+  })
 
-.directive('draggableHardness', ['$document','$timeout' , function($document, $timeout) {
+.directive('draggableHardness', function($document, $timeout) {
     return {
       restrict: 'A',
       scope: { layer: '=draggableHardness' },
@@ -965,7 +958,4 @@ angular.module('avatech')
         }
       }
     };
-  }])
-
-
-;
+  });

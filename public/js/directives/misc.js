@@ -17,6 +17,27 @@ angular.module('avatech').directive('onenter', function() {
   }
 });
 
+angular.module('avatech').directive('thumbnail', ['$timeout', '$parse',function($timeout, $parse) {
+  return {
+    restrict: 'A',
+    scope: {
+      photo: '=thumbnail'
+    },
+    link: function(scope, element, attrs) {
+
+        scope.$watch('photo', function() {
+
+            var url = scope.photo.url;
+
+            if (scope.photo.cloudinary_id && scope.photo.cloudinary_format) url = "https://res.cloudinary.com/avatech/image/upload/w_200/" + scope.photo.cloudinary_id + "." + scope.photo.cloudinary_format;
+            
+            element[0].style.background = "url('" + url + "')"; 
+        });
+
+    }
+  };
+}]);
+
 angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($timeout, $parse) {
   return {
     link: function(scope, element, attrs) {

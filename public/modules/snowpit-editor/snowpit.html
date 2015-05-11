@@ -617,7 +617,7 @@
 
 				<div ng-repeat="photo in profile.photos" class="photo-thumb" style="position:relative; vertical-align:top;height:145px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
 
-					<div ng-style="{ 'background-image': 'url(' + getPhotoUrl(photo) + ')' }" 
+					<div thumbnail="photo"
 
 					style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
 

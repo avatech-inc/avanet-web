@@ -1,10 +1,10 @@
 angular.module('avatech.system').controller('AdminOrgsController', ['$scope', '$location', '$http', 'Global', 'Users', function ($scope, $location, $http, Global, Users) {
     $scope.global = Global;
 
-	// executes on 'page load'
-	$scope.init = function() {
-		$scope.getOrgs();
-	}
+    // executes on 'page load'
+    $scope.init = function() {
+        $scope.getOrgs();
+    }
 
     // var countries = {};
     
@@ -136,7 +136,7 @@ angular.module('avatech.system').controller('AdminOrgsController', ['$scope', '$
             // console.log(countries);
             // console.log(Object.keys(countries).length)
         });
-	}
+    }
 
     // $scope.toggleDisabled = function(user) {
     //     user.disabled = !user.disabled;

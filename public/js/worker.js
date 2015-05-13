@@ -153,103 +153,49 @@ function getColorMap(steps){
     return colorMap;
 }
 
+
+    var elevationColorMap = getColorMap([
+        { color: "fd4bfb", val: 0 },
+        { color: "1739fb", val: 1000 },
+        { color: "2bf8fb", val: 2000 },
+        { color: "28f937", val: 2400 },
+        { color: "fefa37", val: 2800 },
+        { color: "fd912f", val: 3200 },
+        { color: "910209", val: 3600 }
+    ]);
+
+    var slopeColorMap = getColorMap([
+        { color: "ffffff", val: 0 },
+        { color: "00f61c", val: 6 },
+        { color: "02fbd2", val: 11 },
+        { color: "01c6f6", val: 17 },
+        { color: "3765f9", val: 22 },
+        { color: "9615f8", val: 27 },
+        { color: "eb02d0", val: 31 },
+        { color: "fb1978", val: 35 },
+        { color: "ff5c17", val: 39 },
+        { color: "f9c304", val: 42 },
+        { color: "fefe2b", val: 45 },
+        { color: "000000", val: 80 },
+    ]);
+
+    var aspectColorMap = getColorMap([
+        { color: "c0fc33", val: 0 },
+        { color: "3bc93d", val: 22 },
+        { color: "3cca99", val: 67 },
+        { color: "1b29e1", val: 112 },
+        { color: "7e3ac8", val: 157 },
+        { color: "fb0b1a", val: 202 },
+        { color: "fc9325", val: 247 },
+        { color: "fefc37", val: 292 },
+        { color: "c0fc33", val: 338 },
+        { color: "c0fc33", val: 360 },
+    ]);
+
+
 function render(data, processType, alt) {
 
     var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
-
-    // slope map
-    // var colorMap = [];
-    // for (var i = 0; i <= 80; i++) {
-    //     if (i >= 0 && i < 6) {
-    //         colorMap[i] = blendHexColors("00ff00","00f61c", getPercent(0, 6, i));
-    //     } else if (i >= 6 && i < 11)
-    //         colorMap[i] = blendHexColors("00f61c","02fbd2", getPercent(6, 11, i));
-    //     else if (i >= 11 && i < 17)
-    //         colorMap[i] = blendHexColors("02fbd2","01c6f6", getPercent(11, 17, i));
-    //     else if (i >= 17 && i < 22)
-    //         colorMap[i] = blendHexColors("01c6f6","3765f9", getPercent(17, 22, i));
-    //     else if (i >= 22 && i < 27)
-    //         colorMap[i] = blendHexColors("3765f9","9615f8", getPercent(22, 27, i));
-    //     else if (i >= 27 && i < 31)
-    //         colorMap[i] = blendHexColors("9615f8","eb02d0", getPercent(27, 31, i));
-    //     else if (i >= 31 && i < 35)
-    //         colorMap[i] = blendHexColors("eb02d0","fb1978", getPercent(31, 35, i));
-    //     else if (i >= 35 && i <= 39)
-    //         colorMap[i] = blendHexColors("fb1978","ff5c17", getPercent(35, 39, i));
-    //     else if (i >= 39 && i <= 42)
-    //         colorMap[i] = blendHexColors("ff5c17","f9c304", getPercent(39, 42, i));
-    //     else if (i >= 42 && i <= 45)
-    //         colorMap[i] = blendHexColors("f9c304","fefe2b", getPercent(42, 45, i));
-    //     else if (i >= 45 && i <= 80)
-    //         colorMap[i] = blendHexColors("fefe2b","000000", getPercent(45, 80, i));
-    // }
-
-    // elevation color map
-    if (processType == "elevation") {
-        var elevationColorMap = getColorMap([
-            { color: "fd4bfb", val: 0 },
-            { color: "1739fb", val: 1000 },
-            { color: "2bf8fb", val: 2000 },
-            { color: "28f937", val: 2400 },
-            { color: "fefa37", val: 2800 },
-            { color: "fd912f", val: 3200 },
-            { color: "910209", val: 3600 }
-        ]);
-    }
-
-    // slope color map
-    if (processType == "slope") {
-        var slopeColorMap = getColorMap([
-            { color: "ffffff", val: 0 },
-            { color: "00f61c", val: 6 },
-            { color: "02fbd2", val: 11 },
-            { color: "01c6f6", val: 17 },
-            { color: "3765f9", val: 22 },
-            { color: "9615f8", val: 27 },
-            { color: "eb02d0", val: 31 },
-            { color: "fb1978", val: 35 },
-            { color: "ff5c17", val: 39 },
-            { color: "f9c304", val: 42 },
-            { color: "fefe2b", val: 45 },
-            { color: "000000", val: 80 },
-        ]);
-    }
-
-    // aspect color map
-    if (processType == "aspect") {
-        var aspectColorMap = getColorMap([
-            { color: "c0fc33", val: 0 },
-            { color: "3bc93d", val: 22 },
-            { color: "3cca99", val: 67 },
-            { color: "1b29e1", val: 112 },
-            { color: "7e3ac8", val: 157 },
-            { color: "fb0b1a", val: 202 },
-            { color: "fc9325", val: 247 },
-            { color: "fefc37", val: 292 },
-            { color: "c0fc33", val: 338 },
-            { color: "c0fc33", val: 360 },
-        ]);
-        // var aspectColorMap = [];
-        // for (var i = 0; i <= 360; i++) {
-        //     if (i >= 0 && i < 45) {
-        //         aspectColorMap[i] = blendHexColors("C0FC33","3BC93D", getPercent(0, 45, i));
-        //     } else if (i >= 45 && i < 90)
-        //         aspectColorMap[i] = blendHexColors("3BC93D","3CCA99", getPercent(45, 90, i));
-        //     else if (i >= 90 && i < 135)
-        //         aspectColorMap[i] = blendHexColors("3CCA99","1B29E1", getPercent(90, 135, i));
-        //     else if (i >= 135 && i < 180)
-        //         aspectColorMap[i] = blendHexColors("1B29E1","7E3AC8", getPercent(135, 180, i));
-        //     else if (i >= 180 && i < 225)
-        //         aspectColorMap[i] = blendHexColors("7E3AC8","FB0B1A", getPercent(180, 225, i));
-        //     else if (i >= 225 && i < 270)
-        //         aspectColorMap[i] = blendHexColors("FB0B1A","FC9325", getPercent(225, 270, i));
-        //     else if (i >= 270 && i < 315)
-        //         aspectColorMap[i] = blendHexColors("FC9325","FEFC37", getPercent(270, 315, i));
-        //     else if (i >= 315 && i <= 360)
-        //         aspectColorMap[i] = blendHexColors("FEFC37","C0FC33", getPercent(315, 360, i));
-        // }
-    }
-
 
     // AVY FORECAST ROSE
     if (processType == "avy-rose") {
@@ -292,22 +238,6 @@ function render(data, processType, alt) {
                 { color: avyColors[f.N], val: 338 },
                 { color: avyColors[f.N], val: 360 },
             ]);
-            // f.colorMap = [];
-            // for (var a = 1; a <= 360; a++) {
-            //     var c;
-
-            //     if ((a >= 0 && a < 22) || (a >=338 && a<= 360)) c = hexToRGB(avyColors[f.N]);
-            //     else if (a >= 22 && a < 67) c = hexToRGB(avyColors[f.NE]);
-            //     else if (a >= 67 && a < 112) c =  hexToRGB(avyColors[f.E]);
-            //     else if (a >= 112 && a < 157) c =  hexToRGB(avyColors[f.SE]);
-            //     else if (a >= 157 && a < 202) c =  hexToRGB(avyColors[f.S]);
-            //     else if (a >= 202 && a < 247) c =  hexToRGB(avyColors[f.SW]);
-            //     else if (a >= 247 && a < 292) c =  hexToRGB(avyColors[f.W]);
-            //     else if (a >= 292 && a <= 338) c =  hexToRGB(avyColors[f.NW]);
-
-            //     f.colorMap.push(c);
-            // }
-
         }
     }
 
@@ -359,22 +289,6 @@ function render(data, processType, alt) {
                         newColor = f.colorMap[a];
                     else continue;
                 }
-                // if (new_aspect >= 0 && new_aspect < 45)
-                //     newColor = C0FC33-3BC93D
-                // else if (new_aspect >= 45 && new_aspect < 90)
-                //     a45-90 3BC93D-3CCA99
-                // else if (new_aspect >= 90 && new_aspect < 135)
-                //     a90-135 3CCA99-1B29E1
-                // else if (new_aspect >= 135 && new_aspect < 180)
-                //     a135-180 1B29E1-7E3AC8
-                // else if (new_aspect >= 180 && new_aspect < 225)
-                //     a180-225 7E3AC8-FB0B1A
-                // else if (new_aspect >= 225 && new_aspect < 270)
-                //     a225-270 FB0B1A-FC9325
-                // else if (new_aspect >= 270 && new_aspect < 315)
-                //     a270-315 FC9325-FEFC37
-                // else if (new_aspect >= 315 && new_aspect <= 360)
-                //     a315-360 FEFC37-C0FC33
 
                 //var min = 1300; var max = 4000;
                 //var min = 0; var max = 90;
@@ -407,7 +321,6 @@ function render(data, processType, alt) {
             }
 
         }
-
 
         // -------------
 

@@ -60,12 +60,12 @@ function convert(data) {
     var r = [];
     for (var i=0; i< data.length; i++) {
 
-        var new_bits = toBits(data[i]);
+        var _int = data[i];
 
         r.push([
-            bitsToInt(slice(new_bits,0,15)), // elevation
-            bitsToInt(slice(new_bits,15,22)), // slope
-            bitsToInt(slice(new_bits,22,32)) // aspect
+            (0xFFFE0000 & _int) >> 17,
+            (0x1FC00 & _int) >> 10,
+            (0x1FF & _int)
         ]);
     }
     return r;
@@ -111,43 +111,6 @@ function convert(data) {
 //     return dem;
 // }
 
-// function rgbaToInt(rgba) {
-//   var r = rgba[0] & 0xFF;
-//   var g = rgba[1] & 0xFF;
-//   var b = rgba[2] & 0xFF;
-//   var a = rgba[3] & 0xFF;
-
-//   return a << 24 | b << 16 | g << 8 | r << 0;
-// }
-// function toBits(num, bitCount) {
-//   var bits = num.toString(2).split('').map(function(a) { return parseInt(a) });
-//   if (bits.length < bitCount) {
-//     var zeros = new Array(bitCount-bits.length+1).join('0').split('').map(parseFloat);
-//     bits = zeros.concat(bits);
-//   }
-//   return bits;
-// }
-function slice(arr, start, end){
-    var a = [];
-    for (var i = start; i < end; i++) a.push(arr[i]);
-    return a;
-}
-function toBits(num) {
-  var bits = [];
-  for (i = 31; i >= 0; i--) bits.push(num >> i & 1);
-  return bits;
-}
-
-function bitsToInt(bits) {
-  // if (bits.length < 32) {
-  //   var zeros = new Array(32-bits.length+1).join('0').split('').map(parseFloat);
-  //   bits = zeros.concat(bits);
-  // }
-    var r = 0;
-    for(i = 0; i < bits.length; i++) r = r * 2 + bits[i];
-    return r;
-  //return parseInt(bits.join(''), 2);
-}
 function blendRGBColors(c0, c1, p) {
     return [Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],
             Math.round(Math.round(c1[1] - c0[1]) * (p / 100)) + c0[1],

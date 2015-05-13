@@ -977,7 +977,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 options.tileSize;
     };
 
-    var maxNativeZoom = 14;
+    var maxNativeZoom = 13;
     var hills = L.tileLayer.canvas({
         zIndex: 999,
         opacity: .4,
@@ -1086,6 +1086,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
         
+        // invert for TMS
+        tilePoint.y = (1 << zoom) - tilePoint.y - 1;
+        //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+        
         var xhr = new XMLHttpRequest;
         xhr.open("GET", url, true);
         xhr.responseType = "arraybuffer";
@@ -1103,14 +1107,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             }
         };
         return xhr.send(null);
-
-        // PNG.load(url, function(png) {
-        //     var pixels = png.decodePixels();
-        //     PNG_data = new Uint8ClampedArray(pixels).buffer;
-
-        //     redraw();
-        //     hills.redrawQueue.push(redraw);
-        // });
     }
 
     hills.redrawTiles = function () {

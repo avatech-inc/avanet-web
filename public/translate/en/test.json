@@ -1,7 +1,16 @@
 {
-  "new_observation" : "New Observation",
-  "snowpit" : "Snowpit",
-  "avalanche" : "Avalanche",
-  "usb_upload" : "SP1 USB Upload",
-  "organizations" : "Organizations"
+	"new_observation" : "New Observation",
+	"snowpit" : "Snowpit",
+	"avalanche" : "Avalanche",
+	"usb_upload" : "SP1 USB Upload",
+	"organizations" : "Organizations",
+	"organization" : "Organization",
+	"education": "Education",
+	"new_organization": "New Organization",
+	"user_settings": "User Settings",
+	"support": "Support",
+	"register_device": "Register your SP1",
+	"download_app": "Download AvaNet App",
+	"firmware_update": "SP1 Firmware Update",
+	"logout": "Logout"
 }

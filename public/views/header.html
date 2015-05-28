@@ -41,11 +41,11 @@
  
 
         <li class="dropdown">
-          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;New Observation</a>
+          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
-            <li><a href="/profiles/new" style="font-size:17px;">Snowpit</a></li>
-            <li><a href="/avalanches/new" style="font-size:17px;">Avalanche</a></li>
-            <li><a href="#" ng-click="deviceUpload()" style="font-size:17px;"><span style="font-style:italic">SP1</span> USB upload</a></li>
+            <li><a href="/profiles/new" style="font-size:17px;">{{ 'snowpit' | translate }}</a></li>
+            <li><a href="/avalanches/new" style="font-size:17px;">{{ 'avalanche' | translate }}</a></li>
+            <li><a href="#" ng-click="deviceUpload()" style="font-size:17px;">{{ 'usb_upload' | translate }}</a></li>
           </ul>
         </li>
 
@@ -54,13 +54,13 @@
         </li>-->
 
         <li class="dropdown" ng-hide="global.user.student === true">
-          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown">Organizations<b style="margin-left:8px;" class="caret"></b></a>
+          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown">{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}
-            <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+            <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'education' | translate }}</span></span>
             </a></li>
             <li ng-if="global.orgs.length > 0" class="divider"></li>
-            <li ><a href="/orgs/new"><i class="fa fa-plus"></i>New Organization</a></li>
+            <li ><a href="/orgs/new"><i class="fa fa-plus"></i>{{ 'new_organization' | translate }}</a></li>
           </ul>
         </li>
 
@@ -79,19 +79,19 @@
             <li ng-if="global.orgs.length > 0" class="divider"></li>-->
 
 
-            <li><a href="/settings">User Settings</a></li>
+            <li><a href="/settings">{{ 'user_settings' | translate }}</a></li>
             <li class="divider"></li>
             
-            <li><a href="/support" target="_blank">Support</a></li>
-            <li><a href="#" ng-click="registerSP1()">Register your SP1</a></li>
-            <li><a href="/app" target="_blank">Download AvaNet App</a></li>
+            <li><a href="/support" target="_blank">{{ 'support' | translate }}</a></li>
+            <li><a href="#" ng-click="registerSP1()">{{ 'register_device' | translate }}</a></li>
+            <li><a href="/app" target="_blank">{{ 'download_app' | translate }}</a></li>
             <!--<li><a href="/SP1manual" target="_blank">SP1 User Manual</a></li>-->
-            <li><a href="/SP1update" target="_blank">SP1 Firmware Update</a></li>
+            <li><a href="/SP1update" target="_blank">{{ 'firmware_update' | translate }}</a></li>
             <li class="divider"></li>
 
 	          <li ng-if="global.user.admin" ><a href="/admin">Admin</a></li>
 	          <li ng-if="global.user.admin" class="divider"></li>
-	          <li><a href="/logout">Logout</a></li>
+	          <li><a href="/logout">{{ 'logout' | translate }}</a></li>
 	        </ul>
 	      </li>
       </ul>

@@ -67,6 +67,17 @@ angular.module('avatech').config(function($tooltipProvider){
     });
 });
 
+// configure translation
+angular.module('avatech').config(function($translateProvider, $translatePartialLoaderProvider) {
+
+    $translatePartialLoaderProvider.addPart('test');
+    $translateProvider.useLoader('$translatePartialLoader', {
+      urlTemplate: '/translate/{lang}/{part}.json'
+    });
+    $translateProvider.preferredLanguage('de');
+
+});
+
 angular.module('avatech').config(function(cfpLoadingBarProvider) {
     cfpLoadingBarProvider.includeSpinner = false;
     cfpLoadingBarProvider.includeBar = false;

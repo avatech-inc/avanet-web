@@ -12,5 +12,9 @@
   "register_device" : "Register your SP1",
   "download_app" : "Download AvaNet App",
   "firmware_update" : "SP1 Firmware Update",
-  "logout" : "Logout"
+  "logout" : "Logout",
+  "slope_angle": "Slope",
+  "slope_aspect": "Aspect",
+  "elevation": "Elevation",
+  "type": "Type"
 }

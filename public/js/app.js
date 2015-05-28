@@ -1,5 +1,5 @@
 // define app
-angular.module('avatech', ['ngCookies', 'ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'ngQuickDate', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
+angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'ngQuickDate', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
     'pasvaz.bindonce',
     'bootstrapLightbox',
     'angulartics', 'angulartics.mixpanel',
@@ -96,7 +96,7 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 // }]);
 
 angular.module('avatech').run(
- function($rootScope, $cookies, $route, $location, $state, $stateParams, $document, $http, pathRoute, $modalStack, Observations, Global) {
+ function($rootScope, $route, $location, $state, $stateParams, $document, $http, pathRoute, $modalStack, Observations, Global) {
         
     // the first thing that gets run:
     // initialize global service

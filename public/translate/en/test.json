@@ -1,7 +1,7 @@
 {
-  "new_observation": "New Observation",
-  "snowpit": "Snowpit",
-  "avalanche": "Avalanche",
-  "usb_upload": "SP1 USB Upload",
-  "organizations": "Organizations"
+  "new_observation" : "New Observation",
+  "snowpit" : "Snowpit",
+  "avalanche" : "Avalanche",
+  "usb_upload" : "SP1 USB Upload",
+  "organizations" : "Organizations"
 }

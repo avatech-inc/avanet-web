@@ -3,5 +3,14 @@
   "snowpit" : "Profil de neige",
   "avalanche" : "Avalanche",
   "usb_upload" : "SP1 USB données téléverser",
-  "organizations" : "Organisations"
+  "organizations" : "Organisations",
+  "organization" : "Organisation",
+  "education" : "Éducation",
+  "new_organization" : "Ajouter Organisation",
+  "user_settings" : "Paramètres",
+  "support" : "Aide",
+  "register_device" : "Enregistrer votre SP1",
+  "download_app" : "Télécharger l'application mobile AvaNet",
+  "firmware_update" : "Mise à jour du firmware de SP1",
+  "logout" : "Se déconnecter"
 }

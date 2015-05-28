@@ -3,5 +3,14 @@
   "snowpit" : "Schneeprofil",
   "avalanche" : "Lawine",
   "usb_upload" : "USB Daten-Upload",
-  "organizations" : "Organisationen"
+  "organizations" : "Organisationen",
+  "organization" : "Organi",
+  "education" : "Bildung",
+  "new_organization" : "Neue Organisation",
+  "user_settings" : "Benutzereinstellungen",
+  "support" : "Hilfe",
+  "register_device" : "Melden Sie Ihr SP1",
+  "download_app" : "Herunterladen AvaNet mobile anwendung ",
+  "firmware_update" : "SP1-Firmware aktualisieren",
+  "logout" : "Ausloggen"
 }

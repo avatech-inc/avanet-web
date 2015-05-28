@@ -12,5 +12,9 @@
   "register_device" : "Melden Sie Ihr SP1",
   "download_app" : "Herunterladen AvaNet mobile anwendung ",
   "firmware_update" : "SP1-Firmware aktualisieren",
-  "logout" : "Ausloggen"
+  "logout" : "Ausloggen",
+  "slope_angle" : "Hangneigung",
+  "slope_aspect" : "Exposition",
+  "elevation" : "Elevation",
+  "type" : "Art"
 }

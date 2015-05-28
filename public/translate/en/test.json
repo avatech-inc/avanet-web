@@ -13,8 +13,8 @@
   "download_app" : "Download AvaNet App",
   "firmware_update" : "SP1 Firmware Update",
   "logout" : "Logout",
-  "slope_angle": "Slope",
-  "slope_aspect": "Aspect",
-  "elevation": "Elevation",
-  "type": "Type"
+  "slope_angle" : "Slope",
+  "slope_aspect" : "Aspect",
+  "elevation" : "Elevation",
+  "type" : "Type"
 }

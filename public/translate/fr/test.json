@@ -12,5 +12,9 @@
   "register_device" : "Enregistrer votre SP1",
   "download_app" : "Télécharger l'application mobile AvaNet",
   "firmware_update" : "Mise à jour du firmware de SP1",
-  "logout" : "Se déconnecter"
+  "logout" : "Se déconnecter",
+  "slope_angle" : "Pente",
+  "slope_aspect" : "Aspect",
+  "elevation" : "Élévation",
+  "type" : "Type"
 }

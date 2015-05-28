@@ -16,5 +16,11 @@
   "slope_angle" : "Slope",
   "slope_aspect" : "Aspect",
   "elevation" : "Elevation",
-  "type" : "Type"
+  "type" : "Type",
+
+  "settings": {
+  		"user_information": "User Information",
+  		"full_name": "Full Name",
+  		"email": "Email"
+  }
 }

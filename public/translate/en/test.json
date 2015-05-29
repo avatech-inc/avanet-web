@@ -18,7 +18,13 @@
   "download_app" : "Download AvaNet App",
   "firmware_update" : "SP1 Firmware Update",
   "logout" : "Logout",
-  "login" : "Login",
+  "login" : {
+    "forgot" : "Forgot?",
+    "signup" : "Sign up for a new account",
+    "invalid_login" : "Invalid email or password, please try again.",
+    "account_disabled" : "Your account is disabled. Please contact support for assistance.",
+    "invalud_entry" : "Please enter your email and password."
+  },
   "slope_angle" : "Slope",
   "slope_aspect" : "Aspect",
   "elevation" : "Elevation",
@@ -33,22 +39,11 @@
   "published" : "Published",
   "unpublished" : "Unpublished",
   "downloading" : "Downloading",
-
-  "generic_error": "Oops! Something went wrong. Please try again.",
-
-  "login": {
-    "forgot": "Forgot?",
-    "signup": "Sign up for a new account",
-    "invalid_login": "Invalid email or password, please try again.",
-    "account_disabled":"Your account is disabled. Please contact support for assistance.",
-    "invalud_entry": "Please enter your email and password."
-  },
-
-  "publisher": "Publisher",
-  "time": "Time",
-  "date_and_time": "Date & Time",
-  "Location": "Location",
-
+  "generic_error" : "Oops! Something went wrong. Please try again.",
+  "publisher" : "Publisher",
+  "time" : "Time",
+  "date_and_time" : "Date & Time",
+  "Location" : "Location",
   "settings" : {
     "user_information" : "User Information",
     "full_name" : "Full Name",

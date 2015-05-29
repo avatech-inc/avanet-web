@@ -32,6 +32,10 @@
   "published" : "Publié",
   "unpublished" : "Non Publié",
   "downloading" : "Téléchargement",
+  "publisher" : "Éditeur",
+  "time" : "Temps",
+  "date_and_time" : "Date et heure",
+  "Location" : "Emplacement",
   "settings" : {
     "user_information" : "Informations Utilisateur",
     "full_name" : "Nom Complet",

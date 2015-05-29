@@ -19,6 +19,7 @@
   "slope_aspect" : "Aspect",
   "elevation" : "Elevation",
   "type" : "Type",
+  "click_to_place_on_map": "Click to place on map",
 
   "settings": {
   		"user_information": "User Information",
@@ -35,6 +36,10 @@
  		"home_location": "Home Location",
  		"preferences": "Preferences",
  		"units": "Units",
+ 		"metric": "Metric",
+ 		"imperial": "Imperial",
+ 		"celsius": "Celsius",
+ 		"farenheit": "Farenheit",
  		"temperature": "Temperature",
  		"bulk_download": "Bulk Data Download",
  		"bulk_download_sp1_button": "Download SP1 Data"

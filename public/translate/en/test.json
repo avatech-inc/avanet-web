@@ -3,6 +3,7 @@
 
   "new_observation" : "New Observation",
   "snowpit" : "Snowpit",
+  "sp1_profile": "SP1 Profile",
   "avalanche" : "Avalanche",
   "usb_upload" : "SP1 USB Upload",
   "organizations" : "Organizations",
@@ -19,7 +20,14 @@
   "slope_aspect" : "Aspect",
   "elevation" : "Elevation",
   "type" : "Type",
+  "map": "Map",
+  "search_location": "Search for a location",
   "click_to_place_on_map": "Click to place on map",
+  "all_observations": "All Observations",
+  "my_observations": "My Observations",
+  "pan_and_zoom": "pan & zoom the map to see more observations",
+  "published": "Published",
+  "unpublished": "Unpublished",
 
   "settings": {
   		"user_information": "User Information",

@@ -1,5 +1,10 @@
 {
   "save" : "Save",
+  "loading": "Loading",
+  "student": "Student",
+
+  "no_location": "No Location",
+
   "new_observation" : "New Observation",
   "snowpit" : "Snowpit",
   "sp1_profile" : "SP1 Profile",
@@ -20,6 +25,7 @@
   "elevation" : "Elevation",
   "type" : "Type",
   "map" : "Map",
+  "select_map": "Select Base Map",
   "search_location" : "Search for a location",
   "click_to_place_on_map" : "Click to place on map",
   "all_observations" : "All Observations",
@@ -27,6 +33,8 @@
   "pan_and_zoom" : "pan & zoom the map to see more observations",
   "published" : "Published",
   "unpublished" : "Unpublished",
+  "downloading": "Downloading",
+
   "settings" : {
     "user_information" : "User Information",
     "full_name" : "Full Name",

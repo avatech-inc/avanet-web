@@ -32,6 +32,12 @@
   "published" : "Published",
   "unpublished" : "Unpublished",
   "downloading" : "Downloading",
+
+  "publisher": "Publisher",
+  "time": "Time",
+  "date_and_time": "Date & Time",
+  "Location": "Location",
+
   "settings" : {
     "user_information" : "User Information",
     "full_name" : "Full Name",

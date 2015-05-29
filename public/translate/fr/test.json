@@ -1,5 +1,8 @@
 {
   "save" : "Sauver",
+  "loading" : "Chargement",
+  "student" : "Étudiant",
+  "no_location" : "Emplacement Manquant",
   "new_observation" : "Ajouter Observation",
   "snowpit" : "Profil de neige",
   "sp1_profile" : "SP1 Profil",
@@ -20,6 +23,7 @@
   "elevation" : "Élévation",
   "type" : "Type",
   "map" : "Carte",
+  "select_map" : "Sélectionnez la carte",
   "search_location" : "Rechercher un emplacement",
   "click_to_place_on_map" : "Cliquez pour placer sur la carte",
   "all_observations" : "Toutes Observations",
@@ -27,6 +31,7 @@
   "pan_and_zoom" : "panoramique et de zoom de la carte pour voir plus d'observations",
   "published" : "Publié",
   "unpublished" : "Non Publié",
+  "downloading" : "Téléchargement",
   "settings" : {
     "user_information" : "Informations Utilisateur",
     "full_name" : "Nom Complet",

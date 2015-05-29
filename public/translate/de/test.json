@@ -1,5 +1,8 @@
 {
   "save" : "Speichern",
+  "loading" : "Laden",
+  "student" : "Schüler",
+  "no_location" : "Fehlende Lage",
   "new_observation" : "Neue Beobachtung",
   "snowpit" : "Schneeprofil",
   "sp1_profile" : "SP1 Profil",
@@ -20,6 +23,7 @@
   "elevation" : "Elevation",
   "type" : "Art",
   "map" : "Karte",
+  "select_map" : "Wählen Grundkarte",
   "search_location" : "Suchen nach einem ort",
   "click_to_place_on_map" : "Klicken um auf karte zu platzieren",
   "all_observations" : "Alle Beobachtungen",
@@ -27,6 +31,7 @@
   "pan_and_zoom" : "schwenken und zoomen der karte, um mehr zu sehen Beobachtungen",
   "published" : "Veröffentlicht",
   "unpublished" : "Unveröffentlicht",
+  "downloading" : "Herunterladen",
   "settings" : {
     "user_information" : "Benutzerinformation",
     "full_name" : "Vollständiger Name",

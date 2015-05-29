@@ -41,7 +41,7 @@
     "signup": "Sign up for a new account",
     "invalid_login": "Invalid email or password, please try again.",
     "account_disabled":"Your account is disabled. Please contact support for assistance.",
-    "inval'd_entry": "Please enter your email and password."
+    "invalid_entry": "Please enter your email and password."
   },
 
   "publisher": "Publisher",

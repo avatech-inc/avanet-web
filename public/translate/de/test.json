@@ -18,13 +18,6 @@
   "download_app" : "Herunterladen AvaNet mobile Anwendung ",
   "firmware_update" : "SP1-Firmware aktualisieren",
   "logout" : "Ausloggen",
-  "login" : {
-    "forgot" : "vergessen?",
-    "signup" : "Melden Sie sich für ein neues Konto",
-    "invalid_login" : "Ungültige Email oder Passwort. Bitte versuche es erneut.",
-    "account_disabled" : "Ihr Konto ist deaktiviert. Bitte kontaktieren Sie Support.",
-    "invalud_entry" : "Geben Sie bitte Ihre Email und Passwort."
-  },
   "slope_angle" : "Hangneigung",
   "slope_aspect" : "Exposition",
   "elevation" : "Elevation",
@@ -40,6 +33,14 @@
   "unpublished" : "Unveröffentlicht",
   "downloading" : "Herunterladen",
   "generic_error" : "Etwas ist schief gelaufen. Bitte versuche es erneut.",
+  "login" : {
+    "login_button" : "Einloggen",
+    "forgot" : "vergessen?",
+    "signup" : "Melden Sie sich für ein neues Konto",
+    "invalid_login" : "Ungültige Email oder Passwort. Bitte versuche es erneut.",
+    "account_disabled" : "Ihr Konto ist deaktiviert. Bitte kontaktieren Sie Support.",
+    "invalid_entry" : "Geben Sie bitte Ihre Email und Passwort."
+  },
   "publisher" : "Herausgeber",
   "time" : "Zeit",
   "date_and_time" : "Datum und Uhrzeit",

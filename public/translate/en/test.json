@@ -18,6 +18,7 @@
   "download_app" : "Download AvaNet App",
   "firmware_update" : "SP1 Firmware Update",
   "logout" : "Logout",
+  "login" : "Login",
   "slope_angle" : "Slope",
   "slope_aspect" : "Aspect",
   "elevation" : "Elevation",
@@ -33,6 +34,16 @@
   "unpublished" : "Unpublished",
   "downloading" : "Downloading",
 
+  "generic_error": "Oops! Something went wrong. Please try again.",
+
+  "login": {
+    "forgot": "Forgot?",
+    "signup": "Sign up for a new account",
+    "invalid_login": "Invalid email or password, please try again.",
+    "account_disabled":"Your account is disabled. Please contact support for assistance.",
+    "invalud_entry": "Please enter your email and password."
+  },
+
   "publisher": "Publisher",
   "time": "Time",
   "date_and_time": "Date & Time",
@@ -46,6 +57,7 @@
     "state_province" : "State / Province",
     "postal" : "Zip / Postal",
     "country" : "Country",
+    "password" : "Password",
     "change_password" : "Change Password",
     "current_password" : "Current password",
     "new_password" : "New password",

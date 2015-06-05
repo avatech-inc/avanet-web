@@ -1,5 +1,5 @@
-angular.module('avatech.system').controller('LoginController', ['$scope', '$rootScope', '$location', '$cookies', '$http', 'Global',
-function ($scope, $rootScope, $location, $cookies, $http, Global) {
+angular.module('avatech.system').controller('LoginController',
+function ($scope, $rootScope, $location, $http, Global) {
     
     $scope.busy = false;
 
@@ -12,7 +12,6 @@ function ($scope, $rootScope, $location, $cookies, $http, Global) {
             var val = $(el).val();
             ngModel.$setViewValue(val);
         });
-
         // basic validation
         if (!$scope.email || $scope.email == "" || !$scope.password || $scope.password == "") {
             $scope.busy = false;
@@ -45,4 +44,4 @@ function ($scope, $rootScope, $location, $cookies, $http, Global) {
 
         });
     };
-}]);
+});

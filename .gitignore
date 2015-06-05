@@ -7,7 +7,6 @@ _dist/
 public/_uploads/
 public/css/
 .tmp/
-public/js/routes.js
 *.sp
 *.lz4
 newrelic_agent.log

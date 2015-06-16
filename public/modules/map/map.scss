@@ -767,12 +767,15 @@
 		color:#666;
 		font-weight:100;
 		cursor: pointer;
-	}
 
-	.side-list-item {
 		white-space:nowrap;padding:4px;border-bottom:1px solid #ddd;height:76px;
 		font-size: 12px;
 		position:relative;
+
+		a {
+			text-decoration: none !important;
+			padding:0px;
+		}
 	}
 	.side-list-item:hover {
 		background: #f8f8f8;

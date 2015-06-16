@@ -8,7 +8,7 @@
 
       	<input type="text" class="form-control input-sm search location-search-input" 
 	      	ng-model="geo.query"
-	      	placeholder="search for a location">
+	      	placeholder="{{ 'search_location' | translate }}">
 
         <div class="results">
         	<div ng-repeat="result in geo.results" ng-click="goTo(result)">	

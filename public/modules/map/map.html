@@ -5,7 +5,7 @@
 				ng-hide="selectedList == 'my_unpublished'">
 			  <button type="button" class="btn btn-default dropdown-toggle">
 			  	<span>
-			  		<span style="margin-right:10px;">Type</span>
+			  		<span style="margin-right:10px;">{{ 'type' | translate }}</span>
 			    	<div ng-repeat="type in ['profile','test','avy']" class="circle {{type}} {{ searchQuery.type[type] ? '' : 'empty' }}" style="position:relative;top:1px;"></div>
 			    </span>
 			    <span class="caret"></span>
@@ -13,19 +13,20 @@
 		      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
 		    			
 			    	<li ng-click="type_select('profile')"><a>
-			    	<div class="circle profile {{ searchQuery.type.profile ? '' : 'empty' }}"></div> Snowpit</a></li>
+			    	<div class="circle profile {{ searchQuery.type.profile ? '' : 'empty' }}"></div> {{ 'snowpit' | translate }}</a></li>
 
 			    	<li ng-click="type_select('test')"><a>
-			    	<div class="circle test {{ searchQuery.type.test ? '' : 'empty' }}"></div> SP1 Profile</a></li>
+			    	<div class="circle test {{ searchQuery.type.test ? '' : 'empty' }}"></div> {{ 'sp1_profile' | translate }}</a></li>
 
 			    	<li ng-click="type_select('avy')"><a>
-			    	<div class="circle avy {{ searchQuery.type.avy ? '' : 'empty' }}"></div> Avalanche</a></li>
+			    	<div class="circle avy {{ searchQuery.type.avy ? '' : 'empty' }}"></div> {{ 'avalanche' | translate }}</a></li>
 			 	</ul>
 			</div>
 
 			<div class="btn-group filter" dropdown style="">
 			  <button type="button" class="btn btn-default dropdown-toggle">
-			  	<span style="padding-right:3px;">
+		        <span style="padding-right:3px;">{{ 'time' | translate }}</span>
+			  	<span style="padding-right:3px;color:#999;">
 				    <span ng-show="searchQuery.days == 1">Today</span>
 				    <span ng-show="searchQuery.days == 7">Past Week</span>
 				    <span ng-show="searchQuery.days == 31">Past Month</span>
@@ -48,7 +49,7 @@
 			<div class="btn-group filter" dropdown 
 				ng-show="profile.user.student !== true && selectedList == 'published'">
 		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
-		        <span style="padding-right:3px;">Publisher</span> 
+		        <span style="padding-right:3px;">{{ 'publisher' | translate }}</span> 
 
 		        <span class="caret" ng-show="isDefaultPublisher()"></span>
 		        <span style="color:#999;" ng-hide="isDefaultPublisher()">...</span>
@@ -81,7 +82,7 @@
 
 			<div class="btn-group filter" dropdown style="">
 		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
-		        <span style="padding-right:3px;">Elevation</span>
+		        <span style="padding-right:3px;">{{ 'elevation' | translate }}</span>
 		        <span class="caret" ng-show="searchQuery.elev_low == 0 && searchQuery.elev_high == elevationMax"></span>
 		        <span style="color:#999;" ng-show="(searchQuery.elev_low != 0 || searchQuery.elev_high != elevationMax) && searchQuery.elev_low != searchQuery.elev_high">
 		        	{{ formatTempRange(searchQuery.elev_low, searchQuery.elev_high) }}
@@ -109,7 +110,7 @@
 
 			<div class="btn-group filter" dropdown style="">
 		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
-		        <span style="padding-right:3px;">Aspect</span> 
+		        <span style="padding-right:3px;">{{ 'slope_aspect' | translate }}</span> 
 		        <span class="caret" ng-show="searchQuery.aspect_low == 0 && searchQuery.aspect_high == 359"></span>
 		        <span style="color:#999;" ng-show="(searchQuery.aspect_low != 0 || searchQuery.aspect_high != 359) && searchQuery.aspect_low != searchQuery.aspect_high">
 		        	{{ searchQuery.aspect_low }}-{{ searchQuery.aspect_high }}&deg;
@@ -133,7 +134,7 @@
 
 		    <div class="btn-group filter" dropdown style="">
 		      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
-		        <span style="padding-right:3px;">Slope</span> 
+		        <span style="padding-right:3px;">{{ 'slope_angle' | translate }}</span> 
 		        <span class="caret" ng-show="searchQuery.slope_low == 0 && searchQuery.slope_high == 70"></span>
 		        <span style="color:#999;" ng-show="(searchQuery.slope_low != 0 || searchQuery.slope_high != 70) && searchQuery.slope_low != searchQuery.slope_high">
 		        	{{ searchQuery.slope_low }}-{{ searchQuery.slope_high }}&deg;
@@ -177,7 +178,7 @@
 		<div id="map"></div>
 
 
-    <fieldset id="controls" style="position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 272px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
+    <fieldset id="controls" style="display:none;position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 272px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
 
     	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
     	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
@@ -195,22 +196,21 @@
     </fieldset>
 
 		<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
-		<!-- tooltip="Search for location" tooltip-trigger="mouseenter" tooltip-placement="left" tooltip-hide-on-click -->
 		    <div class="btn-group dropup" dropdown>
 		      <button type="button" class="dropdown-toggle">
-		        <i class="ion-map"></i> <span><b>Map:</b> {{ selectedBaseLayer.name }}</span>
+		        <i class="ion-map"></i> <span><!--<b>{{ 'map' | translate }}:</b> -->{{ selectedBaseLayer.name }}</span>
 		      </button>
 		      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
 
 		      		<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
 
-		      		<div class="layers-header">Select Map Layer</div>
+		      		<div class="layers-header">{{ 'select_map' | translate }}</div>
 		      		
-		      		<div style="font-weight:bold;margin-bottom:2px;">Terrain</div>
+		      		<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
 					
 					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
 
-					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">Aerial</div>
+					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
 					
 					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
 
@@ -218,7 +218,7 @@
 		    </div>
 		</div>
 
-		<map-search location-select="mapSearchSelect(location)"></map-search>
+		<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 	</div>
 
 	<div class="side-bar">
@@ -226,7 +226,7 @@
 		<div class="toggle-list">
 
 			<div class="list-header">
-				<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;All Observations</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;My Observations</button>
+				<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;{{ 'all_observations' | translate }}</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;{{ 'my_observations' | translate }}</button>
 			</div>
 
 		</div>
@@ -234,18 +234,18 @@
 		<div class="list-subheader">
 			<div style="position:relative;font-weight:100;text-align:center;line-height:38px;color:#ccc;"
 				ng-show="selectedList == 'published'">
-				<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 0:1) }">pan & zoom the map to see more observations</span>
+				<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 0:1) }">{{ 'pan_and_zoom' | translate }}</span>
 
-				<span style="position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 1:0) }" > <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;&nbsp;Loading</span>
+				<span style="position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 1:0) }" > <i class="fa fa-circle-o-notch fa-spin"></i></span>
 			</div>
 
 			<div ng-show="(selectedList == 'my_published' || selectedList == 'my_unpublished')">
 				<div style="display:inline-block;float:left;">
 					<button ng-mousedown="selectList('my_published',$event)" class="sub-btn"
-						ng-class="{ selected: selectedList == 'my_published' }">Published</button>
+						ng-class="{ selected: selectedList == 'my_published' }">{{ 'published' | translate }}</button>
 					<button ng-mousedown="selectList('my_unpublished',$event)" class="sub-btn"
 						ng-class="{ selected: selectedList == 'my_unpublished' }"
-						>Unpublished</button>
+						>{{ 'unpublished' | translate }}</button>
 				</div>
 
 				<div class="btn-group filter" dropdown 
@@ -288,7 +288,7 @@
 			</div>-->
 			<div ng-show="selectedList == 'my_unpublished' && type_unpublished == 'test'">
 				<div style="float:left;font-weight:100;margin-left:10px;" ng-show="selectedProfiles.length">
-				 {{ selectedProfiles.length }} profile{{ selectedProfiles.length == 1 ? '' : 's' }}  selected
+				<!-- {{ selectedProfiles.length }} profile{{ selectedProfiles.length == 1 ? '' : 's' }}  selected-->
 				</div>
 
 				<div style="float:right;" class="action-buttons" ng-show="selectedProfiles.length">
@@ -303,7 +303,6 @@
 			>
 
 			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-			Loading<br/>
 			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
 			</div>
 
@@ -334,7 +333,7 @@
 					<div bo-if="profile.type=='avy'" class="thumb"></div>
 
 					<div class='lineItem'><i class="fa fa-user"></i>{{ ::profile.user.fullName}} 
-                  		<span bo-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span>
+                  		<span bo-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'student' | translate }}</span></span>
 
 						<!--<span style="padding-left:3px;" ng-show="profile.sharingLevel=='org'">({{ profile.organization.name }})</span>
 
@@ -357,7 +356,7 @@
 					</div>
 					<div class="lineItem" bo-show="profile.type=='test'"><i class="fa fa-map-marker"></i>
 						<span bo-if="profile.location.length">{{ ::profile.location[1] }}, {{ ::profile.location[0] }}</span>
-						<span bo-if="!profile.location || profile.location.length == 0">NO LOCATION</span>
+						<span bo-if="!profile.location || profile.location.length == 0">{{ 'no_location' | translate }}</span>
 					</div>
 
 			</div>
@@ -370,7 +369,6 @@
 		<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
 
 			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-			Loading<br/>
 			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
 			</div>
 
@@ -398,7 +396,7 @@
 					<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 					<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 
-                  		<span ng-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span>
+                  		<span ng-show="profile.user.student" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'student' | translate }}</span></span>
 
 						<!--<span style="padding-left:3px;" ng-show="profile.sharingLevel=='org'">({{ profile.organization.name }})</span>
 
@@ -434,7 +432,6 @@
 		ng-show="selectedList == 'my_unpublished'" always-visible="true">
 
 			<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-			Loading<br/>
 			<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
 			</div>
 

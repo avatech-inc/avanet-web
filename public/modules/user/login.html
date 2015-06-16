@@ -4,33 +4,30 @@
 			<a href="/"><img class="logo" src="/img/logo_horizontal.png"/></a>
 
 			<div class="fade in alert alert-block alert-danger" ng-show="validationError" ng-switch="validationError">
-				<div ng-switch-when="badEntry">Please enter your email and password.</div>
-				<div ng-switch-when="invalid">Invalid email or password, please try again.</div>
-				<div ng-switch-when="disabled">
-					Your account is disabled.<br/>Please <a href='mailto:support@avatechsafety.com'>contact support</a> for assistance.
-				</div>
-				<div ng-switch-default>Oops! Something went wrong.<br/>Please try again.</div>
+				<div ng-switch-when="badEntry">{{ 'login.invalid_entry' | translate }}</div>
+				<div ng-switch-when="invalid">{{ 'login.invalid_login' | translate }}</div>
+				<div ng-switch-when="disabled">{{ 'login.account_disabled' | translate }}</div>
+				<div ng-switch-default>{{ 'generic_error' | translate }}</div>
 			</div>
 			<form class="signin ng-pristine ng-valid" name="form" novalidate>
 				<p class="error"></p>
   				<div class="form-group">
 					<!--<label for="email" class="control-label">Email</label>-->
 					<div class="controls">
-						<input id="email" ng-model="email" class="form-control" type="text" name="email" placeholder="Email" type="email" required autofocus>
+						<input id="email" ng-model="email" class="form-control" type="text" name="email" placeholder="{{ 'settings.email' | translate }}" type="email" required autofocus>
 					</div>
 				</div>
 				<div class="form-group">
 					<!--<label for="password" class="control-label">Password</label>-->
 					<div class="controls">
-						<input id="password" ng-model="password" class="form-control" type="password" name="password" placeholder="Password" required>
-						<a href="/forgot-password" class="forgot-password">Forgot?</a>
+						<input id="password" ng-model="password" class="form-control" type="password" name="password" placeholder="{{ 'settings.password' | translate }}" required>
+						<a href="/forgot-password" class="forgot-password">{{ 'login.forgot' | translate }}</a>
 					</div>
 				</div>
 				<div style="padding-top:10px;">
-					<button ng-click="submit()" ng-disable="busy" class="btn btn-black btn-lg" style="width:140px;">Login</button>
+					<button ng-click="submit()" ng-disable="busy" class="btn btn-black btn-lg" style="width:140px;">{{ 'login.login_button' | translate }}</button>
 					<br/>
-					<a href="/signup" style="margin-top: 32px;display: inline-block;font-size: 18px;color: #eee;font-weight: 100;">Sign up for a new account</a>
-					<!--<a href="/signup" class="show-signup">Sign up</a>-->
+					<a href="/signup" style="margin-top: 32px;display: inline-block;font-size: 18px;color: #eee;font-weight: 100;">{{ 'login.signup' | translate }}</a>
 				</div>
 			</form>
 		</div>

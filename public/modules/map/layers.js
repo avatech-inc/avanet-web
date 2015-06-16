@@ -210,6 +210,13 @@ return {
             "template":"http://swmha.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}.png",
             "type": "TILE"
          },
+         {
+            "alias": "nz-topo",
+            "name": "LINZ New Zealand Topo50",
+            "copyright": "LINZ",
+            "template":"http://tiles-a.data-cdn.linz.govt.nz/services;key=d4e09c59ec0c4e3d901aceed357ffd7c/tiles/v4/layer=767/EPSG:3857/{z}/{x}/{y}.png",
+            "type": "TILE"
+         }
          // {  
          //    "alias":"oc",
          //    "copyright":"OCM",
@@ -382,6 +389,12 @@ return {
             //"template": "http://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WMSServer",
             //"type": "WMS"
             "template": "http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}",
+            "type":"TILE"
+         },
+         {
+            "alias": "nz-aerial",
+            "name":"LINZ New Zealand Aerial",
+            "template": "http://tiles-a.data-cdn.linz.govt.nz/services;key=d4e09c59ec0c4e3d901aceed357ffd7c/tiles/v4/set=2/EPSG:3857/{z}/{x}/{y}.png",
             "type":"TILE"
          }
         ]

@@ -200,9 +200,9 @@ angular.module('avatech').directive('graphBig', function() {
                 var B_P4 = .1304;
                 var C_P4 = -.0023124;
                 var D_P4 = 197.7;
-                var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
+                var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (canvas.width/198);
 
-                pressure_graph = pressure_graph * (canvas.width / 215);
+                //pressure_graph = pressure_graph * (canvas.width / 215);
 
                 graphRows.push(pressure_graph);
             }

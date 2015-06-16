@@ -726,17 +726,9 @@ exports.downloadRawData = function(req, res) {
                   for (var r = 0; r < test.rows.length; r++) {
                     var pressure = test.rows[r];
 
-                    // todo: expand!
+                    var pressure_expanded = (.00008 * Math.pow(pressure,3));
 
-                     var pressure_expanded = (.00008 * Math.pow(pressure,3));
-
-                      // var A_P4 = -194.1;
-                      // var B_P4 = .1304;
-                      // var C_P4 = -.0023124;
-                      // var D_P4 = 197.7;
-                      // var pressure_graph = (A_P4 * (Math.pow(B_P4 , -C_P4 * pressure_expanded)) + D_P4) * (217/198);
-
-                      content += (r + 1) + "," + pressure_expanded + "\n";
+                    content += (r + 1) + "," + pressure_expanded + "\n";
                   }
                   archive.append(content, { name: test._id + "_" + moment(test.date).format("YYYY-MM-DDTHH:mm") + "_" + test.dateNumber + ".csv" })
                 }

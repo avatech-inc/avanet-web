@@ -74,7 +74,8 @@ angular.module('avatech').config(function($translateProvider, $translatePartialL
     $translateProvider.useLoader('$translatePartialLoader', {
       urlTemplate: '/translate/{lang}/{part}.json'
     });
-    $translateProvider.preferredLanguage('de');
+    $translateProvider.preferredLanguage('en');
+    //$translateProvider.preferredLanguage('en');
 
 });
 

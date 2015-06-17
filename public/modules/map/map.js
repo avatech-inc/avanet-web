@@ -1023,10 +1023,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     }
 
-    for (var i = 0; i < 20; i++) {
-        workers[i] = new Worker('js/worker.js');
-        workers[i].onmessage = updateTile;
-    }
+    // for (var i = 0; i < 20; i++) {
+    //     workers[i] = new Worker('js/worker.js');
+    //     workers[i].onmessage = updateTile;
+    // }
 
     $scope.map.on('viewreset', function () {
         hills.redrawQueue = [];

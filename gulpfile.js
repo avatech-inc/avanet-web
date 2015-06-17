@@ -88,11 +88,11 @@ gulp.task('combine-minify', function() {
     .pipe(revReplace())      // substitute in new filenames
 
     // sourcemaps
-    .pipe(rollbar({
-      accessToken: '887db6d480c74bab9cee4ab6376f1545',
-      version: 'version_test',
-      sourceMappingURLPrefix: 'https://avanet.avatech.com'
-    }))
+    // .pipe(rollbar({
+    //   accessToken: '887db6d480c74bab9cee4ab6376f1545',
+    //   version: 'version_test',
+    //   sourceMappingURLPrefix: 'https://avanet.avatech.com'
+    // }))
     //.pipe(gulpif('*.js', sourcemaps.write('./')))
 
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
@@ -119,7 +119,6 @@ gulp.task('buildMain', function () {
     'public/js/controllers/*/*.js',
     'public/js/directives/*.js',
     'public/js/directives/*/*.js',
-
     'public/css/**/*.css'
   ],
   // don't read the file contents - we only need filenames
@@ -136,6 +135,8 @@ gulp.task('clean', function() {
 	return gulp.src('_dist2', {read: false})
         .pipe(clean({ force: true }));
 })
+
+// copy files to dist folder
 gulp.task('copy', function() {
    return gulp.src(
    	['app/**/*','config/**/*',
@@ -145,6 +146,7 @@ gulp.task('copy', function() {
    	'public/fonts/**',
    	'public/img/**',
     'public/js/**',
+    'public/translate/**',
    	'public/modules/**/*.html',
    	'public/views/**'
    	]

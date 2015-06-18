@@ -1,5 +1,4 @@
-angular.module('avatech.system').controller('RegisterController', 
-	['$scope', '$rootScope', '$http', '$stateParams', '$cookies', '$location', 'Global', function ($scope, $rootScope, $http, $stateParams, $cookies, $location, Global) {
+angular.module('avatech.system').controller('RegisterController', function ($scope, $rootScope, $http, $stateParams, $location, Global) {
 
 	$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
 	$scope.successfulReset = false;
@@ -102,4 +101,4 @@ angular.module('avatech.system').controller('RegisterController',
         }
     };
 
-}]);
+});

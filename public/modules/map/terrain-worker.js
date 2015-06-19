@@ -9,6 +9,8 @@ onmessage = function (e) {
         return;
     }
 
+    if (e.data) return;
+
     // console.log("URL: " + e.data.url);
     // PNG.load(e.data.url, function(png) {
     //     var pixels = png.decodePixels();
@@ -197,6 +199,8 @@ function render(data, processType, alt) {
 
     var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
 
+    //if (!data) return new_pixels;
+
     // AVY FORECAST ROSE
     if (processType == "avy-rose") {
 
@@ -241,7 +245,7 @@ function render(data, processType, alt) {
         }
     }
 
-    for(var i=0; i< data.length; i++) {
+    for (var i=0; i< data.length; i++) {
 
         var new_elevation = data[i][0];
         var new_slope = data[i][1];

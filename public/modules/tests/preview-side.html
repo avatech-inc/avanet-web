@@ -248,15 +248,20 @@ scrollable always-visible="true">
 	<!-- snowpit -->
 	<div class="snowpit-container" style="background:#f4f4f4;padding-left:8px;padding-bottom:20px;padding-top:4px;">
 		
-		<div style="position:relative;padding-top:20px;padding-left:30px;">
-			<div ng-repeat="pressure in [60,250,1000]" ng-style="{ left: ($index + 1) * (520 / 3) - 30 + 30 }" style="color:#666;width:30px;display:inline-block;position:absolute;text-align:right;font-size:11px;top:2px;"> 
-			{{ pressure }}
+		<div style="position:relative;padding-top:20px;padding-left:10px;">
+			<div style="color:#777;display:inline-block;position:absolute;text-align:center;font-size:11px;top:3px;left:0;right:0;"> 
+			PRESSURE (kPa)
 			</div>
 
-			<div ng-style="{ top: ($index + 1) * (440 / 15) - 17 }" style="color:#666;width:26px;display:inline-block;position:absolute;text-align:right;font-size:11px;height:15px;line-height:15px;left:0;" ng-repeat="depth in [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]">
-			{{ depth }}
+			<div style="color: #777; display: inline-block; position: absolute; text-align: center; font-size: 11px; top: 255px; left: -200px; right: 0; transform: rotate(270deg); width: 400px; margin-left: 10px;"> 
+			DEPTH (cm)
 			</div>
-			<canvas graph-big="profile.rows_compressed" detail="detailLevel" width="1040" height="880" style="width:520px;height:440px;background:white;"></canvas>
+
+
+			<!--<div ng-style="{ top: ($index + 1) * (440 / 15) - 17 }" style="color:#666;width:26px;display:inline-block;position:absolute;text-align:right;font-size:11px;height:15px;line-height:15px;left:0;" ng-repeat="depth in [0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]">
+			{{ depth }}
+			</div>-->
+			<canvas graph-big="profile.rows_compressed" detail="detailLevel" width="1040" height="910" style="width:520px;height:455px;margin-top: 8px; margin-left: 14px;"></canvas>
 		</div>
 
 	</div>

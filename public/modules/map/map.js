@@ -1234,4 +1234,174 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     });
 
+
+
+    // ---------------------------------------------------
+    // --------------------- DRAWING ---------------------
+    // ---------------------------------------------------
+
+
+    var featureGroup = L.featureGroup().addTo($scope.map);
+     var drawControl = new L.Control.Draw({
+        // edit: {
+        //     featureGroup: featureGroup,
+        //     polyline: {
+        //         shapeOptions: {
+        //             color: '#0000ff',
+        //             weight: 4
+        //         },
+        //         metric: false
+        //     }
+        // },
+        draw: {
+            featureGroup: featureGroup,
+            polyline: {
+                shapeOptions: {
+                    color: '#0000ff',
+                    weight: 3
+                },
+                metric: false
+            },
+            polygon: false,
+            marker: false,
+            rectangle: false,
+            circle: false,
+            repeatMode: true
+        }
+      }).addTo($scope.map);
+
+     //L.drawLocal.draw.toolbar.buttons.polyline = 'Draw a new route';
+
+     var geoJSON = {
+        "name":"NewFeatureType",
+        "type":"FeatureCollection",
+        "features":[
+        {
+            "type":"Feature",
+            "geometry": {
+                "type":"LineString",
+                "coordinates":[]
+            },
+            "properties": null
+        }
+        ]}
+
+        function interpolate(_points) {
+            var new_points = [];
+           for (var i = 0; i < _points.length; i++) {
+                new_points[i*2] = _points[i];
+          }
+
+           for (var i = 0; i < new_points.length; i++) {
+                if (!new_points[i]) {
+                    var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
+                    var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
+                    var percentage = 0.5; 
+                    var middlePoint = new google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage); 
+                    new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
+                }
+          }
+
+            return new_points;
+        }
+
+      var lastLine;
+      var lastLayer;
+      $scope.map.on('draw:created', function(e) {
+          if (lastLayer) featureGroup.removeLayer(lastLayer);
+          if (lastLine) $scope.map.removeLayer(lastLine);
+
+          lastLayer = e.layer;
+          featureGroup.addLayer(e.layer);
+
+          if (el) el.clear();
+          createElevationProfile();
+
+          var points = [];
+
+
+
+          var point_string = "";
+           for (var i = 0; i < e.layer._latlngs.length; i++) {
+               points.push(e.layer._latlngs[i]);
+               //point_string += point.lng + "," + point.lat + ";";
+               //point_string += ";"
+          }
+
+
+          while ((points.length * 2) -1 <= 200) {
+            points = interpolate(points);
+          }
+
+
+           for (var i = 0; i < points.length; i++) {
+                point_string += points[i].lng + "," + points[i].lat + ";";
+          }
+
+          point_string = point_string.substring(0,point_string.length-1);
+          console.log(point_string);
+
+          $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
+            //"-112.084004,36.05322;-112.083914,36.053573;-112.083965,36.053845"
+            point_string 
+            + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
+                console.log(data.results);
+
+                geoJSON.features[0].geometry.coordinates = [];
+                for (var i=0; i< data.results.length; i++) {
+                    geoJSON.features[0].geometry.coordinates.push([
+                        data.results[i].latlng.lng,
+                        data.results[i].latlng.lat,
+                        data.results[i].ele
+                    ]);
+                }
+
+                lastLine = L.geoJson(geoJSON,{
+                    onEachFeature: el.addData.bind(el) //working on a better solution
+                }).addTo($scope.map);
+            })
+          //console.log(e.layer);
+
+          // for (var i = 0; i < e.layer._latlngs.length; i++) {
+          //   var point = e.layer._latlngs[i];
+
+          // }
+
+          //el.addData(e.layer);
+
+            // L.geoJson(e.layer,{
+            //     onEachFeature: el.addData.bind(el) //working on a better solution
+            // }).addTo($scope.map);
+      });
+    
+        var el;
+        function createElevationProfile() {
+
+            if (el) el.removeFrom($scope.map);
+            el = L.control.elevation({
+                position: "topright",
+                theme: "steelblue-theme", //default: lime-theme
+                imperial: true,
+                width: 600,
+                height: 125,
+                margins: {
+                    top: 10,
+                    right: 20,
+                    bottom: 30,
+                    left: 50
+                },
+                useHeightIndicator: true, //if false a marker is drawn at map position
+                interpolation: "linear", //see https://github.com/mbostock/d3/wiki/SVG-Shapes#wiki-area_interpolate
+                hoverNumber: {
+                    decimalsX: 3, //decimals on distance (always in km)
+                    decimalsY: 0, //deciamls on height (always in m)
+                    formatter: undefined //custom formatter function may be injected
+                },
+                xTicks: undefined, //number of ticks in x axis, calculated by default according to width
+                yTicks: undefined, //number of ticks on y axis, calculated by default according to height
+                collapsed: false    //collapsed mode, show chart on click or mouseover
+            });
+            el.addTo($scope.map);
+        }
+
 });

@@ -216,7 +216,7 @@ return {
             "copyright": "LINZ",
             "template":"http://tiles-a.data-cdn.linz.govt.nz/services;key=d4e09c59ec0c4e3d901aceed357ffd7c/tiles/v4/layer=767/EPSG:3857/{z}/{x}/{y}.png",
             "type": "TILE"
-         }
+         },
          // {  
          //    "alias":"oc",
          //    "copyright":"OCM",
@@ -260,27 +260,22 @@ return {
          //    "template": "http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=toporaster2&zoom={z}&x={x}&y={y}",
          //    "type":"TILE"
          // },
-         // {
-         //    "name":"Sweden Topo",
-         //    "template": "http://map01.eniro.no/geowebcache/service/tms1.0.0/map2x/{z}/{x}/{y}.png",
-         //    "tms": true,
-         //    "type":"TILE"
-         // },
-         // {
-         //    "name":"Sweden Imagery",
-         //    "template": "http://map01.eniro.no/geowebcache/service/tms1.0.0/aerial/{z}/{x}/{y}.png",
-         //    "tms": true,
-         //    "type":"TILE"
-         // },
+         {
+            "alias":"sweden-topo",
+            "name":"Sweden Topo",
+            "template": "http://map01.eniro.no/geowebcache/service/tms1.0.0/map2x/{z}/{x}/{y}.png",
+            "tms": true,
+            "type":"TILE"
+         },
 
-         //// {
-         ////    "alias":"italy",
-         ////    "name":"Italy Topo",
-         ////    "copyright":"",
-         ////    "template":"http://ogsuite.geobeyond.it/geoserver/pcn_proxy/wms?",
-         ////    "layers":"pcn_proxy:RN.ZONERISCHIO.CLASSIFICAZIONESISMICA",
-         ////    "type":"WMS"
-         //// },
+         // {
+         //    "alias":"italy",
+         //    "name":"Italy Topo",
+         //    "copyright":"",
+         //    "template":"http://ogsuite.geobeyond.it/geoserver/pcn_proxy/wms?",
+         //    "layers":"pcn_proxy:RN.ZONERISCHIO.CLASSIFICAZIONESISMICA",
+         //    "type":"WMS"
+         // },
 
 
          //// problem with this is the projection: EPSG:32633
@@ -297,28 +292,46 @@ return {
          //    "type":"WMS"
          // },
 
-         // {
-         //    "alias":"swiss",
-         //    "name":"Swiss Topo",
-         //    "copyright":"",
-         //    "subdomains":['10','11','12','13','14'],
-         //    "template":"http://wmts{s}.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20140520/3857/{z}/{x}/{y}.jpeg",
-         //    //"template":"http://api3.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20140520/3857/{z}/{x}/{y}.jpeg",
-         //    "type":"TILE"
-         // },
+         {
+            "alias":"swisstopo",
+            "name":"Swisstopo",
+            "copyright":"",
+            "subdomains":['10','11','12','13','14'],
+            "template":"http://wmts{s}.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20140520/3857/{z}/{x}/{y}.jpeg",
+            //"template":"http://api3.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/20140520/3857/{z}/{x}/{y}.jpeg",
+            "type":"TILE"
+         },
 
          //http://www.basemap.at/index_en.html
-        // {
-        //     "alias":"austriatopo",
-        //     "name": "Austria Topo",
-        //     "copyright": "basemap.at",
-        //     "subdomains":['1','2','3','4'],
-        //     //"template": "http://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", // standard - high dpi
-        //     //"template": "http://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.jpeg", // standard
-        //     "template":"http://maps{s}.wien.gv.at/basemap/bmapgrau/normal/google3857/{z}/{y}/{x}.png", // gray with contour lines
-        //     //"template":"http://maps{s}.wien.gv.at/basemap/bmapgrau/normal/google3857/12/1430/2215.png"
-        //     "type":"TILE"
-        //  },
+        {
+            "alias":"austriatopo",
+            "name": "Austria Topo",
+            "copyright": "basemap.at",
+            "subdomains":['1','2','3','4'],
+            //"template": "http://maps{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", // standard - high dpi
+            //"template": "http://maps{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.jpeg", // standard
+            "template":"http://maps{s}.wien.gv.at/basemap/bmapgrau/normal/google3857/{z}/{y}/{x}.png", // gray with contour lines
+            //"template":"http://maps{s}.wien.gv.at/basemap/bmapgrau/normal/google3857/12/1430/2215.png"
+            "retina": false,
+            "type":"TILE"
+         },
+
+         {
+            "alias": "fr-topo",
+            "name":"France",
+            // GEOGRAPHICALGRIDSYSTEMS.MAPS - "hagstrom" style map, no topo, not very useful for us
+            // ORTHOIMAGERY.ORTHOPHOTOS - satelite. seems identical to mapbox aerial
+
+            "template": "http://wxs.ign.fr/98x5h8z9hyhcmm0q98fhfnkm/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+            "type":"TILE"
+         },
+         {
+
+            "alias": "au-topo",
+            "name":"Australia Topo",
+            "template": "http://www.ga.gov.au/gisimg/rest/services/topography/NATMAP_Digital_Maps_250K_2008Edition_WM/MapServer/tile/{z}/{y}/{x}",
+            "type":"TILE"
+         }
         //  {
         //     "alias":"eurotpop",
         //     "name": "European OpenTopoMap",
@@ -333,9 +346,7 @@ return {
         //        http://www.ign.es/wmts/mapa-raster?request=GetCapabilities&service=WMTS
         //        http://www.idee.es/web/guest/directorio-de-servicios?p_p_id=DIRSRVIDEE_WAR_DIRSRVIDEEportlet_INSTANCE_q4BW&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_DIRSRVIDEE_WAR_DIRSRVIDEEportlet_INSTANCE_q4BW_descSrv=VISUALIZACION&_DIRSRVIDEE_WAR_DIRSRVIDEEportlet_INSTANCE_q4BW_supertipo=OGC&_DIRSRVIDEE_WAR_DIRSRVIDEEportlet_INSTANCE_q4BW_tipoServicio=WMTS
         // japan
-        // NZ
         // Australia
-
         ],
         aerial: [
          { 
@@ -396,7 +407,14 @@ return {
             "name":"LINZ New Zealand Aerial",
             "template": "http://tiles-a.data-cdn.linz.govt.nz/services;key=d4e09c59ec0c4e3d901aceed357ffd7c/tiles/v4/set=2/EPSG:3857/{z}/{x}/{y}.png",
             "type":"TILE"
-         }
+         },
+         {
+            "alias": "sweden-aerial",
+            "name":"Sweden Aerial",
+            "template": "http://map01.eniro.no/geowebcache/service/tms1.0.0/aerial/{z}/{x}/{y}.png",
+            "tms": true,
+            "type":"TILE"
+         },
         ]
     },
     overlays: [

@@ -978,7 +978,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
 
     var maxNativeZoom = 13;
-    var hills = L.tileLayer.canvas({
+    var terrainLayer = L.tileLayer.canvas({
         zIndex: 999,
         opacity: .4,
         maxNativeZoom: maxNativeZoom
@@ -986,7 +986,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     var altitude, azimuth, shadows, highlights;
     var zFactor = .12;
 
-    hills.redrawQueue = [];
+    terrainLayer.redrawQueue = [];
 
     var uniqueId = (function () {
         var lastId = 0;
@@ -995,23 +995,40 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         };
     })();
 
-    var workers = [];
+    //var workers = [];
+    var workers = {};
+
+    var elevationData = {}
 
     function updateTile(e) {
+        if (e.data.terrainData) {
+            var terrainData = {
+                elevation: e.data.terrainData[0],
+                slope: e.data.terrainData[1],
+                aspect: e.data.terrainData[2]
+            }
+            console.log(terrainData);
+            return;
+        }
+
         var ctx = contexts[e.data.id];
         var tileSize = ctx.canvas.width;
 
+        //elevationData[e.data.id] = e.data.dem;
+
+        // regular tile
         if (tileSize == 256) {
             var imgData = ctx.createImageData(256, 256);
-            imgData.data.set(new Uint8ClampedArray(e.data.shades));
+            imgData.data.set(new Uint8ClampedArray(e.data.pixels));
             ctx.putImageData(imgData, 0, 0);
         }
+        // overzoom
         else {
             var temp_canvas = document.createElement('canvas');
             temp_canvas.width = temp_canvas.height = 256;
             var temp_context = temp_canvas.getContext('2d');
             var imgData = temp_context.createImageData(256, 256);
-            imgData.data.set(new Uint8ClampedArray(e.data.shades));
+            imgData.data.set(new Uint8ClampedArray(e.data.pixels));
             temp_context.putImageData(imgData, 0, 0);
 
             var imageObject=new Image();
@@ -1023,31 +1040,33 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     }
 
-    for (var i = 0; i < 20; i++) {
-        workers[i] = new Worker('/modules/map/terrain-worker.js');
-        workers[i].onmessage = updateTile;
-    }
+    // for (var i = 0; i < 20; i++) {
+    //     workers[i] = new Worker('/modules/map/terrain-worker.js');
+    //     workers[i].onmessage = updateTile;
+    // }
 
     $scope.map.on('viewreset', function () {
-        hills.redrawQueue = [];
-        workers.forEach(function (worker) {
-            worker.postMessage('clear');
-        });
+        terrainLayer.redrawQueue = [];
+        // workers.forEach(function (worker) {
+        //     worker.postMessage('clear');
+        // });
     });
 
 
     var contexts = {};
-    hills.drawTile = function(canvas, tilePoint, zoom) {
-        var tileSize = hills._getTileSize();
+    terrainLayer.drawTile = function(canvas, tilePoint, zoom) {
+        var tileSize = terrainLayer._getTileSize();
         canvas.width = canvas.height = tileSize;
 
         var renderedZFactor;
-        var context_id = uniqueId();
+        //var context_id = uniqueId();
+
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
 
         var PNG_data;
 
          if (zoom > maxNativeZoom) zoom = maxNativeZoom;
-        contexts[context_id] = canvas.getContext('2d');
+        contexts[tile_id] = canvas.getContext('2d');
 
         function redraw() {
             // if no terrain overlay specified, clear canvas
@@ -1057,8 +1076,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 return;
             }
 
+
             var transferable = [];
-            var data = { id: context_id };
+            var data = { id: tile_id };
 
             if (renderedZFactor !== zFactor) {
                 data.raster = PNG_data;
@@ -1078,16 +1098,31 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 data.azimuth = pos.azimuth * (180 / Math.PI);
             }
 
-            var workerIndex = (tilePoint.x + tilePoint.y) % workers.length;
-            workers[workerIndex].postMessage(data, transferable);
+
+    //     workers[i] = new Worker('/modules/map/terrain-worker.js');
+    //     workers[i].onmessage = updateTile;
+
+
+            if (!workers[tile_id]) {
+                workers[tile_id] = new Worker('/modules/map/terrain-worker.js');
+                workers[tile_id].onmessage = updateTile;
+            }
+
+            //var workerIndex = (tilePoint.x + tilePoint.y) % workers.length;
+            // workers[workerIndex].context_id = context_id;
+            // workers[workerIndex].postMessage(data, transferable);
+
+            //workers[context_id].context_id = context_id;
+            workers[tile_id].postMessage(data, transferable);
 
             renderedZFactor = zFactor;
         }
 
-        var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-        
+       
         // invert for TMS
-        tilePoint.y = (1 << zoom) - tilePoint.y - 1;
+        //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
+        var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+       
         //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
         
         var xhr = new XMLHttpRequest;
@@ -1103,17 +1138,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 PNG_data = new Uint8ClampedArray(pixels).buffer;
 
                 redraw();
-                hills.redrawQueue.push(redraw);
+                terrainLayer.redrawQueue.push(redraw);
             }
         };
         return xhr.send(null);
     }
 
-    hills.redrawTiles = function () {
-        hills.redrawQueue.forEach(function(redraw) { redraw(); });
+    terrainLayer.redrawTiles = function () {
+        terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
     };
     setTimeout(function(){
-        hills.addTo($scope.map);
+        terrainLayer.addTo($scope.map);
     }, 100);
 
     // --------
@@ -1135,7 +1170,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     var needsRedraw = false;
     function redraw() {
-        if (needsRedraw) hills.redrawTiles();
+        if (needsRedraw) terrainLayer.redrawTiles();
         needsRedraw = false;
         window.requestAnimationFrame(redraw);
     }
@@ -1148,24 +1183,55 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         //redraw();
     }
 
+    // ----- MAP CLICK -----
 
-    // ---------- DRAWING -----------
+    function latLngToTilePoint(lat, lng, zoom) {
+        lat *= (Math.PI/180);
+        return {
+            x: parseInt(Math.floor( (lng + 180) / 360 * (1<<zoom) )),
+            y: parseInt(Math.floor( (1 - Math.log(Math.tan(lat) + 1 / Math.cos(lat)) / Math.PI) / 2 * (1<<zoom) ))
+        }
+    }
+    function tilePointToLatLng(x, y, zoom) {
+        var n = Math.PI-2*Math.PI*y/Math.pow(2,zoom);
+        return {
+            lng: (x/Math.pow(2,zoom)*360-180),
+            lat: (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))))
+        }
+    }
 
-    // var featureGroup = L.featureGroup().addTo($scope.map);
-    //  var drawControl = new L.Control.Draw({
-    //     edit: {
-    //       featureGroup: featureGroup
-    //     }
-    //   }).addTo($scope.map);
+    $scope.map.on('click', function(e) {
+        // adjust zoom level for overzoom
+        var zoom = Math.min(maxNativeZoom, $scope.map.getZoom());
+        // get xyz of clicked tile based on clicked lat/lng
+        var tilePoint = latLngToTilePoint(
+            e.latlng.lat,
+            e.latlng.lng,
+            zoom
+        );
+        // get nw lat/lng of tile
+        var backToLatLng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
+        // get nw container point of tile
+        var containerPoint = $scope.map.latLngToContainerPoint(backToLatLng);
+        // subtract clicked container point from nw container point to get point within tile
+        var pointInTile = {
+            x: e.containerPoint.x - containerPoint.x,
+            y: e.containerPoint.y - containerPoint.y
+        }
+        // adjust points for overzoom
+        if ($scope.map.getZoom() > maxNativeZoom) {
+            var zoomDifference = $scope.map.getZoom() - maxNativeZoom;
+            var zoomDivide = Math.pow(2, zoomDifference)
 
-    //   $scope.map.on('draw:created', function(e) {
-    //       featureGroup.addLayer(e.layer);
-    //       //console.log(e.layer);
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide);
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
+        }
 
-    //       for (var i = 0; i < e.layer._latlngs.length; i++) {
-    //         var point = e.layer._latlngs[i];
+        // send point to tile worker
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + $scope.map.getZoom();
+        var worker = workers[tile_id];
+        if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile });
 
-    //       }
-    //   });
+    });
 
 });

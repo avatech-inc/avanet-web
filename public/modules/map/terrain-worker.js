@@ -4,12 +4,29 @@
 self.dems = {};
 
 onmessage = function (e) {
+    // clear data
     if (e.data === 'clear') {
         self.dems = {};
         return;
     }
+    // terrain data at point
+    else if (e.data.pointInTile) {
+        var dem = self.dems[e.data.id];
+        if (!dem || dem.length != (256 * 256)) return;
 
-    if (e.data) return;
+        // convert xy coord to 2d array index
+        var arrayIndex = (e.data.pointInTile.y * 256 + e.data.pointInTile.x);
+        // get terrain data
+        var terrainData = dem[arrayIndex];
+        // return to client
+        postMessage({ 
+            id: e.data.id,
+            terrainData: terrainData
+        }); 
+        return;
+    }
+
+    if (!e.data) return;
 
     // console.log("URL: " + e.data.url);
     // PNG.load(e.data.url, function(png) {
@@ -54,8 +71,9 @@ onmessage = function (e) {
 
     postMessage({
         id: e.data.id,
-        shades: processed.buffer
+        pixels: processed.buffer,
     }, [processed.buffer]);
+
 };
 
 function convert(data) {

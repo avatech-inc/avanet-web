@@ -711,8 +711,8 @@ exports.downloadRawData = function(req, res) {
                 content += "DATE:," + moment(test.date).format("YYYY-MM-DDTHH:mm") + "\n";
                 content += "DATE #:," + test.dateNumber + "\n";
 
-                content += "SLOPE:," + "" + "\n";
-                content += "ANGLE:," + "" + "\n";
+                content += "SLOPE:," + (test.slope ? test.slope : "") + "\n";
+                content += "ASPECT:," + (test.aspect ? test.aspect : "") + "\n";
                 content += "LOCTATION:,";
                 if (test.location) content+= test.location[1] + "," + test.location[0];
                 content += "\n";

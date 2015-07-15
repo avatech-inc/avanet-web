@@ -11,7 +11,7 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
       $scope.global = Global;
 
         $('textarea.comment').mentionsInput({
-          minChars: 100,
+          minChars: 100, // to disable, make 100 (otherwise, 2)
           onDataRequest:function (mode, query, callback) {
             $http.get('/v1/users/search?query=' + query).then(function(response) {
               var results = [];

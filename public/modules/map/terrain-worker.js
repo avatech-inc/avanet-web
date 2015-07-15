@@ -271,6 +271,9 @@ function render(data, processType, alt) {
 
         var newColor = [];
 
+        // if no data, return transparent
+        if (new_elevation==127 && new_slope==127 && new_aspect ==511) { newColor = [0,0,0,0]; continue; }
+
         // ELEVATION
         if (processType == "elevation") {
 
@@ -342,6 +345,93 @@ function render(data, processType, alt) {
                 newColor = aspectColorMap[new_aspect];
             }
 
+            // lower opacity for flatest slopes
+            // var opacity = 255;
+            // if (new_slope < 5) {
+            //     opacity = (new_slope * 20) * 255;
+            // }
+            // newColor[3] = opacity;
+
+        }
+
+
+        // MKS (aspect-slope)
+        // http://blogs.esri.com/esri/arcgis/2008/05/23/aspect-slope-map/
+        if (processType == "mks") {
+
+            // if (new_slope > 0 && new_slope <= 80) {
+            //     newColor = slopeColorMap[new_slope];
+            // }
+            var num = 0;
+
+            if (new_slope >= 40) num = 40;
+            else if (new_slope >= 20) num = 30;
+            else if (new_slope >= 5) num = 20;
+            else if (new_slope >= 0) num = 10;
+
+            if (new_aspect >= 0 && new_aspect <= 22.5) num+= 1;
+            else if (new_aspect > 22.5 && new_aspect <= 67.5) num+= 2;
+            else if (new_aspect > 67.5 && new_aspect <= 112.5) num+= 3;
+            else if (new_aspect > 112.5 && new_aspect <= 157.5) num+= 4;
+            else if (new_aspect > 157.5 && new_aspect <= 202.5) num+= 5;
+            else if (new_aspect > 202.5 && new_aspect <= 247.5) num+= 6;
+            else if (new_aspect > 247.5 && new_aspect <= 292.5) num+= 7;
+            else if (new_aspect > 292.5 && new_aspect <= 337.5) num+= 8;
+            else if (new_aspect > 337.5 && new_aspect <= 360) num+= 1;
+
+            // var classNum = 0;
+            // if (num <= 20) classNum = 1;
+            // else if (num == 21) classNum = 2;
+            // else if (num == 22) classNum = 3;
+            // else if (num == 23) classNum = 4;
+            // else if (num == 24) classNum = 5;
+            // else if (num == 25) classNum = 6;
+            // else if (num == 26) classNum = 7;
+            // else if (num == 27) classNum = 8;
+            // else if (num == 28) classNum = 9;
+            // else if (num == 31) classNum = 10;
+            // else if (num == 32) classNum = 11;
+            // else if (num == 33) classNum = 12;
+            // else if (num == 34) classNum = 13;
+            // else if (num == 35) classNum = 14;
+            // else if (num == 36) classNum = 15;
+            // else if (num == 37) classNum = 16;
+            // else if (num == 38) classNum = 17;
+            // else if (num == 41) classNum = 18;
+            // else if (num == 42) classNum = 19;
+            // else if (num == 43) classNum = 20;
+            // else if (num == 44) classNum = 21;
+            // else if (num == 45) classNum = 22;
+            // else if (num == 46) classNum = 23;
+            // else if (num == 47) classNum = 24;
+            // else if (num == 48) classNum = 25;
+
+            if (num == 19) newColor = [153, 153, 153];
+            if (num == 21) newColor = [147, 166, 89];
+            if (num == 22) newColor = [102, 153, 102];
+            if (num == 23) newColor = [102, 153, 136];
+            if (num == 24) newColor = [89, 89, 166];
+            if (num == 25) newColor = [128, 108, 147];
+            if (num == 26) newColor = [166, 89, 89];
+            if (num == 27) newColor = [166, 134, 89];
+            if (num == 28) newColor = [166, 166, 89];
+            if (num == 31) newColor = [172, 217, 38];
+            if (num == 32) newColor = [77, 179, 77];
+            if (num == 33) newColor = [73, 182, 146];
+            if (num == 34) newColor = [51, 51, 204];
+            if (num == 35) newColor = [128, 89, 166];
+            if (num == 36) newColor = [217, 38, 38];
+            if (num == 37) newColor = [217, 142, 38];
+            if (num == 38) newColor = [217, 217, 38];
+            if (num == 41) newColor = [191, 255, 0];
+            if (num == 42) newColor = [51, 204, 51];
+            if (num == 43) newColor = [51, 204, 153];
+            if (num == 44) newColor = [26, 26, 230];
+            if (num == 45) newColor = [128, 51, 204];
+            if (num == 46) newColor = [255, 0, 0];
+            if (num == 47) newColor = [255, 149, 0];
+            if (num == 48) newColor = [255, 255, 0];
+
         }
 
         // -------------
@@ -365,14 +455,12 @@ function sunlight(data, altitude, azimuth) {
 
     var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
 
-    var a = azimuth;
-    if (a >= 360) a = a - 360.0;
-    a = a * Math.PI/180.0;
+    if (azimuth >= 360) azimuth = azimuth - 360.0;
+    azimuth = azimuth * Math.PI/180.0;
 
     var z = (90 - altitude) * Math.PI/180.0;
 
-    var neutral = Math.cos(z);
-    console.log("NETURAL: " + neutral);
+    //var neutral = Math.cos(z);
 
     var sunColorMap = getColorMap([
         { color: "0000ff", val: 0 },
@@ -380,25 +468,23 @@ function sunlight(data, altitude, azimuth) {
         { color: "ff0000", val: 100 },
     ]);
 
-    // var sunColorMap = getColorMap([
-    //     { color: "0000ff", val: 0 },
-    //     { color: "0000ff", val: 35 },
-    //     { color: "ffff00", val: 54 },
-    //     { color: "ff0000", val: 100 },
-    // ]);
-
     for(var i=0; i< data.length; i++) {
 
-        //elevation = data[i][0];
-        slope = data[i][1] * (Math.PI/180);
-        aspect = data[i][2] * (Math.PI/180);
-
-        if (!slope || aspect > 360) continue;
-
-        var hillshade = Math.cos(z) * Math.cos(slope) + Math.sin(z) * Math.sin(slope) * Math.cos(a - aspect);
-        if (hillshade < 0) hillshade = 0;
+        var elevation = data[i][0];
+        var slope = data[i][1];
+        var aspect = data[i][2];
 
         var newColor;
+
+        // if no data, return transparent
+        if (elevation == 127 && slope == 127 && aspect == 511) { newColor = [0,0,0,0]; continue; }
+
+        // convert to radians
+        slope = slope * (Math.PI/180);
+        aspect = aspect * (Math.PI/180);
+
+        var hillshade = Math.cos(z) * Math.cos(slope) + Math.sin(z) * Math.sin(slope) * Math.cos(azimuth - aspect);
+        if (hillshade < 0) hillshade = 0;
 
         var min = 0; var max = 1;
         var p = Math.round(((hillshade - min) * 100) / (max - min));

@@ -80,7 +80,9 @@
     "farenheit" : "Farenheit",
     "temperature" : "Temperature",
     "bulk_download" : "Bulk Data Download",
-    "bulk_download_sp1_button" : "Download SP1 Data"
+    "bulk_download_sp1_button" : "Download SP1 Data",
+    "profile_photo": "Profile Photo",
+    "upload_profile_photo": "Upload profile photo"
   },
   "snowpit_editor": {
     "surface": "Surface",

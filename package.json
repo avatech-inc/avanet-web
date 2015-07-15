@@ -1,9 +1,9 @@
 {
-  "name": "AvaNet",
-  "description": "AvaNet",
+  "name": "Avanet",
+  "description": "Avanet",
   "version": "0.0.1-1",
   "private": false,
-  "author": "AvaTech, Inc.",
+  "author": "Avatech, Inc.",
   "engines": {
     "node": "0.12.x",
     "npm": "2.7.x"

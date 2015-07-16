@@ -316,15 +316,15 @@ return {
             "type":"TILE"
          },
 
-         {
-            "alias": "fr-topo",
-            "name":"France",
-            // GEOGRAPHICALGRIDSYSTEMS.MAPS - "hagstrom" style map, no topo, not very useful for us
-            // ORTHOIMAGERY.ORTHOPHOTOS - satelite. seems identical to mapbox aerial
+         // {
+         //    "alias": "fr-topo",
+         //    "name":"France",
+         //    // GEOGRAPHICALGRIDSYSTEMS.MAPS - "hagstrom" style map, no topo, not very useful for us
+         //    // ORTHOIMAGERY.ORTHOPHOTOS - satelite. seems identical to mapbox aerial
 
-            "template": "http://wxs.ign.fr/98x5h8z9hyhcmm0q98fhfnkm/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
-            "type":"TILE"
-         },
+         //    "template": "http://wxs.ign.fr/98x5h8z9hyhcmm0q98fhfnkm/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+         //    "type":"TILE"
+         // },
          {
 
             "alias": "au-topo",

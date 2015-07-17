@@ -119,8 +119,6 @@
 	</head>
 	<body window-resize ng-cloak>
 		<div ng-include="'/views/header.html'"></div>
-		
-		<!--<section class="content" ng-view></section>-->
 		<section class="content" ui-view></section>
 
 		<!-- jQuery - we should really try to remove this!!! -->
@@ -147,7 +145,10 @@
 		<script type="text/javascript" src="/lib/restangular/dist/restangular.js"></script>
 
 		<!-- angular forms -->
-		<script type="text/javascript" src="/lib/angular-schema-form/dist/angular-schema-form.js"></script>
+		<script type="text/javascript" src="/lib/objectpath/lib/ObjectPath.js"></script>
+		<script type="text/javascript" src="/lib/tv4/tv4.js"></script>
+		<script type="text/javascript" src="/lib/angular-sanitize/angular-sanitize.min.js"></script>
+		<script type="text/javascript" src="/lib/angular-schema-form/dist/schema-form.js"></script>
 		<script type="text/javascript" src="/lib/angular-schema-form/dist/bootstrap-decorator.js"></script>
 
 
@@ -191,13 +192,16 @@
 		<!-- Angular local storage -->
     	<script type="text/javascript" src="/lib/angular-local-storage/angular-local-storage.js"></script>
 
-		<!-- Angular UI -->
-    	<script type="text/javascript" src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
-		<script type="text/javascript" src='/lib/angular-ui-utils/modules/route/route.js'></script>
-
 		<!-- Angular Translate -->
 		<script type="text/javascript" src="/lib/angular-translate/angular-translate.js"></script>
 		<script type="text/javascript" src="/lib/angular-translate-loader-partial/angular-translate-loader-partial.js"></script>
+
+		<!-- Angular UI Router -->
+    	<script type="text/javascript" src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
+		<script type="text/javascript" src='/lib/angular-ui-utils/modules/route/route.js'></script>
+
+		<!-- Angular UI Router Extras -->
+    	<script type="text/javascript" src="/lib/ui-router-extras/release/ct-ui-router-extras.js"></script>
 
 		<!-- Angular UI Bootstrap -->
 
@@ -254,6 +258,7 @@
   		<script src="/modules/map/map.js"></script>
   		<script src="/modules/map/terrain-worker.js"></script>
   		<script src="/modules/map-search/map-search.js"></script>
+  		<script src="/modules/observations/observations.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>

@@ -3,6 +3,7 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'pascalprecht.translate',
     'schemaForm',
     'pasvaz.bindonce',
+    'ct.ui.router.extras',
     'bootstrapLightbox',
     'angulartics', 'angulartics.mixpanel',
     'avatech.system',
@@ -113,55 +114,31 @@ angular.module('avatech').run(
  function($rootScope, $route, $location, $state, $stateParams, $document, $http, pathRoute, $modalStack, Observations, Global) {
         
     // the first thing that gets run:
-    // initialize global service
+
+    // init global service
     $rootScope.initPromise = Global.init();
+    // todo: make this cleaner? maybe if orgs is null?
     if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
         $rootScope.orgsLoaded = true;
     });
 
-    // init
+    // init observations service
     Observations.init();
 
-    // todo: this should throw a 404
-    // since the app matches * and returns the angular page for everything, this will return 200
-    //$http.get('/sfsdsfsdg');
-    //$http.get('/test500');
-
-    // 1. before route change
-
-    // $rootScope.$on("$locationChangeStart", function(event, next, current) {
-
-
-    //     // match the current path to the route 
-    //     var currentRoute = pathRoute();
-    //     // if path not found or serverRedirect option enabled, force full server refresh
-    //     // of current route (will cause a 404 if route doesn't exist)
-    //     //if (!currentRoute || $route.routes[currentRoute].serverRedirect) {
-    //     // if (!currentRoute) {
-    //     //     event.preventDefault();
-    //     //     //window.location.href = $location.path(); 
-    //     //     //$location.path()
-    //     //     return;
-    //     // }
-    //     // // adminOnly?
-    //     // if (currentRoute && $route.routes[currentRoute].requireAdmin && !Global.user.admin) {
-    //     //     event.preventDefault();
-    //     //     //window.location.href = $location.path();
-    //     //     return;
-    //     // }
-    // });
-
-    // 2. on route change
-    //$rootScope.$on("$routeChangeStart", function(event, next, current) {
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
 
-        // close modals
+        // close modals (todo: what is this from?)
         $modalStack.dismissAll();
 
-        console.log("loading state:")
+        //console.log("loading state:")
         if (!toState) return;
         if (toState.name == fromState.name) return;
 
+        // if modal, ignore
+        // if (toState.data.modal) {
+        //     console.log("IS MODAL!");
+        //     return;
+        // }
 
         // todo: kludgy way to get rid of tooltips. not ideal, but only solution for now
         $(".tooltip").remove();

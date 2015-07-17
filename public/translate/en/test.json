@@ -7,6 +7,9 @@
   "snowpit" : "Snowpit",
   "sp1_profile" : "SP1 Profile",
   "avalanche" : "Avalanche",
+  
+  "snowpack": "Snowpack",
+
   "usb_upload" : "SP1 USB Upload",
   "organizations" : "Organizations",
   "organization" : "Organization",

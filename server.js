@@ -29,6 +29,6 @@ require('./config/express')(app, passport);
 // start it up
 var port = process.env.PORT || 3000;
 app.listen(port);
-console.log('AvaNet is now running on port ' + port);
+console.log('Avanet is now running on port ' + port);
 
 exports = module.exports = app;

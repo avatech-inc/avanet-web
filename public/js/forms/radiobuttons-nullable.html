@@ -1,0 +1,22 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+
+  	<div class="btn-group" ng-if="form.schema.type.toLowerCase() == 'boolean'">
+        <label class="btn btn-default" ng-model="$$value$$" btn-radio="null">Not Observed</label>
+        <label class="btn btn-default" ng-model="$$value$$" btn-radio="true">Yes</label>
+        <label class="btn btn-default" ng-model="$$value$$" btn-radio="false">No</label>
+    </div>
+  	<div class="btn-group" ng-if="form.schema.type.toLowerCase() == 'string'">
+
+        <label class="btn btn-default" ng-model="$$value$$" btn-radio="null">Not Observed</label>
+
+        <label ng-if="!form.titleMap" ng-repeat="enum in form.schema.enum" class="btn btn-default" ng-model="$$value$$" 
+        	btn-radio="enum">{{ enum }}</label>
+
+        <label ng-if="form.titleMap" ng-repeat="enum in form.titleMap" class="btn btn-default" ng-model="$$value$$" 
+        	btn-radio="enum.value">{{ enum.name }}</label>
+
+    </div>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

@@ -1,0 +1,18 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+
+  <!--<input ng-show="form.key"
+         style="background-color: white"
+         type="text"
+         class="form-control"
+         schema-validate="form"
+         ng-model="$$value$$"
+         pick-a-date
+         min-date="form.minDate"
+         max-date="form.maxDate"
+         format="form.format" />-->
+         
+  <grain-select ng-model="$$value$$" placeholder="select primary type" schema-validate="form"></grain-select>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

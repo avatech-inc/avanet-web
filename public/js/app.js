@@ -1,5 +1,5 @@
 // define app
-angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'ngQuickDate', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
+angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
     'pascalprecht.translate',
     'schemaForm',
     'pasvaz.bindonce',
@@ -43,6 +43,33 @@ angular.module('avatech').factory('httpRequestInterceptor', function ($q, $locat
 //         // }
 //     };        
 // });
+
+// configure angular schema forms
+angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecoratorsProvider', 'sfPathProvider',
+  function(schemaFormProvider,  schemaFormDecoratorsProvider, sfPathProvider) {
+
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'direction-select',
+      '/js/forms/direction-select.html'
+    );
+
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'radiobuttons-nullable',
+      '/js/forms/radiobuttons-nullable.html'
+    );
+
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'datepicker',
+      '/js/forms/datepicker.html'
+    );
+
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'grainTypeSelect',
+      '/js/forms/grain-type-select.html'
+    );
+
+  }
+]);
 
 // configure Restangular
 angular.module('avatech').config(function(RestangularProvider) {

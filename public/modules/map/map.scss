@@ -990,3 +990,42 @@
 			opacity: 1;
 			/*border-bottom:2px solid #ffcc00;*/
 		}
+
+
+		/* drawing */
+
+.leaflet-draw-tooltip {
+	display: none;
+}
+
+.leaflet-editing-icon {
+    border-radius: 99px !important;
+    width: 10px !important;
+    height: 10px !important;
+    margin-left: -5px !important;
+    margin-top: -5px !important;
+    border-color: rgba(0,0,255,.6) !important;
+
+    transition: width opacity 100ms;
+
+    &:hover {
+    	border-color: rgba(0,0,255,1) !important;
+    	background: #eee !important;
+    }
+}
+
+.leaflet-editing-icon[style*="opacity: 0.6"] {
+    background: #9999FF!important;
+    height: 8px !important;
+    width: 8px !important;
+    margin-left: -4px !important;
+    margin-top: -4px !important;
+    opacity: .9 !important;
+    border-color: rgba(0,0,255,.3) !important;
+
+    &:hover {
+    	opacity: 1 !important;
+    	border-color: rgba(0,0,255,1) !important;
+    	background: #eee !important;
+    }
+}

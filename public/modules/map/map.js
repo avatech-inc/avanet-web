@@ -1,6 +1,24 @@
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal) {
     $scope.global = Global;
-    $scope.showPreviewPane = function(){ return ($state.current.name.indexOf("index.") != -1) };
+
+    $scope._showPreviewPane;
+    $scope.showPreviewPane = function(){ 
+        // if ($state.current.data.modal) return $scope._showPreviewPane;
+        // else {
+        //     $scope._showPreviewPane = $state.current.data.showPreviewPane;
+        //     return $scope._showPreviewPane;
+        // } 
+        return $state.current.data.showPreviewPane;
+    };
+    $scope._isFullScreen;
+    $scope.isFullScreen = function() { 
+        // if ($state.current.data.modal) return $scope._isFullScreen;
+        // else {
+        //     $scope._isFullScreen = $state.current.data.fullScreen; 
+        //     return $scope._isFullScreen;
+        // }
+        return $state.current.data.fullScreen;
+    };
 
     $scope.showList = true;
 
@@ -980,7 +998,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     var maxNativeZoom = 13;
     var terrainLayer = L.tileLayer.canvas({
         zIndex: 999,
-        opacity: .4,
+        opacity: .5,
         maxNativeZoom: maxNativeZoom
     });
     var altitude, azimuth, shadows, highlights;
@@ -1242,37 +1260,42 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
 
     var featureGroup = L.featureGroup().addTo($scope.map);
-     var drawControl = new L.Control.Draw({
-        // edit: {
-        //     featureGroup: featureGroup,
-        //     polyline: {
-        //         shapeOptions: {
-        //             color: '#0000ff',
-        //             weight: 4
-        //         },
-        //         metric: false
-        //     }
-        // },
-        draw: {
-            featureGroup: featureGroup,
-            polyline: {
-                shapeOptions: {
-                    color: '#0000ff',
-                    weight: 3
-                },
-                metric: false
-            },
-            polygon: false,
-            marker: false,
-            rectangle: false,
-            circle: false,
-            repeatMode: true
+     // var drawControl = new L.Control.Draw({
+     //    // edit: {
+     //    //     featureGroup: featureGroup,
+     //    //     polyline: {
+     //    //         shapeOptions: {
+     //    //             color: '#0000ff',
+     //    //             weight: 4
+     //    //         },
+     //    //         metric: false
+     //    //     }
+     //    // },
+     //    draw: {
+     //        featureGroup: featureGroup,
+     //        polyline: {
+     //            shapeOptions: {
+     //                color: '#0000ff',
+     //                weight: 3
+     //            },
+     //            metric: false
+     //        },
+     //        polygon: false,
+     //        marker: false,
+     //        rectangle: false,
+     //        circle: false,
+     //        repeatMode: true
+     //    }
+     //  }).addTo($scope.map);
+
+     var editHandler = new L.EditToolbar.Edit($scope.map, {
+        featureGroup: featureGroup,
+        selectedPathOptions: {
+            color: 'blue'
         }
-      }).addTo($scope.map);
+    });
 
-     //L.drawLocal.draw.toolbar.buttons.polyline = 'Draw a new route';
-
-     var geoJSON = {
+    var geoJSON = {
         "name":"NewFeatureType",
         "type":"FeatureCollection",
         "features":[
@@ -1284,7 +1307,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             },
             "properties": null
         }
-        ]}
+    ]};
 
         function interpolate(_points) {
             var new_points = [];
@@ -1305,80 +1328,97 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             return new_points;
         }
 
-      var lastLine;
-      var lastLayer;
-      $scope.map.on('draw:created', function(e) {
-          if (lastLayer) featureGroup.removeLayer(lastLayer);
-          if (lastLine) $scope.map.removeLayer(lastLine);
+        var _line;
+        var editMode = false;
+        var preventEdit = false;
+        $scope.map.on('click', function(e) {
+            // if editing existing line
+            if (editMode) {
+                if (preventEdit) return;
+                var layers = featureGroup._layers;
+                var line = layers[Object.keys(layers)[0]];
 
-          lastLayer = e.layer;
-          featureGroup.addLayer(e.layer);
+                line.editing._markers.push(line.editing._createMarker(e.latlng));
+                line.editing._poly.addLatLng(e.latlng);
+                line.editing.updateMarkers();
+            }
+            // if creating first point
+            else {
+                var newLayer = L.polyline([e.latlng], {}).addTo($scope.map);
+                featureGroup.addLayer(newLayer);
+                editHandler.enable();
+                editMode = true;
 
-          if (el) el.clear();
-          createElevationProfile();
+                // when line is edited (after point is dragged)
+                newLayer.on('edit', function(e) {
+                    // prevent addition of new points for 1 second after moving point
+                    // to prevent accidental addition of new point
+                    preventEdit = true;
+                    setTimeout(function() { preventEdit = false }, 1000);
+                });
+            }
+        });
 
-          var points = [];
+      // var lastLine;
+      // var lastLayer;
+      // $scope.map.on('draw:created', function(e) {
+      //     if (lastLayer) featureGroup.removeLayer(lastLayer);
+      //     if (lastLine) $scope.map.removeLayer(lastLine);
 
+      //     lastLayer = e.layer;
+      //     console.log(e.layer);
+      //     featureGroup.addLayer(e.layer);
 
+      //     editToolbar.enable();
 
-          var point_string = "";
-           for (var i = 0; i < e.layer._latlngs.length; i++) {
-               points.push(e.layer._latlngs[i]);
-               //point_string += point.lng + "," + point.lat + ";";
-               //point_string += ";"
-          }
+      //     //createElevationProfileWidget();
 
+      //     //var points = [];
 
-          while ((points.length * 2) -1 <= 200) {
-            points = interpolate(points);
-          }
+      //     // var point_string = "";
+      //     //  for (var i = 0; i < e.layer._latlngs.length; i++) {
+      //     //      points.push(e.layer._latlngs[i]);
+      //     // }
 
+      //     // while ((points.length * 2) -1 <= 200) {
+      //     //   points = interpolate(points);
+      //     // }
 
-           for (var i = 0; i < points.length; i++) {
-                point_string += points[i].lng + "," + points[i].lat + ";";
-          }
+      //     //  for (var i = 0; i < points.length; i++) {
+      //     //       point_string += points[i].lng + "," + points[i].lat + ";";
+      //     // }
 
-          point_string = point_string.substring(0,point_string.length-1);
-          console.log(point_string);
+      //     // point_string = point_string.substring(0,point_string.length-1);
 
-          $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
-            //"-112.084004,36.05322;-112.083914,36.053573;-112.083965,36.053845"
-            point_string 
-            + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
-                console.log(data.results);
+      //     // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
+      //     //   point_string 
+      //     //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
+      //     //       console.log(data.results);
 
-                geoJSON.features[0].geometry.coordinates = [];
-                for (var i=0; i< data.results.length; i++) {
-                    geoJSON.features[0].geometry.coordinates.push([
-                        data.results[i].latlng.lng,
-                        data.results[i].latlng.lat,
-                        data.results[i].ele
-                    ]);
-                }
+      //     //       geoJSON.features[0].geometry.coordinates = [];
+      //     //       for (var i=0; i< data.results.length; i++) {
+      //     //           geoJSON.features[0].geometry.coordinates.push([
+      //     //               data.results[i].latlng.lng,
+      //     //               data.results[i].latlng.lat,
+      //     //               data.results[i].ele
+      //     //           ]);
+      //     //       }
 
-                lastLine = L.geoJson(geoJSON,{
-                    onEachFeature: el.addData.bind(el) //working on a better solution
-                }).addTo($scope.map);
-            })
-          //console.log(e.layer);
+      //     //       lastLine = L.geoJson(geoJSON,{
+      //     //           onEachFeature: el.addData.bind(el) //working on a better solution
+      //     //       }).addTo($scope.map);
+      //     //   })
 
-          // for (var i = 0; i < e.layer._latlngs.length; i++) {
-          //   var point = e.layer._latlngs[i];
-
-          // }
-
-          //el.addData(e.layer);
-
-            // L.geoJson(e.layer,{
-            //     onEachFeature: el.addData.bind(el) //working on a better solution
-            // }).addTo($scope.map);
-      });
+      // });
     
-        var el;
-        function createElevationProfile() {
+        var elevationWidget;
+        function createElevationProfileWidget() {
 
-            if (el) el.removeFrom($scope.map);
-            el = L.control.elevation({
+            if (elevationWidget) {
+                elevationWidget.clear();
+                elevationWidget.removeFrom($scope.map);
+            }
+            elevationWidget = L.control.elevation({
                 position: "topright",
                 theme: "steelblue-theme", //default: lime-theme
                 imperial: true,

@@ -212,6 +212,29 @@ function getColorMap(steps){
         { color: "c0fc33", val: 360 },
     ]);
 
+    // Bruce Tremper
+    
+    var steepnessColorMap = getColorMap([
+        { color: "00ff00", val: 0 },
+        { color: "00ff00", val: 20 },
+        { color: "ffff00", val: 30 },
+        //{ color: "1b29e1", val: 34 },
+        { color: "ff0000", val: 42 },
+        { color: "ffff00", val: 70 },
+    ]);
+    // if (new_slope > 20 && new_slope <= 30) {
+    //     newColor = [0,255,0,255]; // green
+    // }
+    // else if (new_slope > 30 && new_slope <= 34) {
+    //     newColor = [255,255,0,255]; // yellow
+    // }
+    // else if (new_slope > 34 && new_slope <= 45) {
+    //     newColor = [255,0,0,255]; // red
+    // }
+    // else if (new_slope > 45) {
+    //     newColor = [255,255,0,255]; // yellow
+    // }
+
 
 function render(data, processType, alt) {
 
@@ -292,9 +315,31 @@ function render(data, processType, alt) {
         // SLOPE MAP
         if (processType == "slope") {
 
+            // if (new_slope > 20 && new_slope <= 80) {
+            //     newColor = steepnessColorMap[new_slope];
+            // }
+
+            
             if (new_slope > 0 && new_slope <= 80) {
+                //if (new_aspect > 0 && new_aspect < 90)
                 newColor = slopeColorMap[new_slope];
             }
+
+
+
+
+            // if (new_slope > 20 && new_slope <= 30) {
+            //     newColor = [0,255,0,255]; // green
+            // }
+            // else if (new_slope > 30 && new_slope <= 34) {
+            //     newColor = [255,255,0,255]; // yellow
+            // }
+            // else if (new_slope > 34 && new_slope <= 45) {
+            //     newColor = [255,0,0,255]; // red
+            // }
+            // else if (new_slope > 45) {
+            //     newColor = [255,255,0,255]; // yellow
+            // }
 
         }
 

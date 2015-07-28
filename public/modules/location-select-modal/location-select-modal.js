@@ -41,7 +41,7 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
             }
 
             setTimeout(function(){
-                $scope.map = L.mapbox.map('map','andrewsohn.ihk2g12l', {
+                $scope.map = L.mapbox.map('map_location','andrewsohn.ihk2g12l', {
                     zoomControl: false,
                     tileLayer: {
                         //continuousWorld: false,
@@ -66,20 +66,6 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 // set starting location and zoom
                 $scope.map.setView(initialLocation, 10);
                 $scope.map.invalidateSize();
-
-                // add selection marker
-                // $scope.marker = L.marker(initialLocation, {
-                //     icon: L.mapbox.marker.icon({
-                //       'marker-color': '#ffcc00'
-                //     }), draggable: false
-                // }).addTo($scope.map);
-                // marker2.on('dragend', ondragend);
-                // ondragend();
-                // function ondragend() {
-                //     var m = marker2.getLatLng();
-                //     $scope.form.location = [ m.lng, m.lat ];
-                //     $scope.$apply();
-                // }
 
                 $scope.$apply();
             },100);

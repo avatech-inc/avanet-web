@@ -1,30 +1,30 @@
 <style>
 
-    #map { z-index:999; position:absolute; top:0; bottom:0; left: 0; right: 0;  }
+    #map_location { z-index:999; position:absolute; top:0; bottom:0; left: 0; right: 0;  }
     .modal-footer { margin-top: 0; }
 
     .leaflet-control-attribution { display: none; }
 </style>  
 <!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
-    <div class="modalClose" ng-click="close()"><i class="fa fa-times"></i></div>
+    <div class="modalClose" ng-click="close()"><i class="ion-close-round"></i></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h3 style="font-size:20px;">Drag the map to select your location</h3>
+            <h3>{{ 'location_select_instructions' | translate }}</h3>
         </div>
         <div ng-init="loadMap()" class="modal-body" style="padding:0;" ng-style="{ height: windowHeight - 200 }">
     		
-           <input ng-model="form.location" type="text"/>
+           <input ng-model="form.location" type="text" style="display:none"/>
 
            <img src="http://a.tiles.mapbox.com/v3/marker/pin-m+ffcc00@2x.png" class="leaflet-marker-icon leaflet-zoom-animated" tabindex="0" style="margin-left: -19px; left:50%; top:50%;margin-top: -45px; width:38px; z-index: 9999999;cursor:default;outline:none;">
 
-            <div id="map"></div>
+            <div id="map_location"></div>
 
             <map-search location-select="mapSearchSelect(location)"></map-search>
 
         </div>
         <div class="modal-footer" style="">
 
-           <button class="btn btn-primary btn-lg" ng-click="select()">Select this location</button>
+           <button class="btn btn-primary" ng-click="select()">{{ 'location_select_button' | translate }}</button>
             <!--<span class="btn btn-default" ng-click="closeModal()">Close</span>-->
         </div>
     </div>

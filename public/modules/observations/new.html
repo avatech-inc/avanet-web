@@ -12,14 +12,11 @@
         padding-right: 15px;
         margin-left: 0;
         margin-top: 0 !important;
-        margin-right: 0;    position: static !important;
+        margin-right: 0;    
+        position: relative !important;
     }
     .obs-form bootstrap-decorator:first-child .form-group {
         padding-top:9px;
-    }
-    .obs-form bootstrap-decorator:nth-last-child(2) .form-group {
-        border-bottom: none;
-        margin-bottom: 0;
     }
     .obs-form .form-group.has-error  {
         padding-bottom: 25px;
@@ -51,6 +48,11 @@
         padding-left: 0px;
     }
 
+    .obs-form grain-select {
+        position: static;
+        width: 250px;
+    }
+
 /*    .obs-form .checkbox {
         margin-left: 30%;
         margin-top: 3px;
@@ -69,7 +71,7 @@
         transition: opacity 120ms;
     }
     .obs-form .has-error .help-block {
-        top: 40px;
+        top: 32px;
         color: #a94442;
         z-index: 100;
         display: block;
@@ -84,10 +86,12 @@
         display: none;
     }
 
+    .obs-form {
+        margin-bottom: -10px;
+    }
     div.obs-form {
         border-top: 1px solid #eee;
         padding-top: 9px;    
-        margin-bottom: -10px;
     }
 
 

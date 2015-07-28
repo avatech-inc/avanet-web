@@ -43,12 +43,18 @@
         <li class="dropdown">
           <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
-            <li><a href="/profiles/new" style="font-size:17px;">{{ 'snowpit' | translate }}</a></li>
-            <li><a href="/avalanches/new" style="font-size:17px;">{{ 'avalanche' | translate }}</a></li>
+            <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
+            <li><a href="/avalanches/new">{{ 'avalanche' | translate }}</a></li>
 
-            <li><a href="/observations/snowpack/new" style="font-size:17px;">{{ 'snowpack' | translate }}</a></li>
+            <li><a href="/observations/weather/new">{{ 'weather' | translate }}</a></li>
+            <li><a href="/observations/snowpack/new">{{ 'snowpack' | translate }}</a></li>
+            <li><a href="/observations/snowpack-test/new">{{ 'snowpack-test' | translate }}</a></li>
+            <li><a href="/observations/snow-conditions/new">{{ 'snow-conditions' | translate }}</a></li>
+            <li><a href="/observations/wind/new">{{ 'wind' | translate }}</a></li>
+            
+            <li class="divider"></li>
 
-            <li><a href="#" ng-click="deviceUpload()" style="font-size:17px;">{{ 'usb_upload' | translate }}</a></li>
+            <li><a href="#" ng-click="deviceUpload()">{{ 'usb_upload' | translate }}</a></li>
           </ul>
         </li>
 

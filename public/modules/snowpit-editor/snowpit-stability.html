@@ -366,8 +366,9 @@
   			</div>
         </div>
 
+        <!-- add/save button -->
 
-        <div class="form-group" ng-show="newComment.type != null && hideFormButton ">
+        <div class="form-group" ng-show="newComment.type != null && !hideFormButton">
 			<div class="col-sm-12" style="text-align:right;padding-top:2px;">
     			<button ng-if="newComment.isNew" style="margin-left:4px;" type="submit" class="btn btn-primary" close-dropdown-on-click ng-click="addComment()">Add</button>
 

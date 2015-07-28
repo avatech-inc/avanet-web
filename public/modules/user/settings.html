@@ -449,6 +449,25 @@ margin-bottom: 6px !important;
             </div>
         </div>
 
+
+  		<div class="panel panel-default" ng-show="user">
+	 		<div class="panel-heading" style="text-align:left;font-size:16px;font-weight:bold;">{{ 'settings.profile_photo' | translate }}</div>
+			<div class="panel-body">
+
+				<div style="background:red;border-radius:999px;width:90px;height:90px;float:left;margin-right:20px;margin-bottom:5px;">
+
+				</div>
+
+				<div style="float:left;">
+					<button type="button" ng-click="" class="btn btn-primary" translate="settings.upload_profile_photo"></button>
+				</div>
+
+			</div>
+		    <!--<div class="panel-footer" style="text-align:right;background:#fff;">
+		      <button type="button" ng-click="savePassword()" class="btn btn-primary" translate="save"></button>
+		    </div>-->
+  		</div>
+
   		<div class="panel panel-default" ng-show="user">
 	 		<div class="panel-heading" style="text-align:left;font-size:16px;font-weight:bold;">{{ 'settings.change_password' | translate }}</div>
 			<div class="panel-body">
@@ -557,7 +576,7 @@ margin-bottom: 6px !important;
 				</div>
 			</div>
 
-			<div class="panel-body settings" style="border-bottom:0px solid #ddd;">
+			<!--<div class="panel-body settings" style="border-bottom:0px solid #ddd;">
 		    	<div class="form-horizontal" role="form">
 				  <div class="form-group" name="password">
 				    <label class="col-sm-4 control-label">Fracture</label>
@@ -573,7 +592,7 @@ margin-bottom: 6px !important;
 				    </div>
 				  </div>
 				</div>
-			</div>
+			</div>-->
 			<!--<div class="panel-body">
 		    	<div class="form-horizontal" role="form">
 				  <div class="form-group" name="password">

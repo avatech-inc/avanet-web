@@ -941,9 +941,9 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     context.fillStyle = options.labelColor;
                     context.font = fontSize + "px snowsymbols";
 
-                    if (layer.grainType2) {
+                    if (layer.grainType && layer.grainType2) {
                         var scale = scope.getGrainType(layer.grainType).scale;
-                        if (scale) context.font = (fontSize * scale) + "px snowsymbols";
+                        if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
                         var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
                         if (offsetTop == null) offsetTop = 0;
 
@@ -952,7 +952,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                         context.font = "21px snowsymbols";
                         //context.fillStyle = "#999";
                         var scale2 = scope.getGrainType(layer.grainType2).scale;
-                        if (scale2) context.font = (fontSize * scale2) + "px snowsymbols";
+                        if (scale2 != null) context.font = (fontSize * scale2) + "px snowsymbols";
                         var offsetTop2 = scope.getGrainType(layer.grainType2).offsetTop;
                         if (offsetTop2 == null) offsetTop2 = 0;
 
@@ -965,7 +965,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     }
                     else if (layer.grainType) {
                         var scale = scope.getGrainType(layer.grainType).scale;
-                        if (scale) context.font = (fontSize * scale) + "px snowsymbols";
+                        if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
                         var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
                         if (offsetTop == null) offsetTop = 0;
 

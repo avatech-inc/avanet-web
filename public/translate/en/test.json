@@ -6,10 +6,18 @@
   "new_observation" : "New Observation",
   "snowpit" : "Snowpit",
   "sp1_profile" : "SP1 Profile",
-  "avalanche" : "Avalanche",
-  
-  "snowpack": "Snowpack",
 
+  "avalanche" : "Avalanche",
+  "weather": "Weather",
+  "snowpack": "Snowpack",
+  "snowpack-test": "Snowpack Test",
+  "snow-conditions": "Snow Conditions",
+  "wind": "Wind",
+  "wind-loading": "Wind Loading",
+
+  "submit_button": "Submit",
+  "location_select_instructions": "Drag the map to select your location",
+  "location_select_button": "Select this location",
   "usb_upload" : "SP1 USB Upload",
   "organizations" : "Organizations",
   "organization" : "Organization",

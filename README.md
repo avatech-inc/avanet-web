@@ -1,10 +1,4 @@
-# AvaTechWeb
-
-The AvaTech web platform. Runs on the "MEAN" stack:
-* MongoDB - Database
-* Express - Node.js framework
-* Angular - Frontend framework
-* Node.js
+# Avanet Web Client
 
 ## Installation
 

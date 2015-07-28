@@ -20,32 +20,303 @@
 //     } }
 // ]);
 
-angular.module('avatech').controller('NewObservationModalController', [ '$scope','$modalInstance', 'initialLocation', 'Global',
-    function ($scope, $modalInstance, initialLocation, Global) {
+angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $timeout, $modalInstance, initialLocation, Global) {
 
         $scope.global = Global;
 
-         $scope.schema = {
+        $scope.form_elements = {};
+
+        $scope.obType = $stateParams.obType;
+
+        $scope.snowpackTest = null;
+
+        // $scope.schema = {
+        //     type: "object",
+        //     properties: {
+        //       name: { required: true, type: "string", minLength: 2, title: "Name"}, //, description: "Name or alias" 
+        //       title: {
+        //         title: "Title!",
+        //         type: "string",
+        //         enum: ['dr','jr','sir','mrs','mr','NaN','dj']
+        //       },
+        //       another: {
+        //         type: "string", title: "Another Field"
+        //       },
+        //       created: {
+        //         type: "string",
+        //         format: "date",
+        //         required: true
+        //       },
+        //       grainType: {
+        //         type: "object",
+        //         title: "Grain type",
+        //         //required: true
+        //       },
+        //       currentWindLoading: {
+        //         type: "boolean",
+        //         title: "Current wind loading"
+        //     }
+        //   }
+        // };
+
+        // $scope.form = [
+        //     { key: "name" },
+        //     { key: "title" },
+        //     {
+        //         key: "created",
+        //         type: "datepicker"
+        //     },
+        //     {
+        //         key: "grainType",
+        //         type: "grainTypeSelect"
+        //     },
+        //     {
+        //         key: "currentWindLoading",
+        //         //type: "checkbox"
+        //     },
+        //     {
+        //         key: "another",
+        //         condition: "model.currentWindLoading"
+        //     },
+        //     {
+        //         type: "submit",
+        //         title: "Save"
+        //     },
+        //   ];
+
+        $scope.schemas = {};
+        $scope.forms = {};
+
+        $scope.schemas['wind'] = {
             type: "object",
             properties: {
-              name: { type: "string", minLength: 2, title: "Name", description: "Name or alias" },
-              title: {
-                title: "Title!",
-                type: "string",
-                enum: ['dr','jr','sir','mrs','mr','NaN','dj']
-              }
-            }
-          };
+              // name: { required: true, type: "string", minLength: 2, title: "Name"}, //, description: "Name or alias" 
+              // title: {
+              //   title: "Title!",
+              //   type: "string",
+              //   enum: ['dr','jr','sir','mrs','mr','NaN','dj']
+              // },
+              // another: {
+              //   type: "string", title: "Another Field"
+              // },
+              // created: {
+              //   type: "string",
+              //   format: "date",
+              //   required: true
+              // },
+              // grainType: {
+              //   type: "object",
+              //   title: "Grain type",
+              //   //required: true
+              // },
 
-          $scope.form = [
-            "*",
-            {
-              type: "submit",
-              title: "Save"
+            previousWindLoading: {
+                title: "Previous wind loading",
+                type: "boolean",
+                default: null
+            },
+            currentWindLoading: {
+                title: "Current wind loading",
+                type: "boolean",
+                default: null
+            },
+            spatialExtent: {
+                title: "Spatial extent",
+                type: "string",
+                enum: ['Localized','Widespread'],
+                default: null
+            },
+            windDirectionAverage: {
+                title: "Wind direction average",
+                type: "string",
+                enum: ['Consistent','Variable'],
+                //enum: ['C','V'],
+                default: null
+            },
+            ridgeLine: {
+                title: "Ridgeline",
+                type: "boolean"
+            },
+            windDirection: {
+                title: "Wind direction",
+                type: "number"
+            },
+            windSpeed: {
+                title: "Wind speed",
+                type: "number",
+            },
+            windSpeedEstimation: {
+                title: "Wind speed estimation",
+                type: "string",
+                enum: ['C','L','M','S','E']
+            },
+            blowingSnowExtent: {
+                title: "Blowing snow extent",
+                type: "string",
+                //enum: ['localized','widespread']
+            },
+            blowingSnowDirection: {
+                title: "Blowing snow direction",
+                type: "number"
             }
+
+          }
+        };
+        $scope.forms['wind'] = [
+            { 
+                key: "windDirection",
+                type: "direction-select"
+            },
+            // { 
+            //     key: "windDirectionAverage", 
+            //     type: "radiobuttons-nullable",
+            //     titleMap: [
+            //       { "value": "C", "name": "Consistent" },
+            //       { "value": "V", "name": "Variable" },
+            //     ]
+            // },
+            { key: "windDirectionAverage",  type: "radiobuttons-nullable" },
+            { key: "windSpeed" },
+            { 
+                key: "windSpeedEstimation",
+                titleMap: [
+                  { "value": "C", "name": "Calm" },
+                  { "value": "L", "name": "Light" },
+                  { "value": "M", "name": "Moderate" },
+                  { "value": "S", "name": "Strong" },
+                  { "value": "E", "name": "Extreme" }
+                ]
+            },
+            { key: "currentWindLoading", type: "radiobuttons-nullable" },
+            { key: "previousWindLoading", type: "radiobuttons-nullable" },
+            { key: "spatialExtent", type: "radiobuttons-nullable" }
           ];
 
-          $scope.model = {};
+           $scope.schemas['snowpack-test'] = {
+            type: "object",
+            properties: {
+              // name: { required: true, type: "string", minLength: 2, title: "Name"}, //, description: "Name or alias" 
+              // title: {
+              //   title: "Title!",
+              //   type: "string",
+              //   enum: ['dr','jr','sir','mrs','mr','NaN','dj']
+              // },
+              // another: {
+              //   type: "string", title: "Another Field"
+              // },
+              // created: {
+              //   type: "string",
+              //   format: "date",
+              //   required: true
+              // },
+              // grainType: {
+              //   type: "object",
+              //   title: "Grain type",
+              //   //required: true
+              // },
+
+            // date: {
+            //     type: "string",
+            //     format: "date",
+            //     title: "Date & Time",
+            //     required: true,
+            // },
+            // slope: {
+            //     title: "Slope",
+            //     type: "number"
+            // },
+            // aspect: {
+            //     title: "Aspect",
+            //     type: "number"
+            // },
+          }
+        };
+        $scope.forms['snowpack-test'] = [
+            // {
+            //     key: "date",
+            //     type: "datepicker"
+            // },
+            // {
+            //     key: "slope"
+            // },
+            // {
+            //     key: "aspect",
+            //     type: "direction-select"
+            // }
+          ];
+
+
+          // --------------------
+
+          angular.forEach($scope.schemas,function(schema) {
+                schema.properties.date = {
+                    type: "string",
+                    format: "date",
+                    title: "Date & Time",
+                    required: true,
+                };
+                schema.properties.slope = {
+                    title: "Slope",
+                    type: "number"
+                };
+                schema.properties.aspect = {
+                    title: "Aspect",
+                    type: "number"
+                }
+            });
+
+          angular.forEach($scope.forms,function(form) {
+
+            form.unshift(
+            {
+                key: "date",
+                type: "datepicker"
+            },
+            {
+                key: "slope"
+            },
+            {
+                key: "aspect",
+                type: "direction-select"
+            });
+
+            // add subit button
+            form.push( {
+                type: "submit",
+                title: "Save"
+            });
+
+            // set global form fields
+            for (var i = 0; i < form.length; i++) {
+                //form[i].fieldHtmlClass = "input-sm";
+                form[i].disableSuccessState = true;
+            }
+          });
+
+          $scope.model = {
+            //name: "this is a name",
+            //created: new Date()
+          };
+
+        $scope.submit = function() {
+            // todo: not angular-y (Peter: if you ever see this, I have some 'splaining to do...)
+            $timeout(function() { $('[name="form_elements.obsForm"] input[type="submit"]').click(); });
+        }
+        $scope.onSubmit = function(form) {
+            // console.log("SUBMIT!");
+            // console.log($scope.model);
+
+            $scope.$broadcast('schemaFormValidate');
+
+            console.log("is valid? " + $scope.form_elements.obsForm.$valid);
+
+            console.log($scope.model);
+
+            // Then we check if the form is valid
+            // if (form.$valid) {
+            //   // ... do whatever you need to do with your data.
+            // }
+        }
 
         // console.log("MAP:");
         // console.log($scope.map);
@@ -124,4 +395,4 @@ angular.module('avatech').controller('NewObservationModalController', [ '$scope'
         // }
 
     }
-])
+);

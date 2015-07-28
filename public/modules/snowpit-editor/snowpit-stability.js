@@ -7,7 +7,10 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
         profile: '=prof',
         depthDescending: "=", 
         testType: "=",
-        hideFormButton: "="
+        hideFormButton: "=",
+        largeInputs: "=",
+        hideComment: "=",
+        longLabels: "="
        },
       controller: ['$scope', function($scope) {
 

@@ -23,9 +23,9 @@
 	<form class="form-horizontal" role="form" ng-show="newComment.type != null">
 
         <div class="form-group" ng-show="newComment.isNew" ng-hide="newComment.type == 'comment'">
-        	<label for="" class="col-sm-3 control-label">Type</label>
+        	<label for="" class="col-sm-3 control-label">Test Type</label>
         	<div class="col-sm-9">
-				<select class="form-control input-sm" ng-model="newComment.type">
+				<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-model="newComment.type">
 					<option value="ECT">Extended Column Test</option>
 					<option value="CT">Compression Test</option>
 					<option value="RB">Rutschblock Test</option>
@@ -42,7 +42,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['ECTPV', 'ECTP', 'ECTN', 'ECTX']" ng-model="newComment.ECT.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['ECTPV', 'ECTP', 'ECTN', 'ECTX']" ng-model="newComment.ECT.score">
 					</select>
 				</div>
 			</div>
@@ -50,37 +50,39 @@
 	        <div class="form-group" ng-hide="newComment.ECT.score == 'ECTX'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.ECT.score == 'ECTP' || newComment.ECT.score == 'ECTN'" style="position: absolute;margin-top: -35px;right: 0;">
 	        	<label for="" class="col-sm-3 control-label">Taps</label>
 	        	<div class="col-sm-9">
-	          		<input ng-model="newComment.ECT.taps" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+	          		<input ng-model="newComment.ECT.taps" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
 		        </div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.ECT.score == 'ECTP' || newComment.ECT.score == 'ECTPV'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 			<div class="form-group" ng-show="newComment.ECT.score == 'ECTP' || newComment.ECT.score == 'ECTPV'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ECT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ECT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -91,7 +93,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['CTV', 'CT', 'CTN']" ng-model="newComment.CT.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['CTV', 'CT', 'CTN']" ng-model="newComment.CT.score">
 					</select>
 				</div>
 			</div>
@@ -99,37 +101,39 @@
 	        <div class="form-group" ng-hide="newComment.CT.score == 'CTN'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.CT.score == 'CT'" style="position: absolute;margin-top: -35px;right: 0;">
 	        	<label for="" class="col-sm-3 control-label">Taps</label>
 	        	<div class="col-sm-9">
-	          		<input ng-model="newComment.CT.taps" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+	          		<input ng-model="newComment.CT.taps" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
 		        </div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.CT.score == 'CTV' || newComment.CT.score == 'CT'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 	        <div class="form-group" ng-show="newComment.CT.score == 'CTV' || newComment.CT.score == 'CT'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.CT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.CT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -140,7 +144,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['RB1','RB2', 'RB3','RB4','RB5','RB6','RB7']" ng-model="newComment.RB.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['RB1','RB2', 'RB3','RB4','RB5','RB6','RB7']" ng-model="newComment.RB.score">
 					</select>
 				</div>
 			</div>
@@ -148,30 +152,32 @@
 	        <div class="form-group" ng-hide="newComment.RB.score == 'RB7'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-hide="newComment.RB.score == 'RB7'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 	        <div class="form-group" ng-hide="newComment.RB.score == 'RB7'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.RB.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.RB.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -182,7 +188,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['SBV','SB10', 'SB20','SB30','SB40','SB50','SB60','SB70','SBN']" ng-model="newComment.SB.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['SBV','SB10', 'SB20','SB30','SB40','SB50','SB60','SB70','SBN']" ng-model="newComment.SB.score">
 					</select>
 				</div>
 			</div>
@@ -190,30 +196,32 @@
 	        <div class="form-group" ng-hide="newComment.SB.score == 'SBN'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-hide="newComment.SB.score == 'SBN'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 	        <div class="form-group" ng-hide="newComment.SB.score == 'SBN'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.SB.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.SB.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -224,7 +232,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['STC','STV', 'STE','STM','STH','STN']" ng-model="newComment.ST.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['STC','STV', 'STE','STM','STH','STN']" ng-model="newComment.ST.score">
 					</select>
 				</div>
 			</div>
@@ -232,30 +240,32 @@
 	        <div class="form-group" ng-hide="newComment.ST.score == 'STN'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-hide="newComment.ST.score == 'STN'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 	        <div class="form-group" ng-hide="newComment.ST.score == 'STN'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.ST.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.ST.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -267,7 +277,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Score</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['DTV', 'DT', 'DTN']" ng-model="newComment.DT.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['DTV', 'DT', 'DTN']" ng-model="newComment.DT.score">
 					</select>
 				</div>
 			</div>
@@ -275,37 +285,39 @@
 	        <div class="form-group" ng-hide="newComment.DT.score == 'DTN'">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.DT.score == 'DT'" style="position: absolute;margin-top: -35px;right: 0;">
 	        	<label for="" class="col-sm-3 control-label">Taps</label>
 	        	<div class="col-sm-9">
-	          		<input ng-model="newComment.DT.taps" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+	          		<input ng-model="newComment.DT.taps" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
 		        </div>
 	        </div>
 
 	        <div class="form-group" ng-show="newComment.DT.score == 'DTV' || newComment.DT.score == 'DT'">
-	        	<label for="" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Shear</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Shear Quality</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.shear" btn-radio="'Q1'" uncheckable>Q1</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.shear" btn-radio="'Q2'" uncheckable>Q2</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.shear" btn-radio="'Q3'" uncheckable>Q3</label>
 				    </div>
 				</div>
 			</div>
 
 	        <div class="form-group" ng-show="newComment.DT.score == 'DTV' || newComment.DT.score == 'DT'">
-	        	<label for="" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-hide="longLabels" class="col-sm-3 control-label">Fracture</label>
+	        	<label for="" ng-show="longLabels" class="col-sm-3 control-label">Fracture Character</label>
 	        	<div class="col-sm-9">
 				    <div class="btn-group">
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.fracture" btn-radio="'SP'" uncheckable>SP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.fracture" btn-radio="'SC'" uncheckable>SC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.fracture" btn-radio="'PC'" uncheckable>PC</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.fracture" btn-radio="'RP'" uncheckable>RP</label>
-				        <label class="btn btn-default btn-sm" ng-model="newComment.DT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.fracture" btn-radio="'SP'" uncheckable>SP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.fracture" btn-radio="'SC'" uncheckable>SC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.fracture" btn-radio="'PC'" uncheckable>PC</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.fracture" btn-radio="'RP'" uncheckable>RP</label>
+				        <label class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" ng-model="newComment.DT.fracture" btn-radio="'BRK'" uncheckable>BRK</label>
 				    </div>
 				</div>
 			</div>
@@ -317,7 +329,7 @@
 	        <div class="form-group" ng-show="newComment.isNew">
 	        	<label for="" class="col-sm-3 control-label">Result</label>
 	        	<div class="col-sm-9">
-					<select class="form-control input-sm" ng-options="score for score in ['End', 'SF', 'Arr']" ng-model="newComment.PST.score">
+					<select class="form-control" ng-class="{ 'input-sm': !largeInputs }" ng-options="score for score in ['End', 'SF', 'Arr']" ng-model="newComment.PST.score">
 					</select>
 				</div>
 			</div>
@@ -325,21 +337,21 @@
 	        <div class="form-group">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group">
 	        	<label for="" class="col-sm-7 control-label">Saw cut length (cm)</label>
 	        	<div class="col-sm-5">
-          			<input ng-model="newComment.PST.lengthSawCut" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.PST.lengthSawCut" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
 	        <div class="form-group">
 	        	<label for="" class="col-sm-7 control-label">Isolated column length (cm)</label>
 	        	<div class="col-sm-5">
-          			<input ng-model="newComment.PST.lengthColumn" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.PST.lengthColumn" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
@@ -351,7 +363,7 @@
 	        <div class="form-group">
 	        	<label for="" class="col-sm-3 control-label">Depth</label>
 	        	<div class="col-sm-9">
-          			<input ng-model="newComment.depth" type="number" class="form-control input-sm" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
+          			<input ng-model="newComment.depth" type="number" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="width:55px;padding-right:0px;padding-left:10px;">
       			</div>
 	        </div>
 
@@ -359,10 +371,10 @@
 
 		<!-- END OF TESTS -->
 
-        <div class="form-group" ng-show="newComment.type != null">
+        <div class="form-group" ng-show="newComment.type != null && !hideComment">
         	<label for="" class="col-sm-3 control-label">Comment</label>
         	<div class="col-sm-9">
-      			<input ng-model="newComment.comment" type="text" class="form-control input-sm" placeholder="" style="padding-left:8px;">
+      			<input ng-model="newComment.comment" type="text" class="form-control" ng-class="{ 'input-sm': !largeInputs }" placeholder="" style="padding-left:8px;">
   			</div>
         </div>
 
@@ -372,9 +384,9 @@
 			<div class="col-sm-12" style="text-align:right;padding-top:2px;">
     			<button ng-if="newComment.isNew" style="margin-left:4px;" type="submit" class="btn btn-primary" close-dropdown-on-click ng-click="addComment()">Add</button>
 
-    			<button ng-if="!newComment.isNew" style="margin-left:4px;" type="submit" class="btn btn-primary btn-sm" close-dropdown-on-click ng-click="saveComment()">Save</button>
+    			<button ng-if="!newComment.isNew" style="margin-left:4px;" type="submit" class="btn btn-primary " ng-class="{ 'btn-sm': !largeInputs }" close-dropdown-on-click ng-click="saveComment()">Save</button>
 			</div>
 		</div>
     </form>
 
-	<button ng-hide="newComment.isNew" ng-click="deleteComment()" class="btn btn-default btn-sm" style="position:absolute;left:6px;bottom:6px;" close-dropdown-on-click><i class="fa fa-trash-o"></i></button>
+	<button ng-hide="newComment.isNew" ng-click="deleteComment()" class="btn btn-default " ng-class="{ 'btn-sm': !largeInputs }" style="position:absolute;left:6px;bottom:6px;" close-dropdown-on-click><i class="fa fa-trash-o"></i></button>

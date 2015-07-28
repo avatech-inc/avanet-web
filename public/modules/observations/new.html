@@ -2,22 +2,112 @@
 
     .modal-footer { margin-top: 0; }
 
+    .obs-form .form-group  {
+        margin-bottom: 9px;
+        padding-bottom: 9px;
+        display: table;
+        width: 100%;
+        transition: padding 100ms;
+        border-bottom: 1px solid #eee;
+        padding-right: 15px;
+        margin-left: 0;
+        margin-top: 0 !important;
+        margin-right: 0;    position: static !important;
+    }
+    .obs-form bootstrap-decorator:first-child .form-group {
+        padding-top:9px;
+    }
+    .obs-form bootstrap-decorator:nth-last-child(2) .form-group {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .obs-form .form-group.has-error  {
+        padding-bottom: 25px;
+    }
+    .obs-form .control-label {
+        width: 28%;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: left;
+        padding-right: 14px;
+        line-height: 13px;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: #333;
+        font-weight: 500;
+        padding-left: 15px;   
+        padding-top: 0px;
+        float: none; 
+    }
+    .obs-form .form-control, .obs-form grain-select,
+    .obs-form .form-group > div.col-sm-5,
+    .obs-form .form-group > div.col-sm-9 {
+        width: auto;
+        position: relative;
+        z-index: 200;
+    }
+    .obs-form .form-group > div.col-sm-5,
+    .obs-form .form-group > div.col-sm-9 {
+        padding-left: 0px;
+    }
+
+/*    .obs-form .checkbox {
+        margin-left: 30%;
+        margin-top: 3px;
+        margin-bottom: 13px;
+    }*/
+
+
+    .obs-form .help-block {
+        position: absolute;
+        clear: both;    
+        z-index: 100;
+        font-size: 13px;
+        font-weight: 100;
+        top: 0;
+        opacity: 0;
+        transition: opacity 120ms;
+    }
+    .obs-form .has-error .help-block {
+        top: 40px;
+        color: #a94442;
+        z-index: 100;
+        display: block;
+        opacity: 1;
+    }
+
+    .obs-form .form-control-feedback {
+        display: none;
+    }
+
+    .obs-form .schema-form-submit {
+        display: none;
+    }
+
+    div.obs-form {
+        border-top: 1px solid #eee;
+        padding-top: 9px;    
+        margin-bottom: -10px;
+    }
+
+
 </style>  
 <!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
-    <div class="modalClose" ng-click="close()"><i class="fa fa-times"></i></div>
+    <div class="modalClose" ng-click="close()"><i class="ion-close-round"></i></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h3 style="font-size:20px;">New Observation</h3>
+            <h3>New Observation <span class="slash">/</span> <span style="font-weight:500">{{ obType | translate }}</span></h3>
         </div>
-        <div class="modal-body" style="padding:15px;">
+        <div class="modal-body" style="padding:0px;">
     		
-             <form sf-schema="schema" sf-form="form" sf-model="model"></form>
+             <form name="form_elements.obsForm" ng-submit="onSubmit()" class="obs-form" sf-schema="schemas[obType]" sf-form="forms[obType]" sf-model="model"></form>
+
+             <div ng-if="obType=='snowpack-test'" stability-test test="snowpackTest" depth-descending="settings.depthDescending" hide-form-button="true" hide-comment="true" large-inputs="true" long-labels="true" test-type="'ECT'" class="obs-form"></div>
 
         </div>
-        <!--<div class="modal-footer" style="">
-
-           <button class="btn btn-primary btn-lg" ng-click="submit()">Submit</button>
-        </div>-->
+        <div class="modal-footer" style="">
+           <button class="btn btn-primary" ng-click="submit()">{{ 'submit_button' | translate }}</button>
+        </div>
     </div>
 
 <!--</div>-->

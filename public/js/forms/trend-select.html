@@ -1,0 +1,13 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+
+  	<div class="btn-group">
+        <label class="btn btn-default" uncheckable ng-model="$$value$$" btn-radio="'RR'"><i class="fa fa-arrow-up"></i></label>
+        <label class="btn btn-default" uncheckable ng-model="$$value$$" btn-radio="'R'"><i class="fa fa-arrow-up" style="transform: rotate(45deg);"></i></label>
+        <label class="btn btn-default" uncheckable ng-model="$$value$$" btn-radio="'S'"><i class="fa fa-arrow-up" style="transform: rotate(90deg);"></i></label>
+        <label class="btn btn-default" uncheckable ng-model="$$value$$" btn-radio="'F'"><i class="fa fa-arrow-up" style="transform: rotate(135deg);position: relative; top: 1px;"></i></label>
+        <label class="btn btn-default" uncheckable ng-model="$$value$$" btn-radio="'FR'"><i class="fa fa-arrow-up" style="transform: rotate(180deg);"></i></label>
+    </div>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

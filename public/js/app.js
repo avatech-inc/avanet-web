@@ -68,6 +68,11 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
       '/js/forms/grain-type-select.html'
     );
 
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'trend-select',
+      '/js/forms/trend-select.html'
+    );
+
   }
 ]);
 

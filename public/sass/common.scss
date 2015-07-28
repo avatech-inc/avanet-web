@@ -36,7 +36,65 @@ content: " ";
 display: table;
 content: " ";
 }
-.modal-header h3 { margin:0; }
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee !important;
+    font-weight: 100;
+    background-color: #f9f9f9;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    //padding-top: 16px;
+
+    h3 { 
+      margin:0; 
+      font-weight: 100;
+      font-size: 18px !important;
+      //text-transform: uppercase;
+
+      .slash {
+          opacity: .4;
+          padding-left: 4px;
+          padding-right: 3px;
+          font-weight: 300;
+          position: relative;
+          font-size: 1.1em;
+      }
+    }
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* modal close button */
+.modalClose {
+    position: absolute;
+    display: inline-block;
+    width: 28px;
+    top: 13px;
+    right: 7px;
+    z-index: 99999;
+    color: #888;
+    text-align: center;
+    font-size: 14px;
+    padding: 0;
+    padding-right: 1px;
+    line-height: 28px;
+    cursor: pointer;
+    font-weight: 100;
+    transition: color 120ms;
+
+  &:hover {
+    color: #222;
+  }
+}
+
 
 /* alter modal and background overlay fade animation */
 .modal.fade {
@@ -202,31 +260,6 @@ ul.nav>li.active>a:hover, .nav>li.active>a:focus {
 
 }
 
-/* modal close button */
-.modalClose {
-  background: #000;
-  position: absolute;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 20px;
-  top: -8px;
-  right: -8px;
-  z-index: 99999;
-  color: #fff;
-  border: 2px solid #fff;
-  text-align: center;
-  font-size: 13px;
-  padding: 0;
-  padding-right: 1px;
-  line-height: 19px;
-  cursor: pointer;
-  &:hover {
-    background: #444;
-  }
-}
-
-
 
 
 
@@ -313,6 +346,8 @@ header.navbar {
   }
   ul.dropdown-menu>li>a {
     color: #fff;
+    font-weight: 100;
+    font-size: 15px;
   }
   ul.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
     text-decoration: none;
@@ -320,6 +355,7 @@ header.navbar {
   }
   ul.dropdown-menu .divider {
     background-color: #888;
+    margin: 8px 0;
   }
 
   /* non-mobile */
@@ -701,3 +737,7 @@ input-direction .dir.dir-SW, input-direction-range .dir.dir-SW { bottom: 8px; le
 .leaflet-container {
     background: #eee !important;
 }
+
+
+
+ 

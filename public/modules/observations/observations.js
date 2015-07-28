@@ -110,15 +110,21 @@ angular.module('avatech').controller('NewObservationModalController', function (
               //   //required: true
               // },
 
-            previousWindLoading: {
-                title: "Previous wind loading",
-                type: "boolean",
-                default: null
-            },
-            currentWindLoading: {
-                title: "Current wind loading",
-                type: "boolean",
-                default: null
+            // previousWindLoading: {
+            //     title: "Previous wind loading",
+            //     type: "boolean",
+            //     default: null
+            // },
+            // currentWindLoading: {
+            //     title: "Current wind loading",
+            //     type: "boolean",
+            //     default: null
+            // },
+            windLoading: {
+                title: "Wind Loading",
+                type: "string",
+                enum: ['Current','Previous'],
+                //default: null
             },
             spatialExtent: {
                 title: "Spatial extent",
@@ -153,7 +159,7 @@ angular.module('avatech').controller('NewObservationModalController', function (
             blowingSnowExtent: {
                 title: "Blowing snow extent",
                 type: "string",
-                //enum: ['localized','widespread']
+                enum: ['NONE','PREV', 'L', 'M', 'I', 'U']
             },
             blowingSnowDirection: {
                 title: "Blowing snow direction",
@@ -163,18 +169,11 @@ angular.module('avatech').controller('NewObservationModalController', function (
           }
         };
         $scope.forms['wind'] = [
-            { 
-                key: "windDirection",
-                type: "direction-select"
-            },
-            // { 
-            //     key: "windDirectionAverage", 
-            //     type: "radiobuttons-nullable",
-            //     titleMap: [
-            //       { "value": "C", "name": "Consistent" },
-            //       { "value": "V", "name": "Variable" },
-            //     ]
-            // },
+            // { key: "currentWindLoading", type: "radiobuttons-nullable" },
+            // { key: "previousWindLoading", type: "radiobuttons-nullable" },
+            { key: "windLoading", type: "radiobuttons-nullable" },
+            { key: "spatialExtent", type: "radiobuttons-nullable", condition: "model.windLoading" },
+            { key: "windDirection", type: "direction-select" },
             { key: "windDirectionAverage",  type: "radiobuttons-nullable" },
             { key: "windSpeed" },
             { 
@@ -187,9 +186,17 @@ angular.module('avatech').controller('NewObservationModalController', function (
                   { "value": "E", "name": "Extreme" }
                 ]
             },
-            { key: "currentWindLoading", type: "radiobuttons-nullable" },
-            { key: "previousWindLoading", type: "radiobuttons-nullable" },
-            { key: "spatialExtent", type: "radiobuttons-nullable" }
+            { key: "blowingSnowExtent",
+                // titleMap: [
+                //   { "value": "NONE", "name": "" },
+                //   { "value": "PREV", "name": "" },
+                //   { "value": "M", "name": "" },
+                //   { "value": "I", "name": "" },
+                //   { "value": "U", "name": "" }
+                // ]
+            },
+            { key: "blowingSnowDirection", type: "direction-select", condition: "['L', 'M', 'I', 'U'].indexOf(model.blowingSnowExtent) != -1"},
+
           ];
 
            $scope.schemas['snowpack-test'] = {
@@ -214,37 +221,218 @@ angular.module('avatech').controller('NewObservationModalController', function (
               //   title: "Grain type",
               //   //required: true
               // },
-
-            // date: {
-            //     type: "string",
-            //     format: "date",
-            //     title: "Date & Time",
-            //     required: true,
-            // },
-            // slope: {
-            //     title: "Slope",
-            //     type: "number"
-            // },
-            // aspect: {
-            //     title: "Aspect",
-            //     type: "number"
-            // },
           }
         };
-        $scope.forms['snowpack-test'] = [
-            // {
-            //     key: "date",
-            //     type: "datepicker"
-            // },
-            // {
-            //     key: "slope"
-            // },
-            // {
-            //     key: "aspect",
-            //     type: "direction-select"
-            // }
-          ];
+        $scope.forms['snowpack-test'] = [];
 
+
+
+        $scope.schemas['snowpack'] = {
+            type: "object",
+            properties: {
+                cracking: {
+                    title: "Cracking",
+                    type: "boolean",
+                    default: null
+                },
+                whumpfing: {
+                    title: "Whumpfing",
+                    type: "boolean",
+                    default: null
+                },
+                poorStructure: {
+                    title: "Poor Structure",
+                    type: "boolean",
+                    default: null
+                }
+          }
+        };
+        $scope.forms['snowpack'] = [
+            { key: "cracking", type: "radiobuttons-nullable" },
+            { key: "whumpfing", type: "radiobuttons-nullable" },
+            { key: "poorStructure", type: "radiobuttons-nullable" }
+        ];
+
+        $scope.schemas['weather'] = {
+            type: "object",
+            properties: {
+                currentTemperature: {
+                    title: "Current Temperature",
+                    type: "number"
+                },
+                maxTemperature: {
+                    title: "Max. Temperature",
+                    type: "number"
+                },
+                minTemperature: {
+                    title: "Min. Temperature",
+                    type: "number"
+                },
+                surfaceTemperature: {
+                    title: "Surface Temperature",
+                    type: "number"
+                },
+                thermographTemperature: {
+                    title: "Thermograph Temperature",
+                    type: "number"
+                },
+                thermographTrend: {
+                    title: "Thermograph Trend",
+                    type: "string",
+                    enum: ['RR','R','S','F','FR']
+                },
+                twentyCMTemperature: {
+                    title: "20cm Snow Temperature",
+                    type: "number"
+                },
+                precipitationType: {
+                    title: "Precipitation Type",
+                    type: "string",
+                    enum: ['RR','R','S','F','FR']
+                },
+                precipitationRate: {
+                    title: "Precipitation Rate",
+                    type: "string",
+                    enum: ['RR','R','S','F','FR']
+                },
+                skyCondition: {
+                    title: "Sky Condition",
+                    type: "string",
+                    enum: ['RR','R','S','F','FR']
+                },
+                rapidWarming: {
+                    title: "Rapid Warming",
+                    type: "boolean",
+                    default: null,
+                },
+                barometricPressure: {
+                    title: "Barometric Pressure",
+                    type: "number"
+                },
+                pressureTrend: {
+                    title: "Pressure Trend",
+                    type: "string",
+                    enum: ['RR','R','S','F','FR']
+                },
+                relativeHumidity: {
+                    title: "Relative Humidity",
+                    type: "number"
+                }
+            }
+          };
+
+        $scope.forms['weather'] = [
+            { key: "barometricPressure" },
+            { key: "currentTemperature" },
+            { key: "maxTemperature" },
+            { key: "minTemperature" },
+            { key: "surfaceTemperature" },
+            { key: "thermographTemperature" },
+            { key: "thermographTrend", type: "trend-select" },
+            { key: "twentyCMTemperature" },
+            { key: "precipitationType",
+                titleMap: [
+                  { "value": "NO", "name": "No Precipitation" },
+                  { "value": "RA", "name": "Rain" },
+                  { "value": "SN", "name": "Snow" },
+                  { "value": "RS", "name": "Mixed Rain & Snow" },
+                  { "value": "GR", "name": "Graupel & Hail" },
+                  { "value": "ZR", "name": "Freezing Rain" }
+                ]
+            },
+            { key: "precipitationRate",
+                titleMap: [
+                  { "value": "CLR", "name": "Very Light" },
+                  { "value": "FEW", "name": "Light" },
+                  { "value": "SCT", "name": "Moderate" },
+                  { "value": "BKN", "name": "Heavy" },
+                  { "value": "OVC", "name": "Very Heavy" }
+                ]
+            },
+            { key: "skyCondition",
+                titleMap: [
+                  { "value": "CLR", "name": "Clear" },
+                  { "value": "FEW", "name": "Few" },
+                  { "value": "SCT", "name": "Scattered" },
+                  { "value": "BKN", "name": "Broken" },
+                  { "value": "OVC", "name": "Overcast" },
+                  { "value": "X", "name": "Obscured" }
+                ]
+            },
+            { key: "rapidWarming", type: "radiobuttons-nullable" },
+            { key: "barometricPressure" },
+            { key: "pressureTrend", type: "trend-select" },
+            { key: "relativeHumidity" }
+        ];
+
+         $scope.schemas['snow-conditions'] = {
+            type: "object",
+            properties: {
+                quality: {
+                    title: "Quality",
+                    type: "string",
+                    enum: ['test','test2'],
+                },
+                heightOfSnowpack: {
+                    title: "HS - Height of snowpack",
+                    type: "number"
+                },
+                HN24: {
+                    title: "HN24 - Height of new snow",
+                    type: "number"
+                },
+                HIT: {
+                    title: "HST",
+                    type: "number"
+                },
+                HST: {
+                    title: "HST",
+                    type: "number",
+                },
+                HN24W: {
+                    title: "HN24W",
+                    type: "number",
+                },
+                density: {
+                    title: "Density",
+                    type: "number",
+                },
+                rainGauge: {
+                    title: "Rain Gauge (mm)",
+                    type: "number",
+                },
+                precipGauge: {
+                    title: "Precip. Gauge (mm)",
+                    type: "number",
+                },
+                footPen: {
+                    title: "Foot Penetration (cm)",
+                    type: "number",
+                },
+                surfaceForm: {
+                    title: "Surface Form",
+                    type: "object",
+                },
+                grainSize: {
+                    title: "Surface Grain Size (mm)",
+                    type: "number",
+                },
+          }
+        };
+        $scope.forms['snow-conditions'] = [
+                { key: "quality" },
+                { key: "heightOfSnowpack" },
+                { key: "HN24" },
+                { key: "HIT" },
+                { key: "HST" },
+                { key: "HN24W" },
+                { key: "density" },
+                { key: "rainGauge" },
+                { key: "precipGauge" },
+                { key: "footPen" },
+                { key: "surfaceForm", type: "grainTypeSelect" },
+                { key: "grainSize" }
+          ];
 
           // --------------------
 
@@ -263,6 +451,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
                     title: "Aspect",
                     type: "number"
                 }
+                schema.properties.elevation = {
+                    title: "Elevation",
+                    type: "number"
+                }
             });
 
           angular.forEach($scope.forms,function(form) {
@@ -278,6 +470,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
             {
                 key: "aspect",
                 type: "direction-select"
+            },
+            {
+                key: "elevation",
+                //type: "direction-select"
             });
 
             // add subit button

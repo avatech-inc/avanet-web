@@ -1023,7 +1023,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             var terrainData = {
                 elevation: e.data.terrainData[0],
                 slope: e.data.terrainData[1],
-                aspect: e.data.terrainData[2]
+                aspect: e.data.terrainData[2],
+                lat: e.data.lat,
+                lng: e.data.lng
             }
             console.log(terrainData);
             return;
@@ -1218,23 +1220,26 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     }
 
-    $scope.map.on('click', function(e) {
+    $scope.map.on('mousemove', function(e) {
+        initiateGetTerrainData(e.latlng.lat, e.latlng.lng);
+    });
+    
+    function initiateGetTerrainData(lat, lng) {
         // adjust zoom level for overzoom
         var zoom = Math.min(maxNativeZoom, $scope.map.getZoom());
         // get xyz of clicked tile based on clicked lat/lng
-        var tilePoint = latLngToTilePoint(
-            e.latlng.lat,
-            e.latlng.lng,
-            zoom
-        );
+        var tilePoint = latLngToTilePoint(lat, lng, zoom);
         // get nw lat/lng of tile
         var backToLatLng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
         // get nw container point of tile
-        var containerPoint = $scope.map.latLngToContainerPoint(backToLatLng);
-        // subtract clicked container point from nw container point to get point within tile
+        var nwContainerPoint = $scope.map.latLngToContainerPoint(backToLatLng);
+        // get container point of original lat lng
+        var containerPoint = $scope.map.latLngToContainerPoint(L.latLng(lat,lng));
+
+        // subtract clicked queried point from nw container point to get point within tile
         var pointInTile = {
-            x: e.containerPoint.x - containerPoint.x,
-            y: e.containerPoint.y - containerPoint.y
+            x: containerPoint.x - nwContainerPoint.x,
+            y: containerPoint.y - nwContainerPoint.y
         }
         // adjust points for overzoom
         if ($scope.map.getZoom() > maxNativeZoom) {
@@ -1248,9 +1253,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // send point to tile worker
         var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + $scope.map.getZoom();
         var worker = workers[tile_id];
-        if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile });
-
-    });
+        if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng });
+    }
 
 
 

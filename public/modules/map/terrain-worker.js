@@ -18,10 +18,13 @@ onmessage = function (e) {
         var arrayIndex = (e.data.pointInTile.y * 256 + e.data.pointInTile.x);
         // get terrain data
         var terrainData = dem[arrayIndex];
+
         // return to client
         postMessage({ 
             id: e.data.id,
-            terrainData: terrainData
+            terrainData: terrainData,
+            lat: e.data.lat,
+            lng: e.data.lng
         }); 
         return;
     }

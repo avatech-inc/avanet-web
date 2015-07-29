@@ -1016,7 +1016,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     //var workers = [];
     var workers = {};
 
-    var elevationData = {}
+    var terrainDataCache = {}
 
     function updateTile(e) {
         if (e.data.terrainData) {
@@ -1027,14 +1027,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 lat: e.data.lat,
                 lng: e.data.lng
             }
-            console.log(terrainData);
+            //console.log(terrainData);
+            // store in cache
+            terrainDataCache[e.data.lat + "_" + e.data.lng] = terrainData;
             return;
         }
 
         var ctx = contexts[e.data.id];
         var tileSize = ctx.canvas.width;
-
-        //elevationData[e.data.id] = e.data.dem;
 
         // regular tile
         if (tileSize == 256) {
@@ -1220,11 +1220,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     }
 
-    $scope.map.on('mousemove', function(e) {
+    $scope.map.on('click', function(e) {
         initiateGetTerrainData(e.latlng.lat, e.latlng.lng);
     });
     
     function initiateGetTerrainData(lat, lng) {
+        // round down lat/lng for fewer lookups
+        // 5 decimal places = 1.1132 m percision
+        // https://en.wikipedia.org/wiki/Decimal_degrees
+        // lat = Math.round(lat * 1e5) / 1e5;
+        // lng = Math.round(lng * 1e5) / 1e5;
+
         // adjust zoom level for overzoom
         var zoom = Math.min(maxNativeZoom, $scope.map.getZoom());
         // get xyz of clicked tile based on clicked lat/lng
@@ -1345,6 +1351,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 line.editing._markers.push(line.editing._createMarker(e.latlng));
                 line.editing._poly.addLatLng(e.latlng);
                 line.editing.updateMarkers();
+                lineEdited();
             }
             // if creating first point
             else {
@@ -1359,9 +1366,98 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                     // to prevent accidental addition of new point
                     preventEdit = true;
                     setTimeout(function() { preventEdit = false }, 1000);
+
+                    var layers = featureGroup._layers;
+                    var line = layers[Object.keys(layers)[0]];
+                    lineEdited();
                 });
             }
         });
+
+        var lastLine;
+        function lineEdited(latlngs) {
+            var layers = featureGroup._layers;
+            var line = layers[Object.keys(layers)[0]];
+            var latlngs = line._latlngs;
+
+             var points = [];
+
+              var point_string = "";
+               for (var i = 0; i < latlngs.length; i++) {
+                   points.push(latlngs[i]);
+              }
+
+              while ((points.length * 2) -1 <= 200) { // 200
+                points = interpolate(points);
+              }
+
+              for (var i = 0; i < points.length; i++) {
+                points[i].lat = Math.round(points[i].lat * 1e5) / 1e5;
+                points[i].lng = Math.round(points[i].lng * 1e5) / 1e5;
+
+                // initiate querying if lat/lng isn't already in cache
+                var terrainData = terrainDataCache[points[i].lat + "_" + points[i].lng];
+                if (!terrainData) initiateGetTerrainData(points[i].lat, points[i].lng);
+              }
+
+              // todo: using setTimeout is a pretty kludgey way to do this...
+              setTimeout(function() {
+
+                    geoJSON.features[0].geometry.coordinates = [];
+
+                    for (var i = 0; i < points.length; i++) {
+                        var terrainData = terrainDataCache[points[i].lat + "_" + points[i].lng];
+                        if (terrainData) {
+                            geoJSON.features[0].geometry.coordinates.push([
+                                points[i].lng,
+                                points[i].lat,
+                                terrainData.elevation
+                            ]);
+                        }
+                    }
+
+                    
+                    if (lastLine) $scope.map.removeLayer(lastLine);
+                    createElevationProfileWidget();
+
+                    lastLine = L.geoJson(geoJSON,{
+                        style: {
+                            color: 'transparent'
+                        },
+                        onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
+                    }).addTo($scope.map);
+
+              }, 1000);
+
+                // var lat = Math.round(lat * 1e5) / 1e5;
+                // var lng = Math.round(lng * 1e5) / 1e5;
+
+              //  for (var i = 0; i < points.length; i++) {
+              //       point_string += points[i].lng + "," + points[i].lat + ";";
+              // }
+
+              // point_string = point_string.substring(0,point_string.length-1);
+
+              // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
+              //   point_string 
+              //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
+              //       //console.log(data.results);
+
+              //       geoJSON.features[0].geometry.coordinates = [];
+              //       for (var i=0; i< data.results.length; i++) {
+              //           geoJSON.features[0].geometry.coordinates.push([
+              //               data.results[i].latlng.lng,
+              //               data.results[i].latlng.lat,
+              //               data.results[i].ele
+              //           ]);
+              //       }
+
+              //       lastLine = L.geoJson(geoJSON,{
+              //           onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
+              //       }).addTo($scope.map);
+              //   });
+
+        }
 
       // var lastLine;
       // var lastLayer;
@@ -1377,41 +1473,41 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
       //     //createElevationProfileWidget();
 
-      //     //var points = [];
+          // var points = [];
 
-      //     // var point_string = "";
-      //     //  for (var i = 0; i < e.layer._latlngs.length; i++) {
-      //     //      points.push(e.layer._latlngs[i]);
-      //     // }
+          // var point_string = "";
+          //  for (var i = 0; i < e.layer._latlngs.length; i++) {
+          //      points.push(e.layer._latlngs[i]);
+          // }
 
-      //     // while ((points.length * 2) -1 <= 200) {
-      //     //   points = interpolate(points);
-      //     // }
+          // while ((points.length * 2) -1 <= 200) {
+          //   points = interpolate(points);
+          // }
 
-      //     //  for (var i = 0; i < points.length; i++) {
-      //     //       point_string += points[i].lng + "," + points[i].lat + ";";
-      //     // }
+          //  for (var i = 0; i < points.length; i++) {
+          //       point_string += points[i].lng + "," + points[i].lat + ";";
+          // }
 
-      //     // point_string = point_string.substring(0,point_string.length-1);
+          // point_string = point_string.substring(0,point_string.length-1);
 
-      //     // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
-      //     //   point_string 
-      //     //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
-      //     //       console.log(data.results);
+          // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
+          //   point_string 
+          //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
+          //       console.log(data.results);
 
-      //     //       geoJSON.features[0].geometry.coordinates = [];
-      //     //       for (var i=0; i< data.results.length; i++) {
-      //     //           geoJSON.features[0].geometry.coordinates.push([
-      //     //               data.results[i].latlng.lng,
-      //     //               data.results[i].latlng.lat,
-      //     //               data.results[i].ele
-      //     //           ]);
-      //     //       }
+          //       geoJSON.features[0].geometry.coordinates = [];
+          //       for (var i=0; i< data.results.length; i++) {
+          //           geoJSON.features[0].geometry.coordinates.push([
+          //               data.results[i].latlng.lng,
+          //               data.results[i].latlng.lat,
+          //               data.results[i].ele
+          //           ]);
+          //       }
 
-      //     //       lastLine = L.geoJson(geoJSON,{
-      //     //           onEachFeature: el.addData.bind(el) //working on a better solution
-      //     //       }).addTo($scope.map);
-      //     //   })
+          //       lastLine = L.geoJson(geoJSON,{
+          //           onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
+          //       }).addTo($scope.map);
+          //   })
 
       // });
     
@@ -1445,7 +1541,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 yTicks: undefined, //number of ticks on y axis, calculated by default according to height
                 collapsed: false    //collapsed mode, show chart on click or mouseover
             });
-            el.addTo($scope.map);
+            elevationWidget.addTo($scope.map);
         }
 
 });

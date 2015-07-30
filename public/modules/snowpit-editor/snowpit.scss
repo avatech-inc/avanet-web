@@ -233,27 +233,30 @@ body.snowpit {
   border-left-width: 0;
   font-weight:100;
 }
-.checkbox {
-	width:200px;
-	margin-left:8px;
-	margin-bottom:2px;
-	margin-right:8px;
-	margin-top:6px;
-	padding-left:30px !important;
 
-	font-size: 14px;
-	font-weight: normal;
-	line-height: 1;
-	color: #555;
-	background-color: #eee;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	padding: 9px 12px;
-	padding-right: 0px;
-	float:right;
-}
-.checkbox input {
-	margin-top: 2px;
+.rightPane {
+	.checkbox {
+		width:200px;
+		margin-left:8px;
+		margin-bottom:2px;
+		margin-right:8px;
+		margin-top:6px;
+		padding-left:30px !important;
+
+		font-size: 14px;
+		font-weight: normal;
+		line-height: 1;
+		color: #555;
+		background-color: #eee;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 9px 12px;
+		padding-right: 0px;
+		float:right;
+	}
+	.checkbox input {
+		margin-top: 2px;
+	}
 }
 
 #profileCanvas {
@@ -370,6 +373,20 @@ grain-select {
 	height: 34px;
     width: 100%;
 	display: inline-block;
+}
+
+// error
+.has-error grain-select .grainTypeSelect {
+	> .dropdown-toggle {
+    	border-color: #a94442 !important;
+	}
+	&.open {
+		>.dropdown-toggle {
+			outline: 0;
+		    border-color: #843534;
+		    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 6px #ce8483;
+		}
+	}
 }
 
 grain-select .grainTypeSelect {

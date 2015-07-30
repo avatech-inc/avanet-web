@@ -26,6 +26,14 @@ angular.module('avatech').factory('routePlanning', function (Global) {
 return {
     init: function(_map, terrainLayer) {
 
+
+        _map.on('zoomend', function(e) {
+            //plotElevationProfile();
+            // setTimeout(function(){
+            //     lineEdited();
+            // }, 100)
+        });
+
         // the feature group holder for the route
         var featureGroup = L.featureGroup().addTo(_map);
         // Leaflet.Draw edit handler for custom edit/draw functionality
@@ -69,81 +77,92 @@ return {
                     var line = layers[Object.keys(layers)[0]];
                     lineEdited();
                 });
+
+                newLayer.on('click', function(e){
+                    console.log("CLICK");
+                    console.log(e.latlng);
+                    //elevationWidget.highlight(e.latlng);
+                });
+                newLayer.on('mouseover', function(e){
+                    // console.log("CLICK");
+                    // console.log(e.latlng);
+                    if (elevationWidget) elevationWidget.highlight(e.latlng);
+                });
             }
         });
 
-
-        var geoJSON = {
-            "name":"NewFeatureType",
-            "type":"FeatureCollection",
-            "features":[
-            {
-                "type":"Feature",
-                "geometry": {
-                    "type":"LineString",
-                    "coordinates":[]
-                },
-                "properties": null
-            }
-        ]};
-
-
         var lastLine;
-        function lineEdited(latlngs) {
+        function lineEdited() {
             var layers = featureGroup._layers;
             var line = layers[Object.keys(layers)[0]];
-            var latlngs = line._latlngs;
+            var points = line._latlngs;
 
-             var points = [];
+            // get distance
+            var _points = points.map(function(point) { return [point.lng,point.lat] });
+            var linestring = turf.linestring(_points);
+            var length = turf.lineDistance(linestring, 'kilometers');
+            console.log("LINE LENGTH: " + length);
 
-               for (var i = 0; i < latlngs.length; i++) {
-                   points.push(latlngs[i]);
-              }
+            // sample every 10m
+            var sampleCount = Math.round((length * 1000) / 10);
 
-              while ((points.length * 2) -1 <= 200) { // 200
+            console.log("SAMPLE COUNT: " + sampleCount);
+
+            // interpolate
+            while ((points.length * 2) -1 <= sampleCount) { // 200
                 points = interpolate(points);
-              }
+            }
 
-              for (var i = 0; i < points.length; i++) {
-                points[i].lat = Math.round(points[i].lat * 1e5) / 1e5;
-                points[i].lng = Math.round(points[i].lng * 1e5) / 1e5;
+            console.log("INTERPOLATED: " + points.length);
 
-                // initiate querying if lat/lng isn't already in cache
-                var terrainData = terrainLayer.terrainDataCache[points[i].lat + "_" + points[i].lng];
-                if (!terrainData) terrainLayer.initiateGetTerrainData(points[i].lat, points[i].lng);
-              }
+            terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
+                //receivedPoints.push(terrainData);
+                //if (receivedPoints.length == points.length - 6) {
+                    console.log("DOWNLOAD COMPLETE!!!");
+                    if (!receivedPoints || receivedPoints.length == 0) return;
 
-              // todo: using setTimeout is a pretty kludgey way to do this...
-              setTimeout(function() {
+                    // // remove outliers
+                    // for (var i = 1; i < receivedPoints.length - 1; i++) {
+                    //     var previousPoint = receivedPoints[i - 1];
+                    //     var thisPoint = receivedPoints[i];
+                    //     var nextPoint = receivedPoints[i+1];
 
-                    geoJSON.features[0].geometry.coordinates = [];
+                    //     if (!nextPoint || !thisPoint) continue;
 
-                    for (var i = 0; i < points.length; i++) {
-                        var terrainData = terrainLayer.terrainDataCache[points[i].lat + "_" + points[i].lng];
-                        if (terrainData) {
-                            geoJSON.features[0].geometry.coordinates.push([
-                                points[i].lng,
-                                points[i].lat,
-                                terrainData.elevation
-                            ]);
-                        }
-                    }
+                    //     if (thisPoint.elevation == null && previousPoint.elevation != null) {
+                    //         thisPoint.elevation = previousPoint.elevation;
+                    //     }
+                    //     else if (thisPoint.elevation == null && nextPoint.elevation != null) {
+                    //         thisPoint.elevation = nextPoint.elevation;
+                    //     }
+                    //     if (nextPoint.elevation == null && thisPoint.elevation != null) {
+                    //         nextPoint.elevation = thisPoint.elevation;
+                    //     }
 
+                    //     var distance = turf.distance(
+                    //         turf.point([thisPoint.lng,thisPoint.lat]),
+                    //         turf.point([nextPoint.lng,nextPoint.lat]),
+                    //         "kilometers");
+                    //     distance *= 1000; // convert from km to meters
 
-                    if (lastLine) _map.removeLayer(lastLine);
-                    createElevationProfileWidget();
+                    //     var elevationDiff = Math.abs(thisPoint.elevation - nextPoint.elevation);
+                    //     if (elevationDiff > 0) {
+                    //         var slope  = Math.round(Math.atan(elevationDiff / distance) * (180/Math.PI));
+                    //         var slopeDiff = Math.abs(((thisPoint.slope + nextPoint.slope) / 2) - slope);
+                    //         //var slopeDiff2 = nextPoint.slope - slope;
+                    //         //console.log("DIFF: " + elevationDiff + " / " + slope + " / " + slopeDiff);
 
-                    lastLine = L.geoJson(geoJSON,{
-                        style: {
-                            color: 'transparent'
-                        },
-                        onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
-                    }).addTo(_map);
+                    //         // outlier
+                    //         if (slope > 60 && slopeDiff > 40) {
+                    //             console.log("OUTLIER CORRECTED!");
+                    //             thisPoint.elevation = previousPoint.elevation;
+                    //         }
+                    //     }
+                    // }
 
-              }, 1000);
-
-                // var lat = Math.round(lat * 1e5) / 1e5;
-                // var lng = Math.round(lng * 1e5) / 1e5;
+                    plotElevationProfile(receivedPoints);
+                //}
+            });
 
               //  for (var i = 0; i < points.length; i++) {
               //       point_string += points[i].lng + "," + points[i].lat + ";";
@@ -170,6 +189,47 @@ return {
               //       }).addTo(_map);
               //   });
 
+        }
+
+        function plotElevationProfile(points) {
+            if (!points) return;
+
+            var geoJSON = {
+                "name":"NewFeatureType",
+                "type":"FeatureCollection",
+                "features":[
+                {
+                    "type":"Feature",
+                    "geometry": {
+                        "type":"LineString",
+                        "coordinates":[]
+                    },
+                    "properties": null
+                }
+            ]};
+            geoJSON.features[0].geometry.coordinates = [];
+
+            for (var i = 0; i < points.length; i++) {
+                var terrainData = points[i];
+                if (!terrainData || terrainData.lat == null || terrainData.lat == null || terrainData.elevation == null) continue;
+
+                geoJSON.features[0].geometry.coordinates.push([
+                    terrainData.lng,
+                    terrainData.lat,
+                    terrainData.elevation,
+                    terrainData.slope
+                ]);
+            }
+
+            if (lastLine) _map.removeLayer(lastLine);
+            createElevationProfileWidget();
+
+            lastLine = L.geoJson(geoJSON, {
+                // style: {
+                //     color: 'transparent'
+                // },
+                onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
+            });//.addTo(_map);
         }
 
       // var lastLine;
@@ -234,9 +294,9 @@ return {
             elevationWidget = L.control.elevation({
                 position: "topright",
                 theme: "steelblue-theme", //default: lime-theme
-                imperial: true,
-                width: 600,
-                height: 125,
+                imperial: false, // true
+                width: 700,
+                height: 180,
                 margins: {
                     top: 10,
                     right: 20,

@@ -4,27 +4,21 @@
             async: false
         },
 
-        // redrawQueue[];
-        // contexts = {};
-        // zFactor = .12;
-        // workers = {};
-        // terrainDataCache = {};
-
         initialize: function (options) {
             L.setOptions(this, options);
         },
 
-        redraw: function () {
-            if (this._map) {
-                this._reset({hard: true});
-                this._update();
-            }
+        // redraw: function () {
+        //     if (this._map) {
+        //         this._reset({hard: true});
+        //         this._update();
+        //     }
 
-            for (var i in this._tiles) {
-                this._redrawTile(this._tiles[i]);
-            }
-            return this;
-        },
+        //     for (var i in this._tiles) {
+        //         this._redrawTile(this._tiles[i]);
+        //     }
+        //     return this;
+        // },
 
         _redrawTile: function (tile) {
             this.drawTile(tile, tile._tilePoint, this._map._zoom);
@@ -61,7 +55,8 @@
                 zoom = map.getZoom() + options.zoomOffset,
                 zoomN = options.maxNativeZoom;
 
-            // increase tile size when overscaling
+            // increase tile size when overzooming
+            if (options.underzoom) { if (zoom == 12) return 128; }
             return zoomN !== null && zoom > zoomN ?
                     Math.round(options.tileSize / map.getZoomScale(zoomN, zoom)) : 
                     options.tileSize;
@@ -70,6 +65,8 @@
 
 
     L.tileLayer.terrain = function (options) {
+        options.underzoom = true;
+
         var terrainLayer =  new L.TileLayer.Terrain(options);
 
         terrainLayer.redrawQueue = [];
@@ -88,13 +85,31 @@
                     slope: e.data.terrainData[1],
                     aspect: e.data.terrainData[2],
                     lat: e.data.lat,
-                    lng: e.data.lng
+                    lng: e.data.lng,
+                    index: e.data.index,
+                    pointInTile: e.data.pointInTile
                 }
-                //console.log(terrainData);
+
+                // if empty values, make null
+                if (terrainData.elevation == 127 && terrainData.slope == 127 && terrainData.aspect == 511) {
+                    terrainData.elevation = null;
+                    terrainData.slope = null;
+                    terrainData.aspect = null;
+                }
+
                 // store in cache
                 terrainLayer.terrainDataCache[e.data.lat + "_" + e.data.lng] = terrainData;
+
+                // retreive and call stored callback
+                var callback = terrainLayer.callbacks[e.data.requestId];
+                if (callback) callback(terrainData);
+
                 return;
             }
+
+            // if we've gotten this far and no pixels have been return, it's an error and we should leave
+            // otherwise, tile will be rendered blank
+            if (!e.data.pixels) return;
 
             var ctx = terrainLayer.contexts[e.data.id];
             var tileSize = ctx.canvas.width;
@@ -134,7 +149,9 @@
 
             var PNG_data;
 
-             if (zoom > terrainLayer.options.maxNativeZoom) zoom = terrainLayer.options.maxNativeZoom;
+            if (zoom > terrainLayer.options.maxNativeZoom) zoom = terrainLayer.options.maxNativeZoom;
+            // make zoom level 12 underzoomed from 13
+            if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
             terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
             function redraw() {
@@ -231,16 +248,27 @@
             }
         }
 
-        terrainLayer.initiateGetTerrainData = function(lat, lng) {
-            console.log(lat + "," + lng);
+        terrainLayer.callbacks = {};
+        var batchId = 0;
+
+        terrainLayer.getTerrainData = function(lat, lng, callback, index, batchId) {
+
             // round down lat/lng for fewer lookups
             // 5 decimal places = 1.1132 m percision
             // https://en.wikipedia.org/wiki/Decimal_degrees
-            // lat = Math.round(lat * 1e5) / 1e5;
-            // lng = Math.round(lng * 1e5) / 1e5;
+            lat = Math.round(lat * 1e5) / 1e5;
+            lng = Math.round(lng * 1e5) / 1e5;
+
+            // if its in the cache, return it
+            // var terrainData = terrainLayer.terrainDataCache[lat + "_" + lng];
+            // if (terrainData) {
+            //     terrainData.index = index;
+            //     return callback(terrainData);
+            // }
 
             // adjust zoom level for overzoom
             var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
+            if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
             // get xyz of clicked tile based on clicked lat/lng
             var tilePoint = latLngToTilePoint(lat, lng, zoom);
             // get nw lat/lng of tile
@@ -263,11 +291,64 @@
                 pointInTile.x = Math.floor(pointInTile.x / zoomDivide);
                 pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
             }
+            // adjust points for underzoom
+            if (terrainLayer.options.underzoom && terrainLayer._map.getZoom() == 12) {
+                var zoomDifference = terrainLayer.options.maxNativeZoom - terrainLayer._map.getZoom();
+                var zoomDivide = Math.pow(2, zoomDifference)
+
+                pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
+                pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
+            }
+            // make sure point is within 256x256 bounds
+            if (pointInTile.x > 255) pointInTile.x = 255;
+            if (pointInTile.y > 255) pointInTile.y = 255;
+            if (pointInTile.x < 0) pointInTile.x = 0;
+            if (pointInTile.y < 0) pointInTile.y = 0;
+
+            // create unique id
+            var requestId = lat + "_" + lng + "_" + new Date().getTime();
+            if (index != null) requestId += "_" + index;
+
+            // store callback so we can reference when message is received from worker thread
+            if (callback) terrainLayer.callbacks[requestId] = callback;
 
             // send point to tile worker
             var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + terrainLayer._map.getZoom();
             var worker = terrainLayer.workers[tile_id];
-            if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng });
+            if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng, requestId: requestId, index: index });
+
+        }
+
+        var callbackTimer;
+        var callbackCalled;
+        terrainLayer.getTerrainDataBulk = function(points, callback) {
+            // clear callbacks cache
+            terrainLayer.callbacks = {};
+
+            callbackCalled = false;
+            var d = new Date().getTime();
+            if (callbackTimer) clearTimeout(callbackTimer);
+            var receivedPoints = [];
+            for (var i = 0; i < points.length; i++) {
+                terrainLayer.getTerrainData(points[i].lat, points[i].lng, function(terrainData) {
+                    // place in array based on original index to ensure same order
+                    receivedPoints[terrainData.index] = terrainData;
+
+                    // when all points have been received
+                    if (receivedPoints.length >= points.length - 3) {
+                        // if callback called once, prevent calling again
+                        if (callbackCalled) return;
+                        callbackCalled = true;
+
+                        console.log("TIME: " + (new Date().getTime() - d));
+
+                        callbackTimer = setTimeout(function(){ 
+                            callback(receivedPoints);
+                        }, 10);
+                    }
+
+                }, i);
+            }
         }
 
         return terrainLayer;

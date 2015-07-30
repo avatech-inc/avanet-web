@@ -48,8 +48,11 @@ L.Control.Elevation = L.Control.extend({
         var y = this._y = d3.scale.linear()
             .range([this._height(), 0]);
 
+        //console.log(this._x);
         var area = this._area = d3.svg.area()
-            .interpolate(opts.interpolation)
+            //.interpolate(opts.interpolation)
+            //.interpolate("bundle").tension(.95)
+            .interpolate("basis")
             .x(function(d) {
                 var xDiagCoord = x(d.dist);
                 d.xDiagCoord = xDiagCoord;
@@ -57,6 +60,7 @@ L.Control.Elevation = L.Control.extend({
             })
             .y0(this._height())
             .y1(function(d) {
+                //console.log(d.slope);
                 return y(d.altitude);
             });
 
@@ -85,7 +89,8 @@ L.Control.Elevation = L.Control.extend({
         var g = d3.select(this._container).select("svg").select("g");
 
         this._areapath = g.append("path")
-            .attr("class", "area");
+            .attr("class", "area")
+            //.attr("style", "fill:green;");
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())
@@ -490,7 +495,7 @@ L.Control.Elevation = L.Control.extend({
 
                 var pointG = this._pointG = heightG.append("g");
                 pointG.append("svg:circle")
-                    .attr("r", 6)
+                    .attr("r", 6) // 6
                     .attr("cx", 0)
                     .attr("cy", 0)
                     .attr("class", "height-focus circle-lower");
@@ -509,13 +514,14 @@ L.Control.Elevation = L.Control.extend({
                 .attr("y2", normalizedY)
                 .style("visibility", "visible");
 
-            this._pointG.attr("transform", "translate(" + layerpoint.x + "," + layerpoint.y + ")")
-                .style("visibility", "visible");
+            this._pointG.attr("transform", "translate(" + Math.round(layerpoint.x) + "," + Math.round(layerpoint.y) + ")")
+                .style("visibility", "visible")
+                //.style("pointer-events", "none");
 
             if(opts.imperial) {
                 this._mouseHeightFocusLabel.attr("x", layerpoint.x)
                     .attr("y", normalizedY)
-                    .text(numY + " ft")
+                    .text(numY + " ft (miles will go here)")
                     .style("visibility", "visible");
             }
             else {
@@ -559,6 +565,8 @@ L.Control.Elevation = L.Control.extend({
                 data.push({
                     dist: dist,
                     altitude: opts.imperial ? coords[i][2] * 3.28084 : coords[i][2],
+                    //altitude: 2600 * 3.28084,
+                    slope: coords[i][3],
                     x: coords[i][0],
                     y: coords[i][1],
                     latlng: s
@@ -771,6 +779,18 @@ L.Control.Elevation = L.Control.extend({
         this._x.domain([0, 1]);
         this._y.domain([0, 1]);
         this._updateAxis();
+    },
+
+    highlight: function(latlng) {
+         if (!this._data || this._data.length === 0) {
+            return;
+        }
+        //var latlng = evt.latlng;
+        var item = this._findItemForLatLng(latlng);
+        if (item) {
+            var x = item.xDiagCoord;
+            this._showDiagramIndicator(item, x);
+        }
     }
 
 });

@@ -23,6 +23,9 @@ angular.module('avatech').factory('routePlanning', function (Global) {
         return new_points;
     }
 
+
+    
+
 return {
     init: function(_map, terrainLayer) {
 
@@ -44,6 +47,49 @@ return {
             }
         });
 
+        function addPoint(latlng, middle) {
+            var layers = featureGroup._layers;
+            var line = layers[Object.keys(layers)[0]];
+
+            var index = line.editing._poly._latlngs.length;
+
+            // find nearest point on line
+            // if (middle) {
+            //     var result = null,
+            //         d = Infinity;
+
+            //     //angular.forEach(line.editing._poly._latlngs, function(item) {
+            //     for (var i = 0; i < line.editing._poly._latlngs.length; i++) {
+            //         var item = line.editing._poly._latlngs[i];
+
+            //         var distance = turf.distance(
+            //                 turf.point([item.lng,item.lat]),
+            //                 turf.point([latlng.lng,latlng.lat]),
+            //                 "kilometers");
+
+            //         if (distance < d) {
+            //             d = distance;
+            //             index = i;
+            //         }
+            //     }
+
+            //     console.log("RESULT: " + index);
+            // }
+
+            // find nearest, 'index' is the one NEXT in the list 
+
+            line.editing._poly.spliceLatLngs(index, 0, latlng);
+            line.editing._markers.splice(index, 0, line.editing._createMarker(latlng));
+
+            // line.editing._markers.push(line.editing._createMarker(latlng));
+            // //line.editing._poly.addLatLng(latlng);
+            // line.editing._poly._latlngs.push(L.latLng(latlng));
+
+            line.editing._poly.redraw();
+
+            line.editing.updateMarkers();
+        }
+
         var _line;
         var editMode = false;
         var preventEdit = false;
@@ -51,12 +97,13 @@ return {
             // if editing existing line
             if (editMode) {
                 if (preventEdit) return;
-                var layers = featureGroup._layers;
-                var line = layers[Object.keys(layers)[0]];
+                // var layers = featureGroup._layers;
+                // var line = layers[Object.keys(layers)[0]];
 
-                line.editing._markers.push(line.editing._createMarker(e.latlng));
-                line.editing._poly.addLatLng(e.latlng);
-                line.editing.updateMarkers();
+                // line.editing._markers.push(line.editing._createMarker(e.latlng));
+                // line.editing._poly.addLatLng(e.latlng);
+                // line.editing.updateMarkers();
+                addPoint(e.latlng);
                 lineEdited();
             }
             // if creating first point
@@ -78,24 +125,40 @@ return {
                     lineEdited();
                 });
 
-                newLayer.on('click', function(e){
-                    console.log("CLICK");
-                    console.log(e.latlng);
-                    //elevationWidget.highlight(e.latlng);
+                // newLayer.on('click', function(e){
+                //     console.log("CLICK");
+                //     addPoint(e.latlng, true);
+                // });
+
+                // elevation widget highlight
+                newLayer.on('mousemove', function(e){
+                    if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
                 });
-                newLayer.on('mouseover', function(e){
-                    // console.log("CLICK");
-                    // console.log(e.latlng);
-                    if (elevationWidget) elevationWidget.highlight(e.latlng);
+                newLayer.on('mouseout', function(e){
+                    if (elevationWidget) elevationWidget.highlight();
                 });
             }
         });
 
         var lastLine;
         function lineEdited() {
+
             var layers = featureGroup._layers;
             var line = layers[Object.keys(layers)[0]];
             var points = line._latlngs;
+
+            // clear onclick handlers
+            console.log(line);
+            angular.forEach(line.editing._markers,function(marker) {
+                // remove existing click events (which will delete the marker)
+                marker.off('click');
+                marker.on('click',function(){
+                    console.log("clicked on a marker without deleting!!!");
+                    // todo: create waypoint!!!!
+                })
+                // re-enable delete
+                //marker.on('click', line.editing._onMarkerClick, line.editing);
+            });
 
             // get distance
             var _points = points.map(function(point) { return [point.lng,point.lat] });

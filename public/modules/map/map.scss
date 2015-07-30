@@ -1015,6 +1015,8 @@
 }
 
 .leaflet-editing-icon[style*="opacity: 0.6"] {
+	// display: none;
+	// pointer-events: none;
     background: #9999FF!important;
     height: 8px !important;
     width: 8px !important;

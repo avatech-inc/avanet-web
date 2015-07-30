@@ -2,6 +2,7 @@ var gulp = require('gulp');
 
 var path = require('path');
 var fs = require("fs");
+var nodemon = require('gulp-nodemon');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var inject = require('gulp-inject');
@@ -13,7 +14,6 @@ var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var jshint = require('gulp-jshint');
-var nodemon = require('gulp-nodemon');
 var sourcemaps = require('gulp-sourcemaps');
 var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
@@ -276,7 +276,7 @@ gulp.task('start', function(done) {
   runSequence('compass','buildMain','start2', done);
 });
 gulp.task('start2', function(done) {
-  gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss'], ['compass']);
+ //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
 
   // todo:
   // - livereload when public changes 'public/**/*'
@@ -285,13 +285,18 @@ gulp.task('start2', function(done) {
    nodemon({
     script: 'server.js'
   , ext: 'js html'
+  //, watch: ['public','app','config', '!public/tiles']
+  //, verbose: true
+  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist2','/.sass-cache','/.tmp']
   , env: { 'NODE_ENV': 'development' }
-  })
+  });
+
 });
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist2');
 
+    // todo: no need for nodemon here since we aren't editing
    nodemon({
     script: 'server.js'
   , ext: 'js html'

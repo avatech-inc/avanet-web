@@ -12,19 +12,33 @@ onmessage = function (e) {
     // terrain data at point
     else if (e.data.pointInTile) {
         var dem = self.dems[e.data.id];
+        // make sure full tile is loaded
         if (!dem || dem.length != (256 * 256)) return;
+
+        // make sure coords are with bounds
+        if (e.data.pointInTile.x > 255) e.data.pointInTile.x = 255;
+        if (e.data.pointInTile.y > 255) e.data.pointInTile.y = 255;
+        if (e.data.pointInTile.x < 0) e.data.pointInTile.x = 0;
+        if (e.data.pointInTile.y < 0) e.data.pointInTile.y = 0;
 
         // convert xy coord to 2d array index
         var arrayIndex = (e.data.pointInTile.y * 256 + e.data.pointInTile.x);
         // get terrain data
         var terrainData = dem[arrayIndex];
+        if (!terrainData) return;
+
+        // removed: checking for empty valyes on the client instead...
+        //if (terrainData[0] == 127 && terrainData[1] == 127 && terrainData[2] == 511) return;
 
         // return to client
         postMessage({ 
             id: e.data.id,
+            requestId: e.data.requestId,
+            index: e.data.index,
             terrainData: terrainData,
             lat: e.data.lat,
-            lng: e.data.lng
+            lng: e.data.lng,
+            pointInTile: e.data.pointInTile
         }); 
         return;
     }

@@ -1017,17 +1017,45 @@
 .leaflet-editing-icon[style*="opacity: 0.6"] {
 	// display: none;
 	// pointer-events: none;
-    background: #9999FF!important;
+    background: #9999FF !important;
     height: 8px !important;
     width: 8px !important;
     margin-left: -4px !important;
     margin-top: -4px !important;
-    opacity: .9 !important;
-    border-color: rgba(0,0,255,.3) !important;
+    opacity: .8 !important;
+    border-color: rgba(0,0,255,.4) !important;
 
     &:hover {
     	opacity: 1 !important;
     	border-color: rgba(0,0,255,1) !important;
     	background: #eee !important;
     }
+}
+
+.waypoint-icon {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+    background: yellow  !important;
+    border-width: 2px !important;
+}
+.start-icon {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 999px !important;
+    margin-top: -8px !important;
+    margin-left: -8px !important;
+    background: #76FF7A  !important;
+    border-width: 2px !important;
+}
+.finish-icon {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 999px !important;
+    margin-top: -8px !important;
+    margin-left: -8px !important;
+    background: #FF91A4  !important;
+    border-width: 2px !important;
 }

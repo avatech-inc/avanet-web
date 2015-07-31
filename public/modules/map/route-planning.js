@@ -87,22 +87,38 @@ return {
 
             line.editing._poly.redraw();
 
+            // before calling updateMarkers, keep track of where waypoints are
+            // note: if we ever implement arbitrary new point placement (commented out above)
+            // then this might not work properly, since we're using index to keep track
+            var waypoints = {};
+            angular.forEach(line.editing._markers,function(marker) {
+                if (marker.waypoint) waypoints[marker._index] = true;
+            });
+
+            // call updateMarkers to reload points
             line.editing.updateMarkers();
+
+            // re-load waypoints
+            angular.forEach(line.editing._markers,function(marker) {
+                // start point
+                if (marker._index == 0) $(marker._icon).addClass("start-icon");
+                // finish point
+                if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
+
+                if (waypoints[marker._index]) {
+                    marker.waypoint = true;
+                    $(marker._icon).addClass("waypoint-icon");
+                }
+            });
         }
 
         var _line;
         var editMode = false;
         var preventEdit = false;
         _map.on('click', function(e) {
-            // if editing existing line
+            // if editing existing line, create new point at the end of the line
             if (editMode) {
                 if (preventEdit) return;
-                // var layers = featureGroup._layers;
-                // var line = layers[Object.keys(layers)[0]];
-
-                // line.editing._markers.push(line.editing._createMarker(e.latlng));
-                // line.editing._poly.addLatLng(e.latlng);
-                // line.editing.updateMarkers();
                 addPoint(e.latlng);
                 lineEdited();
             }
@@ -112,6 +128,9 @@ return {
                 featureGroup.addLayer(newLayer);
                 editHandler.enable();
                 editMode = true;
+
+                // start icon
+                $(newLayer.editing._markers[0]).addClass("start-icon");
 
                 // when line is edited (after point is dragged)
                 newLayer.on('edit', function(e) {
@@ -147,17 +166,27 @@ return {
             var line = layers[Object.keys(layers)[0]];
             var points = line._latlngs;
 
-            // clear onclick handlers
-            console.log(line);
             angular.forEach(line.editing._markers,function(marker) {
-                // remove existing click events (which will delete the marker)
+                // remove existing marker click events (which will delete the marker)
                 marker.off('click');
-                marker.on('click',function(){
+                marker.on('click',function(e){
                     console.log("clicked on a marker without deleting!!!");
-                    // todo: create waypoint!!!!
-                })
+                    console.log(e);
+                    console.log(this);
+
+                    this.waypoint = true;
+                    $(this._icon).addClass("waypoint-icon");
+                });
                 // re-enable delete
                 //marker.on('click', line.editing._onMarkerClick, line.editing);
+
+                // if marker is a waypoint, make sure it has css class
+                // console.log("MARKER:");
+                // console.log(marker);
+                // if (marker.waypoint) {
+                //     console.log("waypoint!!!");
+                //     $(marker._icon).addClass("waypoint-icon");
+                // }
             });
 
             // get distance
@@ -169,89 +198,59 @@ return {
             // sample every 10m
             var sampleCount = Math.round((length * 1000) / 10);
 
-            console.log("SAMPLE COUNT: " + sampleCount);
+            //console.log("SAMPLE COUNT: " + sampleCount);
 
             // interpolate
             while ((points.length * 2) -1 <= sampleCount) { // 200
                 points = interpolate(points);
             }
 
-            console.log("INTERPOLATED: " + points.length);
+            //console.log("INTERPOLATED: " + points.length);
 
             terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
-                //receivedPoints.push(terrainData);
-                //if (receivedPoints.length == points.length - 6) {
-                    console.log("DOWNLOAD COMPLETE!!!");
-                    if (!receivedPoints || receivedPoints.length == 0) return;
+                console.log("DOWNLOAD COMPLETE!!!");
+                if (!receivedPoints || receivedPoints.length == 0) return;
 
-                    // // remove outliers
-                    // for (var i = 1; i < receivedPoints.length - 1; i++) {
-                    //     var previousPoint = receivedPoints[i - 1];
-                    //     var thisPoint = receivedPoints[i];
-                    //     var nextPoint = receivedPoints[i+1];
+                // // remove outliers
+                // for (var i = 1; i < receivedPoints.length - 1; i++) {
+                //     var previousPoint = receivedPoints[i - 1];
+                //     var thisPoint = receivedPoints[i];
+                //     var nextPoint = receivedPoints[i+1];
 
-                    //     if (!nextPoint || !thisPoint) continue;
+                //     if (!nextPoint || !thisPoint) continue;
 
-                    //     if (thisPoint.elevation == null && previousPoint.elevation != null) {
-                    //         thisPoint.elevation = previousPoint.elevation;
-                    //     }
-                    //     else if (thisPoint.elevation == null && nextPoint.elevation != null) {
-                    //         thisPoint.elevation = nextPoint.elevation;
-                    //     }
-                    //     if (nextPoint.elevation == null && thisPoint.elevation != null) {
-                    //         nextPoint.elevation = thisPoint.elevation;
-                    //     }
+                //     if (thisPoint.elevation == null && previousPoint.elevation != null) {
+                //         thisPoint.elevation = previousPoint.elevation;
+                //     }
+                //     else if (thisPoint.elevation == null && nextPoint.elevation != null) {
+                //         thisPoint.elevation = nextPoint.elevation;
+                //     }
+                //     if (nextPoint.elevation == null && thisPoint.elevation != null) {
+                //         nextPoint.elevation = thisPoint.elevation;
+                //     }
 
-                    //     var distance = turf.distance(
-                    //         turf.point([thisPoint.lng,thisPoint.lat]),
-                    //         turf.point([nextPoint.lng,nextPoint.lat]),
-                    //         "kilometers");
-                    //     distance *= 1000; // convert from km to meters
+                //     var distance = turf.distance(
+                //         turf.point([thisPoint.lng,thisPoint.lat]),
+                //         turf.point([nextPoint.lng,nextPoint.lat]),
+                //         "kilometers");
+                //     distance *= 1000; // convert from km to meters
 
-                    //     var elevationDiff = Math.abs(thisPoint.elevation - nextPoint.elevation);
-                    //     if (elevationDiff > 0) {
-                    //         var slope  = Math.round(Math.atan(elevationDiff / distance) * (180/Math.PI));
-                    //         var slopeDiff = Math.abs(((thisPoint.slope + nextPoint.slope) / 2) - slope);
-                    //         //var slopeDiff2 = nextPoint.slope - slope;
-                    //         //console.log("DIFF: " + elevationDiff + " / " + slope + " / " + slopeDiff);
+                //     var elevationDiff = Math.abs(thisPoint.elevation - nextPoint.elevation);
+                //     if (elevationDiff > 0) {
+                //         var slope  = Math.round(Math.atan(elevationDiff / distance) * (180/Math.PI));
+                //         var slopeDiff = Math.abs(((thisPoint.slope + nextPoint.slope) / 2) - slope);
+                //         //var slopeDiff2 = nextPoint.slope - slope;
+                //         //console.log("DIFF: " + elevationDiff + " / " + slope + " / " + slopeDiff);
 
-                    //         // outlier
-                    //         if (slope > 60 && slopeDiff > 40) {
-                    //             console.log("OUTLIER CORRECTED!");
-                    //             thisPoint.elevation = previousPoint.elevation;
-                    //         }
-                    //     }
-                    // }
-
-                    plotElevationProfile(receivedPoints);
-                //}
+                //         // outlier
+                //         if (slope > 60 && slopeDiff > 40) {
+                //             console.log("OUTLIER CORRECTED!");
+                //             thisPoint.elevation = previousPoint.elevation;
+                //         }
+                //     }
+                // }
+                plotElevationProfile(receivedPoints);
             });
-
-              //  for (var i = 0; i < points.length; i++) {
-              //       point_string += points[i].lng + "," + points[i].lat + ";";
-              // }
-
-              // point_string = point_string.substring(0,point_string.length-1);
-
-              // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
-              //   point_string 
-              //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
-              //       //console.log(data.results);
-
-              //       geoJSON.features[0].geometry.coordinates = [];
-              //       for (var i=0; i< data.results.length; i++) {
-              //           geoJSON.features[0].geometry.coordinates.push([
-              //               data.results[i].latlng.lng,
-              //               data.results[i].latlng.lat,
-              //               data.results[i].ele
-              //           ]);
-              //       }
-
-              //       lastLine = L.geoJson(geoJSON,{
-              //           onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
-              //       }).addTo(_map);
-              //   });
-
         }
 
         function plotElevationProfile(points) {
@@ -288,38 +287,9 @@ return {
             createElevationProfileWidget();
 
             lastLine = L.geoJson(geoJSON, {
-                // style: {
-                //     color: 'transparent'
-                // },
                 onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
             });//.addTo(_map);
         }
-
-      // var lastLine;
-      // var lastLayer;
-      // _map.on('draw:created', function(e) {
-      //     if (lastLayer) featureGroup.removeLayer(lastLayer);
-      //     if (lastLine) _map.removeLayer(lastLine);
-
-      //     lastLayer = e.layer;
-      //     console.log(e.layer);
-      //     featureGroup.addLayer(e.layer);
-
-      //     editToolbar.enable();
-
-      //     //createElevationProfileWidget();
-
-          // var points = [];
-
-          // var point_string = "";
-          //  for (var i = 0; i < e.layer._latlngs.length; i++) {
-          //      points.push(e.layer._latlngs[i]);
-          // }
-
-          // while ((points.length * 2) -1 <= 200) {
-          //   points = interpolate(points);
-          // }
-
           //  for (var i = 0; i < points.length; i++) {
           //       point_string += points[i].lng + "," + points[i].lat + ";";
           // }

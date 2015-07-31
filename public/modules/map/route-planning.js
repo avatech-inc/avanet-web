@@ -105,14 +105,17 @@ return {
                 // finish point
                 if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
 
+                // waypoints
                 if (waypoints[marker._index]) {
                     marker.waypoint = true;
                     $(marker._icon).addClass("waypoint-icon");
+
+                    // add to elevation profile
+                    elevationWidget.addWaypoint(marker._latlng);
                 }
             });
         }
 
-        var _line;
         var editMode = false;
         var preventEdit = false;
         _map.on('click', function(e) {
@@ -124,16 +127,16 @@ return {
             }
             // if creating first point
             else {
-                var newLayer = L.polyline([e.latlng], {}).addTo(_map);
-                featureGroup.addLayer(newLayer);
+                var line = L.polyline([e.latlng], {}).addTo(_map);
+                featureGroup.addLayer(line);
                 editHandler.enable();
                 editMode = true;
 
                 // start icon
-                $(newLayer.editing._markers[0]).addClass("start-icon");
+                $(line.editing._markers[0]).addClass("start-icon");
 
                 // when line is edited (after point is dragged)
-                newLayer.on('edit', function(e) {
+                line.on('edit', function(e) {
                     // prevent addition of new points for 1 second after moving point
                     // to prevent accidental addition of new point
                     preventEdit = true;
@@ -144,20 +147,22 @@ return {
                     lineEdited();
                 });
 
-                // newLayer.on('click', function(e){
-                //     console.log("CLICK");
-                //     addPoint(e.latlng, true);
-                // });
+                line.on('click', function(e){
+                    console.log("CLICK");
+                    console.log(e);
+                });
 
                 // elevation widget highlight
-                newLayer.on('mousemove', function(e){
+                line.on('mousemove', function(e){
                     if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
                 });
-                newLayer.on('mouseout', function(e){
+                line.on('mouseout', function(e){
                     if (elevationWidget) elevationWidget.highlight();
                 });
             }
         });
+
+        
 
         var lastLine;
         function lineEdited() {
@@ -170,17 +175,23 @@ return {
                 // remove existing marker click events (which will delete the marker)
                 marker.off('click');
                 marker.on('click',function(e){
-                    console.log("clicked on a marker without deleting!!!");
-                    console.log(e);
-                    console.log(this);
+                    var _marker = this;
+                    if (!_marker.waypoint) {
+                        _marker.waypoint = true;
+                        $(_marker._icon).addClass("waypoint-icon");
 
-                    this.waypoint = true;
-                    $(this._icon).addClass("waypoint-icon");
+                        // bind popup
+                        _marker.bindPopup("MARKER " + _marker._index + "<br/><i>this is a</i> <b>test</>");
+
+                        // add to elevation profile
+                        elevationWidget.addWaypoint(e.latlng);
+
+                    }
                 });
                 // re-enable delete
                 //marker.on('click', line.editing._onMarkerClick, line.editing);
 
-                // if marker is a waypoint, make sure it has css class
+                // if marker is a waypoint, add it to elevation profile
                 // console.log("MARKER:");
                 // console.log(marker);
                 // if (marker.waypoint) {
@@ -250,6 +261,12 @@ return {
                 //     }
                 // }
                 plotElevationProfile(receivedPoints);
+
+                // add waypoints to elevation profile
+                angular.forEach(line.editing._markers,function(marker) {
+                    if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
+                });
+
             });
         }
 

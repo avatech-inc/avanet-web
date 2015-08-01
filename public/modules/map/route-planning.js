@@ -31,17 +31,18 @@ return {
         var _line;
 
         // the feature group holder for the route
-        var lineGroup = L.lineGroup().addTo(_map);
+        var lineGroup = L.featureGroup().addTo(_map);
+
         // Leaflet.Draw edit handler for custom edit/draw functionality
         var editHandler = new L.EditToolbar.Edit(_map, {
-            lineGroup: lineGroup,
+            featureGroup: lineGroup,
             selectedPathOptions: {
                 color: 'blue'
             }
         });
 
         // keep track of line segments (point-to-point line segments, not route segments)
-        var lineSegmentGroup = L.lineGroup().addTo(_map);
+        var lineSegmentGroup = L.featureGroup().addTo(_map);
         var segments;
         function updateSegments() {
             segments = [];
@@ -103,7 +104,7 @@ return {
             var waypoints = {};
             for (var i = 0; i < _line.editing._markers.length; i++) {
                 var marker = _line.editing._markers[i];
-                if (marker.waypoint) waypoints[i] = true;
+                if (marker.waypoint) waypoints[i] = marker.waypoint;
             }
 
             // call updateMarkers to reload points
@@ -116,7 +117,7 @@ return {
                 // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
 
                 // if waypoint
-                if (waypoints[marker._index]) makeWaypoint(marker);
+                if (waypoints[marker._index]) makeWaypoint(marker, waypoints[marker._index]);
                 // regular point
                 else makeRegularPoint(marker);
             });
@@ -135,7 +136,7 @@ return {
             }
             // if creating first point
             else {
-                _line = L.polyline([e.latlng], {}).addTo(_map);
+                _line = L.polyline([e.latlng], {});
                 lineGroup.addLayer(_line);
                 editHandler.enable();
                 editMode = true;
@@ -171,10 +172,13 @@ return {
             });
         }
 
-        function makeWaypoint(marker) {
+        function makeWaypoint(marker, waypointData) {
             makePoint(marker);
 
-            marker.waypoint = true;
+            marker.waypoint = {
+                name: 'Waypoint ' + marker._index
+            };
+            if (waypointData) marker.waypoint = waypointData;
 
             // add marker css class
             $(marker._icon).addClass("waypoint-icon");
@@ -184,6 +188,10 @@ return {
 
             var popup = document.createElement("div");
             popup.style.padding = '5px';
+
+            var nameInput = document.createElement("input");
+            popup.appendChild(nameInput);
+            nameInput.value = marker.waypoint.name;
 
             var deleteaypointbutton = document.createElement("button");
             popup.appendChild(deleteaypointbutton);

@@ -225,6 +225,8 @@ return {
             popup.appendChild(deleteButton);
             deleteButton.innerHTML = "delete";
             deleteButton.addEventListener("click", function() {
+                var layers = featureGroup._layers;
+                var line = layers[Object.keys(layers)[0]];
                 line.editing._onMarkerClick({ target: marker });
                  //marker.on('click', line.editing._onMarkerClick, line.editing);
             });

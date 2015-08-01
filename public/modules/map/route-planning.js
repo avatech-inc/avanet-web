@@ -69,22 +69,36 @@ return {
                 segments.push(segmentData);
 
                 var segment = L.polyline([thisPoint, nextPoint], {
-                    color: 'transparent'
+                    color: 'transparent',
+                    weight: 12 // allows for a wider clickable area
                 });
                 segment.segment = segmentData;
 
-                segment.on('click', function(e){
-                    console.log("segment clicked!");
-                    console.log(e.latlng);
-                    console.log(e.target.segment);
+                // add new point when clicking on the line
+                segment.on('mousedown', function(e){
+                    // straighten out point on line
+                    // var newPoint = e.latlng;
+                    // newPoint = turf.pointOnLine(
+                    //     turf.linestring([
+                    //         [e.target.segment.start.lat, e.target.segment.start.lng],
+                    //         [e.target.segment.end.lat, e.target.segment.end.lng]
+                    //     ]),
+                    //     turf.point([newPoint.lat,newPoint.lng])
+                    // );
+                    // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
 
-                    // add point
-                    addPoint(e.latlng, e.target.segment.index + 1);
-                })
+                    addPoint(newPoint, e.target.segment.index + 1);
+                });
+
+                // elevation widget highlight
+                segment.on('mousemove', function(e) {
+                    if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
+                });
+                segment.on('mouseout', function(e) {
+                    if (elevationWidget) elevationWidget.highlight();
+                });
 
                 lineSegmentGroup.addLayer(segment);
-
-                
             }
         }
 
@@ -228,19 +242,6 @@ return {
 
                     updateElevationProfile();
                     updateSegments();
-                });
-
-                // line.on('click', function(e){
-                //     console.log("CLICK");
-                //     console.log(e);
-                // });
-
-                // elevation widget highlight
-                line.on('mousemove', function(e){
-                    if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
-                });
-                line.on('mouseout', function(e){
-                    if (elevationWidget) elevationWidget.highlight();
                 });
             }
         });

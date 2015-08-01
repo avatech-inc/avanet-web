@@ -42,9 +42,9 @@
             }
         },
 
-        drawTile: function (/*tile, tilePoint*/) {
-            // override with rendering code
-        },
+        // drawTile: function (/*tile, tilePoint*/) {
+        //     // override with rendering code
+        // },
 
         tileDrawn: function (tile) {
             this._tileOnLoad.call(tile);
@@ -65,7 +65,7 @@
 
 
     L.tileLayer.terrain = function (options) {
-        options.underzoom = true;
+        options.underzoom = false;
 
         var terrainLayer =  new L.TileLayer.Terrain(options);
 
@@ -138,6 +138,8 @@
             }
         }
 
+        terrainLayer.PNG_cache = {};
+
         terrainLayer.drawTile = function(canvas, tilePoint, zoom) {
 
             var tileSize = terrainLayer._getTileSize();
@@ -145,13 +147,20 @@
 
             var renderedZFactor;
 
-            var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
-
             var PNG_data;
 
+            var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
+
             if (zoom > terrainLayer.options.maxNativeZoom) zoom = terrainLayer.options.maxNativeZoom;
-            // make zoom level 12 underzoomed from 13
+            //make zoom level 12 underzoomed from 13
             if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
+
+
+            //tilePoint = latLngToTilePoint(latlng.lat, latlng.lng, zoom);
+            var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
+            //var tile_id = getTileId(latlng.lat, latlng.lng, zoom);
+            //console.log(tile_id);
+
             terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
             function redraw() {
@@ -195,29 +204,40 @@
             }
 
            
-            // invert for TMS
-            //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
-            var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-           
-            //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-            
-            var xhr = new XMLHttpRequest;
-            xhr.open("GET", url, true);
-            xhr.responseType = "arraybuffer";
-            xhr.onload = function() {
-                if (xhr.status != 200) return;
-                var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+              
+            var cachedTile = terrainLayer.PNG_cache[tile_id];
+            if (cachedTile) {
+                console.log("CACHED TILE FOUND!");
+                PNG_data = new Uint8ClampedArray(cachedTile).buffer;;
+                redraw();
+                terrainLayer.redrawQueue.push(redraw);
+            }
+            else {
+                // invert for TMS
+                //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
+                var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                
 
-                var png = new PNG(data);
-                if (png) {
-                    var pixels = png.decodePixels();
-                    PNG_data = new Uint8ClampedArray(pixels).buffer;
+                var xhr = new XMLHttpRequest;
+                xhr.open("GET", url, true);
+                xhr.responseType = "arraybuffer";
+                xhr.onload = function() {
+                    if (xhr.status != 200) return;
+                    var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
 
-                    redraw();
-                    terrainLayer.redrawQueue.push(redraw);
-                }
-            };
-            return xhr.send(null);
+                    var png = new PNG(data);
+                    if (png) {
+                        var pixels = png.decodePixels();
+                        terrainLayer.PNG_cache[tile_id] = pixels;
+                        PNG_data = new Uint8ClampedArray(pixels).buffer;
+
+                        redraw();
+                        terrainLayer.redrawQueue.push(redraw);
+                    }
+                };
+                return xhr.send(null);
+            }
         }
 
         terrainLayer.redraw = function() {
@@ -250,6 +270,13 @@
 
         terrainLayer.callbacks = {};
         var batchId = 0;
+
+        // function getTileId(lat, lng, zoom) {
+        //     var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
+        //     if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
+        //     var tilePoint = latLngToTilePoint(lat, lng, zoom);
+        //     return tilePoint.x + "_" + tilePoint.y + "_" + zoom;
+        // }
 
         terrainLayer.getTerrainData = function(lat, lng, callback, index, batchId) {
 
@@ -314,6 +341,8 @@
 
             // send point to tile worker
             var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + terrainLayer._map.getZoom();
+            //var tile_id = getTileId(lat, lng, terrainLayer._map.getZoom());
+            //console.log(tile_id);
             var worker = terrainLayer.workers[tile_id];
             if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng, requestId: requestId, index: index });
 

@@ -130,7 +130,7 @@ return {
 
                 // if waypoint
                 if (waypoints[marker._index]) makeWaypoint(marker);
-                // otherwise, bind waypoint/delete button popup
+                // regular point
                 else makeRegularPoint(marker);
             });
 
@@ -168,11 +168,25 @@ return {
                 });
             }
         });
+
+        function makePoint(marker) {
+            // remove existing marker events
+            marker.off('click');
+            marker.off('mouseover');
+            marker.off('mouseout');
+
+            // elevation widget highlight
+            marker.on('mouseover', function(e) {
+                if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
+            });
+            marker.on('mouseout', function(e) {
+                if (elevationWidget) elevationWidget.highlight();
+            });
+        }
     
 
         function makeWaypoint(marker) {
-            // remove existing marker click events
-            marker.off('click');
+            makePoint(marker);
 
             marker.waypoint = true;
 
@@ -200,6 +214,8 @@ return {
             elevationWidget.addWaypoint(marker._latlng);
         }
         function makeRegularPoint(marker) {
+            makePoint(marker);
+
             // remove existing marker click events
             marker.off('click');
 

@@ -193,7 +193,6 @@ return {
             popup.appendChild(nameInput);
             nameInput.value = marker.waypoint.name;
             nameInput.onkeyup = function() {
-                console.log(nameInput.value);
                 marker.waypoint.name = nameInput.value;
             }
 
@@ -233,6 +232,7 @@ return {
                 marker.closePopup();
                 marker.unbindPopup();
                 makeWaypoint(marker);
+                marker.openPopup();
             });
 
             var deleteButton = document.createElement("button");

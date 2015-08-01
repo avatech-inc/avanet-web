@@ -203,7 +203,9 @@
                 renderedZFactor = terrainLayer.zFactor;
             }
 
-           
+           // if (zoom == 13) {
+           //      console.log(tile_id);
+           // }
               
             var cachedTile = terrainLayer.PNG_cache[tile_id];
             if (cachedTile) {
@@ -340,7 +342,12 @@
             if (callback) terrainLayer.callbacks[requestId] = callback;
 
             // send point to tile worker
-            var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + terrainLayer._map.getZoom();
+            var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
+
+           //if (zoom == 13) {
+           //     console.log(tile_id);
+           //}
+
             //var tile_id = getTileId(lat, lng, terrainLayer._map.getZoom());
             //console.log(tile_id);
             var worker = terrainLayer.workers[tile_id];

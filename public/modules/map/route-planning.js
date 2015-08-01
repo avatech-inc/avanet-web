@@ -24,6 +24,41 @@ function interpolate(_points) {
 return {
     init: function(_map, terrainLayer) {
 
+        L.Control.RoutePlanningToolbar = L.Control.extend({
+            options: {
+                position: "topright",
+                theme: "lime-theme",
+                width: 600,
+                height: 175,
+                margins: {
+                    top: 10,
+                    right: 20,
+                    bottom: 30,
+                    left: 60
+                }
+            },
+
+            onRemove: function(map) {
+                this._container = null;
+            },
+
+            onAdd: function(map) {
+                this._map = map;
+
+                var container = this._container = L.DomUtil.create("div", "route-planning-toolbar");
+
+                var saveButton = document.createElement("button");
+                container.appendChild(saveButton);
+                saveButton.innerHTML = "Save";
+                saveButton.onclick = function() {
+                    saveRoute();
+                }
+
+                return container;
+            }
+        });
+        var routePlanningToolbar = new L.Control.RoutePlanningToolbar({}).addTo(_map);
+
         _map.on('zoomend', function(e) {
             //plotElevationProfile();
         });
@@ -307,7 +342,10 @@ return {
 
             for (var i = 0; i < points.length; i++) {
                 var terrainData = points[i];
-                if (!terrainData || terrainData.lat == null || terrainData.lat == null || terrainData.elevation == null) continue;
+                if (!terrainData) return;
+                //if (!terrainData || terrainData.lat == null || terrainData.lat == null || terrainData.elevation == null) continue;
+
+                if (!terrainData.elevation) terrainData.elevation = 0;
 
                 geoJSON.features[0].geometry.coordinates.push([
                     terrainData.lng,
@@ -383,7 +421,24 @@ return {
             });
             elevationWidget.addTo(_map);
         }
+
+
+
+        function saveRoute() {
+            var markers = _line.editing._markers;
+            console.log(markers);
+
+            console.log("MARKERS:");
+
+            angular.forEach(markers, function(marker) {
+                var obj = {}
+                obj.latlng = marker._latlng;
+                obj.waypoint = marker.waypoint;
+                console.log(obj);
+            })
         }
+
     }
+}
 
 });

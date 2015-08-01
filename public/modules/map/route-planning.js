@@ -12,7 +12,7 @@ function interpolate(_points) {
             var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
             var percentage = 0.5; 
             var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
-            // todo: wtf???
+            // todo: wtf?????
             // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
             new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
         }
@@ -26,22 +26,11 @@ return {
 
         L.Control.RoutePlanningToolbar = L.Control.extend({
             options: {
-                position: "topright",
-                theme: "lime-theme",
-                width: 600,
-                height: 175,
-                margins: {
-                    top: 10,
-                    right: 20,
-                    bottom: 30,
-                    left: 60
-                }
+                position: "topleft"
             },
-
             onRemove: function(map) {
                 this._container = null;
             },
-
             onAdd: function(map) {
                 this._map = map;
 
@@ -61,6 +50,8 @@ return {
 
         _map.on('zoomend', function(e) {
             //plotElevationProfile();
+            console.log("MAP ZOOM: " + _map.getZoom());
+            // todo: if zoom level 11, disable route editing
         });
 
         var _line;
@@ -340,12 +331,18 @@ return {
             ]};
             geoJSON.features[0].geometry.coordinates = [];
 
+            // get max elevation
+            var max_elevation = 0;
+            for (var i = 0; i < points.length; i++) {
+                max_elevation = Math.max(points[i].elevation, max_elevation);
+                //if (points[i].elevation > max_elevation) max_elevation = 
+            }
+
             for (var i = 0; i < points.length; i++) {
                 var terrainData = points[i];
-                if (!terrainData) return;
-                //if (!terrainData || terrainData.lat == null || terrainData.lat == null || terrainData.elevation == null) continue;
+                if (!terrainData || terrainData.lat == null || terrainData.lat == null) continue;
 
-                if (!terrainData.elevation) terrainData.elevation = 0;
+                if (!terrainData.elevation) terrainData.elevation = max_elevation;
 
                 geoJSON.features[0].geometry.coordinates.push([
                     terrainData.lng,
@@ -423,7 +420,7 @@ return {
         }
 
 
-
+        // todo: save as geoJSON?
         function saveRoute() {
             var markers = _line.editing._markers;
             console.log(markers);

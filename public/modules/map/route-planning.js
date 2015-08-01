@@ -47,33 +47,112 @@ return {
             }
         });
 
-        function addPoint(latlng, middle) {
+        // keep track of line segments (point-to-point line segments, not route segments)
+        var lineSegmentGroup = L.featureGroup().addTo(_map);
+        var segments = [];
+        function updateSegments() {
+            segments = [];
+            lineSegmentGroup.clearLayers();
+
             var layers = featureGroup._layers;
             var line = layers[Object.keys(layers)[0]];
 
-            var index = line.editing._poly._latlngs.length;
+            for (var i = 0; i < line.editing._poly._latlngs.length - 1; i++) {
+                var thisPoint = line.editing._poly._latlngs[i];
+                var nextPoint = line.editing._poly._latlngs[i + 1];
 
-            // find nearest point on line
+                var segmentData = {
+                    start: thisPoint,
+                    end: nextPoint,
+                    index: i
+                };
+                segments.push(segmentData);
+
+                var segment = L.polyline([thisPoint, nextPoint], {
+                    color: 'transparent'
+                });
+                segment.segment = segmentData;
+
+                segment.on('click', function(e){
+                    console.log("segment clicked!");
+                    console.log(e.latlng);
+                    console.log(e.target.segment);
+
+                    // add point
+                    addPoint(e.latlng, e.target.segment.index + 1);
+                })
+
+                lineSegmentGroup.addLayer(segment);
+
+                
+            }
+        }
+
+        function addPoint(latlng, index) {
+            var layers = featureGroup._layers;
+            var line = layers[Object.keys(layers)[0]];
+
+            if (index == null) index = line.editing._poly._latlngs.length;
+
+            // // find nearest point on line
             // if (middle) {
-            //     var result = null,
-            //         d = Infinity;
+            //     // var result = null,
+            //     //     d = Infinity;
 
-            //     //angular.forEach(line.editing._poly._latlngs, function(item) {
-            //     for (var i = 0; i < line.editing._poly._latlngs.length; i++) {
-            //         var item = line.editing._poly._latlngs[i];
+            //     // //angular.forEach(line.editing._poly._latlngs, function(item) {
+            //     // for (var i = 0; i < line.editing._poly._latlngs.length; i++) {
+            //     //     var item = line.editing._poly._latlngs[i];
 
-            //         var distance = turf.distance(
-            //                 turf.point([item.lng,item.lat]),
+            //     //     var distance = turf.distance(
+            //     //             turf.point([item.lng,item.lat]),
+            //     //             turf.point([latlng.lng,latlng.lat]),
+            //     //             "kilometers");
+
+            //     //     if (distance < d) {
+            //     //         d = distance;
+            //     //         index = i;
+            //     //     }
+            //     // }
+            //     // // we now have the index of the cloest point,
+
+            //     // console.log("RESULT: " + index);
+            //     // var point = latlng;
+            //     // var points = line.editing._poly._latlngs;
+            //     var min_distance1 = 0;
+            //     var min_distance2 = 0;
+
+            //     var index1;
+            //     var index2;
+
+            //     for (var i = 0; i < line.editing._poly._latlngs.length - 1; i++) {
+            //         //if (i < points.length - 2) {
+            //         var thisPoint = line.editing._poly._latlngs[i];
+            //         var nextPoint = line.editing._poly._latlngs[i + 1];
+
+            //         var distance1 = turf.distance(
             //                 turf.point([latlng.lng,latlng.lat]),
+            //                 turf.point([thisPoint.lng,thisPoint.lat]),
             //                 "kilometers");
-
-            //         if (distance < d) {
+            //         min_distance1 = Math.min(min_distance1, distance1);
+            //                if (distance < d) {
             //             d = distance;
             //             index = i;
             //         }
-            //     }
 
-            //     console.log("RESULT: " + index);
+            //         var distance2 = turf.distance(
+            //                 turf.point([latlng.lng,latlng.lat]),
+            //                 turf.point([nextPoint.lng,nextPoint.lat]),
+            //                 "kilometers");
+            //         min_distance2 = Math.min(min_distance2, distance2);
+
+
+            //             // if (min_distance > L.LineUtil.pointToSegmentDistance( point, points[i], points[i + 1] ) ) {
+            //             //     min_distance = L.LineUtil.pointToSegmentDistance( point, points[i], points[i + 1] );
+            //             //     min_offset = i;
+            //             // }
+            //         //}
+            //     }
+            //     console.log("FOUND? " + index1 + "/" + index2);
             // }
 
             // find nearest, 'index' is the one NEXT in the list 
@@ -91,9 +170,11 @@ return {
             // note: if we ever implement arbitrary new point placement (commented out above)
             // then this might not work properly, since we're using index to keep track
             var waypoints = {};
-            angular.forEach(line.editing._markers,function(marker) {
-                if (marker.waypoint) waypoints[marker._index] = true;
-            });
+            //angular.forEach(line.editing._markers,function(marker) {
+            for (var i = 0; i < line.editing._markers.length; i++) {
+                var marker = line.editing._markers[i];
+                if (marker.waypoint) waypoints[i] = true;
+            }
 
             // call updateMarkers to reload points
             line.editing.updateMarkers();
@@ -101,19 +182,23 @@ return {
             // re-load waypoints
             angular.forEach(line.editing._markers,function(marker) {
                 // start point
-                if (marker._index == 0) $(marker._icon).addClass("start-icon");
-                // finish point
-                if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
+                // if (marker._index == 0) $(marker._icon).addClass("start-icon");
+                // // finish point
+                // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
 
                 // waypoints
                 if (waypoints[marker._index]) {
                     marker.waypoint = true;
-                    $(marker._icon).addClass("waypoint-icon");
+                    //$(marker._icon).addClass("waypoint-icon");
 
                     // add to elevation profile
-                    elevationWidget.addWaypoint(marker._latlng);
+                    //elevationWidget.addWaypoint(marker._latlng);
                 }
             });
+
+            updateMarkers();
+            updateElevationProfile();
+            updateSegments();
         }
 
         var editMode = false;
@@ -123,7 +208,6 @@ return {
             if (editMode) {
                 if (preventEdit) return;
                 addPoint(e.latlng);
-                lineEdited();
             }
             // if creating first point
             else {
@@ -142,15 +226,14 @@ return {
                     preventEdit = true;
                     setTimeout(function() { preventEdit = false }, 1000);
 
-                    var layers = featureGroup._layers;
-                    var line = layers[Object.keys(layers)[0]];
-                    lineEdited();
+                    updateElevationProfile();
+                    updateSegments();
                 });
 
-                line.on('click', function(e){
-                    console.log("CLICK");
-                    console.log(e);
-                });
+                // line.on('click', function(e){
+                //     console.log("CLICK");
+                //     console.log(e);
+                // });
 
                 // elevation widget highlight
                 line.on('mousemove', function(e){
@@ -161,35 +244,68 @@ return {
                 });
             }
         });
+    
 
-        
+        function makeWaypoint(marker) {
+            marker.waypoint = true;
 
-        var lastLine;
-        function lineEdited() {
+            // add marker css class
+            $(marker._icon).addClass("waypoint-icon");
 
+            // bind popup
+            marker.unbindPopup();
+            marker.bindPopup("MARKER " + marker._index + "<br/><i>this is a</i> <b>test</>");
+
+            // add to elevation profile
+            elevationWidget.addWaypoint(marker._latlng);
+        }
+
+        function updateMarkers() {
             var layers = featureGroup._layers;
             var line = layers[Object.keys(layers)[0]];
-            var points = line._latlngs;
 
             angular.forEach(line.editing._markers,function(marker) {
+                console.log(marker);
+
                 // remove existing marker click events (which will delete the marker)
                 marker.off('click');
+
+                // if clicking on a marker, create waypoint
                 marker.on('click',function(e){
-                    var _marker = this;
-                    if (!_marker.waypoint) {
-                        _marker.waypoint = true;
-                        $(_marker._icon).addClass("waypoint-icon");
 
-                        // bind popup
-                        _marker.bindPopup("MARKER " + _marker._index + "<br/><i>this is a</i> <b>test</>");
-
-                        // add to elevation profile
-                        elevationWidget.addWaypoint(e.latlng);
-
-                    }
+                    //if (!this.waypoint) makeWaypoint(this);
                 });
                 // re-enable delete
                 //marker.on('click', line.editing._onMarkerClick, line.editing);
+
+                // bind popup
+                var popup = document.createElement("div");
+                popup.style.padding = '5px';
+
+                var makeWaypointbutton = document.createElement("button");
+                popup.appendChild(makeWaypointbutton);
+                makeWaypointbutton.innerHTML = "make waypoint";
+                makeWaypointbutton.addEventListener("click", function() {
+                    marker.closePopup();
+                    marker.unbindPopup();
+                    makeWaypoint(marker);
+                });
+
+                var deleteButton = document.createElement("button");
+                popup.appendChild(deleteButton);
+                deleteButton.innerHTML = "delete";
+                deleteButton.addEventListener("click", function() {
+                    console.log(marker);
+                    // marker.closePopup();
+                    // marker.unbindPopup();
+                    // makeWaypoint(marker);
+                    line.editing._onMarkerClick({ target: marker });
+                });
+
+                marker.bindPopup(popup, { closeButton: false });
+
+                // if marker is already a waypoint, make it a waypoint
+                if (marker.waypoint) makeWaypoint(marker);
 
                 // if marker is a waypoint, add it to elevation profile
                 // console.log("MARKER:");
@@ -199,6 +315,16 @@ return {
                 //     $(marker._icon).addClass("waypoint-icon");
                 // }
             });
+
+        }
+        
+
+        var lastLine;
+        function updateElevationProfile() {
+
+            var layers = featureGroup._layers;
+            var line = layers[Object.keys(layers)[0]];
+            var points = line._latlngs;
 
             // get distance
             var _points = points.map(function(point) { return [point.lng,point.lat] });
@@ -222,44 +348,6 @@ return {
                 console.log("DOWNLOAD COMPLETE!!!");
                 if (!receivedPoints || receivedPoints.length == 0) return;
 
-                // // remove outliers
-                // for (var i = 1; i < receivedPoints.length - 1; i++) {
-                //     var previousPoint = receivedPoints[i - 1];
-                //     var thisPoint = receivedPoints[i];
-                //     var nextPoint = receivedPoints[i+1];
-
-                //     if (!nextPoint || !thisPoint) continue;
-
-                //     if (thisPoint.elevation == null && previousPoint.elevation != null) {
-                //         thisPoint.elevation = previousPoint.elevation;
-                //     }
-                //     else if (thisPoint.elevation == null && nextPoint.elevation != null) {
-                //         thisPoint.elevation = nextPoint.elevation;
-                //     }
-                //     if (nextPoint.elevation == null && thisPoint.elevation != null) {
-                //         nextPoint.elevation = thisPoint.elevation;
-                //     }
-
-                //     var distance = turf.distance(
-                //         turf.point([thisPoint.lng,thisPoint.lat]),
-                //         turf.point([nextPoint.lng,nextPoint.lat]),
-                //         "kilometers");
-                //     distance *= 1000; // convert from km to meters
-
-                //     var elevationDiff = Math.abs(thisPoint.elevation - nextPoint.elevation);
-                //     if (elevationDiff > 0) {
-                //         var slope  = Math.round(Math.atan(elevationDiff / distance) * (180/Math.PI));
-                //         var slopeDiff = Math.abs(((thisPoint.slope + nextPoint.slope) / 2) - slope);
-                //         //var slopeDiff2 = nextPoint.slope - slope;
-                //         //console.log("DIFF: " + elevationDiff + " / " + slope + " / " + slopeDiff);
-
-                //         // outlier
-                //         if (slope > 60 && slopeDiff > 40) {
-                //             console.log("OUTLIER CORRECTED!");
-                //             thisPoint.elevation = previousPoint.elevation;
-                //         }
-                //     }
-                // }
                 plotElevationProfile(receivedPoints);
 
                 // add waypoints to elevation profile

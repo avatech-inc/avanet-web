@@ -265,55 +265,36 @@ return {
             var line = layers[Object.keys(layers)[0]];
 
             angular.forEach(line.editing._markers,function(marker) {
-                console.log(marker);
-
                 // remove existing marker click events (which will delete the marker)
                 marker.off('click');
 
-                // if clicking on a marker, create waypoint
-                marker.on('click',function(e){
-
-                    //if (!this.waypoint) makeWaypoint(this);
-                });
-                // re-enable delete
-                //marker.on('click', line.editing._onMarkerClick, line.editing);
-
-                // bind popup
-                var popup = document.createElement("div");
-                popup.style.padding = '5px';
-
-                var makeWaypointbutton = document.createElement("button");
-                popup.appendChild(makeWaypointbutton);
-                makeWaypointbutton.innerHTML = "make waypoint";
-                makeWaypointbutton.addEventListener("click", function() {
-                    marker.closePopup();
-                    marker.unbindPopup();
-                    makeWaypoint(marker);
-                });
-
-                var deleteButton = document.createElement("button");
-                popup.appendChild(deleteButton);
-                deleteButton.innerHTML = "delete";
-                deleteButton.addEventListener("click", function() {
-                    console.log(marker);
-                    // marker.closePopup();
-                    // marker.unbindPopup();
-                    // makeWaypoint(marker);
-                    line.editing._onMarkerClick({ target: marker });
-                });
-
-                marker.bindPopup(popup, { closeButton: false });
-
                 // if marker is already a waypoint, make it a waypoint
                 if (marker.waypoint) makeWaypoint(marker);
+                // otherwise, bind waypoint/delete button popup
+                else {
+                    // bind popup
+                    var popup = document.createElement("div");
+                    popup.style.padding = '5px';
 
-                // if marker is a waypoint, add it to elevation profile
-                // console.log("MARKER:");
-                // console.log(marker);
-                // if (marker.waypoint) {
-                //     console.log("waypoint!!!");
-                //     $(marker._icon).addClass("waypoint-icon");
-                // }
+                    var makeWaypointbutton = document.createElement("button");
+                    popup.appendChild(makeWaypointbutton);
+                    makeWaypointbutton.innerHTML = "make waypoint";
+                    makeWaypointbutton.addEventListener("click", function() {
+                        marker.closePopup();
+                        marker.unbindPopup();
+                        makeWaypoint(marker);
+                    });
+
+                    var deleteButton = document.createElement("button");
+                    popup.appendChild(deleteButton);
+                    deleteButton.innerHTML = "delete";
+                    deleteButton.addEventListener("click", function() {
+                        line.editing._onMarkerClick({ target: marker });
+                         //marker.on('click', line.editing._onMarkerClick, line.editing);
+                    });
+
+                    marker.bindPopup(popup, { closeButton: false });
+                }
             });
 
         }

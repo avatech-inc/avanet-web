@@ -65,7 +65,7 @@
 
 
     L.tileLayer.terrain = function (options) {
-        options.underzoom = false;
+        options.underzoom = true;
 
         var terrainLayer =  new L.TileLayer.Terrain(options);
 
@@ -219,7 +219,7 @@
                 //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
                 var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-                
+                console.log(url);
 
                 var xhr = new XMLHttpRequest;
                 xhr.open("GET", url, true);
@@ -271,7 +271,6 @@
         }
 
         terrainLayer.callbacks = {};
-        var batchId = 0;
 
         // function getTileId(lat, lng, zoom) {
         //     var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
@@ -280,13 +279,13 @@
         //     return tilePoint.x + "_" + tilePoint.y + "_" + zoom;
         // }
 
-        terrainLayer.getTerrainData = function(lat, lng, callback, index, batchId) {
+        terrainLayer.getTerrainData = function(lat, lng, callback, index) {
 
             // round down lat/lng for fewer lookups
             // 5 decimal places = 1.1132 m percision
             // https://en.wikipedia.org/wiki/Decimal_degrees
-            lat = Math.round(lat * 1e5) / 1e5;
-            lng = Math.round(lng * 1e5) / 1e5;
+            // lat = Math.round(lat * 1e5) / 1e5;
+            // lng = Math.round(lng * 1e5) / 1e5;
 
             // if its in the cache, return it
             // var terrainData = terrainLayer.terrainDataCache[lat + "_" + lng];
@@ -322,7 +321,7 @@
             }
             // adjust points for underzoom
             if (terrainLayer.options.underzoom && terrainLayer._map.getZoom() == 12) {
-                var zoomDifference = terrainLayer.options.maxNativeZoom - terrainLayer._map.getZoom();
+                var zoomDifference = 1;
                 var zoomDivide = Math.pow(2, zoomDifference)
 
                 pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
@@ -334,7 +333,7 @@
             if (pointInTile.x < 0) pointInTile.x = 0;
             if (pointInTile.y < 0) pointInTile.y = 0;
 
-            // create unique id
+            // create unique request id
             var requestId = lat + "_" + lng + "_" + new Date().getTime();
             if (index != null) requestId += "_" + index;
 
@@ -344,15 +343,10 @@
             // send point to tile worker
             var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
 
-           //if (zoom == 13) {
-           //     console.log(tile_id);
-           //}
-
-            //var tile_id = getTileId(lat, lng, terrainLayer._map.getZoom());
-            //console.log(tile_id);
             var worker = terrainLayer.workers[tile_id];
             if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng, requestId: requestId, index: index });
-
+            // if no worker, return empty data
+            else if (callback) callback({ elevation: null, slope: null, aspect: null, lat: lat, lng: lng, index: index, pointInTile: pointInTile });
         }
 
         var callbackTimer;
@@ -360,6 +354,8 @@
         terrainLayer.getTerrainDataBulk = function(points, callback) {
             // clear callbacks cache
             terrainLayer.callbacks = {};
+
+            console.log("POINTS: " + points.length);
 
             callbackCalled = false;
             var d = new Date().getTime();

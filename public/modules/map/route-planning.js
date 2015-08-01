@@ -31,18 +31,18 @@ return {
         var _line;
 
         // the feature group holder for the route
-        var featureGroup = L.featureGroup().addTo(_map);
+        var lineGroup = L.lineGroup().addTo(_map);
         // Leaflet.Draw edit handler for custom edit/draw functionality
         var editHandler = new L.EditToolbar.Edit(_map, {
-            featureGroup: featureGroup,
+            lineGroup: lineGroup,
             selectedPathOptions: {
                 color: 'blue'
             }
         });
 
         // keep track of line segments (point-to-point line segments, not route segments)
-        var lineSegmentGroup = L.featureGroup().addTo(_map);
-        var segments = [];
+        var lineSegmentGroup = L.lineGroup().addTo(_map);
+        var segments;
         function updateSegments() {
             segments = [];
             lineSegmentGroup.clearLayers();
@@ -65,7 +65,7 @@ return {
                 segment.segment = segmentData;
 
                 // add new point when clicking on the line
-                segment.on('mousedown', function(e){
+                segment.on('mousedown', function(e) {
                     // straighten out point on line
                     // var newPoint = e.latlng;
                     // newPoint = turf.pointOnLine(
@@ -136,7 +136,7 @@ return {
             // if creating first point
             else {
                 _line = L.polyline([e.latlng], {}).addTo(_map);
-                featureGroup.addLayer(_line);
+                lineGroup.addLayer(_line);
                 editHandler.enable();
                 editMode = true;
 
@@ -170,7 +170,6 @@ return {
                 if (elevationWidget) elevationWidget.highlight();
             });
         }
-    
 
         function makeWaypoint(marker) {
             makePoint(marker);

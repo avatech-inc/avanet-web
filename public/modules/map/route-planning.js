@@ -87,7 +87,7 @@ return {
                     // );
                     // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
 
-                    addPoint(newPoint, e.target.segment.index + 1);
+                    addPoint(e.latlng, e.target.segment.index + 1);
                 });
 
                 // elevation widget highlight
@@ -108,83 +108,12 @@ return {
 
             if (index == null) index = line.editing._poly._latlngs.length;
 
-            // // find nearest point on line
-            // if (middle) {
-            //     // var result = null,
-            //     //     d = Infinity;
-
-            //     // //angular.forEach(line.editing._poly._latlngs, function(item) {
-            //     // for (var i = 0; i < line.editing._poly._latlngs.length; i++) {
-            //     //     var item = line.editing._poly._latlngs[i];
-
-            //     //     var distance = turf.distance(
-            //     //             turf.point([item.lng,item.lat]),
-            //     //             turf.point([latlng.lng,latlng.lat]),
-            //     //             "kilometers");
-
-            //     //     if (distance < d) {
-            //     //         d = distance;
-            //     //         index = i;
-            //     //     }
-            //     // }
-            //     // // we now have the index of the cloest point,
-
-            //     // console.log("RESULT: " + index);
-            //     // var point = latlng;
-            //     // var points = line.editing._poly._latlngs;
-            //     var min_distance1 = 0;
-            //     var min_distance2 = 0;
-
-            //     var index1;
-            //     var index2;
-
-            //     for (var i = 0; i < line.editing._poly._latlngs.length - 1; i++) {
-            //         //if (i < points.length - 2) {
-            //         var thisPoint = line.editing._poly._latlngs[i];
-            //         var nextPoint = line.editing._poly._latlngs[i + 1];
-
-            //         var distance1 = turf.distance(
-            //                 turf.point([latlng.lng,latlng.lat]),
-            //                 turf.point([thisPoint.lng,thisPoint.lat]),
-            //                 "kilometers");
-            //         min_distance1 = Math.min(min_distance1, distance1);
-            //                if (distance < d) {
-            //             d = distance;
-            //             index = i;
-            //         }
-
-            //         var distance2 = turf.distance(
-            //                 turf.point([latlng.lng,latlng.lat]),
-            //                 turf.point([nextPoint.lng,nextPoint.lat]),
-            //                 "kilometers");
-            //         min_distance2 = Math.min(min_distance2, distance2);
-
-
-            //             // if (min_distance > L.LineUtil.pointToSegmentDistance( point, points[i], points[i + 1] ) ) {
-            //             //     min_distance = L.LineUtil.pointToSegmentDistance( point, points[i], points[i + 1] );
-            //             //     min_offset = i;
-            //             // }
-            //         //}
-            //     }
-            //     console.log("FOUND? " + index1 + "/" + index2);
-            // }
-
-            // find nearest, 'index' is the one NEXT in the list 
-
             line.editing._poly.spliceLatLngs(index, 0, latlng);
             line.editing._markers.splice(index, 0, line.editing._createMarker(latlng));
-
-            // line.editing._markers.push(line.editing._createMarker(latlng));
-            // //line.editing._poly.addLatLng(latlng);
-            // line.editing._poly._latlngs.push(L.latLng(latlng));
-
             line.editing._poly.redraw();
 
             // before calling updateMarkers, keep track of where waypoints are
-            // note: if we ever implement arbitrary new point placement (commented out above)
-            // then this might not work properly, since we're using index to keep track
             var waypoints = {};
-            //angular.forEach(line.editing._markers,function(marker) {
             for (var i = 0; i < line.editing._markers.length; i++) {
                 var marker = line.editing._markers[i];
                 if (marker.waypoint) waypoints[i] = true;
@@ -193,24 +122,18 @@ return {
             // call updateMarkers to reload points
             line.editing.updateMarkers();
 
-            // re-load waypoints
             angular.forEach(line.editing._markers,function(marker) {
                 // start point
                 // if (marker._index == 0) $(marker._icon).addClass("start-icon");
                 // // finish point
                 // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
 
-                // waypoints
-                if (waypoints[marker._index]) {
-                    marker.waypoint = true;
-                    //$(marker._icon).addClass("waypoint-icon");
-
-                    // add to elevation profile
-                    //elevationWidget.addWaypoint(marker._latlng);
-                }
+                // if waypoint
+                if (waypoints[marker._index]) makeWaypoint(marker);
+                // otherwise, bind waypoint/delete button popup
+                else makeRegularPoint(marker);
             });
 
-            updateMarkers();
             updateElevationProfile();
             updateSegments();
         }
@@ -248,6 +171,9 @@ return {
     
 
         function makeWaypoint(marker) {
+            // remove existing marker click events
+            marker.off('click');
+
             marker.waypoint = true;
 
             // add marker css class
@@ -255,51 +181,76 @@ return {
 
             // bind popup
             marker.unbindPopup();
-            marker.bindPopup("MARKER " + marker._index + "<br/><i>this is a</i> <b>test</>");
+
+            var popup = document.createElement("div");
+            popup.style.padding = '5px';
+
+            var deleteaypointbutton = document.createElement("button");
+            popup.appendChild(deleteaypointbutton);
+            deleteaypointbutton.innerHTML = "delete waypoint";
+            deleteaypointbutton.addEventListener("click", function() {
+                marker.closePopup();
+                marker.unbindPopup();
+                deleteWaypoint(marker);
+            });
+
+            marker.bindPopup(popup, { closeButton: false });
 
             // add to elevation profile
             elevationWidget.addWaypoint(marker._latlng);
         }
+        function makeRegularPoint(marker) {
+            // remove existing marker click events
+            marker.off('click');
 
-        function updateMarkers() {
-            var layers = featureGroup._layers;
-            var line = layers[Object.keys(layers)[0]];
+            if (marker.waypoint) delete marker.waypoint;
 
-            angular.forEach(line.editing._markers,function(marker) {
-                // remove existing marker click events (which will delete the marker)
-                marker.off('click');
+            // remove waypoint css class (if exists)
+            $(marker._icon).removeClass("waypoint-icon");
 
-                // if marker is already a waypoint, make it a waypoint
-                if (marker.waypoint) makeWaypoint(marker);
-                // otherwise, bind waypoint/delete button popup
-                else {
-                    // bind popup
-                    var popup = document.createElement("div");
-                    popup.style.padding = '5px';
+            // bind popup
+            var popup = document.createElement("div");
+            popup.style.padding = '5px';
 
-                    var makeWaypointbutton = document.createElement("button");
-                    popup.appendChild(makeWaypointbutton);
-                    makeWaypointbutton.innerHTML = "make waypoint";
-                    makeWaypointbutton.addEventListener("click", function() {
-                        marker.closePopup();
-                        marker.unbindPopup();
-                        makeWaypoint(marker);
-                    });
-
-                    var deleteButton = document.createElement("button");
-                    popup.appendChild(deleteButton);
-                    deleteButton.innerHTML = "delete";
-                    deleteButton.addEventListener("click", function() {
-                        line.editing._onMarkerClick({ target: marker });
-                         //marker.on('click', line.editing._onMarkerClick, line.editing);
-                    });
-
-                    marker.bindPopup(popup, { closeButton: false });
-                }
+            var makeWaypointbutton = document.createElement("button");
+            popup.appendChild(makeWaypointbutton);
+            makeWaypointbutton.innerHTML = "make waypoint";
+            makeWaypointbutton.addEventListener("click", function() {
+                marker.closePopup();
+                marker.unbindPopup();
+                makeWaypoint(marker);
             });
 
+            var deleteButton = document.createElement("button");
+            popup.appendChild(deleteButton);
+            deleteButton.innerHTML = "delete";
+            deleteButton.addEventListener("click", function() {
+                line.editing._onMarkerClick({ target: marker });
+                 //marker.on('click', line.editing._onMarkerClick, line.editing);
+            });
+
+            marker.bindPopup(popup, { closeButton: false });
         }
+
+        // function updateMarkers() {
+        //     var layers = featureGroup._layers;
+        //     var line = layers[Object.keys(layers)[0]];
+
+        //     angular.forEach(line.editing._markers,function(marker) {
+        //         // remove existing marker click events (which will delete the marker)
+        //         marker.off('click');
+
+        //         // if marker is already a waypoint, make it a waypoint
+        //         if (marker.waypoint) makeWaypoint(marker);
+        //         // otherwise, bind waypoint/delete button popup
+        //         else makeRegularPoint(marker);
+        //     });
+        // }
         
+        function deleteWaypoint(marker) {
+            makeRegularPoint(marker);
+            updateElevationProfile();
+        }
 
         var lastLine;
         function updateElevationProfile() {

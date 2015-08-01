@@ -1,41 +1,34 @@
-
-
 angular.module('avatech').factory('routePlanning', function (Global) { 
 
-    function interpolate(_points) {
-        var new_points = [];
-       for (var i = 0; i < _points.length; i++) {
-            new_points[i*2] = _points[i];
-      }
+function interpolate(_points) {
+    var new_points = [];
+   for (var i = 0; i < _points.length; i++) {
+        new_points[i*2] = _points[i];
+  }
 
-       for (var i = 0; i < new_points.length; i++) {
-            if (!new_points[i]) {
-                var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
-                var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
-                var percentage = 0.5; 
-                var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
-                // todo: wtf???
-                // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
-                new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
-            }
-      }
+   for (var i = 0; i < new_points.length; i++) {
+        if (!new_points[i]) {
+            var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
+            var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
+            var percentage = 0.5; 
+            var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
+            // todo: wtf???
+            // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
+            new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
+        }
+  }
 
-        return new_points;
-    }
-
-
-    
+    return new_points;
+}
 
 return {
     init: function(_map, terrainLayer) {
 
-
         _map.on('zoomend', function(e) {
             //plotElevationProfile();
-            // setTimeout(function(){
-            //     lineEdited();
-            // }, 100)
         });
+
+        var _line;
 
         // the feature group holder for the route
         var featureGroup = L.featureGroup().addTo(_map);
@@ -54,12 +47,9 @@ return {
             segments = [];
             lineSegmentGroup.clearLayers();
 
-            var layers = featureGroup._layers;
-            var line = layers[Object.keys(layers)[0]];
-
-            for (var i = 0; i < line.editing._poly._latlngs.length - 1; i++) {
-                var thisPoint = line.editing._poly._latlngs[i];
-                var nextPoint = line.editing._poly._latlngs[i + 1];
+            for (var i = 0; i < _line.editing._poly._latlngs.length - 1; i++) {
+                var thisPoint = _line.editing._poly._latlngs[i];
+                var nextPoint = _line.editing._poly._latlngs[i + 1];
 
                 var segmentData = {
                     start: thisPoint,
@@ -103,26 +93,23 @@ return {
         }
 
         function addPoint(latlng, index) {
-            var layers = featureGroup._layers;
-            var line = layers[Object.keys(layers)[0]];
+            if (index == null) index = _line.editing._poly._latlngs.length;
 
-            if (index == null) index = line.editing._poly._latlngs.length;
-
-            line.editing._poly.spliceLatLngs(index, 0, latlng);
-            line.editing._markers.splice(index, 0, line.editing._createMarker(latlng));
-            line.editing._poly.redraw();
+            _line.editing._poly.spliceLatLngs(index, 0, latlng);
+            _line.editing._markers.splice(index, 0, _line.editing._createMarker(latlng));
+            _line.editing._poly.redraw();
 
             // before calling updateMarkers, keep track of where waypoints are
             var waypoints = {};
-            for (var i = 0; i < line.editing._markers.length; i++) {
-                var marker = line.editing._markers[i];
+            for (var i = 0; i < _line.editing._markers.length; i++) {
+                var marker = _line.editing._markers[i];
                 if (marker.waypoint) waypoints[i] = true;
             }
 
             // call updateMarkers to reload points
-            line.editing.updateMarkers();
+            _line.editing.updateMarkers();
 
-            angular.forEach(line.editing._markers,function(marker) {
+            angular.forEach(_line.editing._markers,function(marker) {
                 // start point
                 // if (marker._index == 0) $(marker._icon).addClass("start-icon");
                 // // finish point
@@ -148,16 +135,16 @@ return {
             }
             // if creating first point
             else {
-                var line = L.polyline([e.latlng], {}).addTo(_map);
-                featureGroup.addLayer(line);
+                _line = L.polyline([e.latlng], {}).addTo(_map);
+                featureGroup.addLayer(_line);
                 editHandler.enable();
                 editMode = true;
 
                 // start icon
-                $(line.editing._markers[0]).addClass("start-icon");
+                $(_line.editing._markers[0]).addClass("start-icon");
 
                 // when line is edited (after point is dragged)
-                line.on('edit', function(e) {
+                _line.on('edit', function(e) {
                     // prevent addition of new points for 1 second after moving point
                     // to prevent accidental addition of new point
                     preventEdit = true;
@@ -241,30 +228,13 @@ return {
             popup.appendChild(deleteButton);
             deleteButton.innerHTML = "delete";
             deleteButton.addEventListener("click", function() {
-                var layers = featureGroup._layers;
-                var line = layers[Object.keys(layers)[0]];
-                line.editing._onMarkerClick({ target: marker });
+                _line.editing._onMarkerClick({ target: marker });
                  //marker.on('click', line.editing._onMarkerClick, line.editing);
             });
 
             marker.bindPopup(popup, { closeButton: false });
         }
 
-        // function updateMarkers() {
-        //     var layers = featureGroup._layers;
-        //     var line = layers[Object.keys(layers)[0]];
-
-        //     angular.forEach(line.editing._markers,function(marker) {
-        //         // remove existing marker click events (which will delete the marker)
-        //         marker.off('click');
-
-        //         // if marker is already a waypoint, make it a waypoint
-        //         if (marker.waypoint) makeWaypoint(marker);
-        //         // otherwise, bind waypoint/delete button popup
-        //         else makeRegularPoint(marker);
-        //     });
-        // }
-        
         function deleteWaypoint(marker) {
             makeRegularPoint(marker);
             updateElevationProfile();
@@ -272,10 +242,7 @@ return {
 
         var lastLine;
         function updateElevationProfile() {
-
-            var layers = featureGroup._layers;
-            var line = layers[Object.keys(layers)[0]];
-            var points = line._latlngs;
+            var points = _line._latlngs;
 
             // get distance
             var _points = points.map(function(point) { return [point.lng,point.lat] });
@@ -302,7 +269,7 @@ return {
                 plotElevationProfile(receivedPoints);
 
                 // add waypoints to elevation profile
-                angular.forEach(line.editing._markers,function(marker) {
+                angular.forEach(_line.editing._markers,function(marker) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
 

@@ -144,6 +144,9 @@ L.Control.Elevation = L.Control.extend({
 
     _dragHandler: function() {
 
+        // disable drag-select
+        return;
+
         //we don´t want map events to occur here
         d3.event.preventDefault();
         d3.event.stopPropagation();
@@ -488,6 +491,7 @@ L.Control.Elevation = L.Control.extend({
                     .append("g");
                 this._mouseHeightFocus = heightG.append('svg:line')
                     .attr('class', 'height-focus line')
+                    .attr('style', 'display:none;')
                     .attr('x2', '0')
                     .attr('y2', '0')
                     .attr('x1', '0')
@@ -502,7 +506,8 @@ L.Control.Elevation = L.Control.extend({
 
                 this._mouseHeightFocusLabel = heightG.append("svg:text")
                     .attr("class", "height-focus-label")
-                    .style("pointer-events", "none");
+                    .style("pointer-events", "none")
+                    .attr('style', 'display:none;');
 
             }
 
@@ -766,6 +771,7 @@ L.Control.Elevation = L.Control.extend({
     clear: function() {
 
         this._clearData();
+        this.clearWaypoints();
 
         if (!this._areapath) {
             return;
@@ -785,11 +791,58 @@ L.Control.Elevation = L.Control.extend({
          if (!this._data || this._data.length === 0) {
             return;
         }
-        //var latlng = evt.latlng;
+        // clear
+        if (latlng == null) {
+            return this._focusG.style("visibility", "hidden");
+        }
         var item = this._findItemForLatLng(latlng);
-        if (item) {
-            var x = item.xDiagCoord;
-            this._showDiagramIndicator(item, x);
+        if (item) this._showDiagramIndicator(item, item.xDiagCoord);
+    },
+
+    clearWaypoints: function() {
+        if (this.waypoints) this.waypoints.remove();
+    },
+
+    addWaypoint: function(latlng) {
+        // add waypoints object if doens't already exist
+        var g = d3.select(this._container).select("svg").select("g");
+        if (!this.waypoints) this.waypoints = g.append("g");
+        //  if (!this._data || this._data.length === 0) {
+        //     return;
+        // }
+        // // clear
+        // if (latlng == null) {
+        //     return this._focusG.style("visibility", "hidden");
+        // }
+        // for (var i = 0; i < latlngs.length; i++) {
+        //     var latlng = latlngs[i];
+
+            var item = this._findItemForLatLng(latlng);
+            if (item) {
+                //this._showDiagramIndicator(item, item.xDiagCoord);
+                //var opts = this.options;
+
+                //waypoint.style("visibility", "visible");
+                this.waypoints.append('svg:line')
+                    .attr('x1', item.xDiagCoord)
+                    .attr('y1', 0)
+                    .attr('x2', item.xDiagCoord)
+                    .attr('y2', this._height())
+                    .attr("class", "elevation-profile-waypoint")
+                    .attr("style", "stroke: yellow; pointer-events: none;")
+                    .classed('hidden', false);
+
+                        // pointG.append("svg:circle")
+                        // .attr("r", 6) // 6
+                        // .attr("cx", 0)
+                        // .attr("cy", 0)
+
+                // var alt = item.altitude,
+                //     dist = item.dist,
+                //     ll = item.latlng,
+                //     numY = opts.hoverNumber.formatter(alt, opts.hoverNumber.decimalsY),
+                //     numX = opts.hoverNumber.formatter(dist, opts.hoverNumber.decimalsX);
+            //}
         }
     }
 

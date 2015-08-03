@@ -272,7 +272,6 @@
         // }
 
         terrainLayer.getTerrainData = function(lat, lng, callback, index, original) {
-
             // round down lat/lng for fewer lookups
             // 5 decimal places = 1.1132 m percision
             // https://en.wikipedia.org/wiki/Decimal_degrees
@@ -336,10 +335,10 @@
             var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
 
             var worker = terrainLayer.workers[tile_id];
-            if (worker != null) worker.postMessage({ id: tile_id,requestId: requestId, 
+            if (worker != null) worker.postMessage({ id: tile_id, requestId: requestId, 
                 lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
 
-            // if no worker exists, return empty data
+            // if no worker exists, return empty terrain data
             else if (callback) callback({ elevation: null, slope: null, aspect: null, 
                 lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
         }
@@ -362,7 +361,7 @@
                     receivedPoints[terrainData.index] = terrainData;
 
                     // when all points have been received
-                    if (receivedPoints.length >= points.length - 3) {
+                    if (receivedPoints.length >= points.length) {
                         // if callback called once, prevent calling again
                         if (callbackCalled) return;
                         callbackCalled = true;
@@ -373,6 +372,8 @@
                             callback(receivedPoints);
                         }, 10);
                     }
+
+                    // todo: put in timeout timer?
 
                 }, 
                 i, // index

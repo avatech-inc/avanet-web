@@ -144,55 +144,63 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
         //var _linePoints = scope.route;
         function saveLinePoints() {
             $timeout(function(){
-            scope.route = [];
-            var legIndex = 0;
-            var legPoints = [];
-            for (var i = 0; i < _line.editing._markers.length; i++) {
-                var thisPoint = _line.editing._markers[i];
+                scope.route = [];
+                var legIndex = 0;
+                var legPoints = [];
 
-                var pointDetails = {
-                    lat: thisPoint._latlng.lat,
-                    lng: thisPoint._latlng.lng,
-                    waypoint: thisPoint.waypoint
-                };
+                var verticalUp = 0;
+                var verticalDown = 0;
+                var startElevation;
+                for (var i = 0; i < _line.editing._markers.length; i++) {
+                    var thisPoint = _line.editing._markers[i];
 
-                legPoints.push([thisPoint._latlng.lng, thisPoint._latlng.lat]);
+                    if (i == 0 && thisPoint.terrain) startElevation = thisPoint.terrain.elevation;
 
-                if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
-                    var leg = {};
-                    leg.index = legIndex;
-                    legIndex++;
+                    var pointDetails = {
+                        lat: thisPoint._latlng.lat,
+                        lng: thisPoint._latlng.lng,
+                        waypoint: thisPoint.waypoint,
+                        terrain: thisPoint.terrain
+                    };
 
-                    // todo: calculate leg details?
+                    // keep track of all points in this leg
+                    legPoints.push([thisPoint._latlng.lng, thisPoint._latlng.lat]);
 
-                    // distance
+                    // keep track of leg terrain stats
+                    if (thisPoint.terrain) {
+                        verticalUp += thisPoint.terrain.verticalUp;
+                        verticalDown += thisPoint.terrain.verticalDown;
+                    }   
 
-                    // get distance
-                    leg.distance = turf.lineDistance(turf.linestring(legPoints), 'kilometers');
+                    if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
+                        var leg = {};
+                        leg.index = legIndex;
+                        legIndex++;
 
-                    // terrainLayer.getTerrainDataBulk(points.map(function(point) { return { lat: point[1], lng: point[0] }}), function(receivedPoints) {
-                    //     console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
-                    //     if (!receivedPoints || receivedPoints.length == 0) return;
-
-                    //     // calculate vertical up/down
+                        // get distance
+                        leg.distance = turf.lineDistance(turf.linestring(legPoints), 'kilometers');
 
 
-                    //     // add waypoints to elevation profile
-                    //     // angular.forEach(_line.editing._markers,function(marker) {
-                    //     //     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
-                    //     // });
+                        if (thisPoint.terrain) {
+                            // vertical up/down
+                            leg.verticalUp = verticalUp;
+                            leg.verticalDown = verticalDown;
 
-                    // });
+                            // elevation change
+                            leg.elevationChange = thisPoint.terrain.elevation - startElevation;
+                        }
 
-                    pointDetails.leg = leg;
+                        pointDetails.leg = leg;
 
-                    legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
-                }
-                
-                //scope.$apply(function() {
+                        // reset for next leg
+                        if (thisPoint.terrain) startElevation = thisPoint.terrain.elevation;
+                        legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
+                        verticalUp = 0;
+                        verticalDown = 0;
+                    }
+                    
                     scope.route.push(pointDetails);
-                //});
-            }
+                }
             });
         }
 
@@ -283,7 +291,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             makePoint(marker);
 
             marker.waypoint = {
-                name: 'Waypoint ' + marker._index
+                name: 'Waypoint'
             };
             if (waypointData) marker.waypoint = waypointData;
 
@@ -400,19 +408,58 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
                 if (!receivedPoints || receivedPoints.length == 0) return;
 
-                // 
-                // for (var i = 0; i < receivedPoints.length; i++) {
-                //     if (receivedPoints[i].original) {
-                //         console.log("ORIGINAL POINT: " + receivedPoints[i].original);
-                //     }
-                // }
-
+                // plot profile
                 plotElevationProfile(receivedPoints);
 
                 // add waypoints to elevation profile
                 angular.forEach(_line.editing._markers,function(marker) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
+
+                // store terrain data
+                var originalIndex = 0;
+                var verticalUp = 0;
+                var verticalDown = 0;
+                var previousElevation = 0;
+                var totalDistance = 0;
+                for (var i = 0; i < receivedPoints.length; i++) {
+                    var terrainData = receivedPoints[i];
+
+                    if (i > 0) {
+                        // keep track of vertical up/down
+                        var previousElevation = receivedPoints[i-1].elevation;
+                        var elevationDifference =  terrainData.elevation - previousElevation;
+                        if (elevationDifference > 0) verticalUp += elevationDifference;
+                        else if (elevationDifference < 0) verticalDown += Math.abs(elevationDifference);
+
+                        // keep track of distance
+                        totalDistance += turf.lineDistance(turf.linestring([
+                            [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
+                            [terrainData.lng, terrainData.lat]
+                        ]), 'kilometers');
+                    }
+
+                    if (terrainData.original) {
+                        var marker = _line.editing._markers[originalIndex];
+                        marker.terrain = {
+                            elevation: terrainData.elevation,
+                            slope: terrainData.slope,
+                            aspect: terrainData.aspect,
+
+                            verticalUp: verticalUp,
+                            verticalDown: verticalDown,
+
+                            totalDistance: totalDistance
+                        };
+                        // reset for next
+                        verticalUp = 0;
+                        verticalDown = 0;
+                        originalIndex++;
+                    }
+                }
+
+                saveLinePoints();
+
             });
         }
 

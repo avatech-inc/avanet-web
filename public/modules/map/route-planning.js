@@ -1,5 +1,3 @@
-//angular.module('avatech').factory('routePlanning', function (Global) { 
-
 angular.module('avatech').directive('routePlanning', function($http, $timeout) {
   return {
     restrict: 'E',

@@ -225,7 +225,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 // start point
                 // if (marker._index == 0) $(marker._icon).addClass("start-icon");
                 // // finish point
-                // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("finish-icon");
+                // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("end-icon");
 
                 // if waypoint
                 if (waypoints[marker._index]) makeWaypoint(marker, waypoints[marker._index]);

@@ -265,11 +265,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             _line.editing.updateMarkers();
 
             angular.forEach(_line.editing._markers,function(marker) {
-                // start point
-                // if (marker._index == 0) $(marker._icon).addClass("start-icon");
-                // // finish point
-                // if (marker._index == line.editing._markers.length - 1) $(marker._icon).addClass("end-icon");
-
                 // if waypoint
                 if (waypoints[marker._index]) makeWaypoint(marker, waypoints[marker._index]);
                 // regular point
@@ -281,25 +276,20 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             saveLinePoints();
         }
 
-        var editMode = false;
         var preventEdit = false;
         _map.on('click', function(e) {
-            // if editing existing line, create new point at the end of the line
-            if (editMode) {
-                if (preventEdit) return;
-                addPoint(e.latlng);
-            }
-            // if creating first point
-            else {
-                _line = L.polyline([e.latlng], {});
+            if (preventEdit) return;
+            // // if editing existing line, create new point at the end of the line
+            // if (_line) {
+            //     addPoint(e.latlng);
+            // }
+            // // if creating first point
+            // else {
+            if (!_line) {
+                _line = L.polyline([], {});
                 lineGroup.addLayer(_line);
                 editHandler.enable();
-                editMode = true;
 
-                saveLinePoints();
-
-                // start icon
-                //$(_line.editing._markers[0]).addClass("start-icon");
 
                 // when line is edited (after point is dragged)
                 _line.on('edit', function(e) {
@@ -313,6 +303,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     saveLinePoints();
                 });
             }
+
+            // add point
+            addPoint(e.latlng);
         });
 
         function makePoint(marker) {
@@ -379,6 +372,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
 
             // remove waypoint css class (if exists)
             $(marker._icon).removeClass("waypoint-icon");
+
+            // start point
+            if (marker._index == 0) $(marker._icon).addClass("start-icon");
+            // end point
+            if (marker._index == _line.editing._markers.length - 1 && _line.editing._markers.length > 1) $(marker._icon).addClass("end-icon");
 
             // bind popup
             var popup = document.createElement("div");
@@ -510,16 +508,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             var geoJSON = {
                 "name":"NewFeatureType",
                 "type":"FeatureCollection",
-                "features":[
-                {
+                "features":[{
                     "type":"Feature",
-                    "geometry": {
-                        "type":"LineString",
-                        "coordinates":[]
-                    },
+                    "geometry": { "type":"LineString", "coordinates":[] },
                     "properties": null
-                }
-            ]};
+            }]};
             geoJSON.features[0].geometry.coordinates = [];
 
             // get max elevation
@@ -548,7 +541,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
 
             lastLine = L.geoJson(geoJSON, {
                 onEachFeature: elevationWidget.addData.bind(elevationWidget) //working on a better solution
-            });//.addTo(_map);
+            });
         }
           //  for (var i = 0; i < points.length; i++) {
           //       point_string += points[i].lng + "," + points[i].lat + ";";
@@ -610,20 +603,19 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             elevationWidget.addTo(_map);
         }
 
-
         // todo: save as geoJSON?
         function saveRoute() {
-            var markers = _line.editing._markers;
-            console.log(markers);
+            // var markers = _line.editing._markers;
+            // console.log(markers);
 
-            console.log("MARKERS:");
+            // console.log("MARKERS:");
 
-            angular.forEach(markers, function(marker) {
-                var obj = {}
-                obj.latlng = marker._latlng;
-                obj.waypoint = marker.waypoint;
-                console.log(obj);
-            })
+            // angular.forEach(markers, function(marker) {
+            //     var obj = {}
+            //     obj.latlng = marker._latlng;
+            //     obj.waypoint = marker.waypoint;
+            //     console.log(obj);
+            // })
         }
     }
 }

@@ -288,8 +288,12 @@
 				<div style="padding:10px;">
 					<div style="font-weight:bold;font-size:18px;margin-bottom:8px;">Route Details</div>
 					DISTANCE: {{ route.terrain.distance.toFixed(3) }} km<br/>
-					ELEVATION: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ route.terrain.elevationChange }} m<br/>
+					NET ELEV: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ route.terrain.elevationChange }} m<br/>
 					VERTICAL: +{{ route.terrain.verticalUp }}m / -{{ route.terrain.verticalDown }} m<br/>
+					SLOPE: AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
+					MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
+					MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
+					<br/>
 					TIME: {{ formatTime(route.terrain.timeEstimateMinutes) }}
 					<br/>
 					Munter rate uphill: <input type="number" ng-model="munterRate.up"/><br/>
@@ -305,8 +309,12 @@
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 							<div class="side-line"></div>
 							DISTANCE: {{ routePoint.leg.distance.toFixed(3) }} km<br/>
-							ELEVATION: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ routePoint.leg.elevationChange }} m<br/>
+							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ routePoint.leg.elevationChange }} m<br/>
 							VERTICAL: +{{ routePoint.leg.verticalUp }}m / -{{ routePoint.leg.verticalDown }} m<br/>
+							SLOPE: AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
+							MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
+							MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
+							<br/>
 							TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}
 						</div>
 						<div class="route-item" style="font-weight:bold"

@@ -16,14 +16,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
     },
     link: function(scope, element) {
 
-
         scope.$watch("munterRateUp", function() {
             if (!elevationProfilePoints || scope.munterRateUp == null) return;
-            calculateTerrainStats(elevationProfilePoints);
+            calculateRouteStats(elevationProfilePoints);
         }, true);
         scope.$watch("munterRateDown", function() {
             if (!elevationProfilePoints|| scope.munterRateDown == null) return;
-            calculateTerrainStats(elevationProfilePoints);
+            calculateRouteStats(elevationProfilePoints);
         }, true);
 
         scope.$watch("hoverOnLeg", function(){
@@ -183,6 +182,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     terrain: {},
                     points: []
                 };
+                
                 var legIndex = 0;
                 var legPoints = [];
 
@@ -192,6 +192,15 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 var verticalUp = 0;
                 var verticalDown = 0;
                 var startElevation;
+
+                var slopeAverage = 0;
+                var totalSlopeAverage = 0;
+
+                var slopeMin = 9999;
+                var totalSlopeMin = 9999;
+
+                var slopeMax = 0;
+                var totalSlopeMax = 0;
 
                 var timeEstimateMinutes = 0;
                 var totalTimeEstimateMinutes = 0;
@@ -219,6 +228,15 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         totalVerticalUp += thisPoint.terrain.verticalUp;
                         totalVerticalDown += thisPoint.terrain.verticalDown;
 
+                        slopeAverage += thisPoint.terrain.slopeAverage;
+                        totalSlopeAverage += thisPoint.terrain.slopeAverage;
+
+                        slopeMin = Math.min(slopeMin, thisPoint.terrain.slopeMin);
+                        slopeMax = Math.max(slopeMax, thisPoint.terrain.slopeMax);
+
+                        totalSlopeMin = Math.min(totalSlopeMin, thisPoint.terrain.slopeMin);
+                        totalSlopeMax = Math.max(totalSlopeMax, thisPoint.terrain.slopeMax);
+
                         timeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
                         totalTimeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
                     }   
@@ -239,6 +257,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                             // elevation change
                             leg.elevationChange = thisPoint.terrain.elevation - startElevation;
 
+                            // slope
+                            leg.slopeAverage = slopeAverage / legPoints.length;
+                            leg.slopeMin = slopeMin;
+                            leg.slopeMax = slopeMax;
+
                             // time estimate
                             leg.timeEstimateMinutes = timeEstimateMinutes;
                         }
@@ -250,6 +273,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
                         verticalUp = 0;
                         verticalDown = 0;
+                        slopeAverage = 0;
+                        slopeMin = 9999;
+                        slopeMax = 0;
                         timeEstimateMinutes = 0;
                     }
                     
@@ -262,6 +288,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     scope.route.terrain.verticalUp = totalVerticalUp;
                     scope.route.terrain.verticalDown = totalVerticalDown;
                     scope.route.terrain.timeEstimateMinutes = totalTimeEstimateMinutes;
+                    scope.route.terrain.slopeAverage = totalSlopeAverage / _line.editing._markers.length;
+                    scope.route.terrain.slopeMin = totalSlopeMin;
+                    scope.route.terrain.slopeMax = totalSlopeMax;
                     scope.route.terrain.elevationChange = 
                         _line.editing._markers[_line.editing._markers.length - 1].terrain.elevation -
                         _line.editing._markers[0].terrain.elevation ;
@@ -487,14 +516,33 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
 
-                calculateTerrainStats(receivedPoints)
+                calculateRouteStats(receivedPoints)
 
                 saveLinePoints();
 
             });
         }
 
-        function calculateTerrainStats(receivedPoints) {
+        function getAverage(list) {
+            var sum = 0;
+            for (var i = 0; i < list.length; i++)
+                sum += list[i];
+            return sum / list.length;
+        }
+        function getMin(list) {
+            var min = 9999;
+            for (var i = 0; i < list.length; i++)
+                min = Math.min(min,list[i]);
+            return min;
+        }
+        function getMax(list) {
+            var max = 0;
+            for (var i = 0; i < list.length; i++)
+                max = Math.max(max,list[i]);
+            return max;
+        }
+
+        function calculateRouteStats(receivedPoints) {
 
             // store terrain data
             var originalIndex = 0;
@@ -505,6 +553,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             var verticalDownDistance = 0;
             var verticalFlatDistance = 0;
 
+            var slopes = [];
+
             var previousElevation = 0;
             var totalDistance = 0;
             var totalTimeEstimateMinutes = 0;
@@ -512,6 +562,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             for (var i = 0; i < receivedPoints.length; i++) {
                 var terrainData = receivedPoints[i];
                 //var thisDistance;
+
+                // keep track of slope
+                slopes.push(terrainData.slope);
 
                 if (i > 0) {
 
@@ -553,6 +606,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         verticalUpDistance: verticalUpDistance,
                         verticalDownDistance: verticalDownDistance,
                         verticalFlatDistance: verticalFlatDistance,
+
+                        slopeAverage: getAverage(slopes),
+                        slopeMin: getMin(slopes),
+                        slopeMax: getMax(slopes),
 
                         distance: !previousMarker ? 0 : totalDistance - previousMarker.terrain.totalDistance,
                         totalDistance: totalDistance
@@ -609,6 +666,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     verticalUpDistance = 0;
                     verticalDownDistance = 0;
                     verticalFlatDistance = 0;
+
+                    slopes = [];
                 }
             }
             saveLinePoints();
@@ -644,7 +703,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     terrainData.lng,
                     terrainData.lat,
                     terrainData.elevation,
-                    terrainData.slope
+                    terrainData.slope,
+                    terrainData.aspect
                 ]);
             }
 

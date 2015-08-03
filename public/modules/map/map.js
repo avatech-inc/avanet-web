@@ -960,7 +960,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // 
 
     // ---------------------------------------------------
-    // --------------------- DRAWING ---------------------
+    // ----------------- ROUTE PLANNING ------------------
     // ---------------------------------------------------
 
     $scope._hoverOnLeg = function(index) {

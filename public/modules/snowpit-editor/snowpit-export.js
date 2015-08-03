@@ -66,6 +66,14 @@ var formatters = {
     formatDistance: function(str) {
         return this.formatElevation(str);
     },
+    formatKmOrMiles: function(str) {
+        if (!str || isNaN(str)) return "--";
+
+        var km = parseFloat(str);
+        if (Global.user.settings.elevation == 1) 
+            return (km * 0.621371).toFixed(3) + " mi"; 
+        else return km.toFixed(3) + " km";
+    },
     formatMetersOrFeet: function(str) {
         return this.formatElevation(str);
     },

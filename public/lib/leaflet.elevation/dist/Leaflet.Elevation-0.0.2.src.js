@@ -586,6 +586,9 @@ L.Control.Elevation = L.Control.extend({
             this._dist = dist;
             this._data = data;
 
+            // this._startPoint = new L.LatLng(coords[0][1], coords[0][0]);
+            // this._endPoint = new L.LatLng(coords[coords.length-1][1], coords[coords.length-1][0]);
+
             ele = opts.imperial ? ele * 3.28084 : ele;
             this._maxElevation = ele;
         }
@@ -722,7 +725,22 @@ L.Control.Elevation = L.Control.extend({
             numY = opts.hoverNumber.formatter(alt, opts.hoverNumber.decimalsY),
             numX = opts.hoverNumber.formatter(dist, opts.hoverNumber.decimalsX);
 
+        //// interpolate distance
+        // var percentage = (xCoordinate / this._width()) * 100;
+        // var startPoint =  new google.maps.LatLng(this._startPoint.lat, this._startPoint.lng); 
+        // var endPoint = new google.maps.LatLng(this._endPoint.lat, this._endPoint.lng); 
+        // var thisPoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
+        // thisPoint = new L.LatLng(thisPoint.G, thisPoint.K);
+        // var newDist = this._startPoint.distanceTo(thisPoint);
+        // // convert to km
+        // newDist /= 100000;
+        // // convert to miles if imperial
+        // if (opts.imperial) newDist = newDist * 0.621371;
+        // // format
+        // newDist = opts.hoverNumber.formatter(newDist, opts.hoverNumber.decimalsX);
+
         if (opts.imperial) {
+            
             // this._focuslabelX.attr("x", xCoordinate)
             //     .text(numY + " ft");
             // this._focuslabelY.attr("y", this._height() - 5)
@@ -744,7 +762,8 @@ L.Control.Elevation = L.Control.extend({
             //     .text(numX + " km");
 
             this._focuslabelY.attr("x", 0).attr("y", -5)
-                .text("DISTANCE: " + numX + " km");
+                .text("DISTANCE: " + numX + " km," ); 
+                //.text("DISTANCE: " + numX + "," + newDist); 
 
             this._focuslabelX.attr("x", 115).attr("y", -5)
                 .text("ELEVATION: " + numY + " m");

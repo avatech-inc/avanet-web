@@ -179,6 +179,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 var verticalUp = 0;
                 var verticalDown = 0;
                 var startElevation;
+
+                var timeEstimateMinutes = 0;
+                var totalTimeEstimateMinutes = 0;
+
                 for (var i = 0; i < _line.editing._markers.length; i++) {
                     var thisPoint = _line.editing._markers[i];
 
@@ -201,6 +205,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
 
                         totalVerticalUp += thisPoint.terrain.verticalUp;
                         totalVerticalDown += thisPoint.terrain.verticalDown;
+
+                        timeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
+                        totalTimeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
                     }   
 
                     if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
@@ -211,7 +218,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         // get distance
                         leg.distance = turf.lineDistance(turf.linestring(legPoints), 'kilometers');
 
-
                         if (thisPoint.terrain) {
                             // vertical up/down
                             leg.verticalUp = verticalUp;
@@ -219,6 +225,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
 
                             // elevation change
                             leg.elevationChange = thisPoint.terrain.elevation - startElevation;
+
+                            // time estimate
+                            leg.timeEstimateMinutes = timeEstimateMinutes;
                         }
 
                         pointDetails.leg = leg;
@@ -228,6 +237,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
                         verticalUp = 0;
                         verticalDown = 0;
+                        timeEstimateMinutes = 0;
                     }
                     
                     scope.route.points.push(pointDetails);
@@ -238,6 +248,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     scope.route.terrain.distance = _line.editing._markers[_line.editing._markers.length - 1].terrain.totalDistance;
                     scope.route.terrain.verticalUp = totalVerticalUp;
                     scope.route.terrain.verticalDown = totalVerticalDown;
+                    scope.route.terrain.timeEstimateMinutes = totalTimeEstimateMinutes;
                     scope.route.terrain.elevationChange = 
                         _line.editing._markers[_line.editing._markers.length - 1].terrain.elevation -
                         _line.editing._markers[0].terrain.elevation ;
@@ -349,10 +360,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 saveLinePoints();
             }
 
-            var deleteaypointbutton = document.createElement("button");
-            popup.appendChild(deleteaypointbutton);
-            deleteaypointbutton.innerHTML = "delete waypoint";
-            deleteaypointbutton.addEventListener("click", function() {
+            var deleteWaypointbutton = document.createElement("button");
+            popup.appendChild(deleteWaypointbutton);
+            deleteWaypointbutton.innerHTML = "delete waypoint";
+            deleteWaypointbutton.addEventListener("click", function() {
                 marker.closePopup();
                 marker.unbindPopup();
                 deleteWaypoint(marker);
@@ -384,8 +395,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             popup.appendChild(makeWaypointbutton);
             makeWaypointbutton.innerHTML = "make waypoint";
             makeWaypointbutton.addEventListener("click", function() {
-                if (marker._index == 0) {
-                    console.log("can't create waypoint on start point")
+                if (marker._index == 0 || marker._index == _line.editing._markers.length - 1) {
+                    console.log("can't create waypoint on start point or end point")
                     return;
                 }
 
@@ -403,7 +414,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             popup.appendChild(deleteButton);
             deleteButton.innerHTML = "delete";
             deleteButton.addEventListener("click", function() {
+                if (_line.editing._markers.length == 1) {
+                    console.log("can't delete only point");
+                    return;
+                }
                 _line.editing._onMarkerClick({ target: marker });
+                //makeRegularPoint(_line.editing._markers[marker._index + 1]);
+                // todo: handle proper styling on delete. start/end points should be waypoints!
             });
 
             marker.bindPopup(popup, { closeButton: false });
@@ -457,27 +474,48 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 var originalIndex = 0;
                 var verticalUp = 0;
                 var verticalDown = 0;
+
+                var verticalUpDistance = 0;
+                var verticalDownDistance = 0;
+                var verticalFlatDistance = 0;
+
                 var previousElevation = 0;
                 var totalDistance = 0;
+                var totalTimeEstimateMinutes = 0;
+
                 for (var i = 0; i < receivedPoints.length; i++) {
                     var terrainData = receivedPoints[i];
+                    //var thisDistance;
 
                     if (i > 0) {
-                        // keep track of vertical up/down
-                        var previousElevation = receivedPoints[i-1].elevation;
-                        var elevationDifference =  terrainData.elevation - previousElevation;
-                        if (elevationDifference > 0) verticalUp += elevationDifference;
-                        else if (elevationDifference < 0) verticalDown += Math.abs(elevationDifference);
 
                         // keep track of distance
-                        totalDistance += turf.lineDistance(turf.linestring([
+                        var thisDistance = turf.lineDistance(turf.linestring([
                             [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
                             [terrainData.lng, terrainData.lat]
                         ]), 'kilometers');
+                        totalDistance += thisDistance;
+
+                        // keep track of vertical up/down
+                        var previousElevation = receivedPoints[i-1].elevation;
+                        var elevationDifference =  terrainData.elevation - previousElevation;
+                        if (elevationDifference > 0) {
+                            verticalUp += elevationDifference;
+                            verticalUpDistance += thisDistance;
+                        }
+                        else if (elevationDifference < 0) {
+                            verticalDown += Math.abs(elevationDifference);
+                            verticalDownDistance += thisDistance;
+                        }
+                        else {
+                            verticalFlatDistance += thisDistance; 
+                        }
+
                     }
 
                     if (terrainData.original) {
                         var marker = _line.editing._markers[originalIndex];
+                        var previousMarker = (originalIndex == 0) ? null : _line.editing._markers[originalIndex - 1];
                         marker.terrain = {
                             elevation: terrainData.elevation,
                             slope: terrainData.slope,
@@ -486,11 +524,61 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                             verticalUp: verticalUp,
                             verticalDown: verticalDown,
 
+                            verticalUpDistance: verticalUpDistance,
+                            verticalDownDistance: verticalDownDistance,
+                            verticalFlatDistance: verticalFlatDistance,
+
+                            distance: !previousMarker ? 0 : totalDistance - previousMarker.terrain.totalDistance,
                             totalDistance: totalDistance
                         };
+
+                        // munter time estimate
+
+                        // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+                        // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+                        // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+                        // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+                        var units_up = 0;
+                        units_up += verticalUpDistance;
+                        units_up += verticalUp / 100;
+
+                        var units_down = 0;
+                        units_down += verticalDownDistance;
+                        units_down += verticalDown / 100;
+
+                        var units_flat = 0;
+                        units_flat += verticalFlatDistance;
+
+                        var minutes_up = (units_up / 4) * 60;
+                        var minutes_down = (units_down / 10) * 60;
+                        var minutes_flat = (units_flat / 7) * 60;
+                        //minutes_flat = 0;
+
+                        marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
+                        totalTimeEstimateMinutes += marker.terrain.timeEstimateMinutes;
+                        marker.terrain.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
+
+                        console.log("   UP: " + minutes_up);
+                        console.log(" DOWN: " + minutes_down);
+                        console.log(" FLAT: " + minutes_flat);
+                        console.log("TOTAL: " + (minutes_up + minutes_down + minutes_flat));
+
+                        if (previousMarker) {
+                            console.log("TOTAL: " + marker.terrain.distance);
+                            console.log("UP/DOWN: " + verticalUpDistance + " / " + verticalDownDistance + "/" + verticalFlatDistance);
+                            console.log("ADDED: " + (verticalUpDistance + verticalDownDistance + verticalFlatDistance));
+                            console.log("----------------");
+                        }
+
                         // reset for next
                         verticalUp = 0;
                         verticalDown = 0;
+
+                        verticalUpDistance = 0;
+                        verticalDownDistance = 0;
+                        verticalFlatDistance = 0;
+
                         originalIndex++;
                     }
                 }

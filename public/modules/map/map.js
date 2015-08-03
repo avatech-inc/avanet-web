@@ -969,12 +969,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope._hoverOnPoint = function(index) {
         $scope.hoverOnPoint = index;
     }
-    // routePlanning.init($scope.map, terrainLayer, function(points) {
-    //     console.log("LINE SAVED:");
-    //     console.log(points);
-    //     $scope.routePoints = points;
-    //     $scope.$apply();
-    //     //$scope.routeP
-    // });
+
+    $scope.formatTime = function(minutes) {
+        var str = "";
+        if (minutes >= 60) {
+            var hours = minutes / 60;
+            var mins = Math.floor(minutes % 60);
+            str = Math.floor(hours) + " hr";
+            if (mins > 0) str += " " + mins + " min";
+        }
+        else str = Math.floor(minutes) + " min";
+        return str;
+    }
 
 });

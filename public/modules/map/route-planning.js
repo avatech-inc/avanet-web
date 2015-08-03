@@ -368,10 +368,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             });
 
             marker.bindPopup(popup, { closeButton: false });
-
-            // add to elevation profile
-            // elevationWidget.addWaypoint(marker._latlng);
-            // saveLinePoints();
         }
         function makeRegularPoint(marker) {
             makePoint(marker);
@@ -412,7 +408,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             deleteButton.innerHTML = "delete";
             deleteButton.addEventListener("click", function() {
                 _line.editing._onMarkerClick({ target: marker });
-                 //marker.on('click', line.editing._onMarkerClick, line.editing);
             });
 
             marker.bindPopup(popup, { closeButton: false });
@@ -429,9 +424,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
         function updateElevationProfile() {
             var points = _line._latlngs;
 
-            // get distance
+            // get line distance
             var distance = turf.lineDistance(turf.linestring(points.map(function(point) { return [point.lng,point.lat] })), 'kilometers');
-            console.log("DISTANCE: " + length);
+            //console.log("DISTANCE: " + length);
 
             // sample every 10m
             var sampleCount = Math.round((distance * 1000) / 10);
@@ -447,7 +442,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 points = interpolate(points);
             }
 
-            console.log("INTERPOLATED: " + points.length);
+            //console.log("INTERPOLATED: " + points.length);
             //console.log(points);
 
             terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {

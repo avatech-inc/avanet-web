@@ -290,7 +290,7 @@
 				<div class="route-list">
 					<div ng-repeat="routePoint in route.points" ng-if="$index == 0 || routePoint.waypoint || $index == route.points.length - 1">
 
-						<div class="route-item" style="padding-left:32px;font-size:12px;" 
+						<div class="route-item" style="padding-left:34px;font-size:12px;" 
 						ng-if="routePoint.waypoint || $index == route.points.length - 1"
 						ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">

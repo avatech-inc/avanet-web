@@ -222,7 +222,7 @@
 
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 
-			<route-planning terrain-layer="terrainLayer" map="map" route="routePoints"></route-planning>
+			<route-planning terrain-layer="terrainLayer" map="map" route="route"></route-planning>
 
 			<style>
 				.route-list {
@@ -267,14 +267,17 @@
 				}
 			</style>
 
-			<div style="width:280px;background:#fff;position:absolute;left:10px;top:10px;">
-				minutes<br/>
-				vertical up<br/>
-				vertical down<br/>
-				<br/>
+			<div ng-show="route" style="width:280px;background:#fff;position:absolute;left:10px;top:10px;">
+				<div style="padding:10px;">
+					<div style="font-weight:bold;font-size:18px;margin-bottom:8px;">Route Details</div>
+					DISTANCE: {{ route.terrain.distance.toFixed(3) }}km<br/>
+					ELEVATION: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ route.terrain.elevationChange }}m<br/>
+					VERTICAL: +{{ route.terrain.verticalUp }}m / -{{ route.terrain.verticalDown }}m
+
+				</div>
 
 				<div class="route-list">
-					<div ng-repeat="routePoint in routePoints" ng-if="$index == 0 || routePoint.waypoint || $index == routePoints.length - 1">
+					<div ng-repeat="routePoint in route.points" ng-if="$index == 0 || routePoint.waypoint || $index == route.points.length - 1">
 						<div class="route-item" ng-if="$index == 0" style="font-weight:bold">
 							<div class="side-line start"></div>
 							<div class="route-waypoint-icon start"></div>
@@ -298,7 +301,7 @@
 							</div>
 						</div>
 
-						<div ng-if="$index == routePoints.length - 1">
+						<div ng-if="$index == route.points.length - 1">
 							<div class="route-item" style="padding-left:32px;font-size:12px;">
 								<div class="side-line"></div>
 								DISTANCE: {{ routePoint.leg.distance.toFixed(3) }}km<br/>

@@ -963,7 +963,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // --------------------- DRAWING ---------------------
     // ---------------------------------------------------
 
-    $scope.routePoints = [];
     // routePlanning.init($scope.map, terrainLayer, function(points) {
     //     console.log("LINE SAVED:");
     //     console.log(points);

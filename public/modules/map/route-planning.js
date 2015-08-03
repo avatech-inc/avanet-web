@@ -141,12 +141,17 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             }
         }
 
-        //var _linePoints = scope.route;
         function saveLinePoints() {
             $timeout(function(){
-                scope.route = [];
+                scope.route = {
+                    terrain: {},
+                    points: []
+                };
                 var legIndex = 0;
                 var legPoints = [];
+
+                var totalVerticalUp = 0;
+                var totalVerticalDown = 0;
 
                 var verticalUp = 0;
                 var verticalDown = 0;
@@ -170,6 +175,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     if (thisPoint.terrain) {
                         verticalUp += thisPoint.terrain.verticalUp;
                         verticalDown += thisPoint.terrain.verticalDown;
+
+                        totalVerticalUp += thisPoint.terrain.verticalUp;
+                        totalVerticalDown += thisPoint.terrain.verticalDown;
                     }   
 
                     if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
@@ -199,7 +207,17 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                         verticalDown = 0;
                     }
                     
-                    scope.route.push(pointDetails);
+                    scope.route.points.push(pointDetails);
+                }
+
+                // route terrain stats
+                if (thisPoint.terrain) {
+                    scope.route.terrain.distance = _line.editing._markers[_line.editing._markers.length - 1].terrain.totalDistance;
+                    scope.route.terrain.verticalUp = totalVerticalUp;
+                    scope.route.terrain.verticalDown = totalVerticalDown;
+                    scope.route.terrain.elevationChange = 
+                        _line.editing._markers[_line.editing._markers.length - 1].terrain.elevation -
+                        _line.editing._markers[0].terrain.elevation ;
                 }
             });
         }
@@ -385,7 +403,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
 
             // get distance
             var distance = turf.lineDistance(turf.linestring(points.map(function(point) { return [point.lng,point.lat] })), 'kilometers');
-            //console.log("LINE LENGTH: " + length);
+            console.log("DISTANCE: " + length);
 
             // sample every 10m
             var sampleCount = Math.round((distance * 1000) / 10);

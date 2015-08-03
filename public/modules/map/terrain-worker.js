@@ -33,12 +33,17 @@ onmessage = function (e) {
         // return to client
         postMessage({ 
             id: e.data.id,
-            requestId: e.data.requestId,
-            index: e.data.index,
-            terrainData: terrainData,
             lat: e.data.lat,
             lng: e.data.lng,
-            pointInTile: e.data.pointInTile
+
+            requestId: e.data.requestId,
+            index: e.data.index,
+            pointInTile: e.data.pointInTile,
+            orginal: e.data.orginal,
+            
+            elevation: terrainData[0],
+            slope: terrainData[1],
+            aspect: terrainData[2],
         }); 
         return;
     }

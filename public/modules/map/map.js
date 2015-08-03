@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, routePlanning) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal) {
     $scope.global = Global;
 
     $scope._showPreviewPane;
@@ -911,7 +911,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // ---------------------------------------------------
 
     // init terrain layer
-    var terrainLayer = L.tileLayer.terrain({
+    var terrainLayer = $scope.terrainLayer = L.tileLayer.terrain({
         zIndex: 999,
         opacity: .5,
         maxNativeZoom: 13
@@ -963,12 +963,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // --------------------- DRAWING ---------------------
     // ---------------------------------------------------
 
-    routePlanning.init($scope.map, terrainLayer, function(points) {
-        console.log("LINE SAVED:");
-        console.log(points);
-        $scope.routePoints = points;
-        $scope.$apply();
-        //$scope.routeP
-    });
+    $scope.routePoints = [];
+    // routePlanning.init($scope.map, terrainLayer, function(points) {
+    //     console.log("LINE SAVED:");
+    //     console.log(points);
+    //     $scope.routePoints = points;
+    //     $scope.$apply();
+    //     //$scope.routeP
+    // });
 
 });

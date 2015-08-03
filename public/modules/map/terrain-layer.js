@@ -79,16 +79,8 @@
         terrainLayer.sunDate;
 
         terrainLayer.updateTile = function(e) {
-            if (e.data.terrainData) {
-                var terrainData = {
-                    elevation: e.data.terrainData[0],
-                    slope: e.data.terrainData[1],
-                    aspect: e.data.terrainData[2],
-                    lat: e.data.lat,
-                    lng: e.data.lng,
-                    index: e.data.index,
-                    pointInTile: e.data.pointInTile
-                }
+            if (e.data.pointInTile) {
+                var terrainData = e.data;
 
                 // if empty values, make null
                 if (terrainData.elevation == 127 && terrainData.slope == 127 && terrainData.aspect == 511) {
@@ -279,7 +271,7 @@
         //     return tilePoint.x + "_" + tilePoint.y + "_" + zoom;
         // }
 
-        terrainLayer.getTerrainData = function(lat, lng, callback, index) {
+        terrainLayer.getTerrainData = function(lat, lng, callback, index, original) {
 
             // round down lat/lng for fewer lookups
             // 5 decimal places = 1.1132 m percision
@@ -344,9 +336,12 @@
             var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
 
             var worker = terrainLayer.workers[tile_id];
-            if (worker != null) worker.postMessage({ id: tile_id, pointInTile: pointInTile, lat: lat, lng: lng, requestId: requestId, index: index });
-            // if no worker, return empty data
-            else if (callback) callback({ elevation: null, slope: null, aspect: null, lat: lat, lng: lng, index: index, pointInTile: pointInTile });
+            if (worker != null) worker.postMessage({ id: tile_id,requestId: requestId, 
+                lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
+
+            // if no worker exists, return empty data
+            else if (callback) callback({ elevation: null, slope: null, aspect: null, 
+                lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
         }
 
         var callbackTimer;
@@ -379,7 +374,10 @@
                         }, 10);
                     }
 
-                }, i);
+                }, 
+                i, // index
+                points[i].original // original
+                );
             }
         }
 

@@ -1,52 +1,71 @@
-angular.module('avatech').factory('routePlanning', function (Global) { 
+//angular.module('avatech').factory('routePlanning', function (Global) { 
 
-function interpolate(_points) {
-    var new_points = [];
-   for (var i = 0; i < _points.length; i++) {
-        new_points[i*2] = _points[i];
-  }
+angular.module('avatech').directive('routePlanning', function($http, $timeout) {
+  return {
+    restrict: 'E',
+    scope: { 
+      map: '=',
+      terrainLayer: '=',
+      route: '='
+      // onprogress: '&',
+      // onupload: '&'
+    },
+    //template: "<div class='upload-area'><input type='file' multiple/><div class='drop-area'><div class='big'>Drop photos here</div><div class='small'>or click to select files</div></div></div>",
+    link: function(scope, element) {
 
-   for (var i = 0; i < new_points.length; i++) {
-        if (!new_points[i]) {
-            var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
-            var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
-            var percentage = 0.5; 
-            var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
-            // todo: wtf?????
-            // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
-            new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
-        }
-  }
+        function interpolate(_points) {
+            var new_points = [];
+            for (var i = 0; i < _points.length; i++) {
+                new_points[i*2] = _points[i];
+           }
 
-    return new_points;
-}
-
-return {
-    init: function(_map, terrainLayer, saveLinePointsCallback) {
-
-        L.Control.RoutePlanningToolbar = L.Control.extend({
-            options: {
-                position: "topleft"
-            },
-            onRemove: function(map) {
-                this._container = null;
-            },
-            onAdd: function(map) {
-                this._map = map;
-
-                var container = this._container = L.DomUtil.create("div", "route-planning-toolbar");
-
-                var saveButton = document.createElement("button");
-                container.appendChild(saveButton);
-                saveButton.innerHTML = "Save";
-                saveButton.onclick = function() {
-                    saveRoute();
+           for (var i = 0; i < new_points.length; i++) {
+                if (!new_points[i]) {
+                    var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
+                    var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
+                    var percentage = 0.5; 
+                    var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
+                    // todo: wtf?????
+                    // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
+                    new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
                 }
+          }
 
-                return container;
-            }
-        });
-        var routePlanningToolbar = new L.Control.RoutePlanningToolbar({}).addTo(_map);
+            return new_points;
+        }
+
+        var terrainLayer = scope.terrainLayer;
+        var _map = scope.map;
+
+        console.log(scope.terrainLayer._map);
+        console.log(scope.map);
+
+        // return {
+        //     init: function(_map, terrainLayer, saveLinePointsCallback) {
+
+        // L.Control.RoutePlanningToolbar = L.Control.extend({
+        //     options: {
+        //         position: "topleft"
+        //     },
+        //     onRemove: function(map) {
+        //         this._container = null;
+        //     },
+        //     onAdd: function(map) {
+        //         this._map = map;
+
+        //         var container = this._container = L.DomUtil.create("div", "route-planning-toolbar");
+
+        //         var saveButton = document.createElement("button");
+        //         container.appendChild(saveButton);
+        //         saveButton.innerHTML = "Save";
+        //         saveButton.onclick = function() {
+        //             saveRoute();
+        //         }
+
+        //         return container;
+        //     }
+        // });
+        // var routePlanningToolbar = new L.Control.RoutePlanningToolbar({}).addTo(_map);
 
         _map.on('zoomend', function(e) {
             //plotElevationProfile();
@@ -122,9 +141,10 @@ return {
             }
         }
 
-        var _linePoints;
+        //var _linePoints = scope.route;
         function saveLinePoints() {
-            _linePoints = [];
+            $timeout(function(){
+            scope.route = [];
             var legIndex = 0;
             var legPoints = [];
             for (var i = 0; i < _line.editing._markers.length; i++) {
@@ -155,7 +175,7 @@ return {
                     //     if (!receivedPoints || receivedPoints.length == 0) return;
 
                     //     // calculate vertical up/down
-                        
+
 
                     //     // add waypoints to elevation profile
                     //     // angular.forEach(_line.editing._markers,function(marker) {
@@ -168,10 +188,12 @@ return {
 
                     legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
                 }
-
-                _linePoints.push(pointDetails);
+                
+                //scope.$apply(function() {
+                    scope.route.push(pointDetails);
+                //});
             }
-            if (saveLinePointsCallback) saveLinePointsCallback(_linePoints);
+            });
         }
 
         function addPoint(latlng, index) {
@@ -361,16 +383,29 @@ return {
             var sampleCount = Math.round((distance * 1000) / 10);
             //console.log("SAMPLE COUNT: " + sampleCount);
 
+            // keep track of original points
+            for (var i = 0; i < points.length;i++) {
+                points[i].original  = true;
+            }
+
             // interpolate
             while ((points.length * 2) -1 <= sampleCount) { // 200
                 points = interpolate(points);
             }
 
             console.log("INTERPOLATED: " + points.length);
+            //console.log(points);
 
             terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
                 console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
                 if (!receivedPoints || receivedPoints.length == 0) return;
+
+                // 
+                // for (var i = 0; i < receivedPoints.length; i++) {
+                //     if (receivedPoints[i].original) {
+                //         console.log("ORIGINAL POINT: " + receivedPoints[i].original);
+                //     }
+                // }
 
                 plotElevationProfile(receivedPoints);
 
@@ -502,8 +537,6 @@ return {
                 console.log(obj);
             })
         }
-
     }
 }
-
 });

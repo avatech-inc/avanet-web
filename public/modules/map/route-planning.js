@@ -9,9 +9,22 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
       hoverOnLeg: '=',
 
       hoverOnPointMap: '=',
-      hoverOnPoint: '='
+      hoverOnPoint: '=',
+
+      munterRateUp: '=',
+      munterRateDown: '=',
     },
     link: function(scope, element) {
+
+
+        scope.$watch("munterRateUp", function() {
+            if (!elevationProfilePoints || scope.munterRateUp == null) return;
+            calculateTerrainStats(elevationProfilePoints);
+        }, true);
+        scope.$watch("munterRateDown", function() {
+            if (!elevationProfilePoints|| scope.munterRateDown == null) return;
+            calculateTerrainStats(elevationProfilePoints);
+        }, true);
 
         scope.$watch("hoverOnLeg", function(){
             angular.forEach(lineSegmentGroup._layers, function(segment) {
@@ -433,6 +446,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             saveLinePoints();
         }
 
+        var elevationProfilePoints;
         var lastLine;
         function updateElevationProfile() {
             var points = _line._latlngs;
@@ -462,7 +476,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
                 if (!receivedPoints || receivedPoints.length == 0) return;
 
-                // plot profile
+                // store elevation profile for later
+                elevationProfilePoints = receivedPoints;
+
+                // plot elevation profile
                 plotElevationProfile(receivedPoints);
 
                 // add waypoints to elevation profile
@@ -470,122 +487,131 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
 
-                // store terrain data
-                var originalIndex = 0;
-                var verticalUp = 0;
-                var verticalDown = 0;
-
-                var verticalUpDistance = 0;
-                var verticalDownDistance = 0;
-                var verticalFlatDistance = 0;
-
-                var previousElevation = 0;
-                var totalDistance = 0;
-                var totalTimeEstimateMinutes = 0;
-
-                for (var i = 0; i < receivedPoints.length; i++) {
-                    var terrainData = receivedPoints[i];
-                    //var thisDistance;
-
-                    if (i > 0) {
-
-                        // keep track of distance
-                        var thisDistance = turf.lineDistance(turf.linestring([
-                            [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
-                            [terrainData.lng, terrainData.lat]
-                        ]), 'kilometers');
-                        totalDistance += thisDistance;
-
-                        // keep track of vertical up/down
-                        var previousElevation = receivedPoints[i-1].elevation;
-                        var elevationDifference =  terrainData.elevation - previousElevation;
-                        if (elevationDifference > 0) {
-                            verticalUp += elevationDifference;
-                            verticalUpDistance += thisDistance;
-                        }
-                        else if (elevationDifference < 0) {
-                            verticalDown += Math.abs(elevationDifference);
-                            verticalDownDistance += thisDistance;
-                        }
-                        else {
-                            verticalFlatDistance += thisDistance; 
-                        }
-
-                    }
-
-                    if (terrainData.original) {
-                        var marker = _line.editing._markers[originalIndex];
-                        var previousMarker = (originalIndex == 0) ? null : _line.editing._markers[originalIndex - 1];
-                        marker.terrain = {
-                            elevation: terrainData.elevation,
-                            slope: terrainData.slope,
-                            aspect: terrainData.aspect,
-
-                            verticalUp: verticalUp,
-                            verticalDown: verticalDown,
-
-                            verticalUpDistance: verticalUpDistance,
-                            verticalDownDistance: verticalDownDistance,
-                            verticalFlatDistance: verticalFlatDistance,
-
-                            distance: !previousMarker ? 0 : totalDistance - previousMarker.terrain.totalDistance,
-                            totalDistance: totalDistance
-                        };
-
-                        // munter time estimate
-
-                        // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-                        // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-                        // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-                        // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-
-                        var units_up = 0;
-                        units_up += verticalUpDistance;
-                        units_up += verticalUp / 100;
-
-                        var units_down = 0;
-                        units_down += verticalDownDistance;
-                        units_down += verticalDown / 100;
-
-                        var units_flat = 0;
-                        units_flat += verticalFlatDistance;
-
-                        var minutes_up = (units_up / 4) * 60;
-                        var minutes_down = (units_down / 10) * 60;
-                        var minutes_flat = (units_flat / 7) * 60;
-                        //minutes_flat = 0;
-
-                        marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
-                        totalTimeEstimateMinutes += marker.terrain.timeEstimateMinutes;
-                        marker.terrain.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
-
-                        console.log("   UP: " + minutes_up);
-                        console.log(" DOWN: " + minutes_down);
-                        console.log(" FLAT: " + minutes_flat);
-                        console.log("TOTAL: " + (minutes_up + minutes_down + minutes_flat));
-
-                        if (previousMarker) {
-                            console.log("TOTAL: " + marker.terrain.distance);
-                            console.log("UP/DOWN: " + verticalUpDistance + " / " + verticalDownDistance + "/" + verticalFlatDistance);
-                            console.log("ADDED: " + (verticalUpDistance + verticalDownDistance + verticalFlatDistance));
-                            console.log("----------------");
-                        }
-
-                        // reset for next
-                        verticalUp = 0;
-                        verticalDown = 0;
-
-                        verticalUpDistance = 0;
-                        verticalDownDistance = 0;
-                        verticalFlatDistance = 0;
-
-                        originalIndex++;
-                    }
-                }
+                calculateTerrainStats(receivedPoints)
 
                 saveLinePoints();
 
             });
+        }
+
+        function calculateTerrainStats(receivedPoints) {
+
+            // store terrain data
+            var originalIndex = 0;
+
+            var verticalUp = 0;
+            var verticalDown = 0;
+            var verticalUpDistance = 0;
+            var verticalDownDistance = 0;
+            var verticalFlatDistance = 0;
+
+            var previousElevation = 0;
+            var totalDistance = 0;
+            var totalTimeEstimateMinutes = 0;
+
+            for (var i = 0; i < receivedPoints.length; i++) {
+                var terrainData = receivedPoints[i];
+                //var thisDistance;
+
+                if (i > 0) {
+
+                    // keep track of distance
+                    var thisDistance = turf.lineDistance(turf.linestring([
+                        [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
+                        [terrainData.lng, terrainData.lat]
+                    ]), 'kilometers');
+                    totalDistance += thisDistance;
+
+                    // keep track of vertical up/down
+                    var previousElevation = receivedPoints[i-1].elevation;
+                    var elevationDifference =  terrainData.elevation - previousElevation;
+                    if (elevationDifference > 0) {
+                        verticalUp += elevationDifference;
+                        verticalUpDistance += thisDistance;
+                    }
+                    else if (elevationDifference < 0) {
+                        verticalDown += Math.abs(elevationDifference);
+                        verticalDownDistance += thisDistance;
+                    }
+                    else {
+                        verticalFlatDistance += thisDistance; 
+                    }
+
+                }
+
+                if (terrainData.original) {
+                    var marker = _line.editing._markers[originalIndex];
+                    var previousMarker = (originalIndex == 0) ? null : _line.editing._markers[originalIndex - 1];
+                    marker.terrain = {
+                        elevation: terrainData.elevation,
+                        slope: terrainData.slope,
+                        aspect: terrainData.aspect,
+
+                        verticalUp: verticalUp,
+                        verticalDown: verticalDown,
+
+                        verticalUpDistance: verticalUpDistance,
+                        verticalDownDistance: verticalDownDistance,
+                        verticalFlatDistance: verticalFlatDistance,
+
+                        distance: !previousMarker ? 0 : totalDistance - previousMarker.terrain.totalDistance,
+                        totalDistance: totalDistance
+                    };
+
+                    // munter time estimate
+
+                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+                    var munter_rate_up = scope.munterRateUp;
+                    var munter_rate_down = scope.munterRateDown;
+                    var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
+
+                    var units_up = 0;
+                    units_up += verticalUpDistance;
+                    units_up += verticalUp / 100;
+
+                    var units_down = 0;
+                    units_down += verticalDownDistance;
+                    units_down += verticalDown / 100;
+
+                    var units_flat = 0;
+                    units_flat += verticalFlatDistance;
+
+                    var minutes_up = (units_up / munter_rate_up) * 60;
+                    var minutes_down = (units_down / munter_rate_down) * 60;
+                    var minutes_flat = (units_flat / munter_rate_flat) * 60;
+
+                    marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
+                    totalTimeEstimateMinutes += marker.terrain.timeEstimateMinutes;
+                    marker.terrain.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
+
+                    // if (previousMarker) {
+                    //     console.log("   UP: " + minutes_up);
+                    //     console.log(" DOWN: " + minutes_down);
+                    //     console.log(" FLAT: " + minutes_flat);
+                    //     console.log("TOTAL: " + (minutes_up + minutes_down + minutes_flat));
+                    //     console.log("~~~~~~~~~~~~~~~~");
+                    //     console.log("TOTAL: " + marker.terrain.distance);
+                    //     console.log("UP/DOWN: " + verticalUpDistance + " / " + verticalDownDistance + "/" + verticalFlatDistance);
+                    //     console.log("ADDED: " + (verticalUpDistance + verticalDownDistance + verticalFlatDistance));
+                    //     console.log("===============");
+                    // }
+
+                    // reset for next
+
+                    originalIndex++;
+
+                    verticalUp = 0;
+                    verticalDown = 0;
+                    verticalUpDistance = 0;
+                    verticalDownDistance = 0;
+                    verticalFlatDistance = 0;
+                }
+            }
+            saveLinePoints();
         }
 
         function plotElevationProfile(points) {

@@ -982,4 +982,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return str;
     }
 
+    $scope.munterRate = {
+        up: 4,
+        down: 10
+    }
+
 });

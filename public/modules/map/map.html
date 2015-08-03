@@ -227,6 +227,12 @@
 				hover-on-leg="hoverOnLeg"
 				hover-on-point-map="hoverOnPointMap"
 				hover-on-point="hoverOnPoint"
+
+				test-munter-rate-up="munterRate.up"
+				test-munter-rate-down="munterRate.down"
+
+				munter-rate-up="munterRate.up"
+				munter-rate-down="munterRate.down"
 				></route-planning>
 
 			<style>
@@ -285,7 +291,9 @@
 					ELEVATION: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ route.terrain.elevationChange }} m<br/>
 					VERTICAL: +{{ route.terrain.verticalUp }}m / -{{ route.terrain.verticalDown }} m<br/>
 					TIME: {{ formatTime(route.terrain.timeEstimateMinutes) }}
-
+					<br/>
+					Munter rate uphill: <input type="number" ng-model="munterRate.up"/><br/>
+					Munter rate downhill: <input type="number" ng-model="munterRate.down"/>
 				</div>
 
 				<div class="route-list">

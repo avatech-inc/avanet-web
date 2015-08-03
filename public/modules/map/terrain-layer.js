@@ -211,7 +211,7 @@
                 //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
                 var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-                console.log(url);
+                //console.log(url);
 
                 var xhr = new XMLHttpRequest;
                 xhr.open("GET", url, true);

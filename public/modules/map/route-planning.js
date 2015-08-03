@@ -22,7 +22,7 @@ function interpolate(_points) {
 }
 
 return {
-    init: function(_map, terrainLayer) {
+    init: function(_map, terrainLayer, saveLinePointsCallback) {
 
         L.Control.RoutePlanningToolbar = L.Control.extend({
             options: {
@@ -69,29 +69,32 @@ return {
 
         // keep track of line segments (point-to-point line segments, not route segments)
         var lineSegmentGroup = L.featureGroup().addTo(_map);
-        var segments;
+
         function updateSegments() {
-            segments = [];
             lineSegmentGroup.clearLayers();
 
-            for (var i = 0; i < _line.editing._poly._latlngs.length - 1; i++) {
-                var thisPoint = _line.editing._poly._latlngs[i];
-                var nextPoint = _line.editing._poly._latlngs[i + 1];
+            var legIndex = 0;
+            for (var i = 0; i < _line.editing._markers.length - 1; i++) {
+                var thisPoint = _line.editing._markers[i];
+                var nextPoint = _line.editing._markers[i + 1];
+
+                // if waypoint
+                if (thisPoint.waypoint) legIndex++;
 
                 var segmentData = {
-                    start: thisPoint,
-                    end: nextPoint,
-                    index: i
+                    start: thisPoint._latlng,
+                    end: nextPoint._latlng,
+                    index: i,
+                    legIndex: legIndex
                 };
-                segments.push(segmentData);
 
-                var segment = L.polyline([thisPoint, nextPoint], {
+                var segment = L.polyline([thisPoint._latlng, nextPoint._latlng], {
                     color: 'transparent',
                     weight: 12 // allows for a wider clickable area
                 });
                 segment.segment = segmentData;
 
-                // add new point when clicking on the line
+                // add new point when clicking on a line segment
                 segment.on('mousedown', function(e) {
                     // straighten out point on line
                     // var newPoint = e.latlng;
@@ -117,6 +120,58 @@ return {
 
                 lineSegmentGroup.addLayer(segment);
             }
+        }
+
+        var _linePoints;
+        function saveLinePoints() {
+            _linePoints = [];
+            var legIndex = 0;
+            var legPoints = [];
+            for (var i = 0; i < _line.editing._markers.length; i++) {
+                var thisPoint = _line.editing._markers[i];
+
+                var pointDetails = {
+                    lat: thisPoint._latlng.lat,
+                    lng: thisPoint._latlng.lng,
+                    waypoint: thisPoint.waypoint
+                };
+
+                legPoints.push([thisPoint._latlng.lng, thisPoint._latlng.lat]);
+
+                if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
+                    var leg = {};
+                    leg.index = legIndex;
+                    legIndex++;
+
+                    // todo: calculate leg details?
+
+                    // distance
+
+                    // get distance
+                    leg.distance = turf.lineDistance(turf.linestring(legPoints), 'kilometers');
+
+                    // terrainLayer.getTerrainDataBulk(points.map(function(point) { return { lat: point[1], lng: point[0] }}), function(receivedPoints) {
+                    //     console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
+                    //     if (!receivedPoints || receivedPoints.length == 0) return;
+
+                    //     // calculate vertical up/down
+                        
+
+                    //     // add waypoints to elevation profile
+                    //     // angular.forEach(_line.editing._markers,function(marker) {
+                    //     //     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
+                    //     // });
+
+                    // });
+
+                    pointDetails.leg = leg;
+
+                    legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
+                }
+
+                _linePoints.push(pointDetails);
+            }
+            if (saveLinePointsCallback) saveLinePointsCallback(_linePoints);
         }
 
         function addPoint(latlng, index) {
@@ -150,6 +205,7 @@ return {
 
             updateElevationProfile();
             updateSegments();
+            saveLinePoints();
         }
 
         var editMode = false;
@@ -167,8 +223,10 @@ return {
                 editHandler.enable();
                 editMode = true;
 
+                saveLinePoints();
+
                 // start icon
-                $(_line.editing._markers[0]).addClass("start-icon");
+                //$(_line.editing._markers[0]).addClass("start-icon");
 
                 // when line is edited (after point is dragged)
                 _line.on('edit', function(e) {
@@ -179,6 +237,7 @@ return {
 
                     updateElevationProfile();
                     updateSegments();
+                    saveLinePoints();
                 });
             }
         });
@@ -220,6 +279,7 @@ return {
             nameInput.value = marker.waypoint.name;
             nameInput.onkeyup = function() {
                 marker.waypoint.name = nameInput.value;
+                saveLinePoints();
             }
 
             var deleteaypointbutton = document.createElement("button");
@@ -234,7 +294,8 @@ return {
             marker.bindPopup(popup, { closeButton: false });
 
             // add to elevation profile
-            elevationWidget.addWaypoint(marker._latlng);
+            // elevationWidget.addWaypoint(marker._latlng);
+            // saveLinePoints();
         }
         function makeRegularPoint(marker) {
             makePoint(marker);
@@ -255,10 +316,19 @@ return {
             popup.appendChild(makeWaypointbutton);
             makeWaypointbutton.innerHTML = "make waypoint";
             makeWaypointbutton.addEventListener("click", function() {
+                if (marker._index == 0) {
+                    console.log("can't create waypoint on start point")
+                    return;
+                }
+
                 marker.closePopup();
                 marker.unbindPopup();
                 makeWaypoint(marker);
                 marker.openPopup();
+
+                updateElevationProfile();
+                updateSegments();
+                saveLinePoints();
             });
 
             var deleteButton = document.createElement("button");
@@ -275,6 +345,8 @@ return {
         function deleteWaypoint(marker) {
             makeRegularPoint(marker);
             updateElevationProfile();
+            updateSegments();
+            saveLinePoints();
         }
 
         var lastLine;
@@ -282,14 +354,11 @@ return {
             var points = _line._latlngs;
 
             // get distance
-            var _points = points.map(function(point) { return [point.lng,point.lat] });
-            var linestring = turf.linestring(_points);
-            var length = turf.lineDistance(linestring, 'kilometers');
-            console.log("LINE LENGTH: " + length);
+            var distance = turf.lineDistance(turf.linestring(points.map(function(point) { return [point.lng,point.lat] })), 'kilometers');
+            //console.log("LINE LENGTH: " + length);
 
             // sample every 10m
-            var sampleCount = Math.round((length * 1000) / 10);
-
+            var sampleCount = Math.round((distance * 1000) / 10);
             //console.log("SAMPLE COUNT: " + sampleCount);
 
             // interpolate
@@ -297,10 +366,10 @@ return {
                 points = interpolate(points);
             }
 
-            //console.log("INTERPOLATED: " + points.length);
+            console.log("INTERPOLATED: " + points.length);
 
             terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
-                console.log("DOWNLOAD COMPLETE!!!");
+                console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
                 if (!receivedPoints || receivedPoints.length == 0) return;
 
                 plotElevationProfile(receivedPoints);
@@ -309,7 +378,6 @@ return {
                 angular.forEach(_line.editing._markers,function(marker) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
-
             });
         }
 

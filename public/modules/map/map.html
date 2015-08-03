@@ -179,23 +179,23 @@
 			<div id="map"></div>
 
 
-	    <fieldset id="controls" style="display:block;position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 276px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
+		    <fieldset id="controls" style="display:block;position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 276px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
 
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>
-	    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
-	    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>
+		    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
+		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>
 
-	        <div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
-	        {{ sunDate | amDateFormat:'h:mm a' }}</div>
-	        <!--
-	        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
-	        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
-	        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
-	    </fieldset>
+		        <div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
+		        {{ sunDate | amDateFormat:'h:mm a' }}</div>
+		        <!--
+		        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
+		        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
+		        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
+		    </fieldset>
 
 			<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
 			    <div class="btn-group dropup" dropdown>
@@ -221,6 +221,41 @@
 			</div>
 
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
+
+			<style>
+				.route-list {
+					border-top: 1px solid #ddd;
+				}
+				.route-item {
+					border-bottom: 1px solid #ddd;
+					padding: 5px 8px;
+				}
+			</style>
+
+			<div style="width:300px;height:400px;background:#fff;position:absolute;left:20px;top:60px;">
+				minutes<br/>
+				vertical up<br/>
+				vertical down<br/>
+				<br/>
+
+				<div class="route-list">
+					<div ng-repeat="routePoint in routePoints" ng-if="$index == 0 || routePoint.waypoint || $index == routePoints.length - 1">
+						<div class="route-item" ng-if="$index == 0">START</div>
+
+						<div ng-if="routePoint.waypoint">
+							<div class="route-item">segment details... {{ routePoint.leg }}</div>
+							<div class="route-item">WAYPOINT: {{ routePoint.waypoint }}</div>
+						</div>
+
+						<div ng-if="$index == routePoints.length - 1">
+							<div class="route-item">segment details... {{ routePoint.leg }}</div>
+							<div class="route-item">END</div>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
 		</div>
 
 		<div class="side-bar">

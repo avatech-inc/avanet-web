@@ -61,7 +61,7 @@ L.Control.Elevation = L.Control.extend({
             .y0(this._height())
             .y1(function(d) {
                 //console.log(d.slope);
-                return y(d.altitude);
+                return y(d.elevation);
             });
 
         var container = this._container = L.DomUtil.create("div", "elevation");
@@ -379,7 +379,7 @@ L.Control.Elevation = L.Control.extend({
                 .ticks(this.options.yTicks)
                 .orient("left"))
             .append("text")
-            .attr("x", -37)
+            .attr("x", -35)
             .attr("y", 3)
             .style("text-anchor", "end")
             .text("ft");
@@ -391,7 +391,7 @@ L.Control.Elevation = L.Control.extend({
                 .ticks(this.options.yTicks)
                 .orient("left"))
             .append("text")
-            .attr("x", -45)
+            .attr("x", -25)
             .attr("y", 3)
             .style("text-anchor", "end")
             .text("m");
@@ -467,7 +467,7 @@ L.Control.Elevation = L.Control.extend({
     },
 
     /*
-     * Handles the moueseover the chart and displays distance and altitude level
+     * Handles the moueseover the chart and displays distance and elevation level
      */
     _mousemoveHandler: function(d, i, ctx) {
         if (!this._data || this._data.length === 0) {
@@ -477,7 +477,7 @@ L.Control.Elevation = L.Control.extend({
         var opts = this.options;
 
         var item = this._data[this._findItemForX(coords[0])],
-            alt = item.altitude,
+            alt = item.elevation,
             dist = item.dist,
             ll = item.latlng,
             numY = opts.hoverNumber.formatter(alt, opts.hoverNumber.decimalsY),
@@ -575,7 +575,7 @@ L.Control.Elevation = L.Control.extend({
                 ele = ele < coords[i][2] ? coords[i][2] : ele;
                 data.push({
                     dist: dist,
-                    altitude: opts.imperial ? coords[i][2] * 3.28084 : coords[i][2],
+                    elevation: opts.imperial ? coords[i][2] * 3.28084 : coords[i][2],
                     slope: coords[i][3],
                     aspect: coords[i][4],
                     x: coords[i][0],
@@ -594,33 +594,33 @@ L.Control.Elevation = L.Control.extend({
     /*
      * Parsing function for GPX data as used by https://github.com/mpetazzoni/leaflet-gpx
      */
-    _addGPXdata: function(coords) {
-        var opts = this.options;
-        if (coords) {
-            var data = this._data || [];
-            var dist = this._dist || 0;
-            var ele = this._maxElevation || 0;
-            for (var i = 0; i < coords.length; i++) {
-                var s = coords[i];
-                var e = coords[i ? i - 1 : 0];
-                var newdist = opts.imperial ? s.distanceTo(e) * 0.621371 : s.distanceTo(e);
-                dist = dist + Math.round(newdist / 1000 * 100000) / 100000;
-                ele = ele < s.meta.ele ? s.meta.ele : ele;
-                data.push({
-                    dist: dist,
-                    altitude: opts.imperial ? s.meta.ele * 3.28084 : s.meta.ele,
-                    x: s.lng,
-                    y: s.lat,
-                    latlng: s
-                });
-            }
-            this._dist = dist;
-            this._data = data;
+    // _addGPXdata: function(coords) {
+    //     var opts = this.options;
+    //     if (coords) {
+    //         var data = this._data || [];
+    //         var dist = this._dist || 0;
+    //         var ele = this._maxElevation || 0;
+    //         for (var i = 0; i < coords.length; i++) {
+    //             var s = coords[i];
+    //             var e = coords[i ? i - 1 : 0];
+    //             var newdist = opts.imperial ? s.distanceTo(e) * 0.621371 : s.distanceTo(e);
+    //             dist = dist + Math.round(newdist / 1000 * 100000) / 100000;
+    //             ele = ele < s.meta.ele ? s.meta.ele : ele;
+    //             data.push({
+    //                 dist: dist,
+    //                 altitude: opts.imperial ? s.meta.ele * 3.28084 : s.meta.ele,
+    //                 x: s.lng,
+    //                 y: s.lat,
+    //                 latlng: s
+    //             });
+    //         }
+    //         this._dist = dist;
+    //         this._data = data;
 
-            ele = opts.imperial ? ele * 3.28084 : ele;
-            this._maxElevation = ele;
-        }
-    },
+    //         ele = opts.imperial ? ele * 3.28084 : ele;
+    //         this._maxElevation = ele;
+    //     }
+    // },
 
     _addData: function(d) {
         var geom = d && d.geometry && d.geometry;
@@ -713,22 +713,29 @@ L.Control.Elevation = L.Control.extend({
             .attr('y1', 0)
             .attr('x2', xCoordinate)
             .attr('y2', this._height())
+            .attr("style","stroke:#00fffa;")
             .classed('hidden', false);
 
-        var alt = item.altitude,
+        var alt = item.elevation,
             dist = item.dist,
             ll = item.latlng,
             numY = opts.hoverNumber.formatter(alt, opts.hoverNumber.decimalsY),
             numX = opts.hoverNumber.formatter(dist, opts.hoverNumber.decimalsX);
 
-        if(opts.imperial){
-            this._focuslabelX.attr("x", xCoordinate)
-                .text(numY + " ft");
-            this._focuslabelY.attr("y", this._height() - 5)
-                .attr("x", xCoordinate)
-                .text(numX + " mi");
+        if (opts.imperial) {
+            // this._focuslabelX.attr("x", xCoordinate)
+            //     .text(numY + " ft");
+            // this._focuslabelY.attr("y", this._height() - 5)
+            //     .attr("x", xCoordinate)
+            //     .text(numX + " mi");
+
+            this._focuslabelY.attr("x", 0).attr("y", -5)
+                .text("DISTANCE: " + numX + " mi");
+
+            this._focuslabelX.attr("x", 115).attr("y", -5)
+                .text("ELEVATION: " + numY + " ft");
         }
-        else{
+        else {
             // this._focuslabelX.attr("x", xCoordinate + 2)
             //     .text(numY + " m");
 
@@ -755,7 +762,7 @@ L.Control.Elevation = L.Control.extend({
             return d.dist;
         });
         var ydomain = d3.extent(this._data, function(d) {
-            return d.altitude;
+            return d.elevation;
         });
         var opts = this.options;
 

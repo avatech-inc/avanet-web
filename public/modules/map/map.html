@@ -223,8 +223,10 @@
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 
 			<route-planning terrain-layer="terrainLayer" map="map" route="route" 
-				hover-on-leg-line="hoverOnLegLine"
+				hover-on-leg-map="hoverOnLegMap"
 				hover-on-leg="hoverOnLeg"
+				hover-on-point-map="hoverOnPointMap"
+				hover-on-point="hoverOnPoint"
 				></route-planning>
 
 			<style>
@@ -236,7 +238,7 @@
 					padding: 6px 8px;
 					position: relative;
 					background: #fff;
-					transition: background 100ms;
+					transition: background 150ms;
 				}
 				.route-item.highlight,
 				.route-item:hover {
@@ -276,7 +278,7 @@
 				}
 			</style>
 
-			<div ng-show="route" style="width:280px;background:#fff;position:absolute;left:10px;top:10px;">
+			<div ng-if="route && route.points.length > 1" style="width:280px;background:#fff;position:absolute;left:10px;top:10px;">
 				<div style="padding:10px;">
 					<div style="font-weight:bold;font-size:18px;margin-bottom:8px;">Route Details</div>
 					DISTANCE: {{ route.terrain.distance.toFixed(3) }}km<br/>
@@ -287,33 +289,32 @@
 
 				<div class="route-list">
 					<div ng-repeat="routePoint in route.points" ng-if="$index == 0 || routePoint.waypoint || $index == route.points.length - 1">
-						<div class="route-item" ng-if="$index == 0" style="font-weight:bold">
-							<div class="side-line start"></div>
-							<div class="route-waypoint-icon start"></div>
-							START ({{ routePoint.terrain.elevation }}m)
+
+						<div class="route-item" style="padding-left:32px;font-size:12px;" 
+						ng-if="routePoint.waypoint || $index == route.points.length - 1"
+						ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
+						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
+							<div class="side-line"></div>
+							DISTANCE: {{ routePoint.leg.distance.toFixed(3) }}km<br/>
+							ELEVATION: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ routePoint.leg.elevationChange }}m<br/>
+							VERTICAL: +{{ routePoint.leg.verticalUp }}m / -{{ routePoint.leg.verticalDown }}m
 						</div>
+						<div class="route-item" style="font-weight:bold"
+							ng-class="{ 'highlight': hoverOnPointMap == $index }" 
+							ng-mouseover="_hoverOnPoint($index)" ng-mouseout="_hoverOnPoint(null)">
+							<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+							<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+							<span ng-hide="$index > 0 && $index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>
+							<span ng-show="$index == route.points.length - 1">END</span>
+							<span ng-show="$index == 0">START</span>
 
-						<div ng-if="routePoint.waypoint || $index == route.points.length - 1">
-							<div class="route-item" style="padding-left:32px;font-size:12px;" 
-							ng-class="{ 'highlight': hoverOnLegLine == routePoint.leg.index }" 
-							ng-mouseover="hoverOnLegItem(routePoint.leg.index)" ng-mouseout="hoverOnLegItem(null)">
-								<div class="side-line"></div>
-								DISTANCE: {{ routePoint.leg.distance.toFixed(3) }}km<br/>
-								ELEVATION: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ routePoint.leg.elevationChange }}m<br/>
-								VERTICAL: +{{ routePoint.leg.verticalUp }}m / -{{ routePoint.leg.verticalDown }}m
-							</div>
-							<div class="route-item" style="font-weight:bold">
-								<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1 }"></div>
-								<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1 }"></div>
-								<span ng-hide="$index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>
-								<span ng-show="$index == route.points.length - 1">END</span>
+							({{ routePoint.terrain.elevation }}m) 
 
-								({{ routePoint.terrain.elevation }}m) 
-								<div style="float:right;">
-									{{ routePoint.terrain.totalDistance.toFixed(3) }}km
-								</div>
+							<div style="float:right;" ng-hide="$index == 0">
+								{{ routePoint.terrain.totalDistance.toFixed(3) }}km
 							</div>
 						</div>
+
 					</div>
 				</div>
 

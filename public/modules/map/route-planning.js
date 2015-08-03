@@ -7,22 +7,31 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
       map: '=',
       terrainLayer: '=',
       route: '=',
-      hoverOnLegLine: '=',
-      hoverOnLeg: '='
-      // onprogress: '&',
-      // onupload: '&'
+      hoverOnLegMap: '=',
+      hoverOnLeg: '=',
+
+      hoverOnPointMap: '=',
+      hoverOnPoint: '='
     },
-    //template: "<div class='upload-area'><input type='file' multiple/><div class='drop-area'><div class='big'>Drop photos here</div><div class='small'>or click to select files</div></div></div>",
     link: function(scope, element) {
 
         scope.$watch("hoverOnLeg", function(){
-            //if (scope.hoverOnLeg == null) return;
-
-            console.log("HOVER: " + scope.hoverOnLeg)
             angular.forEach(lineSegmentGroup._layers, function(segment) {
                 segment.setStyle({ color: 'transparent' });
-                if(segment.segment.legIndex == scope.hoverOnLeg) {
-                    segment.setStyle({ color: 'rgba(0,0,255,.3)' });
+                if (segment.segment.legIndex == scope.hoverOnLeg) {
+                    // highlight route leg
+                    segment.setStyle({ color: 'rgba(0,0,255,.4)' });
+                    // todo: highlight in elevation profile
+                }
+            });
+        }, true);
+        scope.$watch("hoverOnPoint", function(){
+            if (!_line) return;
+            angular.forEach(_line.editing._markers, function(marker) {
+                $(marker._icon).removeClass("highlight");
+                if (marker._index == scope.hoverOnPoint) {
+                    // highlight marker
+                    $(marker._icon).addClass("highlight");
                 }
             });
         }, true);
@@ -146,11 +155,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 // elevation widget highlight
                 segment.on('mousemove', function(e) {
                     if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
-                    $timeout(function(){ scope.hoverOnLegLine = e.target.segment.legIndex });
+                    $timeout(function(){ scope.hoverOnLegMap = e.target.segment.legIndex });
                 });
                 segment.on('mouseout', function(e) {
                     if (elevationWidget) elevationWidget.highlight();
-                    $timeout(function(){ scope.hoverOnLegLine = null });
+                    $timeout(function(){ scope.hoverOnLegMap = null });
                 });
 
                 lineSegmentGroup.addLayer(segment);
@@ -315,9 +324,12 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             // elevation widget highlight
             marker.on('mouseover', function(e) {
                 if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
+                $timeout(function(){ scope.hoverOnPointMap = e.target._index });
+
             });
             marker.on('mouseout', function(e) {
                 if (elevationWidget) elevationWidget.highlight();
+                $timeout(function(){ scope.hoverOnPointMap = null });
             });
         }
 

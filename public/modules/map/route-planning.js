@@ -6,12 +6,26 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
     scope: { 
       map: '=',
       terrainLayer: '=',
-      route: '='
+      route: '=',
+      hoverOnLegLine: '=',
+      hoverOnLeg: '='
       // onprogress: '&',
       // onupload: '&'
     },
     //template: "<div class='upload-area'><input type='file' multiple/><div class='drop-area'><div class='big'>Drop photos here</div><div class='small'>or click to select files</div></div></div>",
     link: function(scope, element) {
+
+        scope.$watch("hoverOnLeg", function(){
+            //if (scope.hoverOnLeg == null) return;
+
+            console.log("HOVER: " + scope.hoverOnLeg)
+            angular.forEach(lineSegmentGroup._layers, function(segment) {
+                segment.setStyle({ color: 'transparent' });
+                if(segment.segment.legIndex == scope.hoverOnLeg) {
+                    segment.setStyle({ color: 'rgba(0,0,255,.3)' });
+                }
+            });
+        }, true);
 
         function interpolate(_points) {
             var new_points = [];
@@ -132,9 +146,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 // elevation widget highlight
                 segment.on('mousemove', function(e) {
                     if (e.latlng && elevationWidget) elevationWidget.highlight(e.latlng);
+                    $timeout(function(){ scope.hoverOnLegLine = e.target.segment.legIndex });
                 });
                 segment.on('mouseout', function(e) {
                     if (elevationWidget) elevationWidget.highlight();
+                    $timeout(function(){ scope.hoverOnLegLine = null });
                 });
 
                 lineSegmentGroup.addLayer(segment);

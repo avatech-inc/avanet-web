@@ -963,6 +963,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // --------------------- DRAWING ---------------------
     // ---------------------------------------------------
 
+    $scope.hoverOnLegItem = function(index) {
+        $scope.hoverOnLeg = index;
+    }
     // routePlanning.init($scope.map, terrainLayer, function(points) {
     //     console.log("LINE SAVED:");
     //     console.log(points);

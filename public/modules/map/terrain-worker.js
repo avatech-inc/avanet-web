@@ -39,8 +39,8 @@ onmessage = function (e) {
             requestId: e.data.requestId,
             index: e.data.index,
             pointInTile: e.data.pointInTile,
-            orginal: e.data.orginal,
-            
+            original: e.data.original,
+
             elevation: terrainData[0],
             slope: terrainData[1],
             aspect: terrainData[2],

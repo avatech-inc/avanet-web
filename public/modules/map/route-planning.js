@@ -182,7 +182,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                     terrain: {},
                     points: []
                 };
-                
+
                 var legIndex = 0;
                 var legPoints = [];
 
@@ -756,7 +756,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
                 width: 700,
                 height: 180,
                 margins: {
-                    top: 10,
+                    top: 24,
                     right: 20,
                     bottom: 30,
                     left: 50

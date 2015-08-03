@@ -5,7 +5,7 @@ L.Control.Elevation = L.Control.extend({
         width: 600,
         height: 175,
         margins: {
-            top: 10,
+            top: 20,
             right: 20,
             bottom: 30,
             left: 60
@@ -129,6 +129,12 @@ L.Control.Elevation = L.Control.extend({
             .attr('x1', '0')
             .attr('y1', '0');
         this._focuslabelX = focusG.append("svg:text")
+            .style("pointer-events", "none")
+            .attr("class", "mouse-focus-label-x");
+        this._focuslabelX2= focusG.append("svg:text")
+            .style("pointer-events", "none")
+            .attr("class", "mouse-focus-label-x");
+        this._focuslabelX3= focusG.append("svg:text")
             .style("pointer-events", "none")
             .attr("class", "mouse-focus-label-x");
         this._focuslabelY = focusG.append("svg:text")
@@ -570,8 +576,8 @@ L.Control.Elevation = L.Control.extend({
                 data.push({
                     dist: dist,
                     altitude: opts.imperial ? coords[i][2] * 3.28084 : coords[i][2],
-                    //altitude: 2600 * 3.28084,
                     slope: coords[i][3],
+                    aspect: coords[i][4],
                     x: coords[i][0],
                     y: coords[i][1],
                     latlng: s
@@ -723,12 +729,25 @@ L.Control.Elevation = L.Control.extend({
                 .text(numX + " mi");
         }
         else{
-            this._focuslabelX.attr("x", xCoordinate)
-                .text(numY + " m");
-            this._focuslabelY.attr("y", this._height() - 5)
-                .attr("x", xCoordinate)
-                .text(numX + " km");
+            // this._focuslabelX.attr("x", xCoordinate + 2)
+            //     .text(numY + " m");
+
+            // this._focuslabelY.attr("y", this._height() - 5)
+            //     .attr("x", xCoordinate)
+            //     .text(numX + " km");
+
+            this._focuslabelY.attr("x", 0).attr("y", -5)
+                .text("DISTANCE: " + numX + " km");
+
+            this._focuslabelX.attr("x", 115).attr("y", -5)
+                .text("ELEVATION: " + numY + " m");
+
         }
+
+        this._focuslabelX2.attr("x", 225).attr("y",-5)
+            .text("SLOPE: " + item.slope + "°");
+        this._focuslabelX3.attr("x", 290).attr("y", -5)
+            .text("ASPECT: " + item.aspect + "°");
     },
 
     _applyData: function() {

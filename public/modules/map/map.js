@@ -816,7 +816,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
 
-    var defaultZoom = 12;
+    var defaultZoom = 13;
     if (!$scope.global.user.location) $scope.map.setView([40.633052,-111.7111795], defaultZoom); //8
     else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], defaultZoom); //8
 
@@ -828,7 +828,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // on map search select
     $scope.mapSearchSelect = function(location) {
         if (location.lat && location.lng)
-            $scope.map.setView([location.lat,location.lng], 12,{ animate: true});
+            $scope.map.setView([location.lat,location.lng], defaultZoom,{ animate: true});
     }
 
     // load profiles

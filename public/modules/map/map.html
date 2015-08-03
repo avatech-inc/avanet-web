@@ -287,9 +287,9 @@
 			<div ng-if="route && route.points.length > 1" style="width:300px;background:#fff;position:absolute;left:10px;top:10px;">
 				<div style="padding:10px;">
 					<div style="font-weight:bold;font-size:18px;margin-bottom:8px;">Route Details</div>
-					DISTANCE: {{ route.terrain.distance.toFixed(3) }} km<br/>
-					NET ELEV: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ route.terrain.elevationChange }} m<br/>
-					VERTICAL: +{{ route.terrain.verticalUp }}m / -{{ route.terrain.verticalDown }} m<br/>
+					DISTANCE: {{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
+					NET ELEV: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}<br/>
+					VERTICAL: +{{ formatters.formatElevation(route.terrain.verticalUp) }} / -{{ formatters.formatElevation(route.terrain.verticalDown) }}<br/>
 					SLOPE: AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
 					MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
 					MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
@@ -308,9 +308,9 @@
 						ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 							<div class="side-line"></div>
-							DISTANCE: {{ routePoint.leg.distance.toFixed(3) }} km<br/>
-							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ routePoint.leg.elevationChange }} m<br/>
-							VERTICAL: +{{ routePoint.leg.verticalUp }}m / -{{ routePoint.leg.verticalDown }} m<br/>
+							DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
+							VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
 							SLOPE: AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
 							MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
 							MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
@@ -326,10 +326,10 @@
 							<span ng-show="$index == route.points.length - 1">END</span>
 							<span ng-show="$index == 0">START</span>
 
-							({{ routePoint.terrain.elevation }}m) 
+							({{ formatters.formatElevation(routePoint.terrain.elevation) }}) 
 
 							<div style="float:right;" ng-hide="$index == 0">
-								{{ routePoint.terrain.totalDistance.toFixed(3) }} km /
+								{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }} /
 								{{ formatTime(routePoint.terrain.totalTimeEstimateMinutes) }}
 							</div>
 						</div>

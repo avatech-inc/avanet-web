@@ -1,4 +1,4 @@
-angular.module('avatech').directive('routePlanning', function($http, $timeout) {
+angular.module('avatech').directive('routePlanning', function($http, $timeout, Global) {
   return {
     restrict: 'E',
     scope: { 
@@ -752,7 +752,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout) {
             elevationWidget = L.control.elevation({
                 position: "topright",
                 theme: "steelblue-theme", //default: lime-theme
-                imperial: false, // true
+                imperial: Global.user.settings.elevation == 1, // true
                 width: 700,
                 height: 180,
                 margins: {

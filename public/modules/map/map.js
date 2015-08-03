@@ -1,5 +1,7 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, snowpitExport) {
     $scope.global = Global;
+
+    $scope.formatters = snowpitExport.formatters;
 
     $scope._showPreviewPane;
     $scope.showPreviewPane = function(){ 

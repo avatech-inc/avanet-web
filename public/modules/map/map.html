@@ -343,7 +343,7 @@
 						</div>
 						<div class="route-item" style="font-weight:bold"
 							ng-class="{ 'highlight': hoverOnPointMap == $index }" 
-							ng-mouseover="_hoverOnPoint($index)" ng-mouseout="_hoverOnPoint(null)">
+							ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
 							<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 							<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 							<span ng-hide="$index > 0 && $index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>

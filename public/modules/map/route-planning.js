@@ -26,6 +26,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         }, true);
 
         scope.$watch("hoverOnLeg", function(){
+            console.log("HOVER ON LEG: " + scope.hoverOnLeg);
             angular.forEach(lineSegmentGroup._layers, function(segment) {
                 segment.setStyle({ color: 'transparent' });
                 if (segment.segment.legIndex == scope.hoverOnLeg) {
@@ -36,6 +37,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             });
         }, true);
         scope.$watch("hoverOnPoint", function(){
+            console.log("HOVER ON POINT: " + scope.hoverOnPoint);
             if (!_line) return;
             angular.forEach(_line.editing._markers, function(marker) {
                 $(marker._icon).removeClass("highlight");
@@ -195,6 +197,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                             lat: thisPoint._latlng.lat,
                             lng: thisPoint._latlng.lng,
                             waypoint: thisPoint.waypoint,
+                            pointIndex: thisPoint._index,
                             terrain: {},
                             leg: {}
                         };
@@ -210,7 +213,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
                         scope.route.points.push(pointDetails);
 
-                        legIndex++;
+                        if (thisPoint.waypoint) legIndex++;
                         lastWaypointIndex = thisPoint._index;
                     }
                 }
@@ -249,6 +252,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             updateSegments();
 
             // don't save line points since it causes flash of NaN in route details panel
+            // it will be called once terrain data is loaded 
             //saveLinePoints();
         }
 
@@ -276,7 +280,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
                     updateElevationProfile();
                     updateSegments();
-                    saveLinePoints();
+
+                    // wait for new elevation profile to load before adjusting
+                    //saveLinePoints();
                 });
             }
 

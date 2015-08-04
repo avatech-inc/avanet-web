@@ -137,6 +137,9 @@ L.Control.Elevation = L.Control.extend({
         this._focuslabelX3= focusG.append("svg:text")
             .style("pointer-events", "none")
             .attr("class", "mouse-focus-label-x");
+        this._focuslabelX4= focusG.append("svg:text")
+            .style("pointer-events", "none")
+            .attr("class", "mouse-focus-label-x");
         this._focuslabelY = focusG.append("svg:text")
             .style("pointer-events", "none")
             .attr("class", "mouse-focus-label-y");
@@ -578,6 +581,8 @@ L.Control.Elevation = L.Control.extend({
                     elevation: opts.imperial ? coords[i][2] * 3.28084 : coords[i][2],
                     slope: coords[i][3],
                     aspect: coords[i][4],
+                    timeEstimateMinutes: coords[i][5],
+
                     x: coords[i][0],
                     y: coords[i][1],
                     latlng: s
@@ -772,8 +777,25 @@ L.Control.Elevation = L.Control.extend({
 
         this._focuslabelX2.attr("x", 225).attr("y",-5)
             .text("SLOPE: " + item.slope + "°");
+
         this._focuslabelX3.attr("x", 290).attr("y", -5)
             .text("ASPECT: " + item.aspect + "°");
+
+        this._focuslabelX4.attr("x", 370).attr("y", -5)
+            .text("TIME: " + this.formatTime(item.timeEstimateMinutes));
+    },
+
+
+    formatTime: function(minutes) {
+        var str = "";
+        if (minutes >= 60) {
+            var hours = minutes / 60;
+            var mins = Math.floor(minutes % 60);
+            str = Math.floor(hours) + " hr";
+            if (mins > 0) str += " " + mins + " min";
+        }
+        else str = Math.floor(minutes) + " min";
+        return str;
     },
 
     _applyData: function() {

@@ -508,6 +508,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 // store elevation profile for later
                 elevationProfilePoints = receivedPoints;
 
+                // calculate route stats/time, etc.
+                calculateRouteStats(receivedPoints)
+
                 // plot elevation profile
                 plotElevationProfile(receivedPoints);
 
@@ -515,8 +518,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 angular.forEach(_line.editing._markers,function(marker) {
                     if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
                 });
-
-                calculateRouteStats(receivedPoints)
 
                 saveLinePoints();
 
@@ -557,6 +558,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             var previousElevation = 0;
             var totalDistance = 0;
+            var timeEstimateMinutes = 0;
             var totalTimeEstimateMinutes = 0;
 
             for (var i = 0; i < receivedPoints.length; i++) {
@@ -569,6 +571,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 if (i > 0) {
 
                     // keep track of distance
+
                     var thisDistance = turf.lineDistance(turf.linestring([
                         [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
                         [terrainData.lng, terrainData.lat]
@@ -576,6 +579,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     totalDistance += thisDistance;
 
                     // keep track of vertical up/down
+
                     var previousElevation = receivedPoints[i-1].elevation;
                     var elevationDifference =  terrainData.elevation - previousElevation;
                     if (elevationDifference > 0) {
@@ -590,7 +594,39 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                         verticalFlatDistance += thisDistance; 
                     }
 
+
+                    // munter time estimate
+
+                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+                    var munter_rate_up = scope.munterRateUp;
+                    var munter_rate_down = scope.munterRateDown;
+                    var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
+
+                    var units_up = 0;
+                    units_up += verticalUpDistance;
+                    units_up += verticalUp / 100;
+
+                    var units_down = 0;
+                    units_down += verticalDownDistance;
+                    units_down += verticalDown / 100;
+
+                    var units_flat = 0;
+                    units_flat += verticalFlatDistance;
+
+                    var minutes_up = (units_up / munter_rate_up) * 60;
+                    var minutes_down = (units_down / munter_rate_down) * 60;
+                    var minutes_flat = (units_flat / munter_rate_flat) * 60;
+
+                    timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
+
+                    // add time estimate to elevation profile points
+                    terrainData.timeEstimateMinutes = timeEstimateMinutes + totalTimeEstimateMinutes;
                 }
+
 
                 if (terrainData.original) {
                     var marker = _line.editing._markers[originalIndex];
@@ -622,27 +658,28 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     // distance: 1km = 1 unit (since distance is already in km, just use as-is)
                     // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
 
-                    var munter_rate_up = scope.munterRateUp;
-                    var munter_rate_down = scope.munterRateDown;
-                    var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
+                    // var munter_rate_up = scope.munterRateUp;
+                    // var munter_rate_down = scope.munterRateDown;
+                    // var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
 
-                    var units_up = 0;
-                    units_up += verticalUpDistance;
-                    units_up += verticalUp / 100;
+                    // var units_up = 0;
+                    // units_up += verticalUpDistance;
+                    // units_up += verticalUp / 100;
 
-                    var units_down = 0;
-                    units_down += verticalDownDistance;
-                    units_down += verticalDown / 100;
+                    // var units_down = 0;
+                    // units_down += verticalDownDistance;
+                    // units_down += verticalDown / 100;
 
-                    var units_flat = 0;
-                    units_flat += verticalFlatDistance;
+                    // var units_flat = 0;
+                    // units_flat += verticalFlatDistance;
 
-                    var minutes_up = (units_up / munter_rate_up) * 60;
-                    var minutes_down = (units_down / munter_rate_down) * 60;
-                    var minutes_flat = (units_flat / munter_rate_flat) * 60;
+                    // var minutes_up = (units_up / munter_rate_up) * 60;
+                    // var minutes_down = (units_down / munter_rate_down) * 60;
+                    // var minutes_flat = (units_flat / munter_rate_flat) * 60;
 
-                    marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
-                    totalTimeEstimateMinutes += marker.terrain.timeEstimateMinutes;
+                    //marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
+                    marker.terrain.timeEstimateMinutes = timeEstimateMinutes;
+                    totalTimeEstimateMinutes += timeEstimateMinutes;
                     marker.terrain.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
 
                     // if (previousMarker) {
@@ -666,7 +703,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     verticalUpDistance = 0;
                     verticalDownDistance = 0;
                     verticalFlatDistance = 0;
-
+                    timeEstimateMinutes = 0;
                     slopes = [];
                 }
             }
@@ -704,7 +741,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     terrainData.lat,
                     terrainData.elevation,
                     terrainData.slope,
-                    terrainData.aspect
+                    terrainData.aspect,
+                    terrainData.timeEstimateMinutes
                 ]);
             }
 
@@ -753,7 +791,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 position: "topright",
                 theme: "steelblue-theme", //default: lime-theme
                 imperial: Global.user.settings.elevation == 1, // true
-                width: 700,
+                width: 670,
                 height: 180,
                 margins: {
                     top: 24,

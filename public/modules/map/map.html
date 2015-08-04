@@ -236,6 +236,21 @@
 				></route-planning>
 
 			<style>
+				.route-box {
+					width:300px; 
+					background: rgba(255,255,255,.9);
+					position:absolute;
+					left:10px;top:10px;bottom:50px;
+					overflow:scroll; 
+					border-radius:4px;
+				}
+				.route-box label {
+					font-weight: 700;
+					margin-bottom: 6px;
+					margin-left: 6px;
+					margin-right: 5px;
+					text-transform: uppercase;
+				}
 				.route-list {
 					border-top: 1px solid #ddd;
 				}
@@ -243,7 +258,7 @@
 					border-bottom: 1px solid #ddd;
 					padding: 6px 8px;
 					position: relative;
-					background: #fff;
+					//background: rgba(255,255,255,.9);
 					transition: background 150ms;
 				}
 				.route-item.highlight,
@@ -284,27 +299,36 @@
 				}
 			</style>
 
-			<div ng-if="route && route.points.length > 1" style="width:300px;background:#fff;position:absolute;left:10px;top:10px;">
-				<div style="padding:10px;">
-					<div style="font-weight:bold;font-size:18px;margin-bottom:8px;">Route Details</div>
-					DISTANCE: {{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
-					NET ELEV: {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}<br/>
-					VERTICAL: +{{ formatters.formatElevation(route.terrain.verticalUp) }} / -{{ formatters.formatElevation(route.terrain.verticalDown) }}<br/>
-					SLOPE: AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
-					MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
-					MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
-					<br/>
-					TIME: {{ formatTime(route.terrain.timeEstimateMinutes) }}
-					<br/>
-					Munter rate up/down: <input type="number" ng-model="munterRate.up" style="width:50px;"/>
-					<input type="number" ng-model="munterRate.down" style="width:50px;"/>
+			<div ng-if="route && route.points.length > 1" class="route-box">
+				<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;">ROUTE
+
+				<div style="float:right;font-weight:500">
+					{{ formatters.formatKmOrMiles(route.terrain.distance) }} / 
+					{{ formatTime(route.terrain.timeEstimateMinutes) }}
+				</div>
+				</div>
+				<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
+					<div style="font-size:13px;">
+						<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
+						<label>VERTICAL</label> 
+							<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
+							<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
+						<br/>
+						<label style="margin-bottom:3px;">SLOPE</label>
+						MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
+						AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
+						MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
+						<br/>
+						<label>Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
+						<input type="number" ng-model="munterRate.down" style="width:34px;"/>
+					</div>
 				</div>
 
 				<div class="route-list">
 					<div ng-repeat="routePoint in route.points" ng-if="$index == 0 || routePoint.waypoint || $index == route.points.length - 1">
 
 						<div class="route-item" style="padding-left:34px;font-size:12px;" 
-						ng-if="routePoint.waypoint || $index == route.points.length - 1"
+						ng-if="$index != 0"
 						ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 							<div class="side-line"></div>

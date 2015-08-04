@@ -582,6 +582,7 @@ L.Control.Elevation = L.Control.extend({
                     slope: coords[i][3],
                     aspect: coords[i][4],
                     timeEstimateMinutes: coords[i][5],
+                    new_dist: coords[i][6],
 
                     x: coords[i][0],
                     y: coords[i][1],
@@ -725,7 +726,8 @@ L.Control.Elevation = L.Control.extend({
             .classed('hidden', false);
 
         var alt = item.elevation,
-            dist = item.dist,
+            //dist = item.dist,
+            dist = item.new_dist,
             ll = item.latlng,
             numY = opts.hoverNumber.formatter(alt, opts.hoverNumber.decimalsY),
             numX = opts.hoverNumber.formatter(dist, opts.hoverNumber.decimalsX);
@@ -767,7 +769,7 @@ L.Control.Elevation = L.Control.extend({
             //     .text(numX + " km");
 
             this._focuslabelY.attr("x", 0).attr("y", -5)
-                .text("DISTANCE: " + numX + " km," ); 
+                .text("DISTANCE: " + numX + " km"); 
                 //.text("DISTANCE: " + numX + "," + newDist); 
 
             this._focuslabelX.attr("x", 115).attr("y", -5)

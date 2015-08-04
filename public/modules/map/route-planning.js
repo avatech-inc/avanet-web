@@ -184,117 +184,40 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 };
 
                 var legIndex = 0;
-                var legPoints = [];
-
-                var totalVerticalUp = 0;
-                var totalVerticalDown = 0;
-
-                var verticalUp = 0;
-                var verticalDown = 0;
-                var startElevation;
-
-                var slopeAverage = 0;
-                var totalSlopeAverage = 0;
-
-                var slopeMin = 9999;
-                var totalSlopeMin = 9999;
-
-                var slopeMax = 0;
-                var totalSlopeMax = 0;
-
-                var timeEstimateMinutes = 0;
-                var totalTimeEstimateMinutes = 0;
+                var lastWaypointIndex = 0;
 
                 for (var i = 0; i < _line.editing._markers.length; i++) {
                     var thisPoint = _line.editing._markers[i];
 
-                    if (i == 0 && thisPoint.terrain) startElevation = thisPoint.terrain.elevation;
+                    if (thisPoint.waypoint || i == 0 || i == _line.editing._markers.length - 1) {
 
-                    var pointDetails = {
-                        lat: thisPoint._latlng.lat,
-                        lng: thisPoint._latlng.lng,
-                        waypoint: thisPoint.waypoint,
-                        terrain: thisPoint.terrain
-                    };
+                        var pointDetails = {
+                            lat: thisPoint._latlng.lat,
+                            lng: thisPoint._latlng.lng,
+                            waypoint: thisPoint.waypoint,
+                            terrain: {},
+                            leg: {}
+                        };
 
-                    // keep track of all points in this leg
-                    legPoints.push([thisPoint._latlng.lng, thisPoint._latlng.lat]);
-
-                    // keep track of leg terrain stats
-                    if (thisPoint.terrain) {
-                        verticalUp += thisPoint.terrain.verticalUp;
-                        verticalDown += thisPoint.terrain.verticalDown;
-
-                        totalVerticalUp += thisPoint.terrain.verticalUp;
-                        totalVerticalDown += thisPoint.terrain.verticalDown;
-
-                        slopeAverage += thisPoint.terrain.slopeAverage;
-                        totalSlopeAverage += thisPoint.terrain.slopeAverage;
-
-                        slopeMin = Math.min(slopeMin, thisPoint.terrain.slopeMin);
-                        slopeMax = Math.max(slopeMax, thisPoint.terrain.slopeMax);
-
-                        totalSlopeMin = Math.min(totalSlopeMin, thisPoint.terrain.slopeMin);
-                        totalSlopeMax = Math.max(totalSlopeMax, thisPoint.terrain.slopeMax);
-
-                        timeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
-                        totalTimeEstimateMinutes += thisPoint.terrain.timeEstimateMinutes;
-                    }   
-
-                    if (thisPoint.waypoint || i == _line.editing._markers.length - 1) {
-                        var leg = {};
-                        leg.index = legIndex;
-                        legIndex++;
-
-                        // get distance
-                        leg.distance = turf.lineDistance(turf.linestring(legPoints), 'kilometers');
-
-                        if (thisPoint.terrain) {
-                            // vertical up/down
-                            leg.verticalUp = verticalUp;
-                            leg.verticalDown = verticalDown;
-
-                            // elevation change
-                            leg.elevationChange = thisPoint.terrain.elevation - startElevation;
-
-                            // slope
-                            leg.slopeAverage = slopeAverage / legPoints.length;
-                            leg.slopeMin = slopeMin;
-                            leg.slopeMax = slopeMax;
-
-                            // time estimate
-                            leg.timeEstimateMinutes = timeEstimateMinutes;
+                        // get leg
+                        if (elevationProfilePoints) {
+                            var legPoints = getLegPoints(lastWaypointIndex, thisPoint._index);
+                            pointDetails.leg = calculateLineSegmentStats(legPoints);
+                            pointDetails.terrain = getElevationProfilePoint(thisPoint._index);
                         }
 
-                        pointDetails.leg = leg;
+                        pointDetails.leg.index = legIndex;
 
-                        // reset for next leg
-                        if (thisPoint.terrain) startElevation = thisPoint.terrain.elevation;
-                        legPoints = [[thisPoint._latlng.lng, thisPoint._latlng.lat]];
-                        verticalUp = 0;
-                        verticalDown = 0;
-                        slopeAverage = 0;
-                        slopeMin = 9999;
-                        slopeMax = 0;
-                        timeEstimateMinutes = 0;
+                        scope.route.points.push(pointDetails);
+
+                        legIndex++;
+                        lastWaypointIndex = thisPoint._index;
                     }
-                    
-                    scope.route.points.push(pointDetails);
                 }
 
                 // route terrain stats
-                if (thisPoint.terrain) {
-                    scope.route.terrain.distance = _line.editing._markers[_line.editing._markers.length - 1].terrain.totalDistance;
-                    scope.route.terrain.verticalUp = totalVerticalUp;
-                    scope.route.terrain.verticalDown = totalVerticalDown;
-                    scope.route.terrain.timeEstimateMinutes = totalTimeEstimateMinutes;
-                    scope.route.terrain.slopeAverage = totalSlopeAverage / _line.editing._markers.length;
-                    scope.route.terrain.slopeMin = totalSlopeMin;
-                    scope.route.terrain.slopeMax = totalSlopeMax;
-                    scope.route.terrain.elevationChange = 
-                        _line.editing._markers[_line.editing._markers.length - 1].terrain.elevation -
-                        _line.editing._markers[0].terrain.elevation ;
-                }
+                if (elevationProfilePoints)
+                   scope.route.terrain = calculateLineSegmentStats(elevationProfilePoints);
             });
         }
 
@@ -324,7 +247,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             updateElevationProfile();
             updateSegments();
-            saveLinePoints();
+
+            // don't save line points since it causes flash of NaN in route details panel
+            //saveLinePoints();
         }
 
         var preventEdit = false;
@@ -477,6 +402,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         var elevationProfilePoints;
         var lastLine;
+        // todo: change name to "get terrain data" or something more descriptive like that
         function updateElevationProfile() {
             var points = _line._latlngs;
 
@@ -509,10 +435,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 elevationProfilePoints = receivedPoints;
 
                 // calculate route stats/time, etc.
-                calculateRouteStats(receivedPoints)
+                calculateRouteStats()
 
                 // plot elevation profile
-                plotElevationProfile(receivedPoints);
+                plotElevationProfile();
 
                 // add waypoints to elevation profile
                 angular.forEach(_line.editing._markers,function(marker) {
@@ -524,193 +450,124 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             });
         }
 
-        function getAverage(list) {
-            var sum = 0;
-            for (var i = 0; i < list.length; i++)
-                sum += list[i];
-            return sum / list.length;
-        }
-        function getMin(list) {
-            var min = 9999;
-            for (var i = 0; i < list.length; i++)
-                min = Math.min(min,list[i]);
-            return min;
-        }
-        function getMax(list) {
-            var max = 0;
-            for (var i = 0; i < list.length; i++)
-                max = Math.max(max,list[i]);
-            return max;
-        }
+        function calculateRouteStats() {
+            var points = elevationProfilePoints;
+            if (!points) return;
 
-        function calculateRouteStats(receivedPoints) {
-
-            // store terrain data
+            var totalDistance = 0;
+            var totalTimeEstimateMinutes = 0;
             var originalIndex = 0;
 
-            var verticalUp = 0;
-            var verticalDown = 0;
-            var verticalUpDistance = 0;
-            var verticalDownDistance = 0;
-            var verticalFlatDistance = 0;
+            for (var i = 0; i < points.length; i++) {
+                var point = points[i];
 
-            var slopes = [];
-
-            var previousElevation = 0;
-            var totalDistance = 0;
-            var timeEstimateMinutes = 0;
-            var totalTimeEstimateMinutes = 0;
-
-            for (var i = 0; i < receivedPoints.length; i++) {
-                var terrainData = receivedPoints[i];
-                //var thisDistance;
-
-                // keep track of slope
-                slopes.push(terrainData.slope);
-
-                if (i > 0) {
-
-                    // keep track of distance
-
-                    var thisDistance = turf.lineDistance(turf.linestring([
-                        [receivedPoints[i-1].lng, receivedPoints[i-1].lat],
-                        [terrainData.lng, terrainData.lat]
-                    ]), 'kilometers');
-                    totalDistance += thisDistance;
-
-                    // keep track of vertical up/down
-
-                    var previousElevation = receivedPoints[i-1].elevation;
-                    var elevationDifference =  terrainData.elevation - previousElevation;
-                    if (elevationDifference > 0) {
-                        verticalUp += elevationDifference;
-                        verticalUpDistance += thisDistance;
-                    }
-                    else if (elevationDifference < 0) {
-                        verticalDown += Math.abs(elevationDifference);
-                        verticalDownDistance += thisDistance;
-                    }
-                    else {
-                        verticalFlatDistance += thisDistance; 
-                    }
-
-
-                    // munter time estimate
-
-                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-
-                    var munter_rate_up = scope.munterRateUp;
-                    var munter_rate_down = scope.munterRateDown;
-                    var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
-
-                    var units_up = 0;
-                    units_up += verticalUpDistance;
-                    units_up += verticalUp / 100;
-
-                    var units_down = 0;
-                    units_down += verticalDownDistance;
-                    units_down += verticalDown / 100;
-
-                    var units_flat = 0;
-                    units_flat += verticalFlatDistance;
-
-                    var minutes_up = (units_up / munter_rate_up) * 60;
-                    var minutes_down = (units_down / munter_rate_down) * 60;
-                    var minutes_flat = (units_flat / munter_rate_flat) * 60;
-
-                    timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
-
-                    // add time estimate to elevation profile points
-                    terrainData.timeEstimateMinutes = timeEstimateMinutes + totalTimeEstimateMinutes;
-                }
-
-
-                if (terrainData.original) {
-                    var marker = _line.editing._markers[originalIndex];
-                    var previousMarker = (originalIndex == 0) ? null : _line.editing._markers[originalIndex - 1];
-                    marker.terrain = {
-                        elevation: terrainData.elevation,
-                        slope: terrainData.slope,
-                        aspect: terrainData.aspect,
-
-                        verticalUp: verticalUp,
-                        verticalDown: verticalDown,
-
-                        verticalUpDistance: verticalUpDistance,
-                        verticalDownDistance: verticalDownDistance,
-                        verticalFlatDistance: verticalFlatDistance,
-
-                        slopeAverage: getAverage(slopes),
-                        slopeMin: getMin(slopes),
-                        slopeMax: getMax(slopes),
-
-                        distance: !previousMarker ? 0 : totalDistance - previousMarker.terrain.totalDistance,
-                        totalDistance: totalDistance
-                    };
-
-                    // munter time estimate
-
-                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-
-                    // var munter_rate_up = scope.munterRateUp;
-                    // var munter_rate_down = scope.munterRateDown;
-                    // var munter_rate_flat = (munter_rate_up + munter_rate_down) / 2;
-
-                    // var units_up = 0;
-                    // units_up += verticalUpDistance;
-                    // units_up += verticalUp / 100;
-
-                    // var units_down = 0;
-                    // units_down += verticalDownDistance;
-                    // units_down += verticalDown / 100;
-
-                    // var units_flat = 0;
-                    // units_flat += verticalFlatDistance;
-
-                    // var minutes_up = (units_up / munter_rate_up) * 60;
-                    // var minutes_down = (units_down / munter_rate_down) * 60;
-                    // var minutes_flat = (units_flat / munter_rate_flat) * 60;
-
-                    //marker.terrain.timeEstimateMinutes = (minutes_up + minutes_down + minutes_flat);
-                    marker.terrain.timeEstimateMinutes = timeEstimateMinutes;
-                    totalTimeEstimateMinutes += timeEstimateMinutes;
-                    marker.terrain.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
-
-                    // if (previousMarker) {
-                    //     console.log("   UP: " + minutes_up);
-                    //     console.log(" DOWN: " + minutes_down);
-                    //     console.log(" FLAT: " + minutes_flat);
-                    //     console.log("TOTAL: " + (minutes_up + minutes_down + minutes_flat));
-                    //     console.log("~~~~~~~~~~~~~~~~");
-                    //     console.log("TOTAL: " + marker.terrain.distance);
-                    //     console.log("UP/DOWN: " + verticalUpDistance + " / " + verticalDownDistance + "/" + verticalFlatDistance);
-                    //     console.log("ADDED: " + (verticalUpDistance + verticalDownDistance + verticalFlatDistance));
-                    //     console.log("===============");
-                    // }
-
-                    // reset for next
-
+                // assign index for tracking
+                point.index = i;
+                // assign original index for tracking markers
+                if (point.original) {
+                    point.originalIndex = originalIndex;
                     originalIndex++;
-
-                    verticalUp = 0;
-                    verticalDown = 0;
-                    verticalUpDistance = 0;
-                    verticalDownDistance = 0;
-                    verticalFlatDistance = 0;
-                    timeEstimateMinutes = 0;
-                    slopes = [];
                 }
+
+                // defaults for first point
+                point.totalDistance = 0;
+                point.totalTimeEstimateMinutes = 0;
+
+                if (i == 0) continue;
+
+                // keep track of distance
+
+                var segmentDistance = turf.lineDistance(turf.linestring([
+                    [points[i-1].lng, points[i-1].lat],
+                    [point.lng, point.lat]
+                ]), 'kilometers');
+                point.distance = segmentDistance;
+                totalDistance += segmentDistance
+                point.totalDistance = totalDistance;
+
+                // keep track of vertical up/down and munter time estimates
+
+                // munter time estimate details...
+                // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+                // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+                // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+                // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+                var previousElevation = points[i-1].elevation;
+                point.elevationDifference = point.elevation - previousElevation;
+                if (point.elevationDifference > 0) {
+                    point.direction = "up";
+                    point.verticalUp = point.elevationDifference;
+
+                    point.munterUnits = segmentDistance + (point.verticalUp / 100);
+                    point.timeEstimateMinutes = (point.munterUnits / scope.munterRateUp) * 60;
+                }
+                else if (point.elevationDifference < 0) {
+                    point.direction = "down";
+                    point.verticalDown = Math.abs(point.elevationDifference);
+
+                    point.munterUnits = segmentDistance + (point.verticalDown / 100);
+                    point.timeEstimateMinutes = (point.munterUnits / scope.munterRateDown) * 60;
+                }
+                else {
+                    point.direction = "flat";
+
+                    point.munterUnits = segmentDistance;
+                    var munter_rate_flat = (scope.munterRateUp + scope.munterRateDown) / 2;
+                    point.timeEstimateMinutes = (point.munterUnits / munter_rate_flat) * 60;
+                }
+
+                totalTimeEstimateMinutes += point.timeEstimateMinutes;
+                point.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
             }
             saveLinePoints();
         }
 
-        function plotElevationProfile(points) {
+        function getLegPoints(pointIndexStart, pointIndexEnd) {
+            if (!elevationProfilePoints) return [];
+            var startIndex = 0;
+            var endIndex = 0;
+            for (var i = 0; i < elevationProfilePoints.length; i++) {
+                var point = elevationProfilePoints[i];
+                if (point.originalIndex == pointIndexStart) startIndex = i;
+                else if (point.originalIndex == pointIndexEnd) endIndex = i;
+            }
+            return elevationProfilePoints.slice(startIndex, endIndex + 1);
+        }
+        function getElevationProfilePoint(pointIndex) {
+            if (!elevationProfilePoints) return -1;
+            for (var i = 0; i < elevationProfilePoints.length; i++) {
+                var point = elevationProfilePoints[i];
+                if (point.originalIndex == pointIndex) return point;
+            }
+        }
+
+        function calculateLineSegmentStats(points) {
+            if (!points || points.length < 2) return {};
+
+            var startPoint = points[0];
+            var endPoint = points[points.length - 1];
+
+            // calculate stats
+            return {
+                timeEstimateMinutes: endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes,
+                distance: endPoint.totalDistance  - startPoint.totalDistance,
+
+                elevationChange: endPoint.elevation - startPoint.elevation,
+                elevationMin: getMin(points, 'elevation'),
+                elevationMax: getMax(points, 'elevation'),
+
+                slopeMin: getMin(points, 'slope'),
+                slopeMax: getMax(points, 'slope'),
+                slopeAverage: getAverage(points, 'slope'),
+
+                verticalUp: getSum(points, 'verticalUp'),
+                verticalDown: getSum(points, 'verticalDown')
+            }
+        }
+
+        function plotElevationProfile() {
+            var points = elevationProfilePoints;
             if (!points) return;
 
             var geoJSON = {
@@ -742,7 +599,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     terrainData.elevation,
                     terrainData.slope,
                     terrainData.aspect,
-                    terrainData.timeEstimateMinutes
+                    terrainData.totalTimeEstimateMinutes,
+                    terrainData.totalDistance
                 ]);
             }
 
@@ -826,6 +684,41 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             //     obj.waypoint = marker.waypoint;
             //     console.log(obj);
             // })
+        }
+
+        // UTILS
+
+        function getAverage(list, property) {
+            var sum = 0;
+            for (var i = 0; i < list.length; i++) {
+                var val = list[i][property];
+                if (!!val) sum += val;
+            }
+            return sum / list.length;
+        }
+        function getMin(list, property) {
+            var min = 9999;
+            for (var i = 0; i < list.length; i++) {
+                var val = list[i][property];
+                if (!!val) min = Math.min(min, val);
+            }
+            return min;
+        }
+        function getMax(list, property) {
+            var max = 0;
+            for (var i = 0; i < list.length; i++) {
+                var val = list[i][property];
+                if (!!val) max = Math.max(max, val);
+            }
+            return max;
+        }
+        function getSum(list, property) {
+            var sum = 0;
+            for (var i = 0; i < list.length; i++) {
+                var val = list[i][property];
+                if (!!val) sum += val;
+            }
+            return sum;
         }
     }
 }

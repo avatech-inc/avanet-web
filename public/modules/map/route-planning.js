@@ -250,21 +250,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             updateElevationProfile();
             updateSegments();
-
-            // don't save line points since it causes flash of NaN in route details panel
-            // it will be called once terrain data is loaded 
-            //saveLinePoints();
         }
 
         var preventEdit = false;
         _map.on('click', function(e) {
             if (preventEdit) return;
-            // // if editing existing line, create new point at the end of the line
-            // if (_line) {
-            //     addPoint(e.latlng);
-            // }
-            // // if creating first point
-            // else {
             if (!_line) {
                 _line = L.polyline([], {});
                 lineGroup.addLayer(_line);
@@ -280,9 +270,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
                     updateElevationProfile();
                     updateSegments();
-
-                    // wait for new elevation profile to load before adjusting
-                    //saveLinePoints();
                 });
             }
 
@@ -408,6 +395,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         var elevationProfilePoints;
         var lastLine;
+
         // todo: change name to "get terrain data" or something more descriptive like that
         function updateElevationProfile() {
             var points = _line._latlngs;
@@ -672,7 +660,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 },
                 xTicks: undefined, //number of ticks in x axis, calculated by default according to width
                 yTicks: undefined, //number of ticks on y axis, calculated by default according to height
-                collapsed: false    //collapsed mode, show chart on click or mouseover
             });
             elevationWidget.addTo(_map);
         }

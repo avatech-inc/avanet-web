@@ -325,7 +325,7 @@
 				</div>
 
 				<div class="route-list">
-					<div ng-repeat="routePoint in route.points" ng-if="$index == 0 || routePoint.waypoint || $index == route.points.length - 1">
+					<div ng-repeat="routePoint in route.points">
 
 						<div class="route-item" style="padding-left:34px;font-size:12px;" 
 						ng-if="$index != 0"
@@ -342,7 +342,7 @@
 							TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}
 						</div>
 						<div class="route-item" style="font-weight:bold"
-							ng-class="{ 'highlight': hoverOnPointMap == $index }" 
+							ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 
 							ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
 							<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 							<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>

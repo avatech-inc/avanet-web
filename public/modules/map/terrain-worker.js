@@ -50,30 +50,11 @@ onmessage = function (e) {
 
     if (!e.data) return;
 
-    // console.log("URL: " + e.data.url);
-    // PNG.load(e.data.url, function(png) {
-    //     var pixels = png.decodePixels();
-    //     console.log("PIXELS: " + pixels.length);
-        
-    //     self.dems[e.data.id] = pixels;// raster2dem(raster, e.data.zFactor);
-
-    //     var shaded = render(
-    //         self.dems[e.data.id],
-    //         e.data.altitude, 
-    //         e.data.azimuth, 
-    //         e.data.shadows, 
-    //         e.data.highlights); 
-
-    //     postMessage({
-    //         id: e.data.id,
-    //         shades: shaded.buffer
-    //     }, [shaded.buffer]);
-    // });
-
     if (e.data.raster) {
-        self.dems[e.data.id] = convert(new Uint32Array(e.data.raster));
+        var converted = convert(new Uint32Array(e.data.raster));
+        self.dems[e.data.id] = converted;
+        //self.dems[e.data.id] = raster2dem(e.data.raster, .12, converted);
     }
-
 
     var processed;
 
@@ -105,53 +86,72 @@ function convert(data) {
         var _int = data[i];
 
         r.push([
-            (0xFFFE0000 & _int) >> 17,
-            (0x1FC00 & _int) >> 10,
-            (0x1FF & _int)
+            (0xFFFE0000 & _int) >> 17, // elevation
+            (0x1FC00 & _int) >> 10, // slope
+            (0x1FF & _int) // aspect
         ]);
     }
     return r;
 }
 
-// function raster2dem(data, zFactor) {
+function raster2dem(data, zFactor, converted) {
 
-//     var values = new Uint16Array(256 * 256);
-//     var dem = new Float32Array(256 * 256 * 2);
+    var values = new Uint16Array(256 * 256);
+    var _data = new Uint32Array(data);
+    for (var i=0; i< _data.length; i++) {
+        values[i] = (0xFFFE0000 & _data[i]) >> 17;
+    }
 
-//     var x, y, dx, dy, i, j;
+    var r = [];
+    for (var i=0; i< values.length; i++) {
 
-//     for (x = 0; x < 256; x++) {
-//         for (y = 0; y < 256; y++) {
-//             i = x + y * 256;
-//             j = i * 4;
-//             values[i] = data[j] + data[j + 1] * 2 + data[j + 2] * 3;
-//         }
-//     }
+        // +---+---+---+
+        // | a | b | c |
+        // +---+---+---+
+        // | d | e | f |
+        // +---+---+---+
+        // | g | h | i |
+        // +---+---+---+
 
-//     for (x = 1; x < 255; x++) {
-//         for (y = 1; y < 255; y++) {
+        zFactor = .08;
 
-//             i = y * 256 + x;
+        var _a = values[i - 255] * zFactor;
+        var _b = values[i + 256] * zFactor;
+        var _c = values[i - 257] * zFactor;
+        var _d = values[i + 1] * zFactor;
+        // e = center value
+        var _f = values[i - 1] * zFactor;
+        var _g = values[i + 257] * zFactor;
+        var _h = values[i - 256] * zFactor;
+        var _i = values[i + 255] * zFactor;
 
-//             dx = ((values[i - 255] + 2 * values[i + 1]   + values[i + 257]) -
-//                   (values[i - 257] + 2 * values[i - 1]   + values[i + 255])) / 8;
-//             dy = ((values[i + 255] + 2 * values[i + 256] + values[i + 257]) -
-//                   (values[i - 257] + 2 * values[i - 256] + values[i - 255])) / 8;
+        var dx = ((_a + (2 * _d) + _g) - (_c + (2 * _f) + _i)) / 8;
+        var dy = ((_a + (2 * _b) + _c) - (_g + (2 * _h) + _i)) / 8;
 
-//             j = (y * 256 + x) * 2;
+        // slope
+        var rise_run = Math.sqrt((dx * dx) + (dy * dy)); 
+        var slope = Math.atan(rise_run) * 57.29578;
+        slope = Math.round(slope);
 
-//             // slope
-//             dem[j] = Math.atan(zFactor * Math.sqrt(dx * dx + dy * dy));
+        // aspect
+        var aspect = 57.29578 * Math.atan2(dy, -dx);
+        if (aspect < 0) aspect = 90 - aspect;
+        else if (aspect > 90) aspect = 360 - aspect + 90;
+        else aspect = 90 - aspect;
+        aspect = Math.round(aspect);
 
-//             // aspect
-//             dem[j + 1] = dx !== 0 ? Math.atan2(dy, -dx) : Math.PI / 2 * (dy > 0 ? 1 : -1);
+        //var dem = converted[i];
+        //console.log("TERRAIN 1: " + dem + "\nTERRAIN 2: " + elevation + "," + slope + "," + aspect);
 
-//             //console.log(dem[j]);
-//         }
-//     }
+        r.push([
+            values[i], // elevation
+            slope,
+            aspect
+        ]);
+    }
 
-//     return dem;
-// }
+    return r;
+}
 
 function blendRGBColors(c0, c1, p) {
     return [Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],

@@ -13,8 +13,16 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
       munterRateUp: '=',
       munterRateDown: '=',
+
+      control: '='
     },
     link: function(scope, element) {
+
+        scope.control = {
+            downloadGPX: function() {
+                downloadGPX();
+            }
+        }
 
         scope.$watch("munterRateUp", function() {
             if (!elevationProfilePoints || scope.munterRateUp == null) return;
@@ -542,6 +550,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var startPoint = points[0];
             var endPoint = points[points.length - 1];
 
+            console.log(startPoint);
+
             // calculate stats
             return {
                 timeEstimateMinutes: endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes,
@@ -556,7 +566,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 slopeAverage: getAverage(points, 'slope'),
 
                 verticalUp: getSum(points, 'verticalUp'),
-                verticalDown: getSum(points, 'verticalDown')
+                verticalDown: getSum(points, 'verticalDown'),
+
+                bearing: turf.bearing(
+                    turf.point([startPoint.lat,startPoint.lng]),
+                    turf.point([endPoint.lat,endPoint.lng]))
             }
         }
 
@@ -662,6 +676,79 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 yTicks: undefined, //number of ticks on y axis, calculated by default according to height
             });
             elevationWidget.addTo(_map);
+        }
+
+        function downloadGPX() {
+            var minlat = '40.59382';
+            var minlon = '-111.65113';
+
+            var maxlat = '40.6090005';
+            var maxlon = '-111.60976';
+
+            // calculate bounds
+            var bounds = new google.maps.LatLngBounds();
+            for (var i = 0; i < _line.editing._markers.length; i++) {
+                var thisPoint = _line.editing._markers[i];
+                bounds.extend(new google.maps.LatLng(thisPoint._latlng.lat, thisPoint._latlng.lng));
+            }
+            console.log("BOUNDS:");
+            console.log(bounds);
+
+            var gpx = 
+                '<?xml version="1.0"?>\n' +
+                '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1">\n' + // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+                '  <metadata>\n' +
+                '    <name><![CDATA[Avanet GPX export]]></name>\n' +
+                '    <desc><![CDATA[]]></desc>\n' +
+                '    <link href="http://avanet.avatech.com">\n' +
+                '      <text>Created with Avanet - Avatech, Inc.</text>\n' +
+                '    </link>\n' +
+                //'    <bounds minlat="' + minlat + '" minlon="' + minlon + '" maxlat="' + maxlat + '" maxlon="' + maxlon + '"/>\n' +
+                '  </metadata>\n';
+
+            // waypoints
+            // for (var i = 0; i < _line.editing._markers.length; i++) {
+            //     var thisPoint = _line.editing._markers[i];
+            //     if (thisPoint.waypoint) {
+            //         gpx +=  '  <wpt lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n' +
+            //                 '    <name><![CDATA[' + thisPoint.waypoint.name + ']]></name>\n' +
+            //                 '    <desc><![CDATA[]]></desc>\n' +
+            //                 '  </wpt>\n';
+            //     }
+            // }
+
+
+            // route start
+            gpx +=  '<rte>' +
+                    '<name><![CDATA[]]></name>\n' +
+                    '<desc><![CDATA[]]></desc>\n' +
+                    '<src>AllTrails</src>\n';
+
+            // route points
+            for (var i = 0; i < _line.editing._markers.length; i++) {
+                var thisPoint = _line.editing._markers[i];
+                //if (thisPoint.waypoint) legIndex++;
+                gpx += '    <rtept lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n';
+                if (thisPoint.waypoint) {
+                    gpx += '      <name><![' + thisPoint.waypoint.name + ']]></name>\n';
+                }
+                gpx += '    </rtept>\n';
+            }
+
+            // route end
+            gpx += '  </rte>\n';
+
+            // end GPX
+            gpx += '</gpx>';
+
+            console.log(gpx);
+
+            var gpxData = 'data:application/gpx+xml;charset=utf-8,' + encodeURIComponent(gpx);
+            var link = document.createElement('a');
+            angular.element(link)
+                .attr('href', gpxData)
+                .attr('download', 'avanet-route.gpx');
+            link.click();
         }
 
         // todo: save as geoJSON?

@@ -233,6 +233,8 @@
 
 				munter-rate-up="munterRate.up"
 				munter-rate-down="munterRate.down"
+
+				control="routeControl"
 				></route-planning>
 
 			<style>
@@ -308,6 +310,7 @@
 				</div>
 				</div>
 				<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
+					<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a>
 					<div style="font-size:13px;">
 						<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
 						<label>VERTICAL</label> 
@@ -333,6 +336,7 @@
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 							<div class="side-line"></div>
 							DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+							BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
 							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
 							VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
 							SLOPE: AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /

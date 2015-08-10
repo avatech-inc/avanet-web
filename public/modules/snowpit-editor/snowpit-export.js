@@ -145,6 +145,8 @@ var formatters = {
         else if (direction >331.88 && direction < 343.12) str='NNW';
         else if (direction >343.13 && direction < 354.37) str='NbW';
 
+        direction = direction.toFixed(0);
+        
         return direction + "° " + str;
     },
     formatPrecip: function(str) {

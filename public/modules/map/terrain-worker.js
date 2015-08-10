@@ -53,7 +53,7 @@ onmessage = function (e) {
     if (e.data.raster) {
         var converted = convert(new Uint32Array(e.data.raster));
         self.dems[e.data.id] = converted;
-        //self.dems[e.data.id] = raster2dem(e.data.raster, .12, converted);
+        //self.dems[e.data.id] = raster2dem(e.data.raster, .051, converted, 40);
     }
 
     var processed;
@@ -66,10 +66,8 @@ onmessage = function (e) {
         );
     }
     else {
-        processed = render(
-            self.dems[e.data.id],
-            e.data.processType,
-            e.data.altitude); 
+        processed = render(self.dems[e.data.id], e.data.processType, e.data.altitude); 
+        //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
     }
 
     postMessage({
@@ -94,63 +92,221 @@ function convert(data) {
     return r;
 }
 
-function raster2dem(data, zFactor, converted) {
+function toBits(num, bitCount) {
+  var bits = num.toString(2).split('').map(function(a) { return parseInt(a) });
+  
+  if (bits.length < bitCount) {
+    var zeros = new Array(bitCount-bits.length+1).join('0').split('').map(parseFloat);
+    bits = zeros.concat(bits);
+  }
+  
+  return bits;
+}
+function bitsToInt(bits) {
+  
+  if (bits.length < 32) {
+    var zeros = new Array(32-bits.length+1).join('0').split('').map(parseFloat);
+    bits = zeros.concat(bits);
+  }
+  
+  // convert to int
+  return parseInt(bits.join(''), 2);
+}
+function intToRgba(_int) {
+   return [
+        _int & 0xFF,
+        _int >> 8 & 0xFF,
+        _int >> 16 & 0xFF,
+        _int >> 24 & 0xFF,
+    ];
+}
 
-    var values = new Uint16Array(256 * 256);
+function raster2dem(data, zFactor, converted, latitude) {
+
+    var values = [];
     var _data = new Uint32Array(data);
-    for (var i=0; i< _data.length; i++) {
-        values[i] = (0xFFFE0000 & _data[i]) >> 17;
+    for (var i=0; i<  _data.length; i++) {
+        var _int = _data[i];
+        //var rgba = intToRgba(_int);
+
+        // var red = (_int >> 16) & 0xFF;
+        // var green = (_int >> 8) & 0xFF;
+        // var blue = _int & 0xFF;
+
+        var red = _int & 0xFF;
+        var green = _int >> 8 & 0xFF;
+        var blue = _int >> 16 & 0xFF;
+        var alpha = _int >> 24 & 0xFF;
+
+        var elevation = (red * 11) + (green * 11) + (blue * 12) + alpha;
+
+        //console.log(elevation);
+
+        //console.log("RGB: " + red + ", " + green + ", " + blue);
+
+        // var thousands = red * 50;
+        // var remainder = Math.round(green + blue);
+        // var elevation = (thousands + remainder);
+        //return thousands + remainder;
+        //console.log("ELEV: " + (thousands + remainder));
+        //values[i] = (0xFFFE0000 & _int) >> 17; // 24
+        values[i] = elevation;
+
+  //       var thousands = rgb[0] * 50;
+  // var remainder = Math.round(rgb[1] + rgb[2]);
+  
+  // // do we know the difference?
+  // //if (rgb[3] != 0) console.log(remainder + "; A: " + (rgb[3]))
+  
+  // return thousands + remainder;
     }
+    //return;
+
+    // var values = []; //new Uint16Array(256 * 256);
+    // var _data = new Uint32Array(data);
+    // for (var i=0; i < _data.length; i++) { //_data.length
+    //     var elev = _data[i];
+    //     //var rgba = intToRgba(elev);
+    //     //data[j] + data[j + 1] * 2 + data[j + 2] * 3;
+
+    //     //console.log(rgba);
+
+    //     //elev = rgba[0] + rgba[1] * 2 + rgba[2] * 3;
+    //     //console.log(elev);
+
+    //     //elevationValues[i] = elev;// / 1000;
+    //     //console.log(elev / 1000);
+    //     // var _bits = toBits(elev);
+    //     // var new_elevation = bitsToInt(_bits.slice(0,24));
+    //     //console.log(rgba);
+    //     values[i] = elev;
+    //     //elevationValues[i] = 1000;
+    // }
+    //return;
+
+    // var values = [];
+    // var _data = new Uint8ClampedArray(data);
+    // var count = 0;
+    // var _bits = [];
+    // for (var i=0; i< _data.length; i++) { //_data.length
+    //     if (count < 3) _bits = toBits(_data[i], 8).concat(_bits);
+    //     count++;
+    //     if (count == 4) {
+    //         var elev = bitsToInt(_bits) / 1;
+    //         values.push(elev);
+    //         count = 0;  
+    //         _bits = [];
+    //     }
+    // }
 
     var r = [];
-    for (var i=0; i< values.length; i++) {
+    for (var i = 0; i < values.length; i++) {
 
-        // +---+---+---+
-        // | a | b | c |
-        // +---+---+---+
-        // | d | e | f |
-        // +---+---+---+
-        // | g | h | i |
-        // +---+---+---+
+        // A B C
+        // D E F
+        // G H I
 
-        zFactor = .08;
+        var _a = values[i - 257];
+        var _b = values[i - 256];
+        var _c = values[i - 255];
+        var _d = values[i - 1];
+        // E (current cell)
+        var _f = values[i + 1];
+        var _g = values[i + 255];
+        var _h = values[i + 256];
+        var _i = values[i + 257];
 
-        var _a = values[i - 255] * zFactor;
-        var _b = values[i + 256] * zFactor;
-        var _c = values[i - 257] * zFactor;
-        var _d = values[i + 1] * zFactor;
-        // e = center value
-        var _f = values[i - 1] * zFactor;
-        var _g = values[i + 257] * zFactor;
-        var _h = values[i - 256] * zFactor;
-        var _i = values[i + 255] * zFactor;
+        var dx = ((_c + 2 * _f + _i) - (_a + 2 * _d + _g)) / 8;
+        var dy = ((_g + 2 * _h + _i) - (_a + 2 * _b + _c)) / 8;
 
-        var dx = ((_a + (2 * _d) + _g) - (_c + (2 * _f) + _i)) / 8;
-        var dy = ((_a + (2 * _b) + _c) - (_g + (2 * _h) + _i)) / 8;
-
-        // slope
-        var rise_run = Math.sqrt((dx * dx) + (dy * dy)); 
-        var slope = Math.atan(rise_run) * 57.29578;
+        var slope = (180/Math.PI) * Math.atan(zFactor * Math.sqrt((dx * dx) + (dy * dy)));
         slope = Math.round(slope);
 
-        // aspect
-        var aspect = 57.29578 * Math.atan2(dy, -dx);
+        var aspect = (180/Math.PI) * Math.atan2(dy, -dx);
         if (aspect < 0) aspect = 90 - aspect;
         else if (aspect > 90) aspect = 360 - aspect + 90;
         else aspect = 90 - aspect;
         aspect = Math.round(aspect);
 
-        //var dem = converted[i];
-        //console.log("TERRAIN 1: " + dem + "\nTERRAIN 2: " + elevation + "," + slope + "," + aspect);
-
-        r.push([
-            values[i], // elevation
-            slope,
+        r[i] = [ 
+            Math.round(values[i]), 
+            slope, 
             aspect
-        ]);
+        ];
+    }
+    return r;
+}
+
+function _hillshade(dem, altitude, azimuth, shadows, highlights) {
+
+    var px = new Uint8ClampedArray(256 * 256 * 4),
+
+        a = - azimuth - Math.PI / 2,
+        z = Math.PI / 2 - altitude,
+
+        cosZ = Math.cos(z),
+        sinZ = Math.sin(z),
+        neutral = cosZ,
+
+        x, y, i, hillshade, alpha;
+
+
+    for (x = 0; x < 256; x++) {
+        for (y = 0; y < 256; y++) {
+
+            // pad dem borders
+            // var i = ((y === 0 ? 1 : y === 255 ? 254 : y) * 256 +
+            //      (x === 0 ? 1 : x === 255 ? 254 : x)) * 1;
+            var i = y * 256 + x;
+
+            if (dem[i] == null) continue;
+
+            var sl  = dem[i][1]; // slope
+            var asp = dem[i][2]; // aspect
+
+            if (sl == null) continue;
+            var newColor = slopeColorMap[sl];
+
+            // if (asp == null) continue;
+            // var newColor = aspectColorMap[asp];
+
+            if (!newColor) continue;
+            i = i * 4;
+
+            px[i] = newColor[0];
+            px[i + 1] = newColor[1];
+            px[i + 2] = newColor[2];
+            px[i + 3] = 255;
+
+            // if (!sl) continue;
+
+            // hillshade = cosZ * Math.cos(sl) + sinZ * Math.sin(sl) * Math.cos(a - asp);
+
+            // if (hillshade < 0) {
+            //     hillshade /= 2;
+            // }
+
+            // alpha = neutral - hillshade;
+
+            // i = (y * 256 + x) * 4;
+
+            // if (neutral > hillshade) { // shadows
+            //     px[i]     = 20;
+            //     px[i + 1] = 0;
+            //     px[i + 2] = 30;
+            //     px[i + 3] = Math.round(255 * alpha * shadows);
+
+            // } else { // highlights
+            //     alpha = Math.min(-alpha * cosZ * highlights / (1 - hillshade), highlights);
+            //     px[i]     = 255;
+            //     px[i + 1] = 255;
+            //     px[i + 2] = 230;
+            //     px[i + 3] = Math.round(255 * alpha);
+            // }
+        }
     }
 
-    return r;
+    return px;
 }
 
 function blendRGBColors(c0, c1, p) {
@@ -269,10 +425,6 @@ function render(data, processType, alt) {
 
         // avy colors
         var avyColors = {
-            // G: hexToRGB("50b848"),
-            // Y: hexToRGB("fff200"),
-            // O: hexToRGB("f7941e"),
-            // R: hexToRGB("ff0000")
             G: "50b848",
             Y: "fff200",
             O: "f7941e",
@@ -546,7 +698,7 @@ function sunlight(data, altitude, azimuth) {
         // if no data, return transparent
         if (elevation == 127 && slope == 127 && aspect == 511) { newColor = [0,0,0,0]; continue; }
 
-        // convert to radians
+        // convert degrees to radians
         slope = slope * (Math.PI/180);
         aspect = aspect * (Math.PI/180);
 

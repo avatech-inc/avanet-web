@@ -1,4 +1,4 @@
-angular.module('avatech').directive('routePlanning', function($http, $timeout, Global) {
+angular.module('avatech').directive('routePlanning', function($http, $timeout, Global, snowpitExport) {
   return {
     restrict: 'E',
     scope: { 
@@ -486,6 +486,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 totalDistance += segmentDistance
                 point.totalDistance = totalDistance;
 
+                // keep track of bearing
+
+                point.bearing = turf.bearing(turf.point([points[i-1].lng, points[i-1].lat]), turf.point([point.lng, point.lat]));
+                if (point.bearing < 0) point.bearing += 360;
+
                 // keep track of vertical up/down and munter time estimates
 
                 // munter time estimate details...
@@ -549,9 +554,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var startPoint = points[0];
             var endPoint = points[points.length - 1];
 
-            var bearing = turf.bearing(
-                    turf.point([startPoint.lng, startPoint.lat]),
-                    turf.point([endPoint.lng, endPoint.lat]))
+            var bearing = turf.bearing(turf.point([startPoint.lng, startPoint.lat]), turf.point([endPoint.lng, endPoint.lat]));
             if (bearing < 0) bearing += 360;
 
             // calculate stats
@@ -606,9 +609,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     terrainData.lat,
                     terrainData.elevation,
                     terrainData.slope,
-                    terrainData.aspect,
+                    snowpitExport.formatters.formatDirection(terrainData.aspect),
                     terrainData.totalTimeEstimateMinutes,
-                    terrainData.totalDistance
+                    terrainData.totalDistance,
+                    snowpitExport.formatters.formatDirection(terrainData.bearing)
                 ]);
             }
 

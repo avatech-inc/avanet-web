@@ -140,6 +140,10 @@ L.Control.Elevation = L.Control.extend({
         this._focuslabelX4= focusG.append("svg:text")
             .style("pointer-events", "none")
             .attr("class", "mouse-focus-label-x");
+        this._focuslabelX5= focusG.append("svg:text")
+            .style("pointer-events", "none")
+            .attr("class", "mouse-focus-label-x");
+
         this._focuslabelY = focusG.append("svg:text")
             .style("pointer-events", "none")
             .attr("class", "mouse-focus-label-y");
@@ -583,6 +587,7 @@ L.Control.Elevation = L.Control.extend({
                     aspect: coords[i][4],
                     timeEstimateMinutes: coords[i][5],
                     new_dist: coords[i][6],
+                    bearing: coords[i][7],
 
                     x: coords[i][0],
                     y: coords[i][1],
@@ -781,9 +786,12 @@ L.Control.Elevation = L.Control.extend({
             .text("SLOPE: " + item.slope + "°");
 
         this._focuslabelX3.attr("x", 290).attr("y", -5)
-            .text("ASPECT: " + item.aspect + "°");
+            .text("ASPECT: " + item.aspect);
 
-        this._focuslabelX4.attr("x", 370).attr("y", -5)
+        this._focuslabelX4.attr("x", 390).attr("y", -5)
+            .text("BEARING: " + item.bearing);
+
+        this._focuslabelX5.attr("x", 490).attr("y", -5)
             .text("TIME: " + this.formatTime(item.timeEstimateMinutes));
     },
 

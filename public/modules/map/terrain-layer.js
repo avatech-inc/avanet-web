@@ -194,10 +194,6 @@
 
                 renderedZFactor = terrainLayer.zFactor;
             }
-
-           // if (zoom == 13) {
-           //      console.log(tile_id);
-           // }
               
             var cachedTile = terrainLayer.PNG_cache[tile_id];
             if (cachedTile) {
@@ -207,11 +203,36 @@
                 terrainLayer.redrawQueue.push(redraw);
             }
             else {
-                // invert for TMS
-                //tilePoint.y = (1 << zoom) - tilePoint.y - 1; 
                 var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                //var url = L.Util.template('http://10.1.10.165:8080/united_states-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                //var url = L.Util.template('http://10.1.10.192:8080/united_states_dev-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                
+                //var url = L.Util.template('https://a.tiles.mapbox.com/v3/aj.sf-dem/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                //var url = L.Util.template('/tiles3/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+
                 //console.log(url);
+
+                // var demImg = new Image();
+                // var demCtx;
+                // demImg.onload = function() {
+                //     var c = document.createElement('canvas');
+                //     c.width = c.height = 256;
+                //     demCtx = c.getContext('2d');
+                //     demCtx.drawImage(demImg, 0, 0);
+
+                //     var pixels = demCtx.getImageData(0, 0, 256, 256).data;//.buffer
+                //     terrainLayer.PNG_cache[tile_id] = pixels;
+                //     PNG_data = pixels.buffer;
+
+                //     //--------
+
+                //     redraw();
+                //     terrainLayer.redrawQueue.push(redraw);
+                // };
+
+                // demImg.crossOrigin = '*';
+                // demImg.src = url;
 
                 var xhr = new XMLHttpRequest;
                 xhr.open("GET", url, true);

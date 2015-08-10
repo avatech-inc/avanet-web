@@ -165,7 +165,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     //         [e.target.segment.start.lat, e.target.segment.start.lng],
                     //         [e.target.segment.end.lat, e.target.segment.end.lng]
                     //     ]),
-                    //     turf.point([newPoint.lat,newPoint.lng])
                     // );
                     // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
 
@@ -550,7 +549,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var startPoint = points[0];
             var endPoint = points[points.length - 1];
 
-            console.log(startPoint);
+            var bearing = turf.bearing(
+                    turf.point([startPoint.lng, startPoint.lat]),
+                    turf.point([endPoint.lng, endPoint.lat]))
+            if (bearing < 0) bearing += 360;
 
             // calculate stats
             return {
@@ -568,9 +570,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 verticalUp: getSum(points, 'verticalUp'),
                 verticalDown: getSum(points, 'verticalDown'),
 
-                bearing: turf.bearing(
-                    turf.point([startPoint.lat,startPoint.lng]),
-                    turf.point([endPoint.lat,endPoint.lng]))
+                bearing: bearing
             }
         }
 

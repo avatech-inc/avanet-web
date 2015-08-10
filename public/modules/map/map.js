@@ -868,12 +868,11 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }).success(function(profiles) {
 
             var d = new Date().getTime();
-            console.log("LOADED!");
             // todo: make this like the "observations" service? (i.e. addorreplace)
             $scope.profiles = profiles;
             $scope.filterProfiles();
 
-            console.log("LOADED 2! " + (new Date().getTime() - d) + " ms");
+            console.log("LOADED! " + (new Date().getTime() - d) + " ms");
 
             $scope.loadingProfiles = false;
             $scope.loadingNew = false;
@@ -964,6 +963,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // ---------------------------------------------------
     // ----------------- ROUTE PLANNING ------------------
     // ---------------------------------------------------
+
+    $scope.routeControl = null;
 
     $scope._hoverOnLeg = function(index) {
         $scope.hoverOnLeg = index;

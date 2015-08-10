@@ -382,7 +382,7 @@ angular.module('avatech').controller('NewObservationModalController', function (
                     type: "number"
                 },
                 HIT: {
-                    title: "HST",
+                    title: "HIT",
                     type: "number"
                 },
                 HST: {

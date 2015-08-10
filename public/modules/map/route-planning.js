@@ -573,6 +573,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 verticalUp: getSum(points, 'verticalUp'),
                 verticalDown: getSum(points, 'verticalDown'),
 
+                aspectMin: getMin(points, 'aspect'),
+                aspectMax: getMax(points, 'aspect'),
+                aspectAverage: getAverageAspect(points, 'aspect'),
+
                 bearing: bearing
             }
         }
@@ -599,20 +603,20 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             }
 
             for (var i = 0; i < points.length; i++) {
-                var terrainData = points[i];
-                if (!terrainData || terrainData.lat == null || terrainData.lat == null) continue;
+                var thisPoint = points[i];
+                if (!thisPoint || thisPoint.lat == null || thisPoint.lat == null) continue;
 
-                if (!terrainData.elevation) terrainData.elevation = max_elevation;
+                if (!thisPoint.elevation) thisPoint.elevation = max_elevation;
 
                 geoJSON.features[0].geometry.coordinates.push([
-                    terrainData.lng,
-                    terrainData.lat,
-                    terrainData.elevation,
-                    terrainData.slope,
-                    snowpitExport.formatters.formatDirection(terrainData.aspect),
-                    terrainData.totalTimeEstimateMinutes,
-                    terrainData.totalDistance,
-                    snowpitExport.formatters.formatDirection(terrainData.bearing)
+                    thisPoint.lng,
+                    thisPoint.lat,
+                    thisPoint.elevation,
+                    thisPoint.slope,
+                    snowpitExport.formatters.formatDirection(thisPoint.aspect),
+                    thisPoint.totalTimeEstimateMinutes,
+                    thisPoint.totalDistance,
+                    snowpitExport.formatters.formatDirection(thisPoint.bearing)
                 ]);
             }
 
@@ -775,34 +779,69 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         function getAverage(list, property) {
             var sum = 0;
             for (var i = 0; i < list.length; i++) {
-                var val = list[i][property];
-                if (!!val) sum += val;
+                var val;
+                if (!property) val = list[i];
+                else val = list[i][property];
+                if (val != null) sum += val;
             }
             return sum / list.length;
         }
         function getMin(list, property) {
             var min = 9999;
             for (var i = 0; i < list.length; i++) {
-                var val = list[i][property];
-                if (!!val) min = Math.min(min, val);
+                var val;
+                if (!property) val = list[i];
+                else val = list[i][property];
+                if (val != null) min = Math.min(min, val);
             }
             return min;
         }
         function getMax(list, property) {
             var max = 0;
             for (var i = 0; i < list.length; i++) {
-                var val = list[i][property];
-                if (!!val) max = Math.max(max, val);
+                var val;
+                if (!property) val = list[i];
+                else val = list[i][property];
+                if (val != null) max = Math.max(max, val);
             }
             return max;
         }
         function getSum(list, property) {
             var sum = 0;
             for (var i = 0; i < list.length; i++) {
-                var val = list[i][property];
-                if (!!val) sum += val;
+                var val;
+                if (!property) val = list[i];
+                else val = list[i][property];
+                if (val != null) sum += val;
             }
             return sum;
+        }
+
+        // for aspect only
+        function getAverageAspect(list, property) {
+            var sines = [];
+            var cosines = [];
+
+            // get sines and cosines
+            for (var i = 0; i < list.length; i++) {
+                var aspect = list[i][property];
+                if (aspect != null) {
+                    // convert aspect degrees to radians
+                    aspect *= Math.PI / 180; 
+                    sines.push(Math.sin(aspect));
+                    cosines.push(Math.cos(aspect));
+                }
+            }
+
+            // calculate mean of sines and cosines
+            var meanSine = getAverage(sines);
+            var meanCosine = getAverage(cosines);
+
+            // calculate aspect in radians
+            var averageAspectRadians = Math.atan2(meanSine, meanCosine);
+
+            // convert to degrees
+            return averageAspectRadians * (180 / Math.PI);;
         }
     }
 }

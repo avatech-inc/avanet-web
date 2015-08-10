@@ -322,7 +322,8 @@
 						AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
 						MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
 						<br/>
-						<label>Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
+						<label>ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+						<label style="margin-bottom:3px;">Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
 						<input type="number" ng-model="munterRate.down" style="width:34px;"/>
 					</div>
 				</div>
@@ -336,14 +337,16 @@
 						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 							<div class="side-line"></div>
 							DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+							TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}<br/>
 							BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
 							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
 							VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
-							SLOPE: AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
+							SLOPE: 
 							MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
+							AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
 							MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
 							<br/>
-							TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}
+							ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
 						</div>
 						<div class="route-item" style="font-weight:bold"
 							ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 

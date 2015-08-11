@@ -351,9 +351,7 @@ function hillshade(dem) {
 
             hillshade = cosZ * Math.cos(sl) + sinZ * Math.sin(sl) * Math.cos(a - asp);
 
-            if (hillshade < 0) {
-                hillshade /= 2;
-            }
+            if (hillshade < 0) hillshade /= 2;
 
             alpha = neutral - hillshade;
 

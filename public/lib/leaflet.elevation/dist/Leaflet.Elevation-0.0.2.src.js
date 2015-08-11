@@ -68,9 +68,6 @@ window.ElevationWidget = function() {
         opts.yTicks = opts.yTicks || Math.round(this._height() / 30);
         opts.hoverNumber.formatter = opts.hoverNumber.formatter || this._formatter;
 
-        //append theme name on body
-        d3.select("body").classed(opts.theme, true);
-
         var x = this._x = d3.scale.linear()
             .range([0, this._width()]);
 
@@ -98,9 +95,9 @@ window.ElevationWidget = function() {
         this._initToggle();
 
         var cont = d3.select(container);
-        cont.attr("width", opts.width);
+        cont.attr("width", this._width());
         var svg = cont.append("svg");
-        svg.attr("width", opts.width)
+        svg.attr("width", this._width())
             .attr("class", "background")
             .attr("height", opts.height)
             .append("g")
@@ -379,8 +376,9 @@ window.ElevationWidget = function() {
     }
 
     this._width = function() {
-        var opts = this.options;
-        return opts.width - opts.margins.left - opts.margins.right;
+        //var opts = this.options;
+        //return opts.width - opts.margins.left - opts.margins.right;
+        return ($(".bottom-pane").width() - opts.margins.left - opts.margins.right);
     }
 
     this._height = function() {

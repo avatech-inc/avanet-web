@@ -8,18 +8,6 @@
             L.setOptions(this, options);
         },
 
-        // redraw: function () {
-        //     if (this._map) {
-        //         this._reset({hard: true});
-        //         this._update();
-        //     }
-
-        //     for (var i in this._tiles) {
-        //         this._redrawTile(this._tiles[i]);
-        //     }
-        //     return this;
-        // },
-
         _redrawTile: function (tile) {
             this.drawTile(tile, tile._tilePoint, this._map._zoom);
         },
@@ -41,10 +29,6 @@
                 this.tileDrawn(tile);
             }
         },
-
-        // drawTile: function (/*tile, tilePoint*/) {
-        //     // override with rendering code
-        // },
 
         tileDrawn: function (tile) {
             this._tileOnLoad.call(tile);

@@ -157,6 +157,7 @@
                     transferable.push(data.raster);
                 }
                 data.processType = terrainLayer.overlayType;
+                data.customParams = terrainLayer.customParams;
 
                 // sun location
                 if (terrainLayer.overlayType == "sun" && terrainLayer.sunDate) {

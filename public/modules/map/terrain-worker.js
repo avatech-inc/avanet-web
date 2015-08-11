@@ -71,7 +71,7 @@ onmessage = function (e) {
         processed = hillshade(self.dems[e.data.id])
     }
     else {
-        processed = render(self.dems[e.data.id], e.data.processType, e.data.altitude); 
+        processed = render(self.dems[e.data.id], e.data.processType, e.data.customParams); 
         //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
     }
 
@@ -483,11 +483,9 @@ function getColorMap(steps){
     // }
 
 
-function render(data, processType, alt) {
+function render(data, processType, customParams) {
 
     var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
-
-    //if (!data) return new_pixels;
 
     // AVY FORECAST ROSE
     if (processType == "avy-rose") {
@@ -529,7 +527,7 @@ function render(data, processType, alt) {
         }
     }
 
-    for (var i=0; i< data.length; i++) {
+    for (var i=0; i < data.length; i++) {
 
         var new_elevation = data[i][0];
         var new_slope = data[i][1];
@@ -539,6 +537,27 @@ function render(data, processType, alt) {
 
         // if no data, return transparent
         if (new_elevation==127 && new_slope==127 && new_aspect ==511) { newColor = [0,0,0,0]; continue; }
+
+
+        // CUSTOM
+        if (processType == "custom") {
+            //console.log(customParams);
+
+            var showAspect = false;
+            if (customParams.aspect_low == 0 && customParams.aspect_high == 359) {
+                showAspect = true;
+            }
+            else {
+                if (customParams.aspect_low > customParams.aspect_high) {
+                    if (new_aspect >= customParams.aspect_low ||
+                        new_aspect <= customParams.aspect_high ) showAspect = true;
+                }
+                else if (new_aspect >= customParams.aspect_low &&
+                        new_aspect <= customParams.aspect_high ) showAspect = true;
+            }
+
+            if (showAspect) newColor = hexToRGB(customParams.color);
+        }
 
         // ELEVATION
         if (processType == "elevation") {

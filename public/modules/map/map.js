@@ -963,7 +963,22 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     //     terrainLayer.initiateGetTerrainData(e.latlng.lat, e.latlng.lng);
     // });
 
-    // 
+    // custom terrain visualization
+    $scope.customTerrain = {
+        color: '#ffcc00',
+
+        aspect_low: 0,
+        aspect_high: 359
+    };
+    $scope.$watch('customTerrain', function() {
+        terrainLayer.customParams = angular.copy($scope.customTerrain);
+        terrainLayer.needsRedraw = true;
+    }, true);
+
+    $scope.capitalizeFirstLetter = function(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     // ---------------------------------------------------
     // ----------------- ROUTE PLANNING ------------------

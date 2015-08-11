@@ -202,12 +202,18 @@
 
 			    <div class="btn-group dropup" dropdown>
 			      <button type="button" class="dropdown-toggle">
-			        <i class="ion-paintbucket"></i> <span><b>Terrain Visualization</b>&nbsp;&nbsp;{{ terrainOverlay }}</span>
+			        <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span>
 			      </button>
 			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
 
 				    	<div style="margin-bottom:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
 
+				    	<div ng-show="terrainOverlay == 'custom'">
+				    		Aspect:
+				    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+
+			  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+				    	</div>
 				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
 				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">Elevation</button>
 				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">Slope</button>
@@ -217,12 +223,12 @@
 				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('custom')">CUSTOM</button>
 				    	<br/>-->
 
-				    	<div class="btn-group">
-					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label>
-					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">Slope</label>
-					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">Aspect</label>
-					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">Hillshade</label>
-					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">Custom</label>
+				    	<div class="btn-group" style="margin: 2px 6px;">
+					        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">
+					        Slope</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">
+					        Aspect</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">
+					        Hillshade</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">
+					        Custom</label>
 					    </div>
 
 				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->

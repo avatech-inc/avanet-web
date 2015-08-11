@@ -591,6 +591,20 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         worldCopyJump: true,
         minZoom: 2
     });
+
+    // disable scroll wheel zoom
+    $scope.map.scrollWheelZoom.disable();
+
+    // add markers layer
+    $scope.mapLayer = L.mapbox.featureLayer().addTo($scope.map);
+
+    // add zoom control to map
+    new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
+
+    // add scale control to map
+    //new L.control.scale().addTo($scope.map);
+
+    // set base map when map loads (this must be declared before map.setView is used)
     $scope.map.on('load', function(e) {
         // get default layer based on location
         var defaultMap = "mbworld";
@@ -610,8 +624,18 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         var baseMap = getLayerByAlias(savedMap);
         if (!baseMap) baseMap = defaultLayer;
-        if (baseMap) $scope.setBaseLayer(baseMap);
+        if (baseMap) {
+            // setTimeout is needed to solve the bug where the zoom animation zooms in/out too much
+            setTimeout(function(){
+                $scope.setBaseLayer(baseMap);
+            });
+        }
     });
+
+    // set initial location and zoom level
+    var defaultZoom = 13;
+    if (!$scope.global.user.location) $scope.map.setView([40.633052,-111.7111795], defaultZoom);
+    else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], defaultZoom);
 
     function getLayerByAlias(alias) {
         var layer;
@@ -625,19 +649,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
         return layer;
     }
-
-
-    // disable scroll wheel zoom
-    $scope.map.scrollWheelZoom.disable();
-
-    // add markers layer
-    $scope.mapLayer = L.mapbox.featureLayer().addTo($scope.map);
-
-    // add zoom control to map
-    new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
-
-    // add scale control to map
-    //new L.control.scale().addTo($scope.map);
 
     // pre-compile map popup
     // todo: move this into a standalone template file
@@ -816,11 +827,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         });
     });
-
-
-    var defaultZoom = 13;
-    if (!$scope.global.user.location) $scope.map.setView([40.633052,-111.7111795], defaultZoom); //8
-    else $scope.map.setView([$scope.global.user.location[1],$scope.global.user.location[0]], defaultZoom); //8
 
 
     $scope.loadMyProfiles = function() {

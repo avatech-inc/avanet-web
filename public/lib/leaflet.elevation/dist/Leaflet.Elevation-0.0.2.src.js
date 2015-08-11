@@ -381,7 +381,6 @@ window.ElevationWidget = function() {
     this._width = function() {
         //var opts = this.options;
         //return opts.width - opts.margins.left - opts.margins.right;
-        console.log("WISTH: " + ($(".bottom-pane").width() - opts.margins.left - opts.margins.right));
         return ($(".bottom-pane").width() - opts.margins.left - opts.margins.right);
     }
 

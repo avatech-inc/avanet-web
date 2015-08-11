@@ -2,6 +2,19 @@ angular.module('avatech').factory('mapLayers', ['$q', function ($q) {
 
 return {
 
+   getLayerByAlias: function(alias) {
+      var _this = this;
+      var layer;
+        for (var i = 0; i <_this.baseLayers.terrain.length; i++) {
+            var l = _this.baseLayers.terrain[i];
+            if (l.alias == alias) layer = l;
+        }
+        for (var i = 0; i < _this.baseLayers.aerial.length; i++) {
+            var l = _this.baseLayers.aerial[i];
+            if (l.alias == alias) layer = l;
+        }
+        return layer;
+    },
     baseLayers: {  
         terrain: [
          { 

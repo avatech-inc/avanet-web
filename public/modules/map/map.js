@@ -617,12 +617,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             else if (country == "Austria") defaultMap = "mbde";
             else defaultMap = "mbworld";
         }
-        var defaultLayer = getLayerByAlias(defaultMap);
+        var defaultLayer = $scope.mapLayers.getLayerByAlias(defaultMap);
 
         // get saved default base layer
         var savedMap = $scope.global.user.settings.defaultMap;
 
-        var baseMap = getLayerByAlias(savedMap);
+        var baseMap = $scope.mapLayers.getLayerByAlias(savedMap);
         if (!baseMap) baseMap = defaultLayer;
         if (baseMap) {
             // setTimeout is needed to solve the bug where the zoom animation zooms in/out too much
@@ -637,18 +637,18 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     $scope.map.setView(initialLocation, defaultZoom);
 
-    function getLayerByAlias(alias) {
-        var layer;
-        for (var i = 0; i < $scope.mapLayers.baseLayers.terrain.length; i++) {
-            var l = $scope.mapLayers.baseLayers.terrain[i];
-            if (l.alias == alias) layer = l;
-        }
-        for (var i = 0; i < $scope.mapLayers.baseLayers.aerial.length; i++) {
-            var l = $scope.mapLayers.baseLayers.aerial[i];
-            if (l.alias == alias) layer = l;
-        }
-        return layer;
-    }
+    // function getLayerByAlias(alias) {
+    //     var layer;
+    //     for (var i = 0; i < $scope.mapLayers.baseLayers.terrain.length; i++) {
+    //         var l = $scope.mapLayers.baseLayers.terrain[i];
+    //         if (l.alias == alias) layer = l;
+    //     }
+    //     for (var i = 0; i < $scope.mapLayers.baseLayers.aerial.length; i++) {
+    //         var l = $scope.mapLayers.baseLayers.aerial[i];
+    //         if (l.alias == alias) layer = l;
+    //     }
+    //     return layer;
+    // }
 
     // pre-compile map popup
     // todo: move this into a standalone template file

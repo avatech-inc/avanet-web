@@ -971,8 +971,11 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         aspect_high: 359
     };
     $scope.$watch('customTerrain', function() {
+        if ($scope.customTerrain.color.indexOf('#') == 0) $scope.customTerrain.color = $scope.customTerrain.color.substr(1);
+
         terrainLayer.customParams = angular.copy($scope.customTerrain);
         terrainLayer.needsRedraw = true;
+
     }, true);
 
     $scope.capitalizeFirstLetter = function(str) {

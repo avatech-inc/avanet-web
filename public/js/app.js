@@ -7,7 +7,8 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'bootstrapLightbox',
     'angulartics', 'angulartics.mixpanel',
     'avatech.system',
-    'avatech.profiles'
+    'avatech.profiles',
+    'colorpicker.module'
 ]);
 
 angular.module('avatech.system', []);

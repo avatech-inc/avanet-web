@@ -95,9 +95,9 @@ window.ElevationWidget = function() {
         this._initToggle();
 
         var cont = d3.select(container);
-        cont.attr("width", this._width());
+        cont.attr("width", this._widthOuter());
         var svg = cont.append("svg");
-        svg.attr("width", this._width())
+        svg.attr("width", this._widthOuter())
             .attr("class", "background")
             .attr("height", opts.height)
             .append("g")
@@ -375,9 +375,13 @@ window.ElevationWidget = function() {
         L.DomUtil.addClass(this._container, 'elevation-collapsed');
     }
 
+    this._widthOuter = function() {
+        return $(".bottom-pane").width();
+    }
     this._width = function() {
         //var opts = this.options;
         //return opts.width - opts.margins.left - opts.margins.right;
+        console.log("WISTH: " + ($(".bottom-pane").width() - opts.margins.left - opts.margins.right));
         return ($(".bottom-pane").width() - opts.margins.left - opts.margins.right);
     }
 
@@ -822,7 +826,7 @@ window.ElevationWidget = function() {
         this._focuslabelX4.attr("x", 390).attr("y", -5)
             .text("BEARING: " + item.bearing);
 
-        this._focuslabelX5.attr("x", 490).attr("y", -5)
+        this._focuslabelX5.attr("x", 500).attr("y", -5)
             .text("TIME: " + this.formatTime(item.timeEstimateMinutes));
     }
 

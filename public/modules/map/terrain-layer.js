@@ -71,7 +71,6 @@
 
         terrainLayer.redrawQueue = [];
         terrainLayer.contexts = {};
-        terrainLayer.zFactor = .12;
         terrainLayer.workers = {};
         terrainLayer.terrainDataCache = {};
         terrainLayer.needsRedraw = false;
@@ -139,8 +138,6 @@
             var tileSize = terrainLayer._getTileSize();
             canvas.width = canvas.height = tileSize;
 
-            var renderedZFactor;
-
             var PNG_data;
 
             var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
@@ -157,6 +154,7 @@
 
             terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
+            var firstLoad = false;
             function redraw() {
 
                 // if no terrain overlay specified, clear canvas
@@ -169,10 +167,8 @@
                 var transferable = [];
                 var data = { id: tile_id };
 
-                if (renderedZFactor !== terrainLayer.zFactor) {
-                    console.log("Z FACTOR: " + renderedZFactor + "/" + terrainLayer.zFactor);
+                if (!firstLoad) {
                     data.raster = PNG_data;
-                    data.zFactor = terrainLayer.zFactor;
                     data.url = url;
                     transferable.push(data.raster);
                 }
@@ -195,7 +191,7 @@
 
                 terrainLayer.workers[tile_id].postMessage(data, transferable);
 
-                renderedZFactor = terrainLayer.zFactor;
+                firstLoad = true;
             }
               
             var cachedTile = terrainLayer.PNG_cache[tile_id];

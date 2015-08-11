@@ -67,6 +67,9 @@ onmessage = function (e) {
             e.data.azimuth
         );
     }
+    else if (e.data.processType == "hillshade") {
+        processed = hillshade(self.dems[e.data.id])
+    }
     else {
         processed = render(self.dems[e.data.id], e.data.processType, e.data.altitude); 
         //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
@@ -312,6 +315,71 @@ function _hillshade(dem, altitude, azimuth, shadows, highlights) {
     return px;
 }
 
+function hillshade(dem) {
+
+    var altitude = 70 * (Math.PI / 180);
+    var azimuth = 0 * (Math.PI / 180);
+    var shadows = .65; // .45
+    var highlights = .1; // .45
+
+    var px = new Uint8ClampedArray(256 * 256 * 4),
+
+        a = - azimuth - Math.PI / 2,
+        z = Math.PI / 2 - altitude,
+
+        cosZ = Math.cos(z),
+        sinZ = Math.sin(z),
+        neutral = cosZ,
+
+        x, y, i, hillshade, alpha;
+
+
+    for (x = 0; x < 256; x++) {
+        for (y = 0; y < 256; y++) {
+
+            // pad dem borders
+            // var i = ((y === 0 ? 1 : y === 255 ? 254 : y) * 256 +
+            //      (x === 0 ? 1 : x === 255 ? 254 : x)) * 1;
+            var i = y * 256 + x;
+
+            if (dem[i] == null) continue;
+
+            var sl  = (dem[i][1] * (Math.PI / 180)) * 1.4;
+            var asp = (dem[i][2] * (Math.PI / 180));
+
+            if (sl == null) continue;
+
+            hillshade = cosZ * Math.cos(sl) + sinZ * Math.sin(sl) * Math.cos(a - asp);
+
+            if (hillshade < 0) {
+                hillshade /= 2;
+            }
+
+            alpha = neutral - hillshade;
+
+            i = (y * 256 + x) * 4;
+
+            if (neutral > hillshade) { // shadows
+                px[i]     = 20;
+                px[i + 1] = 0;
+                px[i + 2] = 30;
+                px[i + 3] = Math.round(255 * alpha * shadows);
+
+            } else { // highlights
+                alpha = Math.min(-alpha * cosZ * highlights / (1 - hillshade), highlights);
+                px[i]     = 255;
+                px[i + 1] = 255;
+                px[i + 2] = 230;
+                px[i + 3] = Math.round(255 * alpha);
+            }
+
+            //console.log(neutral + " / " + hillshade + " / " + px[i + 3]);
+        }
+    }
+
+    return px;
+}
+
 function blendRGBColors(c0, c1, p) {
     return [Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],
             Math.round(Math.round(c1[1] - c0[1]) * (p / 100)) + c0[1],
@@ -477,15 +545,13 @@ function render(data, processType, alt) {
         // ELEVATION
         if (processType == "elevation") {
 
-            if (new_elevation > 0 && new_elevation > 0) { //alt
+            // contour lines
+            // if (new_elevation % 100 < 22) newColor = [255,0,0];
+            // newColor[3] = Math.round((22 - (new_elevation % 100)) * 12.75);
+            // if (newColor.length > 0 && new_slope < 9) newColor[3] = 0;
 
+            if (new_elevation > 0 && new_elevation > 0) {
                 newColor = elevationColorMap[new_elevation];
-                // var min = alt; var max = 3400;
-                // var p = Math.round(((new_elevation - min) * 100) / (max - min));
-
-                // newColor = blendRGBColors([0,0,255],[255,0,0], p);
-                //newColor[3] = Math.pow(p,3); //soften edges
-                //newColor[3] = 255;
             }
         }
 

@@ -666,7 +666,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 height: 165,
                 margins: {
                     top: 24,
-                    right: 0,
+                    right: 30,
                     bottom: 20,
                     left: 50
                 },

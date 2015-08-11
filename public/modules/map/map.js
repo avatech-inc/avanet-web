@@ -22,11 +22,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return $state.current.data.fullScreen;
     };
 
+    $scope.routeEditMode = true;
     $scope.showBottomPane = function() {
-        return true;
+        return $scope.routeEditMode;
     }
     $scope.showRoutePane = function() {
-        return true;
+        return $scope.routeEditMode;
     }
 
     $scope.showList = true;

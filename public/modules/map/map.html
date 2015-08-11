@@ -183,7 +183,7 @@
 			      <button type="button" class="dropdown-toggle">
 			        <i class="ion-map"></i> <span><b>Map</b>&nbsp;&nbsp;{{ selectedBaseLayer.name }}</span>
 			      </button>
-			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
+			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="padding:2px 12px;background:#fff !important;">
 
 			      		<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
 
@@ -202,33 +202,39 @@
 
 			    <div class="btn-group dropup" dropdown>
 			      <button type="button" class="dropdown-toggle">
-			        <i class="ion-paintbucket"></i> <span><b>Terrain Visualization</b>&nbsp;&nbsp;Slope</span>
+			        <i class="ion-paintbucket"></i> <span><b>Terrain Visualization</b>&nbsp;&nbsp;{{ terrainOverlay }}</span>
 			      </button>
-			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
+			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
 
-			      		<fieldset id="controls" style="display:block;background-color: rgba(255,255,255,.7); width: 276px; padding:10px;background:#ddd;">
+				    	<div style="margin-bottom:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
 
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
-					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>-->
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('hillshade')">shade</button>
-					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('custom')">CUSTOM</button>
+				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">Elevation</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">Slope</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">Aspect</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('hillshade')">Hillshade</button>
+				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('custom')">CUSTOM</button>
+				    	<br/>-->
 
-					    	<div style="margin-top:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div><br/>
+				    	<div class="btn-group">
+					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label>
+					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">Slope</label>
+					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">Aspect</label>
+					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">Hillshade</label>
+					        <label class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">Custom</label>
+					    </div>
 
-					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
-					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>-->
+				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
+				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>-->
 
-					        <!--<div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
-					        {{ sunDate | amDateFormat:'h:mm a' }}</div>-->
+				        <!--<div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
+				        {{ sunDate | amDateFormat:'h:mm a' }}</div>-->
 
-					        <!--
-					        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
-					        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
-					        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
-					    </fieldset>
+				        <!--
+				        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
+				        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
+				        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
 
 			        </a></li></ul>
 			    </div>
@@ -610,8 +616,8 @@
 							AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
 							MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
 							<br/>
-							<label>ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
-							<label style="margin-bottom:3px;">Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
+							<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+							<label>Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
 							<input type="number" ng-model="munterRate.down" style="width:34px;"/>
 						</div>
 					</div>

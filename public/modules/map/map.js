@@ -936,11 +936,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // set terrain overlay
     $scope.terrainOverlay;
-    $scope.changeTerrainOverlay = function(overlay) {
-        $scope.terrainOverlay = overlay;
-        terrainLayer.overlayType = overlay;
+    $scope.$watch('terrainOverlay', function(){
+        terrainLayer.overlayType = $scope.terrainOverlay;
         terrainLayer.needsRedraw = true;
-    }
+    });
 
     // sun exposure stuff
 

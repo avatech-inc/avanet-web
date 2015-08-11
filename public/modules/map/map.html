@@ -178,29 +178,10 @@
 		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0) }">
 			<div id="map"></div>
 
-
-		    <fieldset id="controls" style="display:block;position: absolute; z-index: 100000; background-color: rgba(255,255,255,.7); width: 276px; right: 50px; bottom: 10px;border-radius:5px;padding:10px;">
-
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>
-		    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
-		    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>
-
-		        <div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
-		        {{ sunDate | amDateFormat:'h:mm a' }}</div>
-		        <!--
-		        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
-		        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
-		        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
-		    </fieldset>
-
 			<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
 			    <div class="btn-group dropup" dropdown>
 			      <button type="button" class="dropdown-toggle">
-			        <i class="ion-map"></i> <span><!--<b>{{ 'map' | translate }}:</b> -->{{ selectedBaseLayer.name }}</span>
+			        <i class="ion-map"></i> <span><b>Map</b>&nbsp;&nbsp;{{ selectedBaseLayer.name }}</span>
 			      </button>
 			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
 
@@ -215,6 +196,39 @@
 						<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
 						
 						<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+
+			        </a></li></ul>
+			    </div>
+
+			    <div class="btn-group dropup" dropdown>
+			      <button type="button" class="dropdown-toggle">
+			        <i class="ion-paintbucket"></i> <span><b>Terrain Visualization</b>&nbsp;&nbsp;Slope</span>
+			      </button>
+			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-30px;"><li><a style="padding:2px 12px;background:#fff !important;">
+
+			      		<fieldset id="controls" style="display:block;background-color: rgba(255,255,255,.7); width: 276px; padding:10px;background:#ddd;">
+
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">ELV</button>
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('slope')">SLP</button>
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('aspect')">ASP</button>
+					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('mks')">MKS</button>-->
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('hillshade')">shade</button>
+					    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('custom')">CUSTOM</button>
+
+					    	<div style="margin-top:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div><br/>
+
+					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('avy-rose')">AVY</button>-->
+					    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('sun')">SUN</button>-->
+
+					        <!--<div ng-show="terrainOverlay == 'sun'" ><div style="margin-top:12px;" class='clearfix pad0'><input type="range" min="0" max="24" step="0.5" ng-model="sunHours" /></div><br/>
+					        {{ sunDate | amDateFormat:'h:mm a' }}</div>-->
+
+					        <!--
+					        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
+					        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
+					        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
+					    </fieldset>
 
 			        </a></li></ul>
 			    </div>

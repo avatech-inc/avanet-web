@@ -22,7 +22,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return $state.current.data.fullScreen;
     };
 
-    $scope.routeEditMode = true;
+    $scope.routeEditMode = false;
     $scope.showBottomPane = function() {
         return $scope.routeEditMode;
     }
@@ -913,14 +913,19 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // ---------------------------------------------------
 
     // init terrain layer
+    $scope.overlayOpacity = .5;
     var terrainLayer = $scope.terrainLayer = L.tileLayer.terrain({
         zIndex: 999,
-        opacity: .5,
+        opacity: $scope.overlayOpacity,
         maxNativeZoom: 13
     });
     setTimeout(function(){
         terrainLayer.addTo($scope.map);
     }, 100);
+
+    $scope.$watch('overlayOpacity', function() {
+        terrainLayer.setOpacity($scope.overlayOpacity);
+    });
 
     $scope.map.on('viewreset', function () {
         terrainLayer.redrawQueue = [];

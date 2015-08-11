@@ -648,24 +648,22 @@
 
     .mapLayers {
 		position: absolute;
-		bottom: 20px;
+		bottom: 10px;
 		left: 10px;
 		z-index: 1001;
 		height: 29px;
 	}
     .mapLayers .btn-group  {
-		width:100%;
 		display:inline-block;
 		white-space: nowrap;
+		vertical-align: top;
 	}
     .mapLayers .btn-group >button {
 		border: 1px solid #999;
 		background: rgba(255,255,255,.8);
 		border-radius: 3px;
 		box-shadow: none !important;
-		position: absolute;
 		padding-right:10px;
-		left: 0px;
 		height: 29px;
 		width:auto;
 		display:inline-block;

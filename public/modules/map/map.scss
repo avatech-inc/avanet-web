@@ -227,6 +227,15 @@
 	margin-bottom: 1px;
 }
 
+/* bottom pane */
+.bottom-pane {
+	position:absolute;
+	height: 170px;
+	left: 280px; 
+	bottom: 0; right: 0;
+	z-index: 2000;
+	background: #eee;
+}
 /* preview pane */
 .preview-pane {
 	position:absolute;
@@ -1067,3 +1076,7 @@
     background: #FF91A4  !important;
     border-width: 2px !important;
 }
+
+
+
+

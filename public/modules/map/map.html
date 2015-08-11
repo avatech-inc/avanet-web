@@ -175,7 +175,7 @@
 
 		</div>
 
-		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : 0) }">
+		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : 0), bottom: (showBottomPane() ? 170 : 0) }">
 			<div id="map"></div>
 
 
@@ -624,6 +624,9 @@
 
 		<div ng-show="showPreviewPane()" class="preview-pane" >
 			<div ui-view="right-pane"></div>
+		</div>
+		<div ng-show="showBottomPane()" class="bottom-pane">
+
 		</div>
 
 	</section>

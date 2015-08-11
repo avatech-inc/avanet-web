@@ -22,6 +22,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return $state.current.data.fullScreen;
     };
 
+    $scope.showBottomPane = function() {
+        return true;
+    }
+
     $scope.showList = true;
 
     $scope.mapLayers = mapLayers;

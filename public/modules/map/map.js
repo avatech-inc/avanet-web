@@ -25,6 +25,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.showBottomPane = function() {
         return true;
     }
+    $scope.showRoutePane = function() {
+        return true;
+    }
 
     $scope.showList = true;
 

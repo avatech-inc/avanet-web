@@ -175,7 +175,7 @@
 
 		</div>
 
-		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : 0), bottom: (showBottomPane() ? 170 : 0) }">
+		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0) }">
 			<div id="map"></div>
 
 
@@ -221,154 +221,6 @@
 			</div>
 
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
-
-			<route-planning terrain-layer="terrainLayer" map="map" route="route" 
-				hover-on-leg-map="hoverOnLegMap"
-				hover-on-leg="hoverOnLeg"
-				hover-on-point-map="hoverOnPointMap"
-				hover-on-point="hoverOnPoint"
-
-				test-munter-rate-up="munterRate.up"
-				test-munter-rate-down="munterRate.down"
-
-				munter-rate-up="munterRate.up"
-				munter-rate-down="munterRate.down"
-
-				control="routeControl"
-				></route-planning>
-
-			<style>
-				.route-box {
-					width:300px; 
-					background: rgba(255,255,255,.9);
-					position:absolute;
-					left:10px;top:10px;bottom:50px;
-					overflow:scroll; 
-					border-radius:4px;
-				}
-				.route-box label {
-					font-weight: 700;
-					margin-bottom: 6px;
-					margin-left: 6px;
-					margin-right: 5px;
-					text-transform: uppercase;
-				}
-				.route-list {
-					border-top: 1px solid #ddd;
-				}
-				.route-item {
-					border-bottom: 1px solid #ddd;
-					padding: 6px 8px;
-					position: relative;
-					//background: rgba(255,255,255,.9);
-					transition: background 150ms;
-				}
-				.route-item.highlight,
-				.route-item:hover {
-					background:rgba(0,0,255,.05);
-				}
-
-				.route-waypoint-icon {
-					background: yellow;
-					border: 3px solid #6664bd;
-					border-radius: 999px;
-					display:inline-block;
-					width: 20px;
-					height: 20px;
-					z-index: 101;
-					position: relative;
-					vertical-align: top;
-					margin-right: 4px;
-				}
-				.side-line {
-					content: '';
-					width: 4px;
-					background: #6664bd;
-					position: absolute;
-					left: 16px;
-					top: -1px;
-					bottom: -1px;
-					z-index: 100;
-				}
-				.side-line.start { top: 10px; }
-				.side-line.end { bottom: 10px; }
-
-				.route-waypoint-icon.start {
-					background: #76FF7A;
-				}
-				.route-waypoint-icon.end {
-					background: #FF91A4;
-				}
-			</style>
-
-			<div ng-if="route && route.points.length > 1" class="route-box">
-				<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;">ROUTE
-
-				<div style="float:right;font-weight:500">
-					{{ formatters.formatKmOrMiles(route.terrain.distance) }} / 
-					{{ formatTime(route.terrain.timeEstimateMinutes) }}
-				</div>
-				</div>
-				<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
-					<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a>
-					<div style="font-size:13px;">
-						<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
-						<label>VERTICAL</label> 
-							<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
-							<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
-						<br/>
-						<label style="margin-bottom:3px;">SLOPE</label>
-						MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
-						AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
-						MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
-						<br/>
-						<label>ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
-						<label style="margin-bottom:3px;">Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
-						<input type="number" ng-model="munterRate.down" style="width:34px;"/>
-					</div>
-				</div>
-
-				<div class="route-list">
-					<div ng-repeat="routePoint in route.points">
-
-						<div class="route-item" style="padding-left:34px;font-size:12px;" 
-						ng-if="$index != 0"
-						ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
-						ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
-							<div class="side-line"></div>
-							DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
-							TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}<br/>
-							BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
-							NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
-							VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
-							SLOPE: 
-							MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
-							AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
-							MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
-							<br/>
-							ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
-						</div>
-						<div class="route-item" style="font-weight:bold"
-							ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 
-							ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
-							<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
-							<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
-							<span ng-hide="$index > 0 && $index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>
-							<span ng-show="$index == route.points.length - 1">END</span>
-							<span ng-show="$index == 0">START</span>
-
-							({{ formatters.formatElevation(routePoint.terrain.elevation) }}) 
-
-							<div style="float:right;" ng-hide="$index == 0">
-								{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }} /
-								{{ formatTime(routePoint.terrain.totalTimeEstimateMinutes) }}
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-			</div>
 		</div>
 
 		<div class="side-bar">
@@ -627,6 +479,170 @@
 		</div>
 		<div ng-show="showBottomPane()" class="bottom-pane">
 
+		</div>
+		<div ng-show="showRoutePane()" class="route-pane">
+
+
+			<route-planning terrain-layer="terrainLayer" map="map" route="route" 
+				hover-on-leg-map="hoverOnLegMap"
+				hover-on-leg="hoverOnLeg"
+				hover-on-point-map="hoverOnPointMap"
+				hover-on-point="hoverOnPoint"
+
+				test-munter-rate-up="munterRate.up"
+				test-munter-rate-down="munterRate.down"
+
+				munter-rate-up="munterRate.up"
+				munter-rate-down="munterRate.down"
+
+				control="routeControl"
+				></route-planning>
+
+			<style>
+				.route-box {
+					width:290px; 
+					position:absolute;
+					left:0px;top:0px;bottom:0px;right:0px;
+					overflow:scroll; 
+				}
+				.route-box label {
+					font-weight: 700;
+					margin-bottom: 6px;
+					margin-left: 6px;
+					margin-right: 5px;
+					text-transform: uppercase;
+				}
+				.route-list {
+					border-top: 1px solid #ddd;
+				}
+				.route-item {
+					border-bottom: 1px solid #ddd;
+					padding: 6px 8px;
+					position: relative;
+					//background: rgba(255,255,255,.9);
+					transition: background 150ms;
+				}
+				.route-item.highlight,
+				.route-item:hover {
+					background:rgba(0,0,255,.05);
+				}
+
+				.route-waypoint-icon {
+					background: yellow;
+					border: 3px solid #6664bd;
+					border-radius: 999px;
+					display:inline-block;
+					width: 20px;
+					height: 20px;
+					z-index: 101;
+					position: relative;
+					vertical-align: top;
+					margin-right: 4px;
+				}
+				.side-line {
+					content: '';
+					width: 4px;
+					background: #6664bd;
+					position: absolute;
+					left: 16px;
+					top: -1px;
+					bottom: -1px;
+					z-index: 100;
+				}
+				.side-line.start { top: 10px; }
+				.side-line.end { bottom: 10px; }
+
+				.route-waypoint-icon.start {
+					background: #76FF7A;
+				}
+				.route-waypoint-icon.end {
+					background: #FF91A4;
+				}
+
+				.instruct {
+					font-size: 20px;
+				    padding: 20px;
+				    text-align: center;
+				    font-style: italic;
+				    font-weight: 100;
+				}
+			</style>
+
+			<div class="route-box">
+				<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;">ROUTE
+
+					<div style="float:right;font-weight:500" ng-if="route && route.points.length > 1">
+						{{ formatters.formatKmOrMiles(route.terrain.distance) }} / 
+						{{ formatTime(route.terrain.timeEstimateMinutes) }}
+					</div>
+				</div>
+				<div ng-if="!route" class="instruct">
+					Click anywhere<br/>on the map to<br/>start your route
+				</div>
+				<div ng-if="route.points.length == 1" class="instruct">
+					Click on the map<br/>to place the next<br/>point on your route
+				</div>
+				<div ng-if="route && route.points.length > 1">
+					<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
+						<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a>
+						<div style="font-size:13px;">
+							<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
+							<label>VERTICAL</label> 
+								<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
+								<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
+							<br/>
+							<label style="margin-bottom:3px;">SLOPE</label>
+							MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
+							AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
+							MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
+							<br/>
+							<label>ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+							<label style="margin-bottom:3px;">Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
+							<input type="number" ng-model="munterRate.down" style="width:34px;"/>
+						</div>
+					</div>
+
+					<div class="route-list">
+						<div ng-repeat="routePoint in route.points">
+
+							<div class="route-item" style="padding-left:34px;font-size:12px;" 
+							ng-if="$index != 0"
+							ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
+							ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
+								<div class="side-line"></div>
+								DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+								TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}<br/>
+								BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
+								NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
+								VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
+								SLOPE: 
+								MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
+								AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
+								MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
+								<br/>
+								ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
+							</div>
+							<div class="route-item" style="font-weight:bold"
+								ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 
+								ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
+								<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+								<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+								<span ng-hide="$index > 0 && $index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>
+								<span ng-show="$index == route.points.length - 1">END</span>
+								<span ng-show="$index == 0">START</span>
+
+								({{ formatters.formatElevation(routePoint.terrain.elevation) }}) 
+
+								<div style="float:right;" ng-hide="$index == 0">
+									{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }} /
+									{{ formatTime(routePoint.terrain.totalTimeEstimateMinutes) }}
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 	</section>

@@ -232,9 +232,19 @@
 	position:absolute;
 	height: 170px;
 	left: 280px; 
-	bottom: 0; right: 0;
+	bottom: 0; right: 290px;
 	z-index: 2000;
 	background: #eee;
+}
+/* route pane */
+.route-pane {
+	position:absolute;
+	top:46px;
+	bottom:0;right:0;
+	width:290px;
+	background:#fff;
+	z-index:2000;
+	box-shadow: 0px 0px 10px rgba(0,0,0,.4);
 }
 /* preview pane */
 .preview-pane {

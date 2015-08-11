@@ -1,39 +1,68 @@
-L.Control.Elevation = L.Control.extend({
-    options: {
-        position: "topright",
-        theme: "lime-theme",
-        width: 600,
-        height: 175,
-        margins: {
-            top: 20,
-            right: 20,
-            bottom: 30,
-            left: 60
-        },
-        useHeightIndicator: true,
-        interpolation: "linear",
-        hoverNumber: {
-            decimalsX: 3,
-            decimalsY: 0,
-            formatter: undefined
-        },
-        xTicks: undefined,
-        yTicks: undefined,
-        collapsed: false,
-        yAxisMin: undefined,
-        yAxisMax: undefined,
-        forceAxisBounds: false,
-        imperial: false
-    },
+window.ElevationWidget = function() {
+    // options: {
+    //     position: "topright",
+    //     theme: "lime-theme",
+    //     width: 600,
+    //     height: 175,
+    //     margins: {
+    //         top: 20,
+    //         right: 20,
+    //         bottom: 30,
+    //         left: 60
+    //     },
+    //     useHeightIndicator: true,
+    //     interpolation: "linear",
+    //     hoverNumber: {
+    //         decimalsX: 3,
+    //         decimalsY: 0,
+    //         formatter: undefined
+    //     },
+    //     xTicks: undefined,
+    //     yTicks: undefined,
+    //     collapsed: false,
+    //     yAxisMin: undefined,
+    //     yAxisMax: undefined,
+    //     forceAxisBounds: false,
+    //     imperial: false
+    // }
 
-    onRemove: function(map) {
+    this.onRemove = function(map) {
         this._container = null;
-    },
+    }
 
-    onAdd: function(map) {
+    //onAdd: function(map) {
+    this.create = function(map, options) {
         this._map = map;
 
-        var opts = this.options;
+        this.options = options;
+        if (!options) this.options = {
+            position: "topright",
+            theme: "lime-theme",
+            width: 600,
+            height: 175,
+            margins: {
+                top: 20,
+                right: 20,
+                bottom: 30,
+                left: 60
+            },
+            useHeightIndicator: true,
+            interpolation: "linear",
+            hoverNumber: {
+                decimalsX: 3,
+                decimalsY: 0,
+                formatter: undefined
+            },
+            xTicks: undefined,
+            yTicks: undefined,
+            collapsed: false,
+            yAxisMin: undefined,
+            yAxisMax: undefined,
+            forceAxisBounds: false,
+            imperial: false
+        };
+        opts = this.options;
+
         var margin = opts.margins;
         opts.xTicks = opts.xTicks || Math.round(this._width() / 75);
         opts.yTicks = opts.yTicks || Math.round(this._height() / 30);
@@ -152,10 +181,14 @@ L.Control.Elevation = L.Control.extend({
             this._applyData();
         }
 
-        return container;
-    },
+        $(".bottom-pane .elevation").remove();
+        $(".bottom-pane").append($(container));
+        $(container).addClass("elevation-widget");
+        //return container;
+        //return null;
+    }
 
-    _dragHandler: function() {
+    this._dragHandler = function() {
 
         // disable drag-select
         return;
@@ -168,12 +201,12 @@ L.Control.Elevation = L.Control.extend({
 
         this._drawDragRectangle();
 
-    },
+    }
 
     /*
      * Draws the currently dragged rectabgle over the chart.
      */
-    _drawDragRectangle: function() {
+    this._drawDragRectangle = function() {
 
         if (!this._dragStartCoords) {
             return;
@@ -200,12 +233,12 @@ L.Control.Elevation = L.Control.extend({
                 .attr("x", x1);
         }
 
-    },
+    }
 
     /*
      * Removes the drag rectangle and zoms back to the total extent of the data.
      */
-    _resetDrag: function() {
+    this._resetDrag = function() {
 
         if (this._dragRectangleG) {
 
@@ -219,12 +252,12 @@ L.Control.Elevation = L.Control.extend({
 
         }
 
-    },
+    }
 
     /*
      * Handles end of dragg operations. Zooms the map to the selected items extent.
      */
-    _dragEndHandler: function() {
+    this._dragEndHandler = function() {
 
         if (!this._dragStartCoords || !this._gotDragged) {
             this._dragStartCoords = null;
@@ -243,9 +276,9 @@ L.Control.Elevation = L.Control.extend({
         this._dragStartCoords = null;
         this._gotDragged = false;
 
-    },
+    }
 
-    _dragStartHandler: function() {
+    this._dragStartHandler = function() {
 
         d3.event.preventDefault();
         d3.event.stopPropagation();
@@ -254,23 +287,23 @@ L.Control.Elevation = L.Control.extend({
 
         this._dragStartCoords = d3.mouse(this._background.node());
 
-    },
+    }
 
     /*
      * Finds a data entry for a given x-coordinate of the diagram
      */
-    _findItemForX: function(x) {
+    this._findItemForX = function(x) {
         var bisect = d3.bisector(function(d) {
             return d.dist;
         }).left;
         var xinvert = this._x.invert(x);
         return bisect(this._data, xinvert);
-    },
+    }
 
     /*
      * Finds an item with the smallest delta in distance to the given latlng coords
      */
-    _findItemForLatLng: function(latlng) {
+    this._findItemForLatLng = function(latlng) {
         var result = null,
             d = Infinity;
         this._data.forEach(function(item) {
@@ -281,10 +314,10 @@ L.Control.Elevation = L.Control.extend({
             }
         });
         return result;
-    },
+    }
 
     /** Make the map fit the route section between given indexes. */
-    _fitSection: function(index1, index2) {
+    this._fitSection = function(index1, index2) {
 
         var start = Math.min(index1, index2),
             end = Math.max(index1, index2);
@@ -293,9 +326,9 @@ L.Control.Elevation = L.Control.extend({
 
         this._map.fitBounds(ext);
 
-    },
+    }
 
-    _initToggle: function() {
+    this._initToggle = function() {
 
         /* inspired by L.Control.Layers */
 
@@ -335,30 +368,30 @@ L.Control.Elevation = L.Control.extend({
             this._map.on('click', this._collapse, this);
             // TODO keyboard accessibility
         }
-    },
+    }
 
-    _expand: function() {
+    this._expand = function() {
         this._container.className = this._container.className.replace(' elevation-collapsed', '');
-    },
+    }
 
-    _collapse: function() {
+    this._collapse = function() {
         L.DomUtil.addClass(this._container, 'elevation-collapsed');
-    },
+    }
 
-    _width: function() {
+    this._width = function() {
         var opts = this.options;
         return opts.width - opts.margins.left - opts.margins.right;
-    },
+    }
 
-    _height: function() {
+    this._height = function() {
         var opts = this.options;
         return opts.height - opts.margins.top - opts.margins.bottom;
-    },
+    }
 
     /*
      * Fromatting funciton using the given decimals and seperator
      */
-    _formatter: function(num, dec, sep) {
+    this._formatter = function(num, dec, sep) {
         var res;
         if (dec === 0) {
             res = Math.round(num) + "";
@@ -374,9 +407,9 @@ L.Control.Elevation = L.Control.extend({
             res = numbers.join(sep || ".");
         }
         return res;
-    },
+    }
 
-    _appendYaxis: function(y) {
+    this._appendYaxis = function(y) {
         var opts = this.options;
 
         if(opts.imperial){
@@ -403,9 +436,9 @@ L.Control.Elevation = L.Control.extend({
             .style("text-anchor", "end")
             .text("m");
         }
-    },
+    }
 
-    _appendXaxis: function(x) {
+    this._appendXaxis = function(x) {
         var opts = this.options;
 
         if(opts.imperial){
@@ -434,9 +467,9 @@ L.Control.Elevation = L.Control.extend({
             .style("text-anchor", "end")
             .text("km");
         }
-    },
+    }
 
-    _updateAxis: function() {
+    this._updateAxis = function() {
         this._xaxisgraphicnode.selectAll("g").remove();
         this._xaxisgraphicnode.selectAll("path").remove();
         this._xaxisgraphicnode.selectAll("text").remove();
@@ -445,18 +478,18 @@ L.Control.Elevation = L.Control.extend({
         this._yaxisgraphicnode.selectAll("text").remove();
         this._appendXaxis(this._xaxisgraphicnode);
         this._appendYaxis(this._yaxisgraphicnode);
-    },
+    }
 
-    _mouseoutHandler: function() {
+    this._mouseoutHandler = function() {
 
         this._hidePositionMarker();
 
-    },
+    }
 
     /*
      * Hides the position-/heigth indication marker drawn onto the map
      */
-    _hidePositionMarker: function() {
+    this._hidePositionMarker = function() {
 
         if (this._marker) {
             this._map.removeLayer(this._marker);
@@ -471,12 +504,12 @@ L.Control.Elevation = L.Control.extend({
         }
         this._focusG.style("visibility", "hidden");
 
-    },
+    }
 
     /*
      * Handles the moueseover the chart and displays distance and elevation level
      */
-    _mousemoveHandler: function(d, i, ctx) {
+    this._mousemoveHandler = function(d, i, ctx) {
         if (!this._data || this._data.length === 0) {
             return;
         }
@@ -563,12 +596,12 @@ L.Control.Elevation = L.Control.extend({
 
         }
 
-    },
+    }
 
     /*
      * Parsing of GeoJSON data lines and their elevation in z-coordinate
      */
-    _addGeoJSONData: function(coords) {
+    this._addGeoJSONData = function(coords) {
         var opts = this.options;
         if (coords) {
             var data = this._data || [];
@@ -603,7 +636,7 @@ L.Control.Elevation = L.Control.extend({
             ele = opts.imperial ? ele * 3.28084 : ele;
             this._maxElevation = ele;
         }
-    },
+    }
 
     /*
      * Parsing function for GPX data as used by https://github.com/mpetazzoni/leaflet-gpx
@@ -636,7 +669,7 @@ L.Control.Elevation = L.Control.extend({
     //     }
     // },
 
-    _addData: function(d) {
+    this._addData = function(d) {
         var geom = d && d.geometry && d.geometry;
         var i;
 
@@ -667,12 +700,12 @@ L.Control.Elevation = L.Control.extend({
         if (d && d._latlngs) {
             this._addGPXdata(d._latlngs);
         }
-    },
+    }
 
     /*
      * Calculates the full extent of the data array
      */
-    _calculateFullExtent: function(data) {
+    this._calculateFullExtent = function(data) {
 
         if (!data || data.length < 1) {
             throw new Error("no data in parameters");
@@ -686,13 +719,13 @@ L.Control.Elevation = L.Control.extend({
 
         return ext;
 
-    },
+    }
 
     /*
      * Add data to the diagram either from GPX or GeoJSON and
      * update the axis domain and data
      */
-    addData: function(d, layer) {
+    this.addData = function(d, layer) {
         this._addData(d);
         if (this._container) {
             this._applyData();
@@ -703,12 +736,12 @@ L.Control.Elevation = L.Control.extend({
         if (layer) {
             layer.on("mousemove", this._handleLayerMouseOver.bind(this));
         }
-    },
+    }
 
     /*
      * Handles mouseover events of the data layers on the map.
      */
-    _handleLayerMouseOver: function(evt) {
+    this._handleLayerMouseOver = function(evt) {
         if (!this._data || this._data.length === 0) {
             return;
         }
@@ -718,9 +751,9 @@ L.Control.Elevation = L.Control.extend({
             var x = item.xDiagCoord;
             this._showDiagramIndicator(item, x);
         }
-    },
+    }
 
-    _showDiagramIndicator: function(item, xCoordinate) {
+    this._showDiagramIndicator = function(item, xCoordinate) {
         var opts = this.options;
         this._focusG.style("visibility", "visible");
         this._mousefocus.attr('x1', xCoordinate)
@@ -793,10 +826,10 @@ L.Control.Elevation = L.Control.extend({
 
         this._focuslabelX5.attr("x", 490).attr("y", -5)
             .text("TIME: " + this.formatTime(item.timeEstimateMinutes));
-    },
+    }
 
 
-    formatTime: function(minutes) {
+    this.formatTime = function(minutes) {
         var str = "";
         if (minutes >= 60) {
             var hours = minutes / 60;
@@ -806,9 +839,9 @@ L.Control.Elevation = L.Control.extend({
         }
         else str = Math.floor(minutes) + " min";
         return str;
-    },
+    }
 
-    _applyData: function() {
+    this._applyData = function() {
         var xdomain = d3.extent(this._data, function(d) {
             return d.dist;
         });
@@ -831,22 +864,23 @@ L.Control.Elevation = L.Control.extend({
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);
-    },
+    }
 
     /*
      * Reset data
      */
-    _clearData: function() {
+    this._clearData = function() {
         this._data = null;
         this._dist = null;
         this._maxElevation = null;
-    },
+    }
 
     /*
      * Reset data and display
      */
-    clear: function() {
+    this.clear = function() {
 
+        $(".bottom-pane .elevation").remove();
         this._clearData();
         this.clearWaypoints();
 
@@ -862,9 +896,9 @@ L.Control.Elevation = L.Control.extend({
         this._x.domain([0, 1]);
         this._y.domain([0, 1]);
         this._updateAxis();
-    },
+    }
 
-    highlight: function(latlng) {
+    this.highlight = function(latlng) {
          if (!this._data || this._data.length === 0) {
             return;
         }
@@ -874,13 +908,13 @@ L.Control.Elevation = L.Control.extend({
         }
         var item = this._findItemForLatLng(latlng);
         if (item) this._showDiagramIndicator(item, item.xDiagCoord);
-    },
+    }
 
-    clearWaypoints: function() {
+    this.clearWaypoints = function() {
         if (this.waypoints) this.waypoints.remove();
-    },
+    }
 
-    addWaypoint: function(latlng) {
+    this.addWaypoint = function(latlng) {
         // add waypoints object if doens't already exist
         var g = d3.select(this._container).select("svg").select("g");
         if (!this.waypoints) this.waypoints = g.append("g");
@@ -923,8 +957,8 @@ L.Control.Elevation = L.Control.extend({
         }
     }
 
-});
-
-L.control.elevation = function(options) {
-    return new L.Control.Elevation(options);
 };
+
+// L.control.elevation = function(options) {
+//     return new L.Control.Elevation(options);
+// };

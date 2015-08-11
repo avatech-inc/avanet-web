@@ -659,18 +659,20 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             if (elevationWidget) {
                 elevationWidget.clear();
-                elevationWidget.removeFrom(_map);
+                //elevationWidget.removeFrom(_map);
             }
-            elevationWidget = L.control.elevation({
+
+            elevationWidget = new ElevationWidget();
+            elevationWidget.create(_map, {
                 position: "topright",
                 theme: "steelblue-theme", //default: lime-theme
                 imperial: Global.user.settings.elevation == 1, // true
                 width: 670,
-                height: 180,
+                height: 165,
                 margins: {
                     top: 24,
                     right: 20,
-                    bottom: 30,
+                    bottom: 20,
                     left: 50
                 },
                 useHeightIndicator: true, //if false a marker is drawn at map position
@@ -683,7 +685,30 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 xTicks: undefined, //number of ticks in x axis, calculated by default according to width
                 yTicks: undefined, //number of ticks on y axis, calculated by default according to height
             });
-            elevationWidget.addTo(_map);
+            // elevationWidget = L.control.elevation({
+            //     position: "topright",
+            //     theme: "steelblue-theme", //default: lime-theme
+            //     imperial: Global.user.settings.elevation == 1, // true
+            //     width: 670,
+            //     height: 180,
+            //     margins: {
+            //         top: 24,
+            //         right: 20,
+            //         bottom: 30,
+            //         left: 50
+            //     },
+            //     useHeightIndicator: true, //if false a marker is drawn at map position
+            //     interpolation: "linear", //see https://github.com/mbostock/d3/wiki/SVG-Shapes#wiki-area_interpolate
+            //     hoverNumber: {
+            //         decimalsX: 3, //decimals on distance (always in km)
+            //         decimalsY: 0, //deciamls on height (always in m)
+            //         formatter: undefined //custom formatter function may be injected
+            //     },
+            //     xTicks: undefined, //number of ticks in x axis, calculated by default according to width
+            //     yTicks: undefined, //number of ticks on y axis, calculated by default according to height
+            // });
+           // elevationWidget.addTo(_map);
+
         }
 
         function downloadGPX() {

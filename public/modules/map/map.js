@@ -637,19 +637,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     $scope.map.setView(initialLocation, defaultZoom);
 
-    // function getLayerByAlias(alias) {
-    //     var layer;
-    //     for (var i = 0; i < $scope.mapLayers.baseLayers.terrain.length; i++) {
-    //         var l = $scope.mapLayers.baseLayers.terrain[i];
-    //         if (l.alias == alias) layer = l;
-    //     }
-    //     for (var i = 0; i < $scope.mapLayers.baseLayers.aerial.length; i++) {
-    //         var l = $scope.mapLayers.baseLayers.aerial[i];
-    //         if (l.alias == alias) layer = l;
-    //     }
-    //     return layer;
-    // }
-
     // pre-compile map popup
     // todo: move this into a standalone template file
     $scope.compiledPopup;

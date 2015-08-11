@@ -132,6 +132,8 @@
 
         terrainLayer.PNG_cache = {};
 
+        terrainLayer.overlayType = "loadTerrainData";
+
         terrainLayer.drawTile = function(canvas, tilePoint, zoom) {
 
             var tileSize = terrainLayer._getTileSize();
@@ -168,6 +170,7 @@
                 var data = { id: tile_id };
 
                 if (renderedZFactor !== terrainLayer.zFactor) {
+                    console.log("Z FACTOR: " + renderedZFactor + "/" + terrainLayer.zFactor);
                     data.raster = PNG_data;
                     data.zFactor = terrainLayer.zFactor;
                     data.url = url;

@@ -56,6 +56,8 @@ onmessage = function (e) {
         //self.dems[e.data.id] = raster2dem(e.data.raster, .051, converted, 40);
     }
 
+    if (e.data.processType == "loadTerrainData") return;
+
     var processed;
 
     if (e.data.processType == "sun") {
@@ -70,6 +72,7 @@ onmessage = function (e) {
         //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
     }
 
+    
     postMessage({
         id: e.data.id,
         pixels: processed.buffer,

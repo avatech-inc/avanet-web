@@ -370,6 +370,13 @@ return {
             "type": "MAPBOX"
          },
          {
+            "alias": "landsat",
+            "name": "Landsat Live Imagery",
+            "id": "andrewsohn.e9dfc86d",
+            "maxresolution": 12,
+            "type": "MAPBOX"
+         },
+         {
             "alias":"acrgis-worldimagery",
             "name":"ArcGIS World Imagery",
             "template":"http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",

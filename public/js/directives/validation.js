@@ -13,7 +13,7 @@ angular.module('avatech').directive('validate', function() {
       var submitVariableName = "__submit_" + formName;
 
       // get 'form-group' divs
-      var formGroups = elem[0].querySelectorAll('.form-group')
+      var formGroups = elem[0].querySelectorAll('.form-group');
 
       var inputs = [];
       angular.forEach(formGroups, function(formGroup) {
@@ -91,5 +91,5 @@ angular.module('avatech').directive('validate', function() {
           });
       };
     }
-  }
+  };
 });

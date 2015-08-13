@@ -15,7 +15,6 @@ angular.module('avatech').directive('time', function($compile) {
       scope._model = null;
 
       scope.$watch("model",function(newModel){
-        console.log("CHANGED!")
         scope._model = angular.copy(newModel);
         var newDate = new Date(newModel);
         if (newModel != null && newDate instanceof Date && !isNaN(newDate.valueOf())) {

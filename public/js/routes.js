@@ -57,7 +57,7 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
                     backdrop: 'static',
                     windowClass: 'width-480',
                     resolve: {
-                      initialLocation: function() { return {} }
+                      initialLocation: function() { return {}; }
                       //item: "hey!"
                     },
                     // controller: ['$scope', 'item', function($scope, item) {
@@ -352,7 +352,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         .state('404', {
             url: '/*path',
             templateUrl: '/views/404.html'
-        })
-
+        });
     }
 ]);

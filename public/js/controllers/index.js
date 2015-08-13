@@ -24,5 +24,5 @@ angular.module('avatech.system').controller('IndexController', ['$scope', '$loca
         }, function () {
             // on dismiss
         });
-    }
+    };
 }]);

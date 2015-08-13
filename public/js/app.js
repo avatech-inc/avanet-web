@@ -178,7 +178,7 @@ angular.module('avatech').run(
 
         // redirect from login page if already logged in
         if (toState.name == "login" && Global.user) {
-            console.log("already logged in...")
+            console.log("already logged in...");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});
             return;

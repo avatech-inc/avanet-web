@@ -10,7 +10,7 @@ angular.module('avatech').service('Observations', [
 
 	this.init = function() {
 		self.sync();
-	}
+	};
 
 	this.sync = function(callback) {
 		$http.get('/v1/all-observations/mine', { params: { last: lastSync } }
@@ -23,8 +23,7 @@ angular.module('avatech').service('Observations', [
             // callback
             if (callback) callback();
         });
-
-	}
+	};
 
 	function replaceObservation(observation) {
         for (var i = 0; i < self.observations.length; i++) {
@@ -55,7 +54,8 @@ angular.module('avatech').service('Observations', [
         if (observation.type == 'test') {
         	$http.post("/v1/tests", observation);
         }
-	}
+	};
+
 	this.remove = function(observation) {
 		var index = -1;
         for (var i = 0; i < self.observations.length; i++) {
@@ -72,6 +72,6 @@ angular.module('avatech').service('Observations', [
 			observation.removed = true;
         	$http.post("/v1/tests", observation);
         }
-	}
+	};
 }]);
 

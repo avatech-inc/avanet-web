@@ -7,14 +7,14 @@ angular.module('avatech').directive('autosize', function() {
         $(this).autosize();
       });
       // handle programatic reset to empty string
-      scope.$watch(function() { return $(elem).val() }, 
+      scope.$watch(function() { return $(elem).val(); }, 
       function(newVal, oldVal) {
         if(newVal == null || newVal == "" && oldVal != null && oldVal != "") {
           $(elem).autosize().show().trigger('autosize.resize');
         }
       });
     }
-  }
+  };
 });
 
 (function ($) {

@@ -2,7 +2,7 @@
 
 angular.module('avatech').directive('inputDirectionRange', function() {    
 
-    var selectionArea = "<div class='bg'>"
+    var selectionArea = "<div class='bg'>";
     selectionArea += "<div class='dir dir-N'>N</div>";
     selectionArea += "<div class='dir dir-NE'>NE</div>";
     selectionArea += "<div class='dir dir-E'>E</div>";
@@ -204,7 +204,7 @@ angular.module('avatech').directive('inputDirectionRange', function() {
 
 angular.module('avatech').directive('inputDirection', function() {    
 
-    var selectionArea = "<div class='bg'>"
+    var selectionArea = "<div class='bg'>";
     selectionArea += "<div class='dir dir-N'>N</div>";
     selectionArea += "<div class='dir dir-NE'>NE</div>";
     selectionArea += "<div class='dir dir-E'>E</div>";

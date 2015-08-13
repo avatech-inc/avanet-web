@@ -37,7 +37,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
 
             $scope.closeModal = function() {
                 $scope.$parent.$parent.closeModal($scope.uploaded > 0);
-            }
+            };
 
             $scope.uploaded = 0;
             $scope.totalUpload = null;
@@ -50,7 +50,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                     $scope.uploading = true;
                     //$scope.$apply();
                 //},1);
-            }
+            };
 
             $scope.changeStatus = function(status, callback) {
                 //setTimeout(function(){
@@ -58,7 +58,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                     //$scope.$apply();
                     if (callback) $timeout(callback, 300);
                 //},1);
-            }
+            };
 
             var timeout;
             $scope.onAdd = function() {
@@ -73,7 +73,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                         $scope.changeStatus("Verifying device data...", $scope.startUpload);
                     }
                 }, 100);
-            }
+            };
 
             $scope.startUpload = function() {
                 console.log("uploading!");
@@ -143,7 +143,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                         });
                     }
                 });
-            }
+            };
 
             var findMatchingRaw = function(fileNumber) {
                 for (var i = 0; i < $scope.queue.length; i++) {
@@ -153,14 +153,12 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                     }
                 }
                 return null;
-            }
-
+            };
         }
     ])
 
     .controller('FileDestroyController', [ '$scope','$http',
         function ($scope, $http) {
-
 
             var file = $scope.file,
                 state;

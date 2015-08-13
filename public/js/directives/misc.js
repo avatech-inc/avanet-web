@@ -14,7 +14,7 @@ angular.module('avatech').directive('onenter', function() {
          }
       });
     }
-  }
+  };
 });
 
 angular.module('avatech').directive('thumbnail', ['$timeout', '$parse',function($timeout, $parse) {
@@ -46,7 +46,7 @@ angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($t
         if (!scope[modelName]) scope[modelName] = 0;
         scope[modelName]++;
         console.log(scope[modelName]);
-      }
+      };
       scope.$watch(model, function(value) {
         $timeout(function() {
           element[0].focus(); 
@@ -75,7 +75,7 @@ angular.module('avatech.system').directive('windowResize', ['$window', function(
       $scope.$apply();
     });
     $scope._getWindowSize();
-  }
+  };
 }]);
 
 angular.module('avatech.system').directive('onChange', function() {    

@@ -65,7 +65,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                 if (timeout) $timeout.cancel(timeout);
                 timeout = $timeout(function(){
                     // todo: in the future, differentiate between empty avatech folder and bad folder
-                    if ($scope.queue.length == 0) {
+                    if ($scope.queue.length === 0) {
                         $scope.uploading = false;
                         $scope.badFolder = true;
                     }
@@ -83,7 +83,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
 
                     file.fileNumber = file.name.substr(file.name.length-9, 5);
 
-                    if (file.name.toLowerCase().indexOf("processed") == 0) {
+                    if (file.name.toLowerCase().indexOf("processed") === 0) {
                         total++;
                         var r = new FileReader();
                         r.onload = (function(file) {
@@ -114,7 +114,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
                 for (var i = 0; i < $scope.hashed.length; i++) hashes.push($scope.hashed[i].fileHash);
                 $http.post("/v1/tests/checkUpload", { hashes: hashes }).success(function(newHashes) {
 
-                    if (newHashes.length == 0) {
+                    if (newHashes.length === 0) {
                         $scope.upToDate = true;
                     }
                     else {
@@ -148,7 +148,7 @@ angular.module('avatech.upload', ['blueimp.fileupload'])
             var findMatchingRaw = function(fileNumber) {
                 for (var i = 0; i < $scope.queue.length; i++) {
                     var file = $scope.queue[i];
-                    if (file.name.toLowerCase().indexOf("raw") == 0) {
+                    if (file.name.toLowerCase().indexOf("raw") === 0) {
                         if (file.fileNumber == fileNumber) return file;
                     }
                 }

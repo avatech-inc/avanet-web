@@ -17,7 +17,7 @@ angular.module('avatech').directive('time', function($compile) {
       scope.$watch("model",function(newModel){
         scope._model = angular.copy(newModel);
         var newDate = new Date(newModel);
-        if (newModel != null && newDate instanceof Date && !isNaN(newDate.valueOf())) {
+        if (newModel !== null && newDate instanceof Date && !isNaN(newDate.valueOf())) {
           elem.val(formatTime(newDate));
         }
         else elem.val("");
@@ -47,7 +47,7 @@ angular.module('avatech').directive('time', function($compile) {
       function validate(text) {
         var newTime = parseTime(text);
         console.log(newTime);
-        if (newTime != null) scope.model = newTime;
+        if (newTime !== null) scope.model = newTime;
         else scope.model = null;
 
         console.log(scope.model);
@@ -61,7 +61,7 @@ angular.module('avatech').directive('time', function($compile) {
       function parseTime(text) {
         text = text.trim().toLowerCase();
 
-        if (text == "") return null;
+        if (text === "") return null;
 
         // try to parse
         var date = Date.parse("1/1/1800 " + text); 
@@ -97,15 +97,15 @@ angular.module('avatech').directive('time', function($compile) {
           var parts = text.split(":");
           for (var p = 0; p < parts.length; p++) {
             var num = parseInt(parts[p]);
-            if (num != null && !isNaN(num)) {
-              if (p == 0) h = num;
+            if (num !== null && !isNaN(num)) {
+              if (p === 0) h = num;
               else if (p == 1) m = num;
               //else if (p == 2) h = num;
             }
           }
 
           // 24-hour time
-          if (h == 0) {
+          if (h === 0) {
             h = 12; AM_PM = "am";
           }
           else if (h > 12 && h <= 23) {
@@ -113,10 +113,10 @@ angular.module('avatech').directive('time', function($compile) {
           }
 
           // if junk
-          if (h == 0 && m == 0) return null;
+          if (h === 0 && m === 0) return null;
 
           // parse date
-          date = Date.parse("1/1/1800 " + h + ":" + m + (AM_PM == "" ? "" : " " + AM_PM) ); 
+          date = Date.parse("1/1/1800 " + h + ":" + m + (AM_PM === "" ? "" : " " + AM_PM) ); 
         }
         // if it's still bad, return null
         if (isNaN(date)) return null;

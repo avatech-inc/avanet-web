@@ -100,7 +100,7 @@ return {
             { icssg: "MFcl", code: "L", symbol: "L", desc: "Clustered rounded grains" },
             { icssg: "MFpc", code: "M", symbol: "M", desc: "Rounded polycrystals" },
             { icssg: "MFsl", code: "N", symbol: "N", desc: "Slush" },
-            { icssg: "MFcr", code: "O", symbol: "Oh",desc: "Melt-freeze crust", style:{ 'font-size':'54%', position:'relative', bottom:'2px', left:'1px' }, scale: .53, offsetTop: -3 },
+            { icssg: "MFcr", code: "O", symbol: "Oh",desc: "Melt-freeze crust", style:{ 'font-size':'54%', position:'relative', bottom:'2px', left:'1px' }, scale: 0.53, offsetTop: -3 },
         ]},
         { symbol: "P", legacyCode: "i", code: "IF", desc: "Ice Formations", types: [
             { icssg: "IF", code: "P1", symbol: "P", desc: "Ice formations" },

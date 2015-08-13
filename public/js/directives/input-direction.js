@@ -83,7 +83,7 @@ angular.module('avatech').directive('inputDirectionRange', function() {
               //   console.log("its null!");
               //   scope._model = null;
               // }
-              if (newVal == 0) scope._model = "N";
+              if (newVal === 0) scope._model = "N";
               else if (newVal == 45) scope._model = "NE";
               else if (newVal == 90) scope._model = "E";
               else if (newVal == 135) scope._model = "SE";
@@ -96,7 +96,7 @@ angular.module('avatech').directive('inputDirectionRange', function() {
 
 
             scope.$watch('_model', function(newVal) {
-              if(newVal == null || newVal == undefined) {
+              if(newVal === null || newVal === undefined) {
                 //scope.model = null;
                 $(el[0]).find("input.dial").val(-999).trigger('change');
                 return;
@@ -150,14 +150,14 @@ angular.module('avatech').directive('inputDirectionRange', function() {
 
               if (newVal > 359) newVal = 0;
               else if (newVal < 0) newVal = 0;
-              else if (isNaN(newVal) || newVal == null || newVal == undefined) {
+              else if (isNaN(newVal) || newVal === null || newVal === undefined) {
                 newVal = null;
               }
               // setting model to null doesn't trigger $watch (why?), so we have to manually set _model to null
-              if (newVal == null) scope._model = null;
+              if (newVal === null) scope._model = null;
               scope.model = newVal;
 
-              if (!(isNaN(newVal) || newVal == null || newVal == undefined)) {
+              if (!(isNaN(newVal) || newVal === null || newVal=== undefined)) {
                 console.log("hey 2!!!");
                 $(el[0]).find("input.dial").val(newVal).trigger('change');
               }
@@ -270,7 +270,7 @@ angular.module('avatech').directive('inputDirection', function() {
               //   console.log("its null!");
               //   scope._model = null;
               // }
-              if (newVal == 0) scope._model = "N";
+              if (newVal === 0) scope._model = "N";
               else if (newVal == 45) scope._model = "NE";
               else if (newVal == 90) scope._model = "E";
               else if (newVal == 135) scope._model = "SE";
@@ -283,7 +283,7 @@ angular.module('avatech').directive('inputDirection', function() {
 
 
             scope.$watch('_model', function(newVal) {
-              if(newVal == null || newVal == undefined) {
+              if(newVal=== null || newVal=== undefined) {
                 //scope.model = null;
                 $(el[0]).find("input.dial").val(-999).trigger('change');
                 return;
@@ -334,14 +334,14 @@ angular.module('avatech').directive('inputDirection', function() {
 
               if (newVal > 359) newVal = 0;
               else if (newVal < 0) newVal = 0;
-              else if (isNaN(newVal) || newVal == null || newVal == undefined) {
+              else if (isNaN(newVal) || newVal === null || newVal === undefined) {
                 newVal = null;
               }
               // setting model to null doesn't trigger $watch (why?), so we have to manually set _model to null
-              if (newVal == null) scope._model = null;
+              if (newVal === null) scope._model = null;
               scope.model = newVal;
 
-              if (!(isNaN(newVal) || newVal == null || newVal == undefined))
+              if (!(isNaN(newVal) || newVal === null || newVal === undefined))
                 $(el[0]).find("input.dial").val(newVal).trigger('change');
 
             });

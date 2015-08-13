@@ -104,12 +104,12 @@ angular.module('avatech').directive('metersOrFeet', ['$window','$parse', functio
             var metersOrFeet = attrs.metersOrFeet;
 
             attrs.$observe('metersOrFeet', function (newValue) {
-                if (newValue == null) return;
+                if (newValue === null) return;
                 metersOrFeet = newValue;
             });
 
             ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue == null) return;
+                if (modelValue === null) return;
                 console.log("2: " + modelValue);
 
                 // if feet
@@ -137,12 +137,12 @@ angular.module('avatech').directive('cmOrIn', ['$window','$parse', function ($wi
             var cmOrIn = attrs.cmOrIn;
 
             attrs.$observe('cmOrIn', function (newValue) {
-                if (newValue == null) return;
+                if (newValue === null) return;
                 cmOrIn = newValue;
             });
 
             ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue == null) return;
+                if (modelValue === null) return;
                 if (cmOrIn == 1) return Math.round(modelValue * 0.393701); 
                 else return Math.round(modelValue);
             });
@@ -167,12 +167,12 @@ angular.module('avatech').directive('tempUnits', ['$window','$parse', function (
             var tempUnits = attrs.tempUnits;
 
             attrs.$observe('tempUnits', function (newValue) {
-                if (newValue == null) return;
+                if (newValue === null) return;
                 tempUnits = newValue;
             });
 
             ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue == null) return;
+                if (modelValue === null) return;
                 // if fahrenheit
                 if (tempUnits == 'F') return ((modelValue*(9/5))+32);
                 else return Math.round(modelValue).toFixed(1);
@@ -212,7 +212,7 @@ angular.module('avatech').directive('numberOnly', function () {
                     var b = (!isNaN(s) && s != ' ');
                     if (!b && attrs.allowDecimal && attrs.allowDecimal == "true")
                     {
-                        if (s == "." && decimalFound == false)
+                        if (s == "." && decimalFound === false)
                         {
                             decimalFound = true;
                             b = true;
@@ -220,7 +220,7 @@ angular.module('avatech').directive('numberOnly', function () {
                     }
                     if (!b && attrs.allowNegative && attrs.allowNegative == "true")
                     {
-                        b = (s == '-' && i == 0);
+                        b = (s == '-' && i === 0);
                     }
 
                     return b;

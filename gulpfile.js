@@ -14,6 +14,7 @@ var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var jshint = require('gulp-jshint');
+var jscs = require('gulp-jscs');
 var sourcemaps = require('gulp-sourcemaps');
 var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
@@ -156,10 +157,14 @@ gulp.task('copy', function() {
 });
 
 gulp.task('lint',function(){
- return gulp.src('public/js/**/*.js')
+ return gulp.src(['public/js/**/*.js','!public/js/lib/*.js'])
   .pipe(jshint())
   .pipe(jshint.reporter('default'))
-  .pipe(jshint.reporter('fail'));
+  .pipe(jshint.reporter('fail'))
+  .pipe(jscs({
+    "preset": "airbnb"
+  }));
+
 })
 
 // git stuff

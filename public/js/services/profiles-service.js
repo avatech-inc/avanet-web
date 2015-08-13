@@ -1,6 +1,6 @@
 angular.module('avatech').service('Observations', [
-	'$q', '$rootScope', '$timeout', '$interval', '$q', 'Global', '$http',
-	function($q, $rootScope, $timeout, $interval, $q, Global, $http) {
+	'$q', '$rootScope', '$timeout', '$interval', 'Global', '$http',
+	function($q, $rootScope, $timeout, $interval, Global, $http) {
 
 	var self=this;
 

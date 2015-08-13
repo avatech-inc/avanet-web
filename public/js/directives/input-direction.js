@@ -167,8 +167,7 @@ angular.module('avatech').directive('inputDirectionRange', function() {
             // init jquery-knob
             $(el[0]).find("input.dial").knob({
               change: function(newVal) {
-                console.log(newVal);
-                var newVal = parseInt(newVal);
+                newVal = parseInt(newVal);
                 scope.model = newVal;
                 scope.$apply();
               },
@@ -350,8 +349,7 @@ angular.module('avatech').directive('inputDirection', function() {
             // init jquery-knob
             $(el[0]).find("input.dial").knob({
               change: function(newVal) {
-                console.log(newVal);
-                var newVal = parseInt(newVal);
+                newVal = parseInt(newVal);
                 scope.model = newVal;
                 scope.$apply();
               }

@@ -4,7 +4,7 @@ angular.module('avatech').directive('validate', function() {
   return {
     restrict: 'A',
     compile: function(elem, attr) {
-      var formName = attr['name'];
+      var formName = attr.name;
 
       // turn off html5 validation
       elem[0].setAttribute("novalidate","");
@@ -17,7 +17,7 @@ angular.module('avatech').directive('validate', function() {
 
       var inputs = [];
       angular.forEach(formGroups, function(formGroup) {
-        var formGroup = angular.element(formGroup);
+        formGroup = angular.element(formGroup);
         var input = formGroup[0].querySelector('.form-control');
 
         if (input) {

@@ -144,7 +144,7 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 // }]);
 
 angular.module('avatech').run(
- function($rootScope, $route, $location, $state, $stateParams, $document, $http, pathRoute, $modalStack, Observations, Global) {
+ function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Global) {
         
     // the first thing that gets run:
 

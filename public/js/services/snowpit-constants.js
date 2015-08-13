@@ -1,7 +1,7 @@
 angular.module('avatech').factory('snowpitConstants', ['$q', function ($q) { 
 
-var begin = .08;
-var end = .999;
+var begin = 0.08;
+var end = 0.999;
 var inc = (1 - ((1 - end) + begin)) / 15;
 
 return {
@@ -23,8 +23,8 @@ return {
         "K+":  { width: begin + (13 * inc), index: 14 },
         "I-":  { width: begin + (14 * inc), index: 15 },
         "I":   { width: end, index: 16 }
-    }
-    , grainSizes: [
+    },
+    grainSizes: [
         '',
         '.1',
         '.3',
@@ -49,9 +49,8 @@ return {
         '40',
         '50',
         '50+'
-        ]
-
-    , grainTypes: [
+    ],
+    grainTypes: [
         { symbol: "a", legacyCode: "a", code: "PP", desc: "Precipitation Particles", types: [
             { icssg: "PP", code: "a", symbol: "a", desc: "Precipitation particles" },
             { icssg: "PPco", code: "j", symbol: "j", desc: "Columns" },

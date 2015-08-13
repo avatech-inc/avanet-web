@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, snowpitExport) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, snowpitExport, $templateRequest) {
     $scope.global = Global;
 
     $scope.formatters = snowpitExport.formatters;
@@ -48,6 +48,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     mixpanel.track("home");
+
+    // pre-compile observation map popup
+    $scope.compiledPopup;
+    $templateRequest("/modules/map/observation-map-popup.html").then(function(templateHtml) {
+        $scope.compiledPopup = $compile(angular.element(templateHtml));
+    });
 
     // ======= SEARCH =======
 
@@ -644,53 +650,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     var defaultZoom = 13;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     $scope.map.setView(initialLocation, defaultZoom);
-
-    // pre-compile map popup
-    // todo: move this into a standalone template file
-    $scope.compiledPopup;
-    (function(){
-
-        var html = '<div bindonce="profile">';
-
-        html += '<div class="popup-title">';
-        html += "<span bo-if='profile.type==\"profile\"'>Snowpit</span>";
-        html += "<span bo-if='profile.type==\"test\"'>SP1 Profile</span>";
-        html += "<span bo-if='profile.type==\"avy\"'>Avalanche</span>";
-
-        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
-        html += '</div>';
-
-        html += '<a href=\'/{{ profile.type.substr(0,1) }}/{{ profile._id }}\' style="color:#222;">'
-
-        html += "<div class='expand'><i class='fa fa-search-plus'></i></div>";
-
-        // profile
-        html += '<canvas bo-if="profile.type==\'profile\'" profile="profile" width="200" height="200" class="thumb"></canvas>';
-        // test
-        html += '<canvas bo-if="profile.type==\'test\'" graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>';
-        // avy
-        html += "<div bo-if='profile.type==\"avy\"' bo-show='profile.photos.length' class='thumb' style='background-image:url(\"{{ ::profile.photos[0].url }}\")'></div>";
-
-        html += '<div class="popup-content">';
-
-        html += "<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{ ::profile.user.fullName}} <span bo-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>";
-
-        html += "<div bo-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ ::profile.organization.name }}</div>";
-
-        html += "<div><i style='margin-right:3px;' class='fa fa-clock-o'></i>  {{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>";
-
-        // profile or test
-        html += "<div bo-if='profile.type==\"profile\" || profile.type==\"test\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.metaData.location }}</div>";
-        // avy
-        html += "<div bo-if='profile.type==\"avy\"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.locationName }}</div>";
-        
-        html += "</div>";
-        html += "</a>";
-        html += "</div>";
-
-        $scope.compiledPopup = $compile(angular.element(html));
-
-    })();
 
     $scope.addToMap = function(profile) {
         if (!profile.location) return;

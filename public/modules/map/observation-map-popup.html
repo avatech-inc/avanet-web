@@ -1,0 +1,38 @@
+<div bindonce="profile">
+
+<div class="popup-title">
+<span bo-if='profile.type=="profile"'>Snowpit</span>
+<span bo-if='profile.type=="test"'>SP1 Profile</span>
+<span bo-if='profile.type=="avy"'>Avalanche</span>
+
+<div class='expand'><i class='fa fa-search-plus'></i></div>
+</div>
+
+<a href='/{{ profile.type.substr(0,1) }}/{{ profile._id }}' style="color:#222;">
+
+<div class='expand'><i class='fa fa-search-plus'></i></div>
+
+<!-- profile -->
+<canvas bo-if="profile.type=='profile'" profile="profile" width="200" height="200" class="thumb"></canvas>
+<!-- test -->
+<canvas bo-if="profile.type=='test'" graph="profile.rows_micro" width="200" height="200" class="thumb"></canvas>
+<!-- avy -->
+<div bo-if="profile.type=='avy'" bo-show='profile.photos.length' class='thumb' style='background-image:url("{{ ::profile.photos[0].url }}")'></div>
+
+<div class="popup-content">
+
+<div><i style='margin-right:3px;' class='fa fa-user'></i>  {{ ::profile.user.fullName}} <span bo-show='profile.user.student' style='color: #888;'>&nbsp;&nbsp;<i class='fa fa-graduation-cap'></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>STUDENT</span></span></div>
+
+<div bo-show='profile.organization'><i style='margin-right:3px;' class='fa fa-group'></i>  {{ ::profile.organization.name }}</div>
+
+<div><i style='margin-right:3px;' class='fa fa-clock-o'></i>  {{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
+
+<!-- profile or test -->
+<div bo-if='profile.type=="profile" || profile.type=="test"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.metaData.location }}</div>
+
+<!-- avy -->
+<div bo-if='profile.type=="avy"' ><i style='margin-right:3px;' class='fa fa-location-arrow'></i>  {{ ::profile.locationName }}</div>
+        
+</div>
+</a>
+</div>

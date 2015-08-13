@@ -1,6 +1,5 @@
 
-angular.module('avatech').directive('grainSelect', ['snowpitConstants'
-    ,function(snowpitConstants) {    
+angular.module('avatech').directive('grainSelect', function(snowpitConstants) {    
 
     var template = "";
     template += '<div class="btn-group grainTypeSelect" dropdown>';
@@ -25,7 +24,8 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants'
     return {
         restrict: 'E',
         scope: {
-          grainType: '=',
+          //grainType: '=',
+          grainType: '=ngModel',
           placeholder: '@'
         },
         template: template,
@@ -33,14 +33,15 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants'
           
         },
         controller: ['$scope', function($scope) {
+
             $scope.grainTypes = snowpitConstants.grainTypes;
-            $scope.selectedCategory;
 
             $scope.selectCategory = function(category, type) { 
                 $scope.selectedCategory = category.legacyCode;
                 // todo: first need to change all snowpits to use proper codes (icssg)
                 //$scope.setGrainType(category.legacyCode,category.code);
-            }
+            };
+
             $scope.getGrainType = function(grainType) {
                 if (!grainType) return;
                 for (var i = 0; i < $scope.grainTypes.length;i++){
@@ -53,10 +54,10 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants'
                         break;
                     }
                 }
-            }
+            };
             
             $scope.setGrainType = function(category, code) {
-                if (category == null) {
+                if (category === null) {
                     // if ($scope.settings.selectedLayer.grainType2) {
                     //     $scope.settings.selectedLayer.grainType = $scope.settings.selectedLayer.grainType2;
                     //     $scope.settings.selectedLayer.grainType2 = null;
@@ -65,8 +66,8 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants'
                     $scope.grainType = null;
                 }
                 else $scope.grainType = { category: category, code: code };
-            }
+            };
 
         }]
     };        
-}]);
+});

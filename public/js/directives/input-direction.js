@@ -261,7 +261,7 @@ angular.module('avatech').directive('inputDirection', function() {
                 $(el[0]).find("input.dial").val(scope.model).trigger('change');
             });
 
-            var className = attrs["inputClass"];
+            var className = attrs.inputClass;
             input.addClass(className);
 
             scope.$watch('model', function(newVal) {

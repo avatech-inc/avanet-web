@@ -137,7 +137,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return ok;
     }
 
-
     // debounce plotting of filteredProfiles on map
     var _mapTimeout;
     $scope.$watch('filteredProfiles',function(){
@@ -583,7 +582,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
           newBaseLayer = L.tileLayer.wms(layer.template, options);
         }
         else if (layer.type == "MAPBOX") {
-            newBaseLayer = L.mapbox.tileLayer(layer.id);
+            var options = {};
+            if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution;
+            newBaseLayer = L.mapbox.tileLayer(layer.id, options);
         }
 
         // add new layer to map

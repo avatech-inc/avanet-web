@@ -1,5 +1,5 @@
 // define app
-angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio', 
+angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio',
     'pascalprecht.translate',
     'schemaForm',
     'pasvaz.bindonce',
@@ -8,16 +8,16 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'angulartics', 'angulartics.mixpanel',
     'avatech.system',
     'avatech.profiles',
-    'colorpicker.module'
+    'colorpicker.module',
 ]);
 
 angular.module('avatech.system', []);
-angular.module('avatech.profiles', []);
 
+angular.module('avatech.profiles', []);
 
 angular.module('avatech').factory('httpRequestInterceptor', function ($q, $location) {
     return {
-        'responseError': function(rejection) {
+        responseError: function(rejection) {
             // do something on error
             console.log("ERROR!");
             console.log(rejection);
@@ -94,11 +94,11 @@ angular.module('avatech').config(function($locationProvider) {
 // (show this be in this file? doesn't feel totally right to have it here)
 angular.module('avatech').config(function($tooltipProvider){
     $tooltipProvider.setTriggers({
-        'mouseenter': 'mouseleave',
-        'click': 'click',
-        'focus': 'blur',
-        'never': 'mouseleave',
-        'show': 'hide'
+        mouseenter: 'mouseleave',
+        click: 'click',
+        focus: 'blur',
+        never: 'mouseleave',
+        show: 'hide',
     });
 });
 
@@ -110,7 +110,6 @@ angular.module('avatech').config(function($translateProvider, $translatePartialL
       urlTemplate: '/translate/{lang}/{part}.json'
     });
     $translateProvider.preferredLanguage('en');
-    //$translateProvider.preferredLanguage('en');
 
 });
 
@@ -145,7 +144,7 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 
 angular.module('avatech').run(
  function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Global) {
-        
+
     // the first thing that gets run:
 
     // init global service

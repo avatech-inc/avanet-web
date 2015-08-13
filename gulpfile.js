@@ -161,9 +161,13 @@ gulp.task('lint',function(){
   .pipe(jshint())
   .pipe(jshint.reporter('default'))
   .pipe(jshint.reporter('fail'))
-  .pipe(jscs({
-    "preset": "airbnb"
-  }));
+  ;
+  // .pipe(jscs({
+  //   //preset: "airbnb",
+  //   //ignoreEmptyLines: true,
+  //   //disallowTrailingWhitespace: false,
+  //   validateQuoteMarks: "'"
+  // }));
 
 })
 

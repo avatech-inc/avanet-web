@@ -319,7 +319,7 @@ function hillshade(dem) {
 
     var altitude = 70 * (Math.PI / 180);
     var azimuth = 0 * (Math.PI / 180);
-    var shadows = .8; // .45
+    var shadows = .7; // .45
     var highlights = .2; // .45
 
     var px = new Uint8ClampedArray(256 * 256 * 4),
@@ -345,7 +345,7 @@ function hillshade(dem) {
             if (dem[i] == null) continue;
 
             var sl  = (dem[i][1] * (Math.PI / 180)) * 1.9;
-            var asp = (dem[i][2] * (Math.PI / 180));
+            var asp = (dem[i][2] * (Math.PI / 180)) * 1.9;
 
             if (sl == null) continue;
 

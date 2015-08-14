@@ -927,8 +927,11 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.customTerrain = {
         color: '#ffcc00',
 
+        elev_low: 0,
+        elev_high: $scope.elevationMax,
+
         aspect_low: 0,
-        aspect_high: 359
+        aspect_high: 359,
     };
     $scope.$watch('customTerrain', function() {
         if ($scope.customTerrain.color.indexOf('#') == 0) $scope.customTerrain.color = $scope.customTerrain.color.substr(1);

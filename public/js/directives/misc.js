@@ -1,3 +1,22 @@
+
+angular.module('avatech').directive('accordionNew', function () {
+    return {
+        restrict: 'E',
+        link: function (scope, elem, attrs, ctrl) {
+            $(elem).find(".header").click(function() {
+
+                if ($(this).parent().hasClass("open")) {
+                    $(this).parent().removeClass("open");
+                }
+                else {
+                    $(elem).find(".accordion-item").removeClass("open");
+                    $(this).parent().addClass("open");
+                }
+            });
+        }
+    }
+});
+
 // on enter
 angular.module('avatech').directive('onenter', function() {
   return {
@@ -202,8 +221,7 @@ angular.module('avatech').directive('numberOnly', function () {
             maxNum: '@'
         },
 
-        link: function (scope, element, attrs, ctrl)
-        {
+        link: function (scope, element, attrs, ctrl) {
             if (!ctrl) return;
             ctrl.$parsers.unshift(function (inputValue) {
                 var decimalFound = false;

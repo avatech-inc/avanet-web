@@ -209,37 +209,103 @@
 
 				    	<div style="margin-bottom:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
 
+				    	<style>
+
+				    		.accordion-item {
+				    			max-height: 36px;
+				    			overflow: hidden;
+				    			border-bottom: 1px solid #ccc;
+    							transition: max-height 0s ease-out;
+				    		}
+				    		.accordion-item:first-child {
+				    			border-top: 1px solid #ccc;
+				    		}
+
+				    		.accordion-item .header {
+				    			line-height: 36px;
+				    			padding-left: 10px;
+				    			background: #f5f5f5;
+				    			font-size: 16px;
+				    			cursor: pointer;
+				    		}
+
+				    		.accordion-item.open {
+				    			max-height: 600px;
+    							transition: max-height 0.2s ease-in;
+				    		}
+				    		.accordion-item .content {
+				    			padding: 8px;
+				    			margin: 0;
+				    		}
+
+				    	</style>
+
 				    	<div ng-show="terrainOverlay == 'custom'">
-				    		Elevation:
-				    		<slider-new style="width:300px"
-							    ng-model="customTerrain.elev_low"
-							    ng-model-range="customTerrain.elev_high"
-							    translate-fn="formatElev"
-							    floor="0"
-							    ceiling="{{ elevationMax }}"
-							    buffer="10"
-							    step="10">
-							</slider-new>
-							<br/>
-							Slope:
-							<slider-new style="width:300px"
-							    ng-model="customTerrain.slope_low"
-							    ng-model-range="customTerrain.slope_high"
-							    translate-fn="formatDegSlider"
-							    floor="0"
-							    ceiling="70"
-							    buffer="0"
-							    step="1">
-					        </slider-new>
-					        <br/>
 
-				    		Aspect:
-				    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+				    		<accordion-new>
+							    <div class="accordion-item">
+							    	<div class="header">
+							            Elevation
+							        </div>
+							        <div class="content">
+								      	<slider-new style="width:300px"
+										    ng-model="customTerrain.elev_low"
+										    ng-model-range="customTerrain.elev_high"
+										    translate-fn="formatElev"
+										    floor="0"
+										    ceiling="{{ elevationMax }}"
+										    buffer="10"
+										    step="10">
+										</slider-new>
+									</div>
+							    </div>
 
-			  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+							  	<div class="accordion-item">
+							    	<div class="header">
+							            Slope
+							        </div>
+							        <div class="content">
+								      	<slider-new style="width:300px"
+										    ng-model="customTerrain.slope_low"
+										    ng-model-range="customTerrain.slope_high"
+										    translate-fn="formatDegSlider"
+										    floor="0"
+										    ceiling="70"
+										    buffer="0"
+										    step="1">
+								        </slider-new>
+							        </div>
+							    </div>
+
+							  	<div class="accordion-item">
+							    	<div class="header">
+							            Aspect
+							        </div>
+							        <div class="content">
+							    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+
+						  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+					  				</div>
+							    </div>
+
+							  	<div class="accordion-item">
+							    	<div class="header">
+							            Color
+							        </div>
+							        <div class="content">
+						    			<input class="form-control" colorpicker="hex" type="text" ng-model="customTerrain.color" />
+					    			</div>
+							    </div>
+
+							    <!--<accordion-group is-open="status.open">
+							        <accordion-heading>
+							            I can have markup, too! <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+							        </accordion-heading>
+							        This is just some content to illustrate fancy headings.
+							    </accordion-group>-->
+						    </accordion-new>
 
 			  				<br/>
-			  				Color: <input class="form-control" colorpicker="hex" type="text" ng-model="customTerrain.color" />
 				    	</div>
 				    	<!--<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay()">X</button>
 				    	<button class="btn btn-default btn-sm"  ng-click="changeTerrainOverlay('elevation')">Elevation</button>

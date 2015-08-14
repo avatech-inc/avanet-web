@@ -451,7 +451,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return false;
     }
 
-    $scope.formatTemp = function(val) {
+    $scope.formatElev = function(val) {
         if (!Global.user.settings) return;
         // meters
         if (Global.user.settings.elevation == 0)
@@ -474,12 +474,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.formatDegSlider = function(val) {
         return val + "°"
     }
-    $scope.setAspect = function(deg) {
-        if ($scope._searchQuery.aspect_high < deg) $scope._searchQuery.aspect_high = deg;
-        else if ($scope._searchQuery.aspect_low > deg) $scope._searchQuery.aspect_low = deg;
-        else if (deg > $scope._searchQuery.aspect_low) $scope._searchQuery.aspect_low = deg;
-        else if (deg < $scope._searchQuery.aspect_high) $scope._searchQuery.aspect_high = deg;
-    }
+    // $scope.setAspect = function(deg) {
+    //     if ($scope._searchQuery.aspect_high < deg) $scope._searchQuery.aspect_high = deg;
+    //     else if ($scope._searchQuery.aspect_low > deg) $scope._searchQuery.aspect_low = deg;
+    //     else if (deg > $scope._searchQuery.aspect_low) $scope._searchQuery.aspect_low = deg;
+    //     else if (deg < $scope._searchQuery.aspect_high) $scope._searchQuery.aspect_high = deg;
+    // }
 
     // ======= END SEARCH =======
 
@@ -929,6 +929,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         elev_low: 0,
         elev_high: $scope.elevationMax,
+
+        slope_low: 0,
+        slope_high: 70,
 
         aspect_low: 0,
         aspect_high: 359,

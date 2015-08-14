@@ -541,12 +541,10 @@ function render(data, processType, customParams) {
 
         // CUSTOM
         if (processType == "custom") {
-            //console.log(customParams);
 
             var showAspect = false;
-            if (customParams.aspect_low == 0 && customParams.aspect_high == 359) {
+            if (customParams.aspect_low == 0 && customParams.aspect_high == 359) 
                 showAspect = true;
-            }
             else {
                 if (customParams.aspect_low > customParams.aspect_high) {
                     if (new_aspect >= customParams.aspect_low ||
@@ -556,7 +554,11 @@ function render(data, processType, customParams) {
                         new_aspect <= customParams.aspect_high ) showAspect = true;
             }
 
-            if (showAspect) newColor = hexToRGB(customParams.color);
+            var showElevation = (new_elevation >= customParams.elev_low && new_elevation <= customParams.elev_high);
+
+            var showSlope = (new_slope >= customParams.slope_low && new_slope <= customParams.slope_high);
+
+            if (showAspect && showElevation && showSlope) newColor = hexToRGB(customParams.color);
         }
 
         // ELEVATION

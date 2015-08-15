@@ -435,6 +435,27 @@ return {
             "tms": true,
             "type":"TILE"
          },
+         {
+            "alias": "modis",
+            "name":"MODIS",
+            "template": "http://map1.vis.earthdata.nasa.gov/wmts-webmerc/MODIS_Aqua_CorrectedReflectance_TrueColor/default/2014-02-01/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+            "maxresolution": 9,
+            "type":"TILE"
+         },
+         {
+            "alias": "modis-snow",
+            "name": "MODIS Snow Cover",
+            "template": "http://map1.vis.earthdata.nasa.gov/wmts-webmerc/MODIS_Terra_Snow_Cover/default/2014-02-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png",
+            "maxresolution": 6,
+            "type": "TILE"
+
+            // http://map1.vis.earthdata.nasa.gov/wmts-webmerc/1.0.0/WMTSCapabilities.xml
+            // AMSR2_Snow_Water_Equivalent = GoogleMapsCompatible_Level6 (doesn't work)
+            // AMSRE_Snow_Depth_Over_Ice = GoogleMapsCompatible_Level6 (doesn't work)
+            // AIRS_Precipitation_Day = GoogleMapsCompatible_Level6 (works)
+            // MODIS_Terra_Snow_Cover = GoogleMapsCompatible_Level8
+            // MODIS_Aqua_Snow_Cover = GoogleMapsCompatible_Level8
+         }
         ]
     },
     overlays: [

@@ -449,6 +449,7 @@ return {
             "maxresolution": 6,
             "type": "TILE"
 
+            // https://wiki.earthdata.nasa.gov/display/GIBS/GIBS+Available+Imagery+Products
             // http://map1.vis.earthdata.nasa.gov/wmts-webmerc/1.0.0/WMTSCapabilities.xml
             // AMSR2_Snow_Water_Equivalent = GoogleMapsCompatible_Level6 (doesn't work)
             // AMSRE_Snow_Depth_Over_Ice = GoogleMapsCompatible_Level6 (doesn't work)

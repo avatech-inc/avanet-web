@@ -79,8 +79,9 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
 
 // configure Restangular
 angular.module('avatech').config(function(RestangularProvider) {
-    // api url prefix
-    RestangularProvider.setBaseUrl('/v1/');
+    // set API base url
+    //RestangularProvider.setBaseUrl('/v1/');
+    RestangularProvider.setBaseUrl('http://127.0.0.1:10010/v2/');
     // support mongodb "_id" format
     RestangularProvider.setRestangularFields({ id: "_id" });
 });

@@ -1,21 +1,34 @@
 angular.module('avatech.system').controller('ForgotPasswordController', 
-	['$scope', '$http', 'Global', function ($scope, $http, Global) {
+    function ($scope, $http, Global, Restangular) {
 
     $scope.send = function() {
     	// validation
+        // todo: validate email!
  		if (!$scope.email || $scope.email == "") {
  			$scope.validationError = "Please enter a valid email"; return;
  		}
-        $http.post("/v1/users/forgot-password", { email: $scope.email })
-        .success(function (data) { 
- 			$scope.validationError = null;
-        	if (!data.success) {
-        		$scope.validationError = "Oops! We couldn't find a user with that email."
-    		}
-            else {
-                mixpanel.track("forgot password", { email: $scope.email });
+
+        Restangular.all('users/forgot-password').post({ 
+            email: $scope.email
+        })
+        // user found
+        .then(function(data) {
+
+            mixpanel.track("forgot password", { email: $scope.email });
+            $scope.resetSuccess = true;
+            $scope.validationError = null;
+
+        }, 
+        // user not found
+        function(response) {
+
+            if (response.status == 404) {
+                $scope.validationError =  "Oops! We couldn't find a user with that email."
             }
-            $scope.resetSuccess = data.success;
+            else {
+                $scope.validationError = "Server Error. Please try again";
+            }
+
         });
     };
-}]);
+});

@@ -211,23 +211,27 @@ exports.updateUser = function(req, res) {
     delete req.body.hashed_password;
     delete req.body.salt;
     delete req.body.username;
-    //delete req.body.email;
+    delete req.body.email_normalized;
     delete req.body.created;
     // remove _id from the model
     delete req.body._id;
 
     // if email specified, check if email exists
     if (req.body.email) {
+        console.log("EMAIL: " + req.body.email);
         User.findOne({ email_normalized: req.body.email.toLowerCase() }, function(err, emailUser) {
             // if doesn't exist OR email belongs to current user
             if (!emailUser || emailUser._id == req.params.userId) {
                 // update
+                console.log("UPDATING EMAIL!")
+                console.log(req.body);
+                console.log("------------------------------------------------")
                 _save(req.params.userId, req.body);
             }
             else return res.json({ error: "A user with that email already exists" });
         });
     }
-    // if no email specified, just save
+    // if no email specified, just save it
     else _save(req.params.userId, req.body);
 
     var _save = function(_id, newUser) {

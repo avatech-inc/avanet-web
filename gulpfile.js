@@ -218,9 +218,11 @@ gulp.task('deploy', function(done){
 
 	    var remotes = {
         "production": "git@heroku.com:avanet.git",
-        "staging": "git@heroku.com:avanet-staging.git"
+        "demo": "git@heroku.com:avanet-demo.git"
       } 
-      var remote = "production";
+      //var remote = "production"; var app = "avanet";
+      var remote = "demo"; var app = "avanet-demo";
+      
       if (argv.to) remote = argv.to;
 
 	    exec("git remote rm " + remote, {cwd: process.cwd }, function(err, stdout, stderr){
@@ -228,7 +230,7 @@ gulp.task('deploy', function(done){
 	       		//console.log(stdout);
 	   			gutil.log("git remote added");
 
-					exec("heroku config:set NODE_ENV=production -app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
+					exec("heroku config:set NODE_ENV=production -app " + app, {cwd: process.cwd }, function(err, stdout, stderr){
 
 		       		console.log(stdout);
 		       		gutil.log("Pushing to '" + remote + "'")

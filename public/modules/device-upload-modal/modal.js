@@ -146,11 +146,6 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
             $http.post('/v1/tests/checkUpload', { hashes: hashes }).
               success(function(newHashes) {
 
-                //newHashes = hashes;
-
-                console.log(" NEW: " + newHashes.length);
-                console.log(newHashes);
-
                 if (newHashes.length == 0) {
                     console.log("NOTHING!");
                     if (scope.oncomplete) scope.oncomplete({ uploaded: [] });
@@ -207,13 +202,6 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
           xhr.upload.addEventListener("progress", function (evt) {
             if (evt.lengthComputable) {
               console.log((evt.loaded / evt.total) * 100 + "%"); 
-              //var progress = (evt.loaded / evt.total) * 100;
-              //console.log(progress + "," + fileObject.progress);
-              //if (progress > fileObject.progress) fileObject.progress = progress;
-              //if (scope.onprogress) scope.onprogress({ file: fileObject });
-            }
-            else {
-              // No data to calculate on
             }
           }, false);
           
@@ -226,12 +214,6 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
               if (xhr.status == 200) {
                 data = JSON.parse(xhr.responseText);
                 callback(data);
-
-                //fileObject.url = data.url;
-                //if (scope.onupload) scope.onupload({ file: fileObject });
-                //document.body.removeChild(canvas);
-              } else {
-                //errorHandler && errorHandler(status);
               }
             }
           };
@@ -282,7 +264,7 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
             }
           }
           else {
-           // fileList.innerHTML = "No support for the File API in this web browser";
+           // No support for the File API in this web browser
           } 
         }
 

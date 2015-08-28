@@ -228,17 +228,17 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         else {
             //$http.post('/v1/users/' + $scope.htt, $scope.changePassword)
             $scope.user.customPOST($scope.changePassword, 'change-password')
-            .then(function (data) { 
-                if (data.error) {
-                    $scope.showErrorPassword = data.error;
-                    $scope.scrollToErrorPassword();
-                }
-                else {
-                    $scope.changePassword = {};
-                    $scope.showSuccessPassword = "Your new password has been saved";
-                    $scope.scrollToErrorPassword();
-                    mixpanel.track("changed password");
-                }
+            // success
+            .then(function (data) {
+                $scope.changePassword = {};
+                $scope.showSuccessPassword = "Your new password has been saved";
+                $scope.scrollToErrorPassword();
+                mixpanel.track("changed password");
+            },
+            // error
+            function(response) {
+                $scope.showErrorPassword = response.data.message;
+                $scope.scrollToErrorPassword();
             });
         }
     }

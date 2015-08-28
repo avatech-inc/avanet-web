@@ -501,66 +501,6 @@ var compressRows = function(rows, n) {
     // }
 }
 
-exports.fornow = function(req, res) {
-
-  var stream = Test.find({ version: 'v1' }).stream();
-
-  stream.on('data', function (test) {
-
-    test.rows_mini = downsample(test.rows, 10);
-    test.rows_micro = compressRows(test.rows_mini, 4);
-    //test.rows_micro = compressRows(test.rows_mini, 3);
-
-    test.save(function(err) {
-      if (err) console.log(err);
-      else console.log("SAVED!");
-    });
-
-    console.log("LEN : " + test.rows.length + "/" + test.rows_mini.length + "/" + test.rows_micro.length);
-  
-  }).on('error', function (err) {
-    // handle the error
-  }).on('close', function () {
-    // the stream is closed
-  });
-
-    // Test.find({ version: 'v1' })
-    // //.select('-rows')
-    // .exec(function(err, tests) {
-
-    //    console.log("TESTS: " + tests.length)
-
-    //     for (var i = 0; i < tests.length; i++) {
-
-    //       //(function(test) {
-    //          //var test = tests[i];
-    //         if (tests[i].rows.length > 0) {
-
-    //           // tests[i].rows_mini = downsample(tests[i].rows, 10);
-    //           // tests[i].rows_micro = compressRows(tests[i].rows_mini, 4);
-    //           //test.rows_micro = compressRows(test.rows_mini, 3);
-
-    //           tests[i].save(function(err) {
-    //             console.log(err);
-    //             console.log("hey?");
-    //             if (err) console.log(err);
-    //             else console.log("SAVED!");
-    //           });
-
-    //           //console.log(tests[i].save);
-
-    //           //console.log("LEN  " + i + ": " + tests[i].rows.length + "/" + tests[i].rows_mini.length + "/" + tests[i].rows_micro.length);
-
-    //         }
-
-    //       //})(tests[i]);
-         
-    //     }
-
-    // });
-    res.json({});
-};
-
 exports.getAll = function(req, res) {
 
     var lastSync = new Date();

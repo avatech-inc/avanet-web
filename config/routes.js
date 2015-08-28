@@ -106,7 +106,6 @@ module.exports = function(app, passport) {
     app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
     //app.get('/v1/tests/:testId/thumb.jpg', tests.thumb);
-    //app.get('/fornow', tests.fornow);
 
     // Field Tests
 

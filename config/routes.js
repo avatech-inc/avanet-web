@@ -60,9 +60,9 @@ module.exports = function(app, passport) {
     // search users
     app.get('/v1/users/search', auth.requireLogin, users.search);
     // update user
-    app.put('/v1/users/:userId', auth.requireLogin, users.updateUser);
+    //app.put('/v1/users/:userId', auth.requireLogin, users.updateUser);
     // change password
-    app.post('/v1/users/:userId/change-password', auth.requireLogin, users.changePassword);
+    //app.post('/v1/users/:userId/change-password', auth.requireLogin, users.changePassword);
     // get pending user
     app.get('/v1/users/pending/:userHashId', users.getPending);
     // get user

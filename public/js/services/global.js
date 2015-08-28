@@ -1,5 +1,5 @@
 
-angular.module('avatech').factory("Global", ['$location','$http','$state','$stateParams','$interval','localStorageService', 'Restangular', 
+angular.module('avatech').factory("Global",
     function($location,$http,$state,$stateParams,$interval,localStorageService, Restangular) {
 
         var _this = this;
@@ -28,6 +28,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 localStorageService.set('user', user);
                 localStorageService.set('token', token);
 				_this._data.user = user;
+
 				$http.defaults.headers.common['Auth-Token'] = token;
 
                 var tracking_user ={
@@ -58,6 +59,7 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
                 _this._data.orgs = [];
             	localStorageService.remove('user');
             	localStorageService.remove('token');
+
                 delete $http.defaults.headers.common['Auth-Token'];
 
                 Raven.setUserContext();
@@ -172,4 +174,4 @@ angular.module('avatech').factory("Global", ['$location','$http','$state','$stat
 
         return _this._data;
     }
-]);
+);

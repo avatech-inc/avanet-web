@@ -1,12 +1,13 @@
 .DS_Store
 .sass-cache/
 node_modules/
-_dist/
+/_dist/
 /_dist2/
-/_dist2/**
+/~_dist/
 public/_uploads/
 public/css/
 .tmp/
+tmp/
 *.sp
 *.lz4
 newrelic_agent.log

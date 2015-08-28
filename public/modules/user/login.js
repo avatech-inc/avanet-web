@@ -7,6 +7,7 @@ function ($scope, $rootScope, $location, $http, Global, Restangular) {
         $scope.busy = true;
 
         // browser autofill hack
+        // todo: this doesn't seem to work in every case
         $("[ng-model]").each(function(index,el){
             var ngModel = angular.element(el).data('$ngModelController');
             var val = $(el).val();
@@ -49,34 +50,6 @@ function ($scope, $rootScope, $location, $http, Global, Restangular) {
             $scope.password = "";
             $scope.busy = false;
 
-          // console.log("Error with status code: " + response.status);
-          // console.log(response);
-
         });
-
-        // $http.post("/v1/users/login", { email: $scope.email, password: $scope.password })
-        // .success(function (data) { 
-        // 	// if auth successful, login
-        // 	if (data.success) {
-        //         $scope.validationError = null;
-        //         Global.login(data.user, data.token);
-
-        //         $rootScope.initPromise = Global.init();
-        //         // todo: duplicate of app.js
-        //         if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-        //             $rootScope.orgsLoaded = true;
-        //         });
-        //     }
-        // 	// otherwise, show the error
-        //     else {
-        //         $scope.validationError = data.error;
-        //         // reset password field
-        //         $scope.password = "";
-        //         $scope.busy = false;
-        //     }
-        // })
-        // .error(function (data, status) { 
-
-        // });
     };
 });

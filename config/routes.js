@@ -47,10 +47,9 @@ module.exports = function(app, passport) {
     });
 
     // forgot/reset password
-
-    app.post('/v1/users/forgot-password', users.forgotPassword);
-    app.get('/v1/users/reset-password/:forgotPasswordToken', users.checkForgotPassword);
-    app.post('/v1/users/reset-password', users.resetPassword);
+    // app.post('/v1/users/forgot-password', users.forgotPassword);
+    // app.get('/v1/users/reset-password/:forgotPasswordToken', users.checkForgotPassword);
+    // app.post('/v1/users/reset-password', users.resetPassword);
 
     // user
 

@@ -252,59 +252,60 @@ exports.updateUser = function(req, res) {
 
 };
 
-exports.forgotPassword = function (req, res) {
-    User.findOne({ email_normalized: req.body.email.toLowerCase() }, function(err, user) {
-        if (user) {
-            // delete existing ForgotPassword
-            ForgotPassword.remove({ user: user.id }, function (err) {
-                // create ForgotPassword
-                var forgotPassword = new ForgotPassword({ user: user.id });
-                forgotPassword.save(function(err) {
-                    if (err) return next(err);
+// exports.forgotPassword = function (req, res) {
+//     User.findOne({ email_normalized: req.body.email.toLowerCase() }, function(err, user) {
+//         if (user) {
+//             // delete existing ForgotPassword
+//             ForgotPassword.remove({ user: user.id }, function (err) {
+//                 // create ForgotPassword
+//                 var forgotPassword = new ForgotPassword({ user: user.id });
+//                 forgotPassword.save(function(err) {
+//                     if (err) return next(err);
 
-                    // send forgot password email
-                    Mail.sendTemplate('forgot-password', 
-                        { email: user.email }, 
-                        { 
-                            'NAME': user.fullName, 
-                            'RESET_LINK': req.protocol + "://" + req.get('host') + '/reset/' +  forgotPassword.id 
-                        }
-                    );
-                });
-            });
-        }
-        res.json({ success: (user != null) });
-    });
-}
+//                     // send forgot password email
+//                     Mail.sendTemplate('forgot-password', 
+//                         { email: user.email }, 
+//                         { 
+//                             'NAME': user.fullName, 
+//                             'RESET_LINK': req.protocol + "://" + req.get('host') + '/reset/' +  forgotPassword.id 
+//                         }
+//                     );
+//                 });
+//             });
+//         }
+//         res.json({ success: (user != null) });
+//     });
+// }
 
-exports.checkForgotPassword = function (req, res) {
-    ForgotPassword.findOne({ _id: req.params.forgotPasswordToken }, function(err, forgotPassword) {
-        res.json({ ok: !!forgotPassword });
-    });
-}
-exports.resetPassword = function (req, res) {
-    ForgotPassword.findOne({ _id: req.body.forgotPasswordToken  }, function(err, forgotPassword) {
-        // if token is valid
-        if (forgotPassword) {
-            // get user
-            User.findOne({ _id: forgotPassword.user }, function(err, user) {
-                if (user) {
-                    // save new password
-                    // todo: validate password
-                    user.password = req.body.password;
-                    user.save(function(err){
-                        // delete forgotPassword token
-                        forgotPassword.remove(function() {
-                            res.json({ success: true });
-                        });
-                    });
-                }
-            });
-        }
-        // if token is invalid
-        else res.json({ success: false, error: "invalid token" });
-    });
-}
+// exports.checkForgotPassword = function (req, res) {
+//     ForgotPassword.findOne({ _id: req.params.forgotPasswordToken }, function(err, forgotPassword) {
+//         res.json({ ok: !!forgotPassword });
+//     });
+// }
+// exports.resetPassword = function (req, res) {
+//     ForgotPassword.findOne({ _id: req.body.forgotPasswordToken  }, function(err, forgotPassword) {
+//         // if token is valid
+//         if (forgotPassword) {
+//             // get user
+//             User.findOne({ _id: forgotPassword.user }, function(err, user) {
+//                 if (user) {
+//                     // save new password
+//                     // todo: validate password
+//                     user.password = req.body.password;
+//                     user.save(function(err){
+//                         // delete forgotPassword token
+//                         forgotPassword.remove(function() {
+//                             res.json({ success: true });
+//                         });
+//                     });
+//                 }
+//             });
+//         }
+//         // if token is invalid
+//         else res.json({ success: false, error: "invalid token" });
+//     });
+// }
+
 exports.changePassword = function (req, res) {
     //User.findOne({ _id: req.params.userId }, function(err, user) {
     User.findOne({ _id: req.user._id }, function(err, user) {

@@ -54,7 +54,7 @@ module.exports = function(app, passport) {
     // user
 
     // register new user
-    app.post('/v1/users', users.create);
+    //app.post('/v1/users', users.create);
     // get all users
     app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
     // search users
@@ -66,7 +66,7 @@ module.exports = function(app, passport) {
     // get pending user
     app.get('/v1/users/pending/:userHashId', users.getPending);
     // get user
-    app.get('/v1/users/:userId', auth.requireLogin, users.show);
+    //app.get('/v1/users/:userId', auth.requireLogin, users.show);
     // get user stats
     app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
 

@@ -1,30 +1,30 @@
-angular.module('avatech.system').controller('RegisterController', function ($scope, $rootScope, $http, $stateParams, $location, Global) {
+angular.module('avatech.system').controller('RegisterController', 
+  function ($scope, $rootScope, $http, $stateParams, $location, Global, Restangular) {
 
 	$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
 	$scope.successfulReset = false;
   $scope.email = "";
 
-  if ($stateParams.userHashId && $stateParams.userHashId != "") {
-  	$http.get("/v1/users/pending/" + $stateParams.userHashId)
-      .success(function (data) { 
+  // if ($stateParams.userHashId && $stateParams.userHashId != "") {
+  // 	$http.get("/v1/users/pending/" + $stateParams.userHashId)
+  //     .success(function (data) { 
 
-          $scope.isPending = data.ok;
-          if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
-      });
-  }
-  else if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
-    $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
-      .success(function (data) { 
+  //         $scope.isPending = data.ok;
+  //         if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
+  //     });
+  // }
+  // else if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
+  //   $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
+  //     .success(function (data) { 
 
-          console.log(data);
-          $scope.isPending = data.ok;
-          if ($scope.isPending) $scope.org = data;
-      });
-  }
+  //         console.log(data);
+  //         $scope.isPending = data.ok;
+  //         if ($scope.isPending) $scope.org = data;
 
+  //     });
+  // }
 
     $scope.reg = {};
-
 
     $scope.scrollToError = function(){
         // jQuery stuff, not so elegant but what can ya do
@@ -61,7 +61,6 @@ angular.module('avatech.system').controller('RegisterController', function ($sco
             return;
         }
         else {
-            //console.log($scope.reg);
 
             var newUser = {
                 fullName: $scope.reg.name,
@@ -79,25 +78,43 @@ angular.module('avatech.system').controller('RegisterController', function ($sco
                 orgHashId: $stateParams.orgHashId
             }
 
-             $http.post("/v1/users/", newUser)
-            .success(function (data) { 
-                console.log(data);
-                // if creation succesful, login
-                if (data.success == true) { 
-                  Global.login(data.user, data.token);
+            Restangular.all('users').post(newUser)
+            // success
+            .then(function (data) {
+                Global.login(data.user, data.authToken);
 
-                  mixpanel.track("registered");
+                mixpanel.track("registered");
 
-                  $rootScope.initPromise = Global.init();
-                  if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-                      $rootScope.orgsLoaded = true;
-                  });
-                }
-                else if (data.success == false) {
-                    $scope.showError = data.error;
-                    $scope.scrollToError();
-                }
+                $rootScope.initPromise = Global.init();
+                if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
+                    $rootScope.orgsLoaded = true;
+                });
+            }, 
+            // error
+            function(response) {
+                $scope.showError = response.data.message;
+                $scope.scrollToError();
             });
+
+            //  $http.post("/v1/users/", newUser)
+            // .success(function (data) { 
+            //     console.log(data);
+            //     // if creation succesful, login
+            //     if (data.success == true) { 
+            //       Global.login(data.user, data.token);
+
+            //       mixpanel.track("registered");
+
+            //       $rootScope.initPromise = Global.init();
+            //       if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
+            //           $rootScope.orgsLoaded = true;
+            //       });
+            //     }
+            //     else if (data.success == false) {
+            //         $scope.showError = data.error;
+            //         $scope.scrollToError();
+            //     }
+            // });
         }
     };
 

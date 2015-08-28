@@ -1,6 +1,13 @@
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, snowpitExport, $templateRequest) {
     $scope.global = Global;
 
+    $rootScope.isDemo = false;
+    $scope.routeEditMode = false;
+
+    if ($rootScope.isDemo) {
+        mixpanel.track("demo");
+    }
+
     $scope.formatters = snowpitExport.formatters;
 
     $scope._showPreviewPane;
@@ -22,7 +29,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return $state.current.data.fullScreen;
     };
 
-    $scope.routeEditMode = false;
     $scope.showBottomPane = function() {
         return $scope.routeEditMode;
     }
@@ -650,6 +656,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // set initial location and zoom level
     var defaultZoom = 13;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
+    if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
     $scope.map.setView(initialLocation, defaultZoom);
 
     $scope.addToMap = function(profile) {
@@ -839,29 +846,37 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.loadingNew = false;
         });
     }
-    $scope.loadingProfiles = true;
-    $scope.loadProfiles(false);
-    $scope.loadMyProfiles();
-    setTimeout(function(){
-        setInterval(function(){
-            $scope.loadProfiles(false);
-            $scope.loadMyProfiles();
+
+    if ($rootScope.isDemo === false) {
+        $scope.loadingProfiles = true;
+        $scope.loadProfiles(false);
+        $scope.loadMyProfiles();
+        setTimeout(function(){
+            setInterval(function(){
+                $scope.loadProfiles(false);
+                $scope.loadMyProfiles();
+            }, 60000);
         }, 60000);
-    }, 60000);
 
-    $scope.map.on('moveend', function() {
-        $timeout.cancel($scope.loadProfilesTimer);
-        $scope.loadProfilesTimer = $timeout(function(){
-            $scope.loadProfiles();
-        }, 2000);
-    });
+        $scope.map.on('moveend', function() {
+            $timeout.cancel($scope.loadProfilesTimer);
+            $scope.loadProfilesTimer = $timeout(function(){
+                $scope.loadProfiles();
+            }, 2000);
+        });
 
-    $scope.map.on('zoomend', function() {
-        $timeout.cancel($scope.loadProfilesTimer);
-        $scope.loadProfilesTimer = $timeout(function(){
-            $scope.loadProfiles();
-        }, 2000);
-        mixpanel.track("zoom", $scope.map.getZoom());
+        $scope.map.on('zoomend', function() {
+            $timeout.cancel($scope.loadProfilesTimer);
+            $scope.loadProfilesTimer = $timeout(function(){
+                $scope.loadProfiles();
+            }, 2000);
+            mixpanel.track("zoom", $scope.map.getZoom());
+        });
+    }
+
+    // make sure map loads properly
+    $timeout(function(){
+        $scope.map.invalidateSize();
     });
 
     $scope.href = function (path) {
@@ -896,6 +911,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // set terrain overlay
     $scope.terrainOverlay;
+    if ($rootScope.isDemo) $scope.terrainOverlay = "elevation";
     $scope.$watch('terrainOverlay', function(){
         terrainLayer.overlayType = $scope.terrainOverlay;
         terrainLayer.needsRedraw = true;
@@ -978,5 +994,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         up: 4,
         down: 10
     }
+
 
 });

@@ -1,6 +1,6 @@
 <section ng-controller="MapController">
 	<section ng-hide="isFullScreen()" >
-		<div id="map-header">
+		<div id="map-header" ng-hide="isDemo">
 
 				<div class="btn-group filter" dropdown style=""
 					ng-hide="selectedList == 'my_unpublished'">
@@ -176,7 +176,7 @@
 
 		</div>
 
-		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0) }">
+		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0), left: (isDemo ? 0 : 280), top: (isDemo ? 46 : 90)  }">
 			<div id="map"></div>
 
 			<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
@@ -207,7 +207,7 @@
 			      </button>
 			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
 
-				    	<div style="margin-bottom:12px;" class='clearfix pad0' ng-show="terrainOverlay">OPACITY <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
+				    	<div style="padding: 12px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative;bottom:3px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
 
 				    	<style>
 
@@ -244,11 +244,11 @@
 
 				    		<accordion-new>
 							    <div class="accordion-item">
-							    	<div class="header">
+							    	<div class="header" ng-click="$broadcast('refreshSlider')">
 							            Elevation
 							        </div>
 							        <div class="content">
-								      	<slider-new style="width:300px"
+								      	<slider-new style="width:240px"
 										    ng-model="customTerrain.elev_low"
 										    ng-model-range="customTerrain.elev_high"
 										    translate-fn="formatElev"
@@ -261,11 +261,11 @@
 							    </div>
 
 							  	<div class="accordion-item">
-							    	<div class="header">
+							    	<div class="header" ng-click="$broadcast('refreshSlider')">
 							            Slope
 							        </div>
 							        <div class="content">
-								      	<slider-new style="width:300px"
+								      	<slider-new style="width:240px"
 										    ng-model="customTerrain.slope_low"
 										    ng-model-range="customTerrain.slope_high"
 										    translate-fn="formatDegSlider"
@@ -319,8 +319,8 @@
 				    	<div class="btn-group" style="margin: 2px 6px;">
 					        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">
 					        Slope</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">
-					        Aspect</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">
-					        Hillshade</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">
+					        Aspect</label><!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">
+					        Hillshade</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">
 					        Custom</label>
 					    </div>
 
@@ -342,7 +342,7 @@
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 		</div>
 
-		<div class="side-bar">
+		<div class="side-bar" ng-hide="isDemo">
 
 			<div class="toggle-list">
 
@@ -596,7 +596,7 @@
 		<div ng-show="showPreviewPane()" class="preview-pane" >
 			<div ui-view="right-pane"></div>
 		</div>
-		<div ng-show="showBottomPane()" class="bottom-pane">
+		<div ng-show="showBottomPane()" class="bottom-pane" ng-style="{ left: isDemo ? 0 : 280 }">
 
 		</div>
 		<div ng-show="showRoutePane()" class="route-pane">

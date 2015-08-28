@@ -40,7 +40,7 @@
       <ul class="nav navbar-nav navbar-right" ng-if="global.user">
  
 
-        <li class="dropdown">
+        <li class="dropdown" ng-hide="isDemo">
           <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
             <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
@@ -62,7 +62,7 @@
           <a style="font-weight:500;color:#fff;" href="/observations">My Observations</a>
         </li>-->
 
-        <li class="dropdown" ng-hide="global.user.student === true">
+        <li class="dropdown" ng-hide="global.user.student === true || isDemo">
           <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown">{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}
@@ -89,17 +89,17 @@
 
 
             <li><a href="/settings">{{ 'user_settings' | translate }}</a></li>
-            <li class="divider"></li>
-            
-            <li><a href="/support" target="_blank">{{ 'support' | translate }}</a></li>
-            <li><a href="#" ng-click="registerSP1()">{{ 'register_device' | translate }}</a></li>
-            <li><a href="/app" target="_blank">{{ 'download_app' | translate }}</a></li>
-            <!--<li><a href="/SP1manual" target="_blank">SP1 User Manual</a></li>-->
-            <li><a href="/SP1update" target="_blank">{{ 'firmware_update' | translate }}</a></li>
-            <li class="divider"></li>
+            <li ng-hide="isDemo" class="divider"></li>
 
-	          <li ng-if="global.user.admin" ><a href="/admin">Admin</a></li>
-	          <li ng-if="global.user.admin" class="divider"></li>
+            <li ng-hide="isDemo"><a href="/support" target="_blank">{{ 'support' | translate }}</a></li>
+            <li ng-hide="isDemo"><a href="#" ng-click="registerSP1()">{{ 'register_device' | translate }}</a></li>
+            <li ng-hide="isDemo"><a href="/app" target="_blank">{{ 'download_app' | translate }}</a></li>
+            <li ng-hide="isDemo"><a href="/SP1update" target="_blank">{{ 'firmware_update' | translate }}</a></li>
+            <li ng-hide="isDemo" class="divider"></li>
+
+	          <li ng-hide="isDemo" ng-if="global.user.admin" ><a href="/admin">Admin</a></li>
+	          <li ng-hide="isDemo" ng-if="global.user.admin" class="divider"></li>
+
 	          <li><a href="/logout">{{ 'logout' | translate }}</a></li>
 	        </ul>
 	      </li>

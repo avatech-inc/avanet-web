@@ -3,15 +3,7 @@
 angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouterProvider', '$httpProvider',
     function($routeProvider,$stateProvider, $urlRouterProvider, $httpProvider) {
 
-        $httpProvider.interceptors.push('httpRequestInterceptor');
-        // register routes defined in routes.js
-        // for (var route in window.routes) {
-        //     $routeProvider.when(route,window.routes[route]);
-        // };
-        // 404
-        //$routeProvider.otherwise({ templateUrl: '/views/404.html' });
-    
-      //$urlRouterProvider.otherwise("/404");
+        //$httpProvider.interceptors.push('httpRequestInterceptor');
 
 
       $stateProvider

@@ -53,7 +53,6 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
                 $scope.scrollToError();
             }
             else {
-                console.log(user);
                 $scope.user = user;
                 Global.setUser($scope.user);
                 $scope.tempUser = Restangular.copy(user);

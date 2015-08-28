@@ -8,6 +8,7 @@ public/_uploads/
 public/css/
 .tmp/
 tmp/
+tmp/*
 *.sp
 *.lz4
 newrelic_agent.log

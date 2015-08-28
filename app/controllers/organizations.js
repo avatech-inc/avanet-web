@@ -4,8 +4,6 @@
 var mongoose = require('mongoose');
 
 var Organization = mongoose.model('Organization');
-var ForgotPassword = mongoose.model('ForgotPassword');
-var Invite = mongoose.model('Invite');
 var User = mongoose.model('User');
 
 var Mail = require('../../config/mail');

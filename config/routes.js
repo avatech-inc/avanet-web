@@ -2,7 +2,7 @@ var async = require('async');
 var auth = require('./auth');
 var path = require('path');
 
-module.exports = function(app, passport) {
+module.exports = function(app) {
 
     var obs = require('../app/controllers/observations');
     var profiles = require('../app/controllers/profiles');
@@ -170,7 +170,7 @@ module.exports = function(app, passport) {
     app.get('*', function(req,res) { 
 
         //console.log("ACCEPT HEADERS: " + req.headers.accept);
-        
+
         res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
     });
 };

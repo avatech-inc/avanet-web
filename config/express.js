@@ -14,7 +14,7 @@ var path = require('path');
 var root = path.normalize(__dirname + '/..');
 
 
-module.exports = function(app, passport) {
+module.exports = function(app) {
     app.set('showStackError', true);
 
     // compress
@@ -48,16 +48,12 @@ module.exports = function(app, passport) {
         else next();
     });
 
-    //app.use(cookieParser());
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(bodyParser.json());
     app.use(methodOverride());
 
-    // init passport for local auth
-    app.use(passport.initialize());
-
     // register routes
-    require('./routes')(app, passport);
+    require('./routes')(app);
 
     // error handling
     var ravenClient = new raven.Client('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540');

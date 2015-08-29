@@ -125,7 +125,9 @@ angular.module('avatech').factory("Global",
                     .then(function (_user) {
                         if (_user._id) {
                             _this._data.setUser(_user);
-                            _this._data.orgs = _user.organizationss;
+                            _this._data.orgs = _user.organizations;
+
+                            console.log(_user.organizations);
                         }
                     });
 

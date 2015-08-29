@@ -12,7 +12,62 @@ module.exports = function(app, passport) {
 
     var fs = require("fs"); //Load the filesystem module
 
+    // todo: duplicate of controllers/users.js!!!!!!!!!!!!!
+    // var jwt = require('jwt-simple');
+    // var jwt_secret = "guyute";
+
+    // login
+    // app.post('/v1/users/login', function(req, res, next) {
+    //   passport.authenticate('local', function(err, user, info) {
+    //     //if (err) { return next(err); }
+    //     if (err){
+    //         console.log("LOGIN ERROR 1!");
+    //         console.log(err);
+    //     }
+    //     if (!user) { return res.json({ success: false, error: info.error }); }
+
+    //     var client_user = {
+    //         _id: user._id,
+    //         firstName: user.firstName,
+    //         lastName: user.lastName,
+    //         fullName: user.fullName,
+    //         admin: user.admin,
+    //         location: user.location,
+    //         settings: user.settings,
+    //         permissions: user.permissions,
+    //         student: user.student,
+    //         country: user.country
+    //     };
+
+    //     var payload = { id: user._id };
+    //     var token = jwt.encode(payload, jwt_secret);;
+    //     return res.json({ success: true, token: token, user: client_user });
+
+    //   })(req, res, next);
+    // });
+
+    // forgot/reset password
+    // app.post('/v1/users/forgot-password', users.forgotPassword);
+    // app.get('/v1/users/reset-password/:forgotPasswordToken', users.checkForgotPassword);
+    // app.post('/v1/users/reset-password', users.resetPassword);
+
     // user
+
+    // register new user
+    //app.post('/v1/users', users.create);
+    // search users
+    //app.get('/v1/users/search', auth.requireLogin, users.search);
+    // update user
+    //app.put('/v1/users/:userId', auth.requireLogin, users.updateUser);
+    // change password
+    //app.post('/v1/users/:userId/change-password', auth.requireLogin, users.changePassword);
+    // get pending user
+    //app.get('/v1/users/pending/:userHashId', users.getPending);
+    // get user
+    //app.get('/v1/users/:userId', auth.requireLogin, users.show);
+
+    // admin only:
+
     // get all users
     app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
     // get user stats
@@ -45,10 +100,22 @@ module.exports = function(app, passport) {
 
     // Organizations
 
-    //app.put('/v1/orgs/:orgId', auth.requireLogin, orgs.update);
+    app.post('/v1/orgs', auth.requireLogin, orgs.create);
+    app.put('/v1/orgs/:orgId', auth.requireLogin, orgs.update);
+    // get logged-in users's orgs
+    //app.get('/v1/orgs', auth.requireLogin, orgs.getUserOrgs);
+    // get all orgs (admin only)
     app.get('/v1/orgs/search', auth.requireLogin, orgs.search);
-
+    //app.get('/v1/orgs/:orgId', auth.requireLogin, orgs.show);
     app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
+    // Organization Members
+    //app.get('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_all);
+    //app.post('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_add);
+    //app.put('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_update);
+    //app.delete('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
+
+    // admin only: 
+
     app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 
     // Observations

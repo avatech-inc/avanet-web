@@ -68,20 +68,20 @@ exports.showEducation = function(req, res) {
     });
 };
 
-// exports.update = function(req, res, next) {
-//     // remove forbidden fields
-//     delete req.body.members;
-//     delete req.body.created;
-//     delete req.body._id;
+exports.update = function(req, res) {
+    // remove forbidden fields
+    delete req.body.members;
+    delete req.body.created;
 
-//     // update
-//     Organization.findOneAndUpdate({ _id: req.swagger.params.orgId.value }, req.body, { select: '-members', new: true }, function(err, org) {
-//         if (err) next(err);
-
-//         if (org) res.json(org);
-//         else res.status(404).json({ message: "Organization not found" });
-//     });
-// };
+    // remove _id from the model
+    delete req.body._id;
+    // update
+    Organization.findOneAndUpdate({ _id: req.params.orgId }, req.body, { select: '-members' }, function(err, org) {
+        if (err) next(err);
+        if (org) res.json(org);
+        else res.json({});
+    });
+};
 // search users
 exports.search = function (req, res) {
     // search by name (starts with <query>)

@@ -276,16 +276,16 @@ exports.getPending = function (req, res) {
     });
 }
 
-exports.show = function(req, res) {
-    User.findOne({ _id: req.params.userId })
-    .select('-hashed_password -salt -provider')
-    .exec(function(err, user) {
-        // todo: permissions stuff - only show fields user is allowed to see? (i.e., user can see more for themselves than others can see of them)
-        if (err) return next(err);
-        if (!user) return next(new Error('Failed to load User ' + id));
-        res.json(user);
-    });
-};
+// exports.show = function(req, res) {
+//     User.findOne({ _id: req.params.userId })
+//     .select('-hashed_password -salt -provider')
+//     .exec(function(err, user) {
+//         // todo: permissions stuff - only show fields user is allowed to see? (i.e., user can see more for themselves than others can see of them)
+//         if (err) return next(err);
+//         if (!user) return next(new Error('Failed to load User ' + id));
+//         res.json(user);
+//     });
+// };
 
 exports.getUserStats = function(req, res) {
 

@@ -13,38 +13,38 @@ module.exports = function(app, passport) {
     var fs = require("fs"); //Load the filesystem module
 
     // todo: duplicate of controllers/users.js!!!!!!!!!!!!!
-    var jwt = require('jwt-simple');
-    var jwt_secret = "guyute";
+    // var jwt = require('jwt-simple');
+    // var jwt_secret = "guyute";
 
     // login
-    app.post('/v1/users/login', function(req, res, next) {
-      passport.authenticate('local', function(err, user, info) {
-        //if (err) { return next(err); }
-        if (err){
-            console.log("LOGIN ERROR 1!");
-            console.log(err);
-        }
-        if (!user) { return res.json({ success: false, error: info.error }); }
+    // app.post('/v1/users/login', function(req, res, next) {
+    //   passport.authenticate('local', function(err, user, info) {
+    //     //if (err) { return next(err); }
+    //     if (err){
+    //         console.log("LOGIN ERROR 1!");
+    //         console.log(err);
+    //     }
+    //     if (!user) { return res.json({ success: false, error: info.error }); }
 
-        var client_user = {
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            fullName: user.fullName,
-            admin: user.admin,
-            location: user.location,
-            settings: user.settings,
-            permissions: user.permissions,
-            student: user.student,
-            country: user.country
-        };
+    //     var client_user = {
+    //         _id: user._id,
+    //         firstName: user.firstName,
+    //         lastName: user.lastName,
+    //         fullName: user.fullName,
+    //         admin: user.admin,
+    //         location: user.location,
+    //         settings: user.settings,
+    //         permissions: user.permissions,
+    //         student: user.student,
+    //         country: user.country
+    //     };
 
-        var payload = { id: user._id };
-        var token = jwt.encode(payload, jwt_secret);;
-        return res.json({ success: true, token: token, user: client_user });
+    //     var payload = { id: user._id };
+    //     var token = jwt.encode(payload, jwt_secret);;
+    //     return res.json({ success: true, token: token, user: client_user });
 
-      })(req, res, next);
-    });
+    //   })(req, res, next);
+    // });
 
     // forgot/reset password
     // app.post('/v1/users/forgot-password', users.forgotPassword);
@@ -105,13 +105,6 @@ module.exports = function(app, passport) {
     app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
     //app.get('/v1/tests/:testId/thumb.jpg', tests.thumb);
-
-    // Field Tests
-
-    var fieldTests = require('../app/controllers/field-tests');
-    app.post('/v1/field-tests', auth.requireLogin, fieldTests.create);
-    app.get('/v1/field-tests', auth.requireLogin, fieldTests.all);
-    app.get('/v1/field-tests/:fieldTestId', fieldTests.show);
 
     // Organizations
 

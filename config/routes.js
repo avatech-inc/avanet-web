@@ -111,7 +111,7 @@ module.exports = function(app, passport) {
     app.post('/v1/orgs', auth.requireLogin, orgs.create);
     app.put('/v1/orgs/:orgId', auth.requireLogin, orgs.update);
     // get logged-in users's orgs
-    app.get('/v1/orgs', auth.requireLogin, orgs.getUserOrgs);
+    //app.get('/v1/orgs', auth.requireLogin, orgs.getUserOrgs);
     // get all orgs (admin only)
     app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
     app.get('/v1/orgs/search', auth.requireLogin, orgs.search);
@@ -119,7 +119,7 @@ module.exports = function(app, passport) {
     app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
     // Organization Members
     //app.get('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_all);
-    app.post('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_add);
+    //app.post('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_add);
     //app.put('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_update);
     //app.delete('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
 

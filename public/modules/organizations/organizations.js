@@ -97,32 +97,31 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
 
         Restangular.one('orgs', $stateParams.orgId)
         .all('members')
-        .post({ user: user._id }).then(function (member) {
-            // if error...
-            if (member.success !=null && member.success == false) {
-                console.log(member);
-            }
+        .post({ user: user._id })
+        // success
+        .then(function (member) {
             // add new member to  collection
-            else {
-                $scope.members.push(member);
-            }
+            $scope.members.push(member);
+        }
+        // error
+        , function(){
+            console.log(member);
         });
     }
     $scope.inviteEmail = function() {
-        console.log($scope.search.email);
         if (!$scope.search.email) return;
 
         Restangular.one('orgs', $stateParams.orgId)
         .all('members')
-        .post({ email: $scope.search.email }).then(function (member) {
-            // if error...
-            if (member.success !=null && member.success == false) {
-                console.log(member);
-            }
+        .post({ email: $scope.search.email })
+        // success
+        .then(function (member) {
             // add new member to  collection
-            else {
-                $scope.members.push(member);
-            }
+            $scope.members.push(member);
+        }
+        // error
+        , function(){
+            console.log(member);
         });
     }
 

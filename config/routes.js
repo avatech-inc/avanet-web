@@ -8,7 +8,6 @@ module.exports = function(app, passport) {
     var tests = require('../app/controllers/tests');
     var orgs = require('../app/controllers/organizations');
     var obs = require('../app/controllers/observations');
-    var comments = require('../app/controllers/comments');
 
     var fs = require("fs"); //Load the filesystem module
 
@@ -51,7 +50,6 @@ module.exports = function(app, passport) {
     // Avalanche Observations
 
     app.post('/v1/observations', auth.requireLogin, obs.create);
-    app.get('/v1/observations', auth.requireLogin, obs.all);
     app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
     app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);

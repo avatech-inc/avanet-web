@@ -2,7 +2,6 @@ var mongoose = require('mongoose'),
     Async = require('async'),
     Test = mongoose.model('Test'),
     Observation = mongoose.model('Observation'),
-    Organization = mongoose.model('Organization'),
     _ = require('underscore');
 
 exports.create = function(req, res) {

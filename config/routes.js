@@ -4,28 +4,29 @@ var path = require('path');
 
 module.exports = function(app, passport) {
 
-    var users = require('../app/controllers/users');
-    var tests = require('../app/controllers/tests');
-    var orgs = require('../app/controllers/organizations');
     var obs = require('../app/controllers/observations');
+    var profiles = require('../app/controllers/profiles');
+    var tests = require('../app/controllers/tests');
+
+    var Device = require('mongoose').model('Device');
 
     var fs = require("fs"); //Load the filesystem module
 
+    // NOT PORTED:
+
     // User
 
-    app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
-    app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
+    // app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
+    // app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
 
     // Organizations
 
-    app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
-    app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
+    // app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
+    // app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 
     // ---------------------------------------------
 
     // Manual Profiles
-
-    var profiles = require('../app/controllers/profiles');
 
     // todo: these return ALL observation types - maybe replace this with "observations"
     // and rename "observations" to "avalanches"?
@@ -39,7 +40,6 @@ module.exports = function(app, passport) {
 
     // Device Profiles
 
-    var tests = require('../app/controllers/tests');
     app.get('/v1/tests', auth.requireLogin, tests.getAll);
     app.post('/v1/tests', auth.requireLogin, tests.create);
     app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
@@ -56,7 +56,6 @@ module.exports = function(app, passport) {
 
     // Devices
 
-    var Device = require('mongoose').model('Device');
     app.post('/v1/devices/:serialNumber/register', auth.requireLogin, function(req,res) {
         Device.findOne({ serial: req.params.serialNumber }).exec(function(err,device){
             if (!device) {

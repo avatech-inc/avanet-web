@@ -17,15 +17,6 @@ exports.getAll = function (req, res) {
         res.json(users);
     });
 }
-exports.getPending = function (req, res) {
-    // decode hashed user id
-    var userId = hashids.decodeHex(req.params.userHashId);
-
-    User.findOne({ _id: userId, pending: true }, function(err, user) {
-        if (user) res.json({ ok: true });
-        else res.json({ ok: false })
-    });
-}
 exports.getUserStats = function(req, res) {
 
     var Test = mongoose.model('Test');

@@ -12,11 +12,23 @@ module.exports = function(app, passport) {
 
     var fs = require("fs"); //Load the filesystem module
 
-    // user
-    // get all users
+    // User
+
     app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
-    // get user stats
     app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
+
+    // Organizations
+
+    app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
+    app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
+
+    // Comments
+
+    app.get('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.all);
+    app.post('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.create);
+    app.delete('/v1/comments/:commentId', auth.requireLogin, comments.destroy);
+
+    // ---------------------------------------------
 
     // Manual Profiles
 
@@ -41,26 +53,14 @@ module.exports = function(app, passport) {
     app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
     app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
-    //app.get('/v1/tests/:testId/thumb.jpg', tests.thumb);
 
-    // Organizations
-
-    app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
-    app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
-
-    // Observations
+    // Avalanche Observations
 
     app.post('/v1/observations', auth.requireLogin, obs.create);
     app.get('/v1/observations', auth.requireLogin, obs.all);
     app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
     app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
-
-    // Comments
-
-    app.get('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.all);
-    app.post('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.create);
-    app.delete('/v1/comments/:commentId', auth.requireLogin, comments.destroy);
 
     // Devices
 

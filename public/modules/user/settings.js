@@ -64,8 +64,8 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
             $scope.scrollToError();
         },
         // error
-        function() {
-            $scope.showError = user.error;
+        function(response) {
+            $scope.showError = response.data.message;
             $scope.scrollToError();
         });
     }

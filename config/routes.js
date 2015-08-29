@@ -22,12 +22,6 @@ module.exports = function(app, passport) {
     app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
     app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 
-    // Comments
-
-    app.get('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.all);
-    app.post('/v1/comments/:ownerType/:ownerId', auth.requireLogin, comments.create);
-    app.delete('/v1/comments/:commentId', auth.requireLogin, comments.destroy);
-
     // ---------------------------------------------
 
     // Manual Profiles

@@ -16,12 +16,6 @@ angular.module('avatech.system').controller('RegisterController',
     function() {
       $scope.isPending = false;
     });
-
-  	// $http.get("/v1/users/pending/" + $stateParams.userHashId)
-   //    .success(function (data) { 
-   //        $scope.isPending = data.ok;
-   //        if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
-   //    });
   }
   
   // if ($stateParams.orgHashId && $stateParams.orgHashId != "") {

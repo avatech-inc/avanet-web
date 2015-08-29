@@ -129,6 +129,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.doSearch = function(profile){
         var ok = true;
 
+        console.log(profile);
+
         // only search through published profiles 
         if (profile.type == 'profile' && !profile.published) return false;
 
@@ -272,6 +274,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.searchQuery.publisher.me = true;
 
         if ($scope.searchQuery.publisher.me != null) {
+            console.log(val);
             if (val.user._id == $scope.global.user._id) {
                 //allowed = $scope.searchQuery.publisher.me;
                 if (allowed === false && $scope.searchQuery.publisher.me) allowed = true;

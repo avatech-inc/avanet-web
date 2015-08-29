@@ -5,22 +5,31 @@ angular.module('avatech.system').controller('RegisterController',
 	$scope.successfulReset = false;
   $scope.email = "";
 
-  // if ($stateParams.userHashId && $stateParams.userHashId != "") {
-  // 	$http.get("/v1/users/pending/" + $stateParams.userHashId)
-  //     .success(function (data) { 
+  if ($stateParams.userHashId && $stateParams.userHashId != "") {
+    Restangular.one('users/pending', $stateParams.userHashId).get()
+    .then(function(){
+      console.log("hey!");
+      $scope.isPending = true;
+      $scope.userHashId = $stateParams.userHashId;
+    },
+    // error
+    function() {
+      $scope.isPending = false;
+    });
 
-  //         $scope.isPending = data.ok;
-  //         if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
-  //     });
-  // }
-  // else if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
+  	// $http.get("/v1/users/pending/" + $stateParams.userHashId)
+   //    .success(function (data) { 
+   //        $scope.isPending = data.ok;
+   //        if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
+   //    });
+  }
+  
+  // if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
   //   $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
   //     .success(function (data) { 
-
   //         console.log(data);
   //         $scope.isPending = data.ok;
   //         if ($scope.isPending) $scope.org = data;
-
   //     });
   // }
 

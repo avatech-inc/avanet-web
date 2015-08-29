@@ -64,22 +64,11 @@ module.exports = function(app, passport) {
     // change password
     //app.post('/v1/users/:userId/change-password', auth.requireLogin, users.changePassword);
     // get pending user
-    app.get('/v1/users/pending/:userHashId', users.getPending);
+    //app.get('/v1/users/pending/:userHashId', users.getPending);
     // get user
     //app.get('/v1/users/:userId', auth.requireLogin, users.show);
     // get user stats
     app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
-
-    // new user invitations
-    // // get invite
-    // app.get('/admin/invites/:inviteToken', users.getInvite);
-    // // get all invites
-    // app.get('/admin/invites', auth.requireLogin, auth.requireAdmin, users.getInvites);
-    // // create invite
-    // app.post('/admin/invites', auth.requireLogin, auth.requireAdmin, users.invite);
-    // // delete invite
-    // app.delete('/admin/invites/:inviteToken', auth.requireLogin, auth.requireAdmin, users.deleteInvite);
-
 
     // Manual Profiles
 

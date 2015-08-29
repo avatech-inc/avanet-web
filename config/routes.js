@@ -24,13 +24,12 @@ module.exports = function(app, passport) {
 
     // ---------------------------------------------
 
-    // Manual Profiles
-
     // todo: these return ALL observation types - maybe replace this with "observations"
     // and rename "observations" to "avalanches"?
     app.get('/v1/all-observations', auth.requireLogin, profiles.all);
     app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
 
+    // Manual Profiles
     app.post('/v1/profiles', auth.requireLogin, profiles.create);
     app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
@@ -124,7 +123,6 @@ module.exports = function(app, passport) {
     app.get('/manifest.plist', function(req,res) { 
         res.sendFile(path.join(__dirname, '../app/views', 'manifest.plist'));
     });
-
     app.get('/download-app', function(req,res) { 
         res.sendFile(path.join(__dirname, '../app/views', 'download-app.hyml'));
     });

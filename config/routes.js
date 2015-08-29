@@ -8,8 +8,6 @@ module.exports = function(app, passport) {
     var profiles = require('../app/controllers/profiles');
     var tests = require('../app/controllers/tests');
 
-    var Device = require('mongoose').model('Device');
-
     var fs = require("fs"); //Load the filesystem module
 
     // NOT PORTED:
@@ -54,35 +52,6 @@ module.exports = function(app, passport) {
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
     app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
 
-    // Devices
-
-    app.post('/v1/devices/:serialNumber/register', auth.requireLogin, function(req,res) {
-        Device.findOne({ serial: req.params.serialNumber }).exec(function(err,device){
-            if (!device) {
-                //return res.json({ error: "The serial number you entered is not valid. Please double check and try again." });
-                device = new Device();
-                device.serial = req.params.serialNumber;
-                device.verified = false;
-                device.user = req.user;
-                device.save();
-                return res.json({ registered: req.params.serialNumber });
-            }
-            else if (device.user && device.user.equals(req.user._id)) {
-                return res.json({ error: "You have already registered this device." });
-            }
-            else if (device.user) {
-                return res.json({ error: "This device has already been registered." });
-            }
-            else  {
-                // register
-                device.user = req.user;
-                device.save();
-                return res.json({ registered: req.params.serialNumber });
-            }
-        });
-        //
-    });
-
     // Snowpit Editor File Upload
 
     var multiparty = require('multiparty');
@@ -118,7 +87,7 @@ module.exports = function(app, passport) {
         });
 
     });
-    
+
     //--------------------------------------------------------------------------------
 
     var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');

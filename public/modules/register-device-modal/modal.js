@@ -1,6 +1,4 @@
-angular.module('avatech').factory('RegisterDeviceModal', [ '$modal',
-    function ($modal) {
-
+angular.module('avatech').factory('RegisterDeviceModal', function ($modal) {
         return { open: function(options) {
 
             var modalInstance = $modal.open({
@@ -13,11 +11,11 @@ angular.module('avatech').factory('RegisterDeviceModal', [ '$modal',
             return modalInstance.result;
 
         }
-    } }
-]);
+    }
+});
 
-angular.module('avatech').controller('RegisterDeviceModalController', [ '$scope','$modalInstance', '$timeout', '$http', 'Global',
-    function ($scope, $modalInstance, $timeout, $http, Global) {
+angular.module('avatech').controller('RegisterDeviceModalController',
+    function ($scope, $modalInstance, $timeout, $http, Global, Restangular) {
 
         $scope.global = Global;
 
@@ -45,31 +43,23 @@ angular.module('avatech').controller('RegisterDeviceModalController', [ '$scope'
                 $scope.checking = false; return;
             }
 
-            $http.post('/v1/devices/' + $scope.serial.number + '/register', { }).
-              success(function(data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
-                if (data.error) {
-                    alert(data.error);
-                }
-                else if (data.registered) {
-                    $scope.registering = true;
-                    $timeout(function(){
-                        $scope.registering = false;
-                        $scope.registered = true;
-                    }, 2000);
-                }
-                else alert("An error ocurred. Please try again.");
-                
+            Restangular.one('devices', $scope.serial.number).customPOST({}, 'register')
+            // success
+            .then(function(data){
+                $scope.registering = true;
+                $timeout(function(){
+                    $scope.registering = false;
+                    $scope.registered = true;
+                }, 2000);
+            },
+            // error
+            function(response) {
+                alert(response.data.message);
+            })
+            // always
+            .finally(function(){
                 $scope.checking = false;
-              }).
-              error(function(data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
-              });
-
-            //alert($scope.serial.number);
-            //$modalInstance.close();
+            });
         };
     }
-])
+);

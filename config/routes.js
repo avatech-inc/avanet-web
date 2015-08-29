@@ -58,7 +58,7 @@ module.exports = function(app, passport) {
     // get all users
     app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
     // search users
-    app.get('/v1/users/search', auth.requireLogin, users.search);
+    //app.get('/v1/users/search', auth.requireLogin, users.search);
     // update user
     //app.put('/v1/users/:userId', auth.requireLogin, users.updateUser);
     // change password

@@ -508,9 +508,12 @@ margin-bottom: 6px !important;
 			    <div style="margin-bottom:4px;"></div>-->
 
 				<span style="width:100px;text-align:right;padding-right:10px;display:inline-block;">Lat/Lng</span>
-				 <input style="width:107px;margin-right:3px;display:inline-block;" class="form-control" ng-model="user._lat"/>
+				 	
+			 	<b>{{ user.location[1] }}, {{ user.location[0] }}</b>
+				 <!--<input style="width:107px;margin-right:3px;display:inline-block;" class="form-control" ng-model="userLocation._lat"/>
 
-				 <input style="width:107px;display:inline-block;" class="form-control" ng-model="user._lng"/>
+				 <input style="width:107px;display:inline-block;" class="form-control" ng-model="userLocation._lng"/>
+				 -->
 
 			    <div style="margin-bottom:4px;"></div>
 

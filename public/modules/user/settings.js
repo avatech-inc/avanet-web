@@ -7,7 +7,6 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         var RestObject = Restangular.one('users', $scope.global.user._id);
         RestObject.get().then(function (user) {
             $scope.user = user;
-            $scope.user.location = $scope.user.location;
 
             $scope.tempUser = Restangular.copy(user);
 
@@ -47,57 +46,66 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         }
         // merge and save
 
-        $scope.tempUser.save().then(function(user) {
-            if (user.error) {
-                $scope.showError = user.error;
-                $scope.scrollToError();
-            }
-            else {
-                $scope.user = user;
-                Global.setUser($scope.user);
-                $scope.tempUser = Restangular.copy(user);
+        // console.log($scope.tempUser);
+        // return;
+        delete $scope.tempUser.location;
 
-                $scope.showSuccess = "Your new information has been saved";
-                $scope.scrollToError();
-            }
+        $scope.tempUser.save()
+        // success
+        .then(function(user) {
+            console.log($scope.tempUser);
+            console.log(user);
+
+            $scope.user = user;
+            Global.setUser($scope.user);
+            $scope.tempUser = Restangular.copy(user);
+
+            $scope.showSuccess = "Your new information has been saved";
+            $scope.scrollToError();
+        },
+        // error
+        function() {
+            $scope.showError = user.error;
+            $scope.scrollToError();
         });
     }
 
     
     // LOCATION LAT/LNG INPUT
 
-    $scope.$watch('user.location', function(newLocation){
-        if (!$scope.user) return;
-        if (!newLocation) return;
-        if (newLocation.length) {
-            $scope.user._lat = newLocation[1];
-            $scope.user._lng = newLocation[0];
+    $scope.$watch('user.location', function(newLocation, oldLocation) {
+        if (!oldLocation || !newLocation) return;
+        
+        // if new location set, save user
+        if (oldLocation.toString() != newLocation.toString()) {
+            // console.log("updating here too!!!")
+            // console.log(oldLocation);
+            // console.log(newLocation);
+            $scope.user.save();
+            mixpanel.track("changed home location");
+            $scope.global.setUser($scope.user);
         }
-
-        $scope.user.save();
-        mixpanel.track("changed home location");
-        $scope.global.setUser($scope.user);
     });
-    $scope.$watch('user._lat', function(newLat){
-        if (!$scope.obs) return;
-        if (!newLat) return;
-        newLat = parseFloat(newLat);
-        if (isNaN(newLat)) newLat = 0;
-        if (newLat > 90) newLat = 90;
-        else if (newLat < -90) newLat = -90;
-        if (!$scope.user.location) $scope.user.location = [0,0];
-        $scope.user.location[1] = newLat;
-    });
-    $scope.$watch('user._lng', function(newLng){
-        if (!$scope.obs) return;
-        if (!newLng) return;
-        newLng = parseFloat(newLng);
-        if (isNaN(newLng)) newLng = 0;
-        if (newLng > 180) newLng = 180;
-        else if (newLng < -180) newLng = -180;
-        if (!$scope.user.location) $scope.user.location = [0,0];
-        $scope.user.location[0] = newLng;
-    });
+    // $scope.$watch('userLocation._lat', function(newLat) {
+    //     if (!$scope.obs) return;
+    //     if (!newLat) return;
+    //     newLat = parseFloat(newLat);
+    //     if (isNaN(newLat)) newLat = 0;
+    //     if (newLat > 90) newLat = 90;
+    //     else if (newLat < -90) newLat = -90;
+    //     if (!$scope.userLocation.location) $scope.userLocation.location = [0,0];
+    //     $scope.userLocation.location[1] = newLat;
+    // }, true);
+    // $scope.$watch('userLocation._lng', function(newLng) {
+    //     if (!$scope.obs) return;
+    //     if (!newLng) return;
+    //     newLng = parseFloat(newLng);
+    //     if (isNaN(newLng)) newLng = 0;
+    //     if (newLng > 180) newLng = 180;
+    //     else if (newLng < -180) newLng = -180;
+    //     if (!$scope.userLocation.location) $scope.userLocation.location = [0,0];
+    //     $scope.userLocation.location[0] = newLng;
+    // }, true);
 
     // SELECT LOCATION MODAL
 
@@ -107,8 +115,8 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
             initialLocation: $scope.user.location
         }).then(function (location) {
             if (location && location.length == 2) {
-                location[0] = location[0].toFixed(7); 
-                location[1] = location[1].toFixed(7); 
+                location[0] = parseFloat(location[0].toFixed(7)); 
+                location[1] = parseFloat(location[1].toFixed(7)); 
 
                 $scope.user.location = location;
 

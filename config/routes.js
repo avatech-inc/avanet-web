@@ -22,7 +22,7 @@ module.exports = function(app, passport) {
     // app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
     // app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 
-    // ---------------------------------------------
+    // ---------------------------------------------------------
 
     // todo: these return ALL observation types - maybe replace this with "observations"
     // and rename "observations" to "avalanches"?
@@ -51,7 +51,11 @@ module.exports = function(app, passport) {
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
     app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
 
-    // Snowpit Editor File Upload
+    // ---------------------------------------------------------
+
+
+
+    // File Upload
 
     var multiparty = require('multiparty');
     var uuid = require('node-uuid');

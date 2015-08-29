@@ -8,8 +8,6 @@ module.exports = function(app, passport) {
     var profiles = require('../app/controllers/profiles');
     var tests = require('../app/controllers/tests');
 
-    var fs = require("fs"); //Load the filesystem module
-
     // NOT PORTED:
 
     // User
@@ -93,6 +91,8 @@ module.exports = function(app, passport) {
 
     //--------------------------------------------------------------------------------
 
+    // SMS
+
     var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');
     app.get('/send-app-sms', function(req,res) {
         console.log("hey!");
@@ -114,7 +114,7 @@ module.exports = function(app, passport) {
                 // http://www.twilio.com/docs/api/rest/sending-sms#example-1
 
                 // console.log(responseData.from); // outputs "+14506667788"
-                // console.log(responseData.body); // outputs "word to your mother."
+                // console.log(responseData.body); // outputs "word"
 
             }
         });
@@ -169,9 +169,8 @@ module.exports = function(app, passport) {
 
     app.get('*', function(req,res) { 
 
-        console.log("ACCEPT HEADERS: " + req.headers.accept);
-        //console.log("IS AJAX: " + req.xhr ); // <-- why is this always false?
-        //res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
+        //console.log("ACCEPT HEADERS: " + req.headers.accept);
+        
         res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
     });
 };

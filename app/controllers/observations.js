@@ -42,7 +42,7 @@ exports.update = function(req, res) {
     req.body.updated = new Date();
 
     // update
-    Observation.findOneAndUpdate({ _id: req.params.observationId }, req.body, { select: '-user' }, function(err, observation) {
+    Observation.findOneAndUpdate({ _id: req.params.observationId }, req.body, { select: '-user', new: true }, function(err, observation) {
         if (err) console.log(err);
         if (observation) res.json(observation);
         else res.json({});

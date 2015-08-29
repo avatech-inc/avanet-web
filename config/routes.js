@@ -121,21 +121,14 @@ module.exports = function(app, passport) {
     
     app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 
-    app.get('/manifest.plist', function(req,res) {
-        //res.sendfile('./app/views/manifest.plist'); 
+    app.get('/manifest.plist', function(req,res) { 
         res.sendFile(path.join(__dirname, '../app/views', 'manifest.plist'));
-    });
-    app.get('/beta.plist', function(req,res) {
-        //res.sendfile('./app/views/manifest_beta.plist'); 
-        res.sendFile(path.join(__dirname, '../app/views', 'manifest_beta.plist'));
     });
 
     app.get('/download-app', function(req,res) { 
-        //res.sendFile('./app/views/download-app.html'); 
         res.sendFile(path.join(__dirname, '../app/views', 'download-app.hyml'));
     });
     app.get('/app', function(req,res) { 
-        //res.sendFile('./app/views/download-app.html'); 
         res.sendFile(path.join(__dirname, '../app/views', 'download-app.html'));
     });
 

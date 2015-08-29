@@ -8,7 +8,6 @@ angular.module('avatech.system').controller('RegisterController',
   if ($stateParams.userHashId && $stateParams.userHashId != "") {
     Restangular.one('users/pending', $stateParams.userHashId).get()
     .then(function(){
-      console.log("hey!");
       $scope.isPending = true;
       $scope.userHashId = $stateParams.userHashId;
     },
@@ -18,6 +17,7 @@ angular.module('avatech.system').controller('RegisterController',
     });
   }
   
+  // todo: this needs to be re-implemented if we want education edition to work
   // if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
   //   $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
   //     .success(function (data) { 

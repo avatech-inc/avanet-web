@@ -55,7 +55,7 @@ angular.module('avatech').factory("Global",
                 else $location.path("/");
 
                 // init
-                _this.init();
+                _this._data.init();
             },
             logout: function() {
                 _this._data.user = null;

@@ -6,8 +6,6 @@ var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization'),
     _ = require('underscore');
 
-// -----------------------------------------------------------------
-
 var util = require('util');
 
 exports.create = function(req, res) {

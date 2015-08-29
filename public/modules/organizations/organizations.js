@@ -70,8 +70,6 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         });
 
         RestObject.getList('members').then(function (members) {
-            console.log(members);
-
             $scope.members = [];
             $scope.students = [];
             angular.forEach(members, function(member) {

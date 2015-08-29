@@ -115,15 +115,13 @@ module.exports = function(app, passport) {
     // get all orgs (admin only)
     app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
     app.get('/v1/orgs/search', auth.requireLogin, orgs.search);
-    app.get('/v1/orgs/:orgId', auth.requireLogin, orgs.show);
+    //app.get('/v1/orgs/:orgId', auth.requireLogin, orgs.show);
     app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
-
     // Organization Members
-
-    app.get('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_all);
+    //app.get('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_all);
     app.post('/v1/orgs/:orgId/members', auth.requireLogin, orgs.members_add);
-    app.put('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_update);
-    app.delete('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
+    //app.put('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_update);
+    //app.delete('/v1/orgs/:orgId/members/:memberId', auth.requireLogin, orgs.members_remove);
 
     // Observations
 

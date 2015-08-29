@@ -35,27 +35,14 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         console.log($scope.newOrgForm);
 
         Restangular.all('orgs').post($scope.newOrg).then(function(newOrg) {
-            console.log(newOrg);
-            if (newOrg.success != undefined && newOrg.success === false) {
-                // handle error
-                alert(newOrg.error);
-            }
-            else {
-                $location.path('orgs/' + newOrg._id);
-                if (!Global.orgs.length) Global.orgs = [];
-                Global.orgs.push({ name: newOrg.name, _id: newOrg._id });
-            }
-
-        }, function() {
-            // handle error
+            $location.path('orgs/' + newOrg._id);
+            if (!Global.orgs.length) Global.orgs = [];
+            Global.orgs.push({ name: newOrg.name, _id: newOrg._id });
+        }, 
+        // error
+        function(response) {
+            alert(response.data.message);
         });
-        // var org = new Organizations($scope.newOrg);
-        // org.$save(function(newOrg) {
-        //     if (newOrg.success && newOrg.success == false) {
-        //         // handle error
-        //     }
-        //     else $location.path('orgs/' + newOrg._id);
-        // });
     }
     $scope.members = [];
     $scope.students = [];

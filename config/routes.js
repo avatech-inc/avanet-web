@@ -45,9 +45,6 @@ module.exports = function(app, passport) {
 
     // Organizations
 
-    //app.put('/v1/orgs/:orgId', auth.requireLogin, orgs.update);
-    app.get('/v1/orgs/search', auth.requireLogin, orgs.search);
-
     app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
     app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 

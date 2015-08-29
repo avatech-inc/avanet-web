@@ -13,14 +13,14 @@ angular.module('avatech').directive('commentsNew', function($http, $timeout, $sc
         $('textarea.comment').mentionsInput({
           minChars: 100, // to disable, make 100 (otherwise, 2)
           onDataRequest:function (mode, query, callback) {
-            $http.get('/v1/users/search?query=' + query).then(function(response) {
+
+            Restangular.one("users").getList("search", { query: query }).then(function(response) {
               var results = [];
-              for (var i = 0; i < response.data.length; i++) {
+              for (var i = 0; i < response.length; i++) {
                 console.log(result);
-                var result = response.data[i];
+                var result = response[i];
                 results.push({ id: result._id, name: result.fullName, avatar: '', type: 'user' });
               }
-              //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
               callback.call(this, results);
             });
           }

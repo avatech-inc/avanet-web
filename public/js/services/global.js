@@ -53,6 +53,9 @@ angular.module('avatech').factory("Global",
             	}
                 // otherwise, go to home
                 else $location.path("/");
+
+                // init
+                _this.init();
             },
             logout: function() {
                 _this._data.user = null;
@@ -77,7 +80,6 @@ angular.module('avatech').factory("Global",
 
 	    		var user = localStorageService.get('user');
 
-                //var test = hey;
                 Rollbar.critical("test error!");
 
                 console.log("local storage user:");

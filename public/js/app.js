@@ -146,11 +146,6 @@ angular.module('avatech').run(
 
     // init global service
     Global.init();
-    //$rootScope.initPromise = Global.init();
-    // // todo: make this cleaner? maybe if orgs is null?
-    // if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-    //     $rootScope.orgsLoaded = true;
-    // });
 
     // init observations service
     Observations.init();

@@ -29,13 +29,6 @@ function ($scope, $rootScope, $location, $http, Global, Restangular) {
 
             $scope.validationError = null;
             Global.login(data.user, data.authToken);
-            Global.init();
-            //$rootScope.initPromise = Global.init();
-            // // todo: duplicate of app.js
-            // if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-            //     $rootScope.orgsLoaded = true;
-            // });
-
         }, 
         // on login error
         function(response) {

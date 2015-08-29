@@ -82,12 +82,6 @@ angular.module('avatech.system').controller('RegisterController',
             // success
             .then(function (data) {
                 Global.login(data.user, data.authToken);
-                Global.init();
-
-                // $rootScope.initPromise = Global.init();
-                // if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-                //     $rootScope.orgsLoaded = true;
-                // });
 
                 mixpanel.track("registered");
             }, 

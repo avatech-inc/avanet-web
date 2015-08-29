@@ -121,27 +121,29 @@ angular.module('avatech').factory("Global",
 
                 // get user from web
                 if (user && user._id) {
-                    console.log(user._id);
-                    var RestObject = Restangular.one('users', user._id);
-                    RestObject.get().then(function (_user) {
-                        if (_user._id) _this._data.setUser(_user);
+                    Restangular.one('users', user._id).get()
+                    .then(function (_user) {
+                        if (_user._id) {
+                            _this._data.setUser(_user);
+                            _this._data.orgs = _user.organizationss;
+                        }
                     });
 
                     // get user orgs
                     // todo: merge this with user (above)
-                    var promise = Restangular.all('orgs').getList();
-                    promise.then(function(orgs) {
-                        console.log("ORGS:");
-                        console.log(orgs);
+                    // var promise = Restangular.all('orgs').getList();
+                    // promise.then(function(orgs) {
+                    //     console.log("ORGS:");
+                    //     console.log(orgs);
 
-                        _this._data.orgs = orgs;
-                        // if (newOrg.success && newOrg.success == false) {
-                        //     // handle error
-                        // }
-                        // else $location.path('orgs/' + newOrg._id);
+                    //     _this._data.orgs = orgs;
+                    //     // if (newOrg.success && newOrg.success == false) {
+                    //     //     // handle error
+                    //     // }
+                    //     // else $location.path('orgs/' + newOrg._id);
 
-                    });
-                    return promise;
+                    // });
+                    // return promise;
                 }
 
 

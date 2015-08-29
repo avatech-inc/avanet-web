@@ -3,7 +3,8 @@ angular.module('avatech').controller('ObservationsController', ['$scope', '$q', 
 function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Global, Restangular, LocationSelectModal, Confirm, Lightbox) {
     $scope.global = Global;
 
-    $scope.obs = {};
+    $scope.obs = {}; 
+    if ($scope.global.orgs.length) $scope.obs.organization = $scope.global.orgs[0]._id;
 
     $scope.loaded = false;
 
@@ -261,15 +262,6 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
         if (oldVal != undefined)
             $scope.obs.secondaryTriggers = [];
     }, true);
-
-    // ORG
-    $scope.$watch("orgsLoaded",function(orgsLoaded){
-        if (orgsLoaded === true && $scope.obs && $scope.global.orgs.length > 0 ) {
-            if ($scope.obs.organization == null) 
-                $scope.obs.organization = $scope.global.orgs[0]._id;
-
-        }
-    },true);
 
     // LOCATION LAT/LNG INPUT
 

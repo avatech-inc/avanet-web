@@ -115,6 +115,9 @@ angular.module('avatech')
                     metaData: { },
                     user: { fullName: Global.user.fullName, _id: Global.user._id }
                 });
+
+                if ($scope.global.orgs.length) profile.organization = $scope.global.orgs[0]._id;
+
                 $scope.profile = angular.copy(profile);
                 $scope.loading = false;
             } else {
@@ -238,35 +241,6 @@ angular.module('avatech')
             }, 500);
         }, true);
 
-        // ORG
-        $scope.$watch("orgsLoaded",function(orgsLoaded){
-            if (orgsLoaded === true && $scope.profile && $scope.global.orgs.length > 0) {
-                console.log("ORGS HAVE BEEN LOADED!!!!!")
-                if ($scope.profile.organization == null) 
-                    $scope.profile.organization = $scope.global.orgs[0]._id;
-            }
-            // if (!newProfile) {
-            //     console.log(Global);
-            // }
-
-            // // calculate layer depth (and keep track of index)
-            // var runningDepth = $scope.profile.depth;
-            // angular.forEach($scope.profile.layers,function(layer, index){
-            //     runningDepth -= layer.height;
-            //     layer.depth = runningDepth;
-            //     layer.index = index;
-            // });
-            // // calculate views
-            // $scope.calculateViews();
-
-            // if ($scope.timer) $timeout.cancel($scope.timer);
-            // $scope.timer = $timeout(function(){
-            //     // if new, create
-            //     if ($scope._isNew) $scope.create();
-            //     // otherwise, save
-            //     else if ($scope.profile._id) $scope.update();
-            // }, 500);
-        },true);
 
         // DENSITY
 

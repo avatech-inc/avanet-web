@@ -82,39 +82,20 @@ angular.module('avatech.system').controller('RegisterController',
             // success
             .then(function (data) {
                 Global.login(data.user, data.authToken);
+                Global.init();
+
+                // $rootScope.initPromise = Global.init();
+                // if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
+                //     $rootScope.orgsLoaded = true;
+                // });
 
                 mixpanel.track("registered");
-
-                $rootScope.initPromise = Global.init();
-                if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-                    $rootScope.orgsLoaded = true;
-                });
             }, 
             // error
             function(response) {
                 $scope.showError = response.data.message;
                 $scope.scrollToError();
             });
-
-            //  $http.post("/v1/users/", newUser)
-            // .success(function (data) { 
-            //     console.log(data);
-            //     // if creation succesful, login
-            //     if (data.success == true) { 
-            //       Global.login(data.user, data.token);
-
-            //       mixpanel.track("registered");
-
-            //       $rootScope.initPromise = Global.init();
-            //       if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-            //           $rootScope.orgsLoaded = true;
-            //       });
-            //     }
-            //     else if (data.success == false) {
-            //         $scope.showError = data.error;
-            //         $scope.scrollToError();
-            //     }
-            // });
         }
     };
 

@@ -1,7 +1,8 @@
 <section ng-controller="LoginController" ng-cloak>
-		<div class="login-form">
 
-			<a href="/"><img class="logo" src="/img/logo_horizontal.png"/></a>
+		<img class="logo" src="/img/logo_horizontal.png"/>
+
+		<div class="login-form" ng-style="{ opacity: busy ? 0 : 1 }">
 
 			<div class="fade in alert alert-block alert-danger" ng-show="validationError" ng-switch="validationError">
 				<div ng-switch-when="badEntry">{{ 'login.invalid_entry' | translate }}</div>
@@ -9,6 +10,7 @@
 				<div ng-switch-when="disabled">{{ 'login.account_disabled' | translate }}</div>
 				<div ng-switch-default>{{ 'generic_error' | translate }}</div>
 			</div>
+
 			<form class="signin ng-pristine ng-valid" name="form" novalidate>
 				<p class="error"></p>
   				<div class="form-group">
@@ -30,5 +32,10 @@
 					<a href="/signup" style="margin-top: 32px;display: inline-block;font-size: 18px;color: #eee;font-weight: 100;">{{ 'login.signup' | translate }}</a>
 				</div>
 			</form>
+
+		</div>
+
+		<div ng-style="{ opacity: busy ? 1 : 0 }" style="position: absolute; top: 180px; color: rgba(255,255,255,.9); font-size: 60px; text-align: center; left: 0; right: 0; pointer-events:none; transition: opacity 200ms;">
+			<i class="fa fa-circle-o-notch fa-spin"></i>
 		</div>
 </section>

@@ -5,9 +5,7 @@ angular.module('avatech.system').controller('ResetPasswordController',
 	$scope.validToken = null;
 	$scope.successfulReset = false;
 
-    var restPasswordBase = Restangular.all('users/reset-password');
-
-    restPasswordBase.get($scope.forgotPasswordToken)
+    Restangular.one('users/forgot-password', $scope.forgotPasswordToken).get()
     // token found
     .then(function() {
         $scope.validToken = true;
@@ -28,10 +26,9 @@ angular.module('avatech.system').controller('ResetPasswordController',
     	// all good, proceed
  		$scope.validationError = null;
 
-        restPasswordBase.post({
-        	forgotPasswordToken: $scope.forgotPasswordToken, 
+        Restangular.one('users/forgot-password', $scope.forgotPasswordToken).customPOST({
         	password: $scope.password 
-    	})
+    	}, 'reset')
          // password reset success
         .then(function() {
             $scope.successfulReset = true;

@@ -26,10 +26,8 @@ function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
 
         // server auth
         Global.login($scope.email, $scope.password,
-        // success
-        function() {
-            $scope.success = true;
-        },  
+        // login success
+        function() { },  
         // login error
         function(message) {
             $timeout(function(){

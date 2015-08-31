@@ -84,9 +84,8 @@ angular.module('avatech.system').controller('RegisterController',
             Restangular.all('users').post(newUser)
             // success
             .then(function (data) {
-                Global.login(data.user, data.authToken);
-
                 mixpanel.track("registered");
+                Global.login(newUser.email, newUser.password);
             }, 
             // error
             function(response) {

@@ -235,7 +235,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         }
         else {
             //$http.post('/v1/users/' + $scope.htt, $scope.changePassword)
-            $scope.user.customPOST($scope.changePassword, 'change-password')
+            $scope.user.customPOST($scope.changePassword, 'password')
             // success
             .then(function (data) {
                 $scope.changePassword = {};

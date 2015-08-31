@@ -6,7 +6,6 @@ angular.module('avatech').factory("Global",
         _this._data = {
 
         	user: null,
-
             orgs: [],
 
             redirectUrl: null,
@@ -23,28 +22,47 @@ angular.module('avatech').factory("Global",
                 Restangular.one('users', _this._data.user._id).customPUT(_this._data.user);
             },
 
-            login: function(auth) {
-                localStorageService.set('auth', auth);
+            login: function(email, password, successCallback, errorCallback) {
+                Restangular.all('users/authenticate').post({ 
+                    email: email,
+                    password: password
+                })
+                // on login success
+                .then(function(auth) {
 
-                $http.defaults.headers.common['Auth-Token'] = auth.authToken;
-                // get user from server
-                Restangular.one('users', auth.userId).get()
-                .then(function (user) {
-                    window._user = user;
+                    if (successCallback) successCallback();
 
-                    // init
-                    _this._data.init(function() {
+                    localStorageService.set('auth', auth);
 
-                        // if redirectUrl available, go
-                        if (_this._data.redirectUrl) {
-                            var redirectUrl = _this._data.redirectUrl;
-                            _this._data.redirectUrl = null;
-                            $location.path(redirectUrl);
-                        }
-                        // otherwise, go to home
-                        else $location.path("/");
+                    $http.defaults.headers.common['Auth-Token'] = auth.authToken;
+                    // get user from server
+                    Restangular.one('users', auth.userId).get()
+                    .then(function (user) {
+                        window._user = user;
 
+                        // init
+                        _this._data.init(function() {
+
+                            // if redirectUrl available, go
+                            if (_this._data.redirectUrl) {
+                                var redirectUrl = _this._data.redirectUrl;
+                                _this._data.redirectUrl = null;
+                                $location.path(redirectUrl);
+                            }
+                            // otherwise, go to home
+                            else $location.path("/");
+
+                        });
                     });
+                }, 
+                // on login error
+                function(response) {
+
+                    if (errorCallback) {
+                        if (response.status == 401) errorCallback(response.data.message);
+                        else errorCallback("Server Error. Please try again");
+                    }
+
                 });
             },
             logout: function() {

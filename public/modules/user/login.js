@@ -1,47 +1,42 @@
 angular.module('avatech.system').controller('LoginController',
-function ($scope, $rootScope, $location, $http, Global, Restangular) {
+function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
     
     $scope.busy = false;
 
     $scope.submit = function() {
-        $scope.busy = true;
-        $scope.validationError = null;
 
         // browser autofill hack
         // todo: this doesn't seem to work in every case
         // todo: new way of doing it? just set $scope.email and password by jQuery value...
-        $("[ng-model]").each(function(index,el){
-            var ngModel = angular.element(el).data('$ngModelController');
-            var val = $(el).val();
-            ngModel.$setViewValue(val);
-        });
+        // $("[ng-model]").each(function(index,el){
+        //     var ngModel = angular.element(el).data('$ngModelController');
+        //     var val = $(el).val();
+        //     ngModel.$setViewValue(val);
+        // });
+        $scope.email = $(".signin #email").val();
+        $scope.password = $(".signin #password").val();
 
         // basic validation
         if (!$scope.email || $scope.email == "" || !$scope.password || $scope.password == "") {
-            $scope.busy = false;
             $scope.validationError = "badEntry";
             return;
         }
+
+        $scope.busy = true;
+
         // server auth
-        Restangular.all('users/authenticate').post({ 
-            email: $scope.email, 
-            password: $scope.password 
-        })
-        // on login success
-        .then(function(auth) {
-            Global.login(auth);
-        }, 
-        // on login error
-        function(response) {
-
-            if (response.status == 401)
-                $scope.validationError = response.data.message;
-            else
-                $scope.validationError = "Server Error. Please try again";
-            
-            $scope.password = "";
-            $scope.busy = false;
-
+        Global.login($scope.email, $scope.password,
+        // success
+        function() {
+            $scope.success = true;
+        },  
+        // login error
+        function(message) {
+            $timeout(function(){
+                $scope.validationError = message;
+                $scope.password = "";
+                $scope.busy = false;
+            },1000);
         });
     };
 });

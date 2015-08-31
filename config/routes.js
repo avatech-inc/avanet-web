@@ -27,31 +27,29 @@ module.exports = function(app) {
     app.get('/v1/all-observations', auth.requireLogin, profiles.all);
     app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
 
-    // Manual Profiles
+    // Manual Profiles (JUST crud)
     app.post('/v1/profiles', auth.requireLogin, profiles.create);
-    app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
+    app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
     app.delete('/v1/profiles/:profileId', auth.requireLogin, profiles.destroy);
 
-    // Device Profiles
-
-    app.get('/v1/tests', auth.requireLogin, tests.getAll);
-    app.post('/v1/tests', auth.requireLogin, tests.create);
-    app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
-    app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
-    app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
-    app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
-
-    // Avalanche Observations
-
+    // Avalanche Observations (JUST crud)
     app.post('/v1/observations', auth.requireLogin, obs.create);
     app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
     app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
     app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
 
+    // Device Profiles
+    // this handles both create and update
+    app.post('/v1/tests', auth.requireLogin, tests.create);
+    app.get('/v1/tests', auth.requireLogin, tests.getAll);
+    app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
+    app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
+    app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
+    app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
+
+
     // ---------------------------------------------------------
-
-
 
     // File Upload
 

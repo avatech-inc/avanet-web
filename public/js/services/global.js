@@ -18,48 +18,39 @@ angular.module('avatech').factory("Global",
             },
 
             setUserSetting: function(name, value) {
-                var newUser = Restangular.copy(_this._data.user);
-                newUser.settings[name] = value;
-                newUser.save();
-                _this._data.setUser(newUser);
+                if (_this._data.user.settings[name] && _this._data.user.settings[name] == value) return;
+                _this._data.user[name] = value;
+                Restangular.one('users', _this._data.user._id).customPUT(_this._data.user);
             },
 
-            login: function(user, token) {
-                localStorageService.set('user', user);
-                localStorageService.set('token', token);
-				_this._data.user = user;
+            login: function(auth) {
+                localStorageService.set('auth', auth);
 
-				$http.defaults.headers.common['Auth-Token'] = token;
+                $http.defaults.headers.common['Auth-Token'] = auth.authToken;
+                // get user from server
+                Restangular.one('users', auth.userId).get()
+                .then(function (user) {
+                    window._user = user;
 
-                var tracking_user ={
-                    name: user.fullName,
-                    username: user.fullName,
-                    email: user.email,
-                    id: user._id
-                };
-                Raven.setUserContext(tracking_user);
-                heap.identify(tracking_user);
-                Rollbar.configure({ payload: { person: tracking_user }});
-                mixpanel.identify(user._id);
-                tracking_user.$email = tracking_user.email; // for mixpanel
-                mixpanel.people.set(tracking_user);
-                mixpanel.track('login');
+                    // init
+                    _this._data.init(function() {
 
-                // if redirectUrl available, go
-                if (_this._data.redirectUrl) {
-                	var redirectUrl = _this._data.redirectUrl;
-                	_this._data.redirectUrl = null;
-                	$location.path(redirectUrl);
-            	}
-                // otherwise, go to home
-                else $location.path("/");
+                        // if redirectUrl available, go
+                        if (_this._data.redirectUrl) {
+                            var redirectUrl = _this._data.redirectUrl;
+                            _this._data.redirectUrl = null;
+                            $location.path(redirectUrl);
+                        }
+                        // otherwise, go to home
+                        else $location.path("/");
 
-                // init
-                _this._data.init();
+                    });
+                });
             },
             logout: function() {
                 _this._data.user = null;
                 _this._data.orgs = [];
+                localStorageService.remove('auth');
             	localStorageService.remove('user');
             	localStorageService.remove('token');
 
@@ -69,89 +60,139 @@ angular.module('avatech').factory("Global",
                 heap.identify();
                 mixpanel.track('logout');
                 mixpanel.identify();
-                Rollbar.configure({ payload: { person: { } } });
 
-	            //$state.transitionTo("login", null, {location:'replace'});
                 window.location.href = "/login";
             },
 
 
-	    	init: function() {
+	    	init: function(callback) {
 
-	    		var user = localStorageService.get('user');
+                _this._data.user = null;
+                _this._data.orgs = [];
 
-                Rollbar.critical("test error!");
+                Raven.setUserContext();
+                heap.identify();
+                mixpanel.identify();
 
-                console.log("local storage user:");
-                console.log(user);
+                delete $http.defaults.headers.common['Auth-Token'];
 
-                if (user) {
-                    var tracking_user ={
-                        name: user.fullName,
-                        username: user.fullName,
-                        email: user.email,
-                        id: user._id
-                    };
-                    Raven.setUserContext(tracking_user);
-                    heap.identify(tracking_user);
-                    mixpanel.identify(user._id);
-                    Rollbar.configure({ payload: { person: tracking_user }});
-                    tracking_user.$email = tracking_user.email; // for mixpanel
-                    mixpanel.people.set(tracking_user);
+	    		var auth = localStorageService.get('auth');
+                // if token exists, user is logged in
+                if (auth) {
+                    // set http header
+                    $http.defaults.headers.common['Auth-Token'] = auth.authToken;
+
+                    var user = window._user;
+                    if (user) {
+
+       //              // get user from server
+       //              Restangular.one('users', auth.userId).get()
+       //              .then(function (user) {
+                        // user defaults (if not set)
+                        // todo: is this still necessary?
+                        if (!user.settings) user.settings = {};
+                        if (!user.settings.tempUnits) user.settings.tempUnits = 0;
+                        if (!user.settings.distance) user.settings.distance = 0;
+                        if (!user.settings.elevation) user.settings.elevation = 0;
+                        if (!user.settings.fracture) user.settings.fracture = 0;
+
+                        // todo: check if this needs to be here (search where user.permissions is used)
+                        if (!user.permissions) user.permissions = {};
+
+                        // save locally
+                        _this._data.setUser(user);
+                        _this._data.orgs = user.organizations;
+
+                        // callback
+                        if (callback) callback();
+
+                        // tracking
+                        var tracking_user ={
+                            name: user.fullName,
+                            username: user.fullName,
+                            email: user.email,
+                            id: user._id
+                        };
+                        Raven.setUserContext(tracking_user);
+                        heap.identify(tracking_user);
+                        mixpanel.identify(user._id);
+                        tracking_user.$email = tracking_user.email; // for mixpanel
+                        mixpanel.people.set(tracking_user);
+       //              },
+       //              // error
+       //              function() {
+       //                  // todo: if this returns an error, logout?
+       //              });
+                    }
                 }
-                else {
-                    Raven.setUserContext();
-                    heap.identify();
-                    mixpanel.identify();
-                    Rollbar.configure({ payload: { person: { } } });
-                }
+
+
+                // if no userId in localstorage
+
+                // if (user) {
+                //     var tracking_user ={
+                //         name: user.fullName,
+                //         username: user.fullName,
+                //         email: user.email,
+                //         id: user._id
+                //     };
+                //     Raven.setUserContext(tracking_user);
+                //     heap.identify(tracking_user);
+                //     mixpanel.identify(user._id);
+                //     tracking_user.$email = tracking_user.email; // for mixpanel
+                //     mixpanel.people.set(tracking_user);
+                // }
+                // else {
+                //     Raven.setUserContext();
+                //     heap.identify();
+                //     mixpanel.identify();
+                // }
 
                 // temporary? need it just in case
-                if (user) {
-                    if (!user.settings) user.settings = {};
-                    if (!user.settings.tempUnits) user.settings.tempUnits = 0;
-                    if (!user.settings.distance) user.settings.distance = 0;
-                    if (!user.settings.elevation) user.settings.elevation = 0;
-                    if (!user.settings.fracture) user.settings.fracture = 0;
+                // if (user) {
+                //     if (!user.settings) user.settings = {};
+                //     if (!user.settings.tempUnits) user.settings.tempUnits = 0;
+                //     if (!user.settings.distance) user.settings.distance = 0;
+                //     if (!user.settings.elevation) user.settings.elevation = 0;
+                //     if (!user.settings.fracture) user.settings.fracture = 0;
+                //     if (!user.permissions) user.permissions = {};
+                // }
+               // _this._data.setUser(user);
 
-                    if (!user.permissions) user.permissions = {};
-                }
-                _this._data.setUser(user);
+                // var token = localStorageService.get('token');
+                // if (token) $http.defaults.headers.common['Auth-Token'] = token;
 
-                var token = localStorageService.get('token');
-                if (token) $http.defaults.headers.common['Auth-Token'] = token;
+                // // get user from web
+                // if (user && user._id) {
+                //     Restangular.one('users', user._id).get()
+                //     .then(function (_user) {
+                //         if (_user._id) {
+                //             _this._data.setUser(_user);
+                //             _this._data.orgs = _user.organizations;
 
-                // get user from web
-                if (user && user._id) {
-                    Restangular.one('users', user._id).get()
-                    .then(function (_user) {
-                        if (_user._id) {
-                            _this._data.setUser(_user);
-                            _this._data.orgs = _user.organizations;
+                //             console.log(_user.organizations);
+                //         }
+                //     });
 
-                            console.log(_user.organizations);
-                        }
-                    });
+                //     // get user orgs
+                //     // todo: merge this with user (above)
+                //     // var promise = Restangular.all('orgs').getList();
+                //     // promise.then(function(orgs) {
+                //     //     console.log("ORGS:");
+                //     //     console.log(orgs);
 
-                    // get user orgs
-                    // todo: merge this with user (above)
-                    // var promise = Restangular.all('orgs').getList();
-                    // promise.then(function(orgs) {
-                    //     console.log("ORGS:");
-                    //     console.log(orgs);
+                //     //     _this._data.orgs = orgs;
+                //     //     // if (newOrg.success && newOrg.success == false) {
+                //     //     //     // handle error
+                //     //     // }
+                //     //     // else $location.path('orgs/' + newOrg._id);
 
-                    //     _this._data.orgs = orgs;
-                    //     // if (newOrg.success && newOrg.success == false) {
-                    //     //     // handle error
-                    //     // }
-                    //     // else $location.path('orgs/' + newOrg._id);
-
-                    // });
-                    // return promise;
-                }
+                //     // });
+                //     // return promise;
+                // }
 
 
-		    	setInterval(_this._data._monitor, 100);
+		    	//setInterval(_this._data._monitor, 100);
 	    	},
             _monitor: function() {
                 // compare our local user to the localStorage user
@@ -165,6 +206,7 @@ angular.module('avatech').factory("Global",
                     //console.log(_this._data.user._id);
                     //console.log(user._id)
 
+                    // todo: review this
 	    			_this._data.user = user;
 	    			var token = localStorageService.get('token');
 	    			if (token) $http.defaults.headers.common['Auth-Token'] = token;

@@ -77,7 +77,7 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
 angular.module('avatech').config(function(RestangularProvider) {
     // set API base url
     //RestangularProvider.setBaseUrl('/v1/');
-    RestangularProvider.setBaseUrl('http://127.0.0.1:10010/v2/');
+    RestangularProvider.setBaseUrl(window.apiBaseUrl);
     // support mongodb "_id" format
     RestangularProvider.setRestangularFields({ id: "_id" });
 });
@@ -152,18 +152,11 @@ angular.module('avatech').run(
 
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
 
-        // close modals (todo: what is this from?)
+        // close all modals (todo: what is this from?)
         $modalStack.dismissAll();
 
-        //console.log("loading state:")
         if (!toState) return;
         if (toState.name == fromState.name) return;
-
-        // if modal, ignore
-        // if (toState.data.modal) {
-        //     console.log("IS MODAL!");
-        //     return;
-        // }
 
         // todo: kludgy way to get rid of tooltips. not ideal, but only solution for now
         $(".tooltip").remove();

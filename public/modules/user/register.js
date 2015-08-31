@@ -1,5 +1,5 @@
 angular.module('avatech.system').controller('RegisterController', 
-  function ($scope, $rootScope, $http, $stateParams, $location, Global, Restangular) {
+  function ($scope, $rootScope, $timeout, $http, $stateParams, $location, Global, Restangular) {
 
 	$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
 	$scope.successfulReset = false;
@@ -65,6 +65,12 @@ angular.module('avatech.system').controller('RegisterController',
         }
         else {
 
+            $scope.busy = true;
+
+            $('html,body').animate({
+              scrollTop: 0
+            }, 300);
+
             var newUser = {
                 fullName: $scope.reg.name,
                 email: $scope.reg.email,
@@ -89,8 +95,11 @@ angular.module('avatech.system').controller('RegisterController',
             }, 
             // error
             function(response) {
-                $scope.showError = response.data.message;
-                $scope.scrollToError();
+                $timeout(function(){
+                  $scope.busy = false;
+                  $scope.showError = response.data.message;
+                  $scope.scrollToError();
+                }, 1000);
             });
         }
     };

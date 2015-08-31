@@ -4,15 +4,9 @@ margin-bottom: 5px !important;
 }
 </style>
 <section ng-controller="RegisterController" ng-cloak>
-	<div class="login-form" style="width:380px;">
-		<a href="/"><img class="logo" src="/img/logo_horizontal.png"/></a>
+	<img class="logo" src="/img/logo_horizontal.png"/>
 
-		<!--<div class="fade in alert alert-block alert-danger" ng-show="validToken == false || error == 'invalid token'">
-			Your invitation has expired.<br/>Please <a href='mailto:support@avatechsafety.com'>contact support</a> for assistance.
-		</div>-->
-		<!--<div class="fade in alert alert-block alert-danger" ng-show="validationError">
-			{{validationError}}
-		</div>-->
+	<div class="login-form" style="width:380px;" ng-style="{ opacity: busy ? 0 : 1 }">
 
 		<div ng-if="org" style="margin-bottom:24px;">
 			<div style="text-align:center;color:#fff;font-size:40px;">{{ org.name }}</div>
@@ -363,17 +357,6 @@ margin-bottom: 5px !important;
 					    </div>
 					  </div>
 
-
-					  <!--<div class="form-group">
-					    <div class="col-sm-offset-3 col-sm-9">
-					      <div class="checkbox">
-					        <label>
-					          <input type="checkbox" ng-model="order.pro_isPro"> I certify that I am a snow professional and understand that the SP1 is exclusively a professional product
-					        </label>
-					      </div>
-					    </div>
-					  </div>-->
-
 					</div>
 
 			    </li>
@@ -398,4 +381,9 @@ margin-bottom: 5px !important;
   		</form>
 
 	</div>
+
+	<div ng-style="{ opacity: busy ? 1 : 0 }" style="position: absolute; top: 180px; color: rgba(255,255,255,.9); font-size: 60px; text-align: center; left: 0; right: 0; pointer-events:none; transition: opacity 200ms;">
+		<i class="fa fa-circle-o-notch fa-spin"></i>
+	</div>
+
 </section>

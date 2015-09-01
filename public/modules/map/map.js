@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, Restangular, mapLayers, PublishModal, snowpitExport, $templateRequest) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest) {
     $scope.global = Global;
 
     $rootScope.isDemo = false;
@@ -598,8 +598,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             newBaseLayer.addTo($scope.map);
             //newBaseLayer.bringToFront();
         }
-
+        // remove old layer from map (todo: should we keep it?)
         if ($scope.baseLayer) $scope.map.removeLayer($scope.baseLayer);
+
+        // keep track of base layer on scope
         $scope.baseLayer = newBaseLayer;
 
         // save to user settings
@@ -625,8 +627,22 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // add scale control to map
     //new L.control.scale().addTo($scope.map);
 
-    // set base map when map loads (this must be declared before map.setView is used)
-    $scope.map.on('load', function(e) {
+    // map load event must be defined before we set initial zoom/location)
+    var mapLoaded = $q.defer();
+    $scope.map.on('load', function(e) { mapLoaded.resolve(); });
+
+    // set initial location and zoom level
+    var defaultZoom = 13;
+    var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
+    if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
+    $scope.map.setView(initialLocation, defaultZoom);
+
+    // set base layer after map has been initialized and layers have been loaded from server
+    $q.all([
+        mapLoaded,
+        $scope.mapLayers.loaded
+    ]).then(function() {
+
         // get default layer based on location
         var defaultMap = "mbworld";
         var country = $scope.global.user.country;
@@ -645,19 +661,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         var baseMap = $scope.mapLayers.getLayerByAlias(savedMap);
         if (!baseMap) baseMap = defaultLayer;
-        if (baseMap) {
-            // setTimeout is needed to solve the bug where the zoom animation zooms in/out too much
-            setTimeout(function(){
-                $scope.setBaseLayer(baseMap);
-            });
-        }
-    });
 
-    // set initial location and zoom level
-    var defaultZoom = 13;
-    var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
-    if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
-    $scope.map.setView(initialLocation, defaultZoom);
+        // setTimeout is needed to solve that bug where the zoom animation is incorrect
+        setTimeout(function(){
+            $scope.setBaseLayer(baseMap);
+        });
+        
+    });
 
     $scope.addToMap = function(profile) {
         if (!profile.location) return;

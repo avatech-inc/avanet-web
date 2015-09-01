@@ -126,7 +126,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
 
     $scope.newSearch = function() {
         $scope.search = { query: "" };
-        $scope.focus('focusSearch');
+        //$scope.focus('focusSearch');
     }
     $scope.doSearch = function() {
         $timeout.cancel($scope.search.timer);
@@ -139,7 +139,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         $scope.search.timer = $timeout(function(){
             $scope.search.searching = true;
 
-            Restangular.one("users").getList("search", { query: $scope.search.query }).then(function(users) {
+            Restangular.all("users").getList({ query: $scope.search.query }).then(function(users) {
                 $scope.search.searching = false;
 
                 if (users.length == 0) {

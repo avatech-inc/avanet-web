@@ -14,7 +14,7 @@ angular.module('avatech').directive('commentsNew', function($http, $timeout, $sc
           minChars: 100, // to disable, make 100 (otherwise, 2)
           onDataRequest:function (mode, query, callback) {
 
-            Restangular.one("users").getList("search", { query: query }).then(function(response) {
+            Restangular.all("users").getList({ query: $scope.search.query }).then(function(response) {
               var results = [];
               for (var i = 0; i < response.length; i++) {
                 console.log(result);

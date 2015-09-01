@@ -18,7 +18,7 @@ angular.module('avatech').factory("Global",
 
             setUserSetting: function(name, value) {
                 if (_this._data.user.settings[name] && _this._data.user.settings[name] == value) return;
-                _this._data.user[name] = value;
+                _this._data.user.settings[name] = value;
                 Restangular.one('users', _this._data.user._id).customPUT(_this._data.user);
             },
 

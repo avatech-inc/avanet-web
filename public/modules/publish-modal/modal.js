@@ -134,7 +134,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
             $scope.search.timer = $timeout(function(){
                 $scope.search.searching = true;
 
-                Restangular.one("orgs").getList("search", { query: $scope.search.query }).then(function(users) {
+                Restangular.all("orgs").getList({ query: $scope.search.query }).then(function(orgs) {
                     $scope.search.searching = false;
 
                     // if (users.length == 0) {
@@ -155,7 +155,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
                     //     if (user.isMember == null) user.isMember = false;
                     // }
 
-                    if (!$scope.abortSearch) $scope.search.results = users;
+                    if (!$scope.abortSearch) $scope.search.results = orgs;
                 });            
 
             },400);

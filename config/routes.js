@@ -11,14 +11,10 @@ module.exports = function(app) {
     // NOT PORTED:
 
     // User
-
-    // app.get('/v1/users', auth.requireLogin, auth.requireAdmin, users.getAll);
     // app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
 
     // Organizations
-
     // app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
-    // app.get('/v1/orgs/all', auth.requireLogin, auth.requireAdmin, orgs.getAll);
 
     // ---------------------------------------------------------
 

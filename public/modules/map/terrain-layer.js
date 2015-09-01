@@ -188,14 +188,13 @@
             }
             else {
                 var url = L.Util.template('https://s3.amazonaws.com/avatech-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+                //var url = L.Util.template('http://10.1.10.165:8080/austriaTEST-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('http://10.1.10.165:8080/united_states-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('/tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('http://10.1.10.192:8080/united_states_dev-tiles/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 
                 //var url = L.Util.template('https://a.tiles.mapbox.com/v3/aj.sf-dem/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
                 //var url = L.Util.template('/tiles3/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
-
-                //console.log(url);
 
                 // var demImg = new Image();
                 // var demCtx;

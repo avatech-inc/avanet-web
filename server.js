@@ -1,6 +1,3 @@
-// init newrelic
-require('newrelic');
-
 var express = require('express');
 var fs = require('fs');
 

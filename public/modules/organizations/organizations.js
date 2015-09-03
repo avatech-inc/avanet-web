@@ -79,12 +79,9 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         member.remove();
         $scope.students.splice(index, 1);
     }
-    $scope.addMember = function(user) {
-        if (user.isMember) return;
-
-        Restangular.one('orgs', $stateParams.orgId)
-        .all('members')
-        .post({ user: user._id })
+    function addMember(userIdOrEmail) {
+        Restangular.one('orgs', $stateParams.orgId).all('members')
+        .post({ userIdOrEmail: userIdOrEmail })
         // success
         .then(function (member) {
             // add new member to  collection
@@ -95,21 +92,13 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
             console.log(member);
         });
     }
+    $scope.addMember = function(user) {
+        if (user.isMember) return;
+        addMember(user._id);
+    }
     $scope.inviteEmail = function() {
         if (!$scope.search.email) return;
-
-        Restangular.one('orgs', $stateParams.orgId)
-        .all('members')
-        .post({ email: $scope.search.email })
-        // success
-        .then(function (member) {
-            // add new member to  collection
-            $scope.members.push(member);
-        }
-        // error
-        , function(){
-            console.log(member);
-        });
+        addMember($scope.search.email);
     }
 
     $scope.allowMemberRemove = function(member) {

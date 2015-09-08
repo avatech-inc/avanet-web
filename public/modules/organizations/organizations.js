@@ -86,6 +86,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         .then(function (member) {
             // add new member to  collection
             $scope.members.push(member);
+            $scope.$apply();
         }
         // error
         , function(){

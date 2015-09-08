@@ -1,7 +1,9 @@
 angular.module('avatech.system').controller('RegisterController', 
   function ($scope, $rootScope, $timeout, $http, $stateParams, $location, Global, Restangular) {
 
-	$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
+	//$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
+  $scope.isPending = (!$stateParams.userHashId || $stateParams.userHashId == "") ? false : null;
+
 	$scope.successfulReset = false;
   $scope.email = "";
 
@@ -84,14 +86,15 @@ angular.module('avatech.system').controller('RegisterController',
                 password: $scope.reg.password,
 
                 userHashId: $scope.userHashId,
-                orgHashId: $stateParams.orgHashId
+                orgHashId: $stateParams.orgHashId,
+                userType: "pro"
             }
 
             Restangular.all('users').post(newUser)
             // success
             .then(function (data) {
                 mixpanel.track("registered");
-                Global.login(newUser.email, newUser.password);
+                Global.login(data.email, newUser.password);
             }, 
             // error
             function(response) {

@@ -1,12 +1,11 @@
 var async = require('async');
-var auth = require('./auth');
 var path = require('path');
 
 module.exports = function(app) {
 
-    var obs = require('../app/controllers/observations');
-    var profiles = require('../app/controllers/profiles');
-    var tests = require('../app/controllers/tests');
+    // var obs = require('../app/controllers/observations');
+    // var profiles = require('../app/controllers/profiles');
+    // var tests = require('../app/controllers/tests');
 
     // NOT PORTED:
 
@@ -20,29 +19,29 @@ module.exports = function(app) {
 
     // todo: these return ALL observation types - maybe replace this with "observations"
     // and rename "observations" to "avalanches"?
-    app.get('/v1/all-observations', auth.requireLogin, profiles.all);
-    app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
+    // app.get('/v1/all-observations', auth.requireLogin, profiles.all);
+    // app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
 
     // Manual Profiles (JUST crud)
-    app.post('/v1/profiles', auth.requireLogin, profiles.create);
-    app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
-    app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
-    app.delete('/v1/profiles/:profileId', auth.requireLogin, profiles.destroy);
+    // app.post('/v1/profiles', auth.requireLogin, profiles.create);
+    // app.get('/v1/profiles/:profileId', auth.requireLogin, profiles.show);
+    // app.put('/v1/profiles/:profileId', auth.requireLogin, profiles.update);
+    // app.delete('/v1/profiles/:profileId', auth.requireLogin, profiles.destroy);
 
     // Avalanche Observations (JUST crud)
-    app.post('/v1/observations', auth.requireLogin, obs.create);
-    app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
-    app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
-    app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
+    // app.post('/v1/observations', auth.requireLogin, obs.create);
+    // app.get('/v1/observations/:observationId', auth.requireLogin, obs.show);
+    // app.put('/v1/observations/:observationId', auth.requireLogin, obs.update);
+    // app.delete('/v1/observations/:observationId', auth.requireLogin, obs.destroy);
 
     // Device Profiles
     // this handles both create and update
-    app.post('/v1/tests', auth.requireLogin, tests.create);
-    app.get('/v1/tests', auth.requireLogin, tests.getAll);
-    app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
-    app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
-    app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
-    app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
+    // app.post('/v1/tests', auth.requireLogin, tests.create);
+    // app.get('/v1/tests', auth.requireLogin, tests.getAll);
+    // app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
+    // app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
+    // app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
+    // app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
 
 
     // ---------------------------------------------------------

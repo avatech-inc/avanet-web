@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular) {
     $scope.global = Global;
 
     $rootScope.isDemo = false;
@@ -817,12 +817,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         var bounds = $scope.map.getBounds();
         if (showLoader !== false) $scope.loadingNew = true;
 
-        // abort previous profile requests
+        // abort previous requests
         if ($scope.canceler) $scope.canceler.resolve();
         $scope.canceler = $q.defer();
 
         // zoom level
-        var verbose = ($scope.map.getZoom() > 7); 
+        //var verbose = ($scope.map.getZoom() > 7); 
 
         // padding in pixels (so we don't get cut-off map points)
         var padding = 5;
@@ -836,18 +836,19 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         point_sw = $scope.map.containerPointToLatLng(point_sw);
 
         // get obs from server
-        $http.get('/v1/all-observations', 
-        { params: { 
+        // todo: use 'since' ? use 'startDate'?
+        Restangular.all("observations")
+        .withHttpConfig({ timeout: $scope.canceler.promise })
+        .getList({
             nelat: point_ne.lat, nelng: point_ne.lng, 
             swlat: point_sw.lat, swlng: point_sw.lng, 
-            verbose: verbose
-          }, 
-          timeout: $scope.canceler.promise
-        }).success(function(profiles) {
+            verbose: false
+        })
+        .then(function(obs) {
 
             var d = new Date().getTime();
             // todo: make this like the "observations" service? (i.e. addorreplace)
-            $scope.profiles = profiles;
+            $scope.profiles = obs;
             $scope.filterProfiles();
 
             console.log("LOADED! " + (new Date().getTime() - d) + " ms");
@@ -855,6 +856,26 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.loadingProfiles = false;
             $scope.loadingNew = false;
         });
+
+        // $http.get('/v1/all-observations', 
+        // { params: { 
+        //     nelat: point_ne.lat, nelng: point_ne.lng, 
+        //     swlat: point_sw.lat, swlng: point_sw.lng, 
+        //     verbose: verbose
+        //   }, 
+        //   timeout: $scope.canceler.promise
+        // }).success(function(profiles) {
+
+        //     var d = new Date().getTime();
+        //     // todo: make this like the "observations" service? (i.e. addorreplace)
+        //     $scope.profiles = profiles;
+        //     $scope.filterProfiles();
+
+        //     console.log("LOADED! " + (new Date().getTime() - d) + " ms");
+
+        //     $scope.loadingProfiles = false;
+        //     $scope.loadingNew = false;
+        // });
     }
 
     if ($rootScope.isDemo === false) {

@@ -35,9 +35,9 @@
 
 		<!-- inject:css -->
 		  <link rel="stylesheet" href="/css/common.css">
+		  <link rel="stylesheet" href="/css/map-search/map-search.css">
 		  <link rel="stylesheet" href="/css/map/map.css">
 		  <link rel="stylesheet" href="/css/map/route-planning.css">
-		  <link rel="stylesheet" href="/css/map-search/map-search.css">
 		  <link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
 		  <link rel="stylesheet" href="/css/user/login.css">
 		  <!-- endinject -->
@@ -81,12 +81,6 @@
 		<!-- google maps 'geometry' API for geo calculations -->
 		<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
 
-
-		<!--   Leaflet Cluster Plugin 
-		<script src='//leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js'></script>-->
-		<!--<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
-		<link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />-->
-
     	<!-- Sentry / Raven -->
     	<script src="//cdn.ravenjs.com/1.1.18/jquery,native/raven.min.js"></script>
 
@@ -129,10 +123,11 @@
 		<script type="text/javascript" src='/js/lib/zlib.js'></script> 
 		<script type="text/javascript" src='/js/lib/png.js'></script> 
 
-		<!-- lodash
-		<script type="text/javascript" src='/lib/lodash/dist/lodash.js'></script> -->
 		<!-- underscore -->
 		<script type="text/javascript" src='/lib/underscore/underscore.js'></script> 
+
+		<!-- Leaflet PruneCluster -->
+		<script type="text/javascript" src='/js/lib/PruneCluster.js'></script>
 
 		<!-- turf.js -->
 		<script type="text/javascript"  src="/js/lib/turf.min.js" charset="utf-8"></script>

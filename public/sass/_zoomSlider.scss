@@ -1,0 +1,17 @@
+/* Adjustments to account for mapbox.css box-sizing rules */
+.leaflet-control-zoomslider-knob { width:14px; height:6px; }
+.leaflet-container .leaflet-control-zoomslider-body {
+  -webkit-box-sizing:content-box;
+     -moz-box-sizing:content-box;
+          box-sizing:content-box;
+}
+.leaflet-control-zoomslider-in:after,
+.leaflet-control-zoomslider-out:after
+ {
+ 	position: relative;
+    top: 3px;
+}
+.leaflet-control-zoomslider-knob {
+    width: 14px !important;
+    height: 5px !important;
+}

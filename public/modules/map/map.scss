@@ -85,14 +85,15 @@
 }
 
 /* popup close button */
-.leaflet-popup-close-button, .map-tooltip.closable .close {
-	background-position: -4px -56px;
-	width: 17px;
-	height: 17px;
+.leaflet-popup-close-button, 
+.map-tooltip.closable .close {
+	background-position: -4px -56px !important;
+	width: 17px !important;
+	height: 17px !important;
 	//background-color: #fff;
-	border-radius: 91px;
-	top: 5px;
-	right: 5px;
+	border-radius: 91px !important;
+	top: 5px !important;
+	right: 5px !important;
 	//display: none;
 }
 

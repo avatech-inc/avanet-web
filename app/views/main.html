@@ -63,13 +63,13 @@
 		<!-- end rollbar -->
 
 
-    	<!-- MapBox -->
-    	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.js'></script>
+    	<!-- MapBox / Leaflet -->
+    	<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
     	<script type="text/javascript">
     		L.mapbox.accessToken = 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg';
       		L.mapbox.config.FORCE_HTTPS = true;
     	</script>
-		<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
 
 		<!-- Leaflet Draw -->
 		<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
@@ -126,6 +126,9 @@
 
 		<script type="text/javascript" src='/js/lib/zlib.js'></script> 
 		<script type="text/javascript" src='/js/lib/png.js'></script> 
+
+		<!-- UTM-lat/lng conversion -->
+		<script type="text/javascript" src='/js/lib/utm.js'></script> 
 
 		<!-- underscore -->
 		<script type="text/javascript" src='/lib/underscore/underscore.js'></script> 
@@ -262,6 +265,11 @@
   		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+  		<script src="/modules/map/layers.js"></script>
+  		<script src="/modules/map/map.js"></script>
+  		<script src="/modules/map/route-planning.js"></script>
+  		<script src="/modules/map/terrain-layer.js"></script>
+  		<script src="/modules/map/terrain-worker.js"></script>
   		<script src="/modules/map-search/map-search.js"></script>
   		<script src="/modules/observations/observations.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>
@@ -276,11 +284,6 @@
   		<script src="/modules/snowpit-editor/snowpit-publish-modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-views.js"></script>
-  		<script src="/modules/map/layers.js"></script>
-  		<script src="/modules/map/map.js"></script>
-  		<script src="/modules/map/route-planning.js"></script>
-  		<script src="/modules/map/terrain-layer.js"></script>
-  		<script src="/modules/map/terrain-worker.js"></script>
   		<script src="/modules/tests/test-graphs.js"></script>
   		<script src="/modules/tests/test-preview-modal.js"></script>
   		<script src="/modules/tests/test-preview.js"></script>

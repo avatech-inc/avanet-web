@@ -173,7 +173,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 obsOnMap[profile.type + "_" + profile._id] = marker;
 
                 // add to heatmap
-                if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
+                //if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
 
             }
         });
@@ -928,36 +928,18 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         hoverDelay = $timeout(function(){
             $scope.hideMapButtons = !!profile;
 
-            $scope.mapLayer.eachLayer(function(marker) {
-
-                var className = "count-icon-" + marker.profile.type;
-                if (profile) className += ' inactive';
-
-                if (marker.options.icon.options.className.indexOf("selected") == -1) {
-                    marker.setIcon(L.divIcon({
-                        className: className,
-                        html: "",
-                        iconSize: [14, 14]
-                    }));
-                    marker.setZIndexOffset(-1000);
-                }
-
-                if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id && 
-
-                    marker.options.icon && 
-                    marker.options.icon.options &&
-                    marker.options.icon.options.className && 
-                    marker.options.icon.options.className.indexOf("selected") == -1) {
-
-                    marker.setIcon(L.divIcon({
-                        className: "count-icon-" + marker.profile.type + ' active',
-                        html: "",
-                        iconSize: [14, 14]
-                    }));
-                    marker.setZIndexOffset(1000);
-                }
-
-            });
+            if (profile) {
+                angular.forEach(obsOnMap, function(marker) {
+                    marker.filtered = true;
+                    if (profile._id == marker.data.observation._id) marker.filtered = false;
+                });
+            }
+            else {
+                angular.forEach(obsOnMap, function(marker) {
+                    marker.filtered = false;
+                });
+            }
+            pruneCluster.ProcessView();
         }, 120);
     }
 

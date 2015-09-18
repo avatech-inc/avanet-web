@@ -102,21 +102,6 @@ angular.module('avatech').factory("Global",
 
                     var user = window._user;
                     if (user) {
-
-       //              // get user from server
-       //              Restangular.one('users', auth.userId).get()
-       //              .then(function (user) {
-                        // user defaults (if not set)
-                        // todo: is this still necessary?
-                        if (!user.settings) user.settings = {};
-                        if (!user.settings.tempUnits) user.settings.tempUnits = 0;
-                        if (!user.settings.distance) user.settings.distance = 0;
-                        if (!user.settings.elevation) user.settings.elevation = 0;
-                        if (!user.settings.fracture) user.settings.fracture = 0;
-
-                        // todo: check if this needs to be here (search where user.permissions is used)
-                        if (!user.permissions) user.permissions = {};
-
                         // save locally
                         _this._data.setUser(user);
                         _this._data.orgs = user.organizations;

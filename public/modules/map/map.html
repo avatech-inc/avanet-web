@@ -538,8 +538,7 @@
 
 						<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>
 
-						<div bo-if="profile.type=='snowpit' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
-						<div bo-if="profile.type=='sp-profile'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
+						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 
 						<!--<div class='lineItem' bo-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
 							{{ ::profile.locationName }}
@@ -600,8 +599,7 @@
 
 						<div class='lineItem'><i class="fa fa-group"></i>{{profile.organization.name}}</div>
 
-						<div ng-if="profile.type=='snowpit' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
-						<div ng-if="profile.type=='sp-profile'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+						<div class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 
 						<div class='lineItem' ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.type == 'avy' ? profile.locationName : profile.metaData.location }}</div>
 						<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
@@ -646,8 +644,7 @@
 							<div ng-hide="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Last edited <span am-time-ago="profile.updated"></span></div>
 							<div ng-show="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Uploaded <span am-time-ago="profile.created"></span></div>
 
-							<div class="lineItem" ng-hide="profile.type=='sp-profile'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
-							<div class="lineItem" ng-show="profile.type=='sp-profile'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+							<div class="lineItem"><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 
 							<div class="lineItem" ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
 

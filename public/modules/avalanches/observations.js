@@ -189,11 +189,13 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
                 $scope.obs.sharedOrganizations = sharing.selectedOrgs;
                 $scope.obs.shareWithStudents = sharing.students;
 
+                $scope.obs.type = "avy";
+
                 console.log($scope.obs);
 
                 if ($scope.observationId == "new") {
                     Restangular.all('observations').post($scope.obs).then(function(newOrg) {
-                        console.log(newOrg);
+                        //console.log(newOrg);
                         // if (newOrg.success && newOrg.success == false) {
                         //     // handle error
                         // }
@@ -205,14 +207,13 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
                         $location.path('/')
                             .search('lat', $scope.obs.location[1])
                             .search('lng', $scope.obs.location[0]);
-
+                    // error
                     }, function() {
-                        // handle error
+
                     });
                 }
                 else {
-                    $scope.obs.save().then(function(){
-                        console.log("saved!!!!!!!!");
+                    $scope.obs.save().then(function() {
                          $location.path('/')
                             .search('lat', $scope.obs.location[1])
                             .search('lng', $scope.obs.location[0]);

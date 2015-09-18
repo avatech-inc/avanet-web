@@ -224,8 +224,50 @@ var formatters = {
     formatLatLng: function(point) {
         if (!point) return "--"
         var s = "";
-        s+= point[1].toFixed(7) + ", "
-        s+= point[0].toFixed(7)
+
+        if (point.lat && point.lng) {
+            s+= point.lat.toFixed(5) + ", "
+            s+= point.lng.toFixed(5)
+        }
+        else if (point.length == 2) {
+            s+= point[1].toFixed(5) + ", "
+            s+= point[0].toFixed(5)
+        }
+        else s = "--"
+
+        return s;
+    },
+    formatLatLngAsUTM: function(point) {
+        if (!point) return "--"
+        var s = "";
+
+        var lat, lng;
+        if (point.lat && point.lng) {
+            lat = point.lat;
+            lng = point.lng;
+        }
+        else if (point.length == 2) {
+            lat = point[1];
+            lng = point[0];
+        }
+
+        if (lat && lng) {
+            // calculate UTM zone
+            var zone = Math.floor((lng + 180.0) / 6) + 1;
+
+            // convert lat decimal degrees to UTM band
+            var band = (-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : "";
+
+            // get UTM
+            var xy = new Array(2);
+            LatLonToUTMXY (DegToRad(lat), DegToRad(lng), zone, xy);
+
+            // format
+            s += zone + band + " ";
+            s += xy[0].toFixed(0) + "E ";
+            s += xy[1].toFixed(0) + "N";
+        }
+        else s = "--"
         return s;
     },
     formatDate: function(date,time) {

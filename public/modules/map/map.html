@@ -504,7 +504,7 @@
 				</div>
 				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
 
-				<div bindonce ng-repeat="profile in $parent.filteredProfiles | orderBy: '-date' track by profile._id" 
+				<div bindonce ng-repeat="profile in ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" 
 
 					class="side-list-item short"
 
@@ -551,9 +551,9 @@
 
 				</div>
 
-				<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
+			<!-- 	<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
 				<div style="text-align:center;padding:30px;font-weight:100;font-size:16px;">No observations found matching<br/>your search criteria and within<br/>your current map view.</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
@@ -612,9 +612,9 @@
 					</a>
 
 				</div>
-				<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
+		<!-- 		<div ng-show="profiles.length > 0 && filteredProfiles.length == 0 && filteredDrafts.length != 0">
 				<div style="text-align:center;padding:30px;font-weight:100;font-size:16px;">No observations found matching<br/>your search criteria and within<br/>your current map view.</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div class="list-holder marginTop" scrollable 

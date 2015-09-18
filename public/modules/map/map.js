@@ -105,23 +105,34 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.searchQuery.publisher = angular.copy(defaultPublisher);
     }
 
-    // filtering
-    $scope.filteredProfiles = [];
-    $scope.filterProfiles = function() {
-        $scope.filteredProfiles = [];
-        angular.forEach($scope.profiles, function(profile) {
-            if ($scope.doSearch(profile)) $scope.filteredProfiles.push(profile);
+    $scope.searchObs = function() {
+        $scope._searchQuery = angular.copy($scope.searchQuery);
+        // hide all markers
+        angular.forEach(obsOnMap, function(marker) {
+            marker.filtered = true;
+            marker.data.filtered = true;
         });
+        // iterate through obs and filter
+        angular.forEach($scope.profiles,function(ob) {
+            ob.filtered = true;
+            if ($scope.doSearch(ob)) {
+                console.log("here!");
+                ob.filtered = false;
+                obsOnMap[ob._id].filtered = false;
+                obsOnMap[ob._id].data.filtered = false;
+            }
+        });
+        pruneCluster.ProcessView();
     }
     
     // debounce search
     var _searchTimeout;
     $scope.$watch('searchQuery',function(){
+        console.log("SEARCH!");
         if (_searchTimeout) $timeout.cancel(_searchTimeout);
         _searchTimeout = $timeout(function(){
-            $scope._searchQuery = angular.copy($scope.searchQuery);
-            $scope.filterProfiles();
-        },100);
+            $scope.searchObs();
+        }, 100);
     }, true);
 
     $scope.doSearch = function(profile){
@@ -146,14 +157,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     var obsOnMap = {};
     function plotObsOnMap() {
-        angular.forEach($scope.filteredProfiles,function(profile) {
+        angular.forEach($scope.profiles,function(profile) {
             // already on map
-            var existingMarker = obsOnMap[profile.type + "_" + profile._id];
+            var existingMarker = obsOnMap[profile._id];
             if (existingMarker) {
                 // if deleted, remove it from map and from list
                 if (profile.removed) {
                     pruneCluster.RemoveMarkers([existingMarker]);
-                    delete obsOnMap[profile.type + "_" + profile._id];
+                    delete obsOnMap[profile._id];
                 }
             }
             // not on map (ignore if removed)
@@ -170,7 +181,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 // add to map
                 pruneCluster.RegisterMarker(marker);
                 // keep track of all markers placed on map
-                obsOnMap[profile.type + "_" + profile._id] = marker;
+                obsOnMap[profile._id] = marker;
 
                 // add to heatmap
                 //if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
@@ -181,9 +192,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         pruneCluster.ProcessView();
     }
     // todo: debounce?
-    $scope.$watch('filteredProfiles',function(){
-        plotObsOnMap();
-    }, true);
+    // $scope.$watch('filteredProfiles',function(){
+    //     plotObsOnMap();
+    // }, true);
     
     // filters
 
@@ -860,10 +871,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // }
 
         // not working...
-        obsOnMap = {};
-        pruneCluster.RemoveMarkers();
-        pruneCluster.ProcessView();
-        plotObsOnMap();
+        // obsOnMap = {};
+        // pruneCluster.RemoveMarkers();
+        // pruneCluster.ProcessView();
+        // plotObsOnMap();
     });
 
     // keep track of location at cursor
@@ -927,22 +938,24 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if (hoverDelay) $timeout.cancel(hoverDelay);
         hoverDelay = $timeout(function(){
             $scope.hideMapButtons = !!profile;
-
+            // if ob is specified, only show that ob
             if (profile) {
                 angular.forEach(obsOnMap, function(marker) {
+                    // hide
                     marker.filtered = true;
+                    // show if matches filter
                     if (profile._id == marker.data.observation._id) marker.filtered = false;
                 });
             }
+            // if no ob is specified, reset to former value
             else {
                 angular.forEach(obsOnMap, function(marker) {
-                    marker.filtered = false;
+                    marker.filtered = marker.data.filtered;
                 });
             }
             pruneCluster.ProcessView();
-        }, 120);
-    }
-
+        }, 100);
+    };
 
     $scope.$on('resizeMap', function() { 
         $timeout(function() { $scope.map.invalidateSize(); });
@@ -1044,7 +1057,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             var d = new Date().getTime();
             // todo: make this like the "observations" service? (i.e. addorreplace)
             $scope.profiles = obs;
-            $scope.filterProfiles();
+            plotObsOnMap();
+            $scope.searchObs();
 
             console.log("LOADED! " + (new Date().getTime() - d) + " ms");
 

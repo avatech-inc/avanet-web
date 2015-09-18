@@ -506,7 +506,7 @@
 
 				<div bindonce ng-repeat="profile in $parent.filteredProfiles | orderBy: '-date' track by profile._id" 
 
-					class="side-list-item"
+					class="side-list-item short"
 
 					ng-click="href('/obs/' + profile._id)" 
 
@@ -541,14 +541,13 @@
 						<div bo-if="profile.type=='snowpit' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
 						<div bo-if="profile.type=='sp-profile'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 
-						<div class='lineItem' bo-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
-							<span bo-if="profile.type == 'avy'">{{ ::profile.locationName }}</span>
-							<span bo-if="profile.metaData.location">{{ ::profile.metaData.location }}</span>
+						<!--<div class='lineItem' bo-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
+							{{ ::profile.locationName }}
 						</div>
 						<div class="lineItem" bo-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
 							<span bo-if="profile.location.length">{{ ::profile.location[1] }}, {{ ::profile.location[0] }}</span>
 							<span bo-if="!profile.location || profile.location.length == 0">{{ 'no_location' | translate }}</span>
-						</div>
+						</div>-->
 
 				</div>
 

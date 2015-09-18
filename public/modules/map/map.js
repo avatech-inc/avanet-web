@@ -4,9 +4,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $rootScope.isDemo = false;
     $scope.routeEditMode = false;
 
-    if ($rootScope.isDemo) {
-        mixpanel.track("demo");
-    }
+    if ($rootScope.isDemo) mixpanel.track("demo");
 
     $scope.formatters = snowpitExport.formatters;
 
@@ -145,43 +143,47 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // debounce plotting of filteredProfiles on map
     var _mapTimeout;
+
+    var obsOnMap = {};
+    function plotObsOnMap() {
+        angular.forEach($scope.filteredProfiles,function(profile) {
+            // already on map
+            var existingMarker = obsOnMap[profile.type + "_" + profile._id];
+            if (existingMarker) {
+                // if deleted, remove it from map and from list
+                if (profile.removed) {
+                    pruneCluster.RemoveMarkers([existingMarker]);
+                    delete obsOnMap[profile.type + "_" + profile._id];
+                }
+            }
+            // not on map (ignore if removed)
+            else if (!profile.removed) {
+
+                var marker = new PruneCluster.Marker(profile.location[1], profile.location[0]);
+
+                // associate profile with marker
+                marker.data.observation = profile;
+                
+                // set observation type
+                //marker.category = 0;
+
+                // add to map
+                pruneCluster.RegisterMarker(marker);
+                // keep track of all markers placed on map
+                obsOnMap[profile.type + "_" + profile._id] = marker;
+
+                // add to heatmap
+                if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
+
+            }
+        });
+        // redraw prune cluster
+        pruneCluster.ProcessView();
+    }
+    // todo: debounce?
     $scope.$watch('filteredProfiles',function(){
-        if (_mapTimeout) $timeout.cancel(_mapTimeout);
-        _mapTimeout = $timeout(function() {
-
-            var allMarkers = {};
-            $scope.mapLayer.eachLayer(function(marker) { 
-                allMarkers[marker.profile._id] = marker;
-            });
-
-            var allProfileIds = [];
-            angular.forEach($scope.filteredProfiles,function(profile) {
-                allProfileIds.push(profile._id);
-                var marker = allMarkers[profile._id];
-                // if not on map, add to map
-                if (!marker) {
-                    $scope.addToMap(profile);
-                }
-                // if already on map, make it visible
-                else {
-                    marker.setOpacity(1);
-                    marker._icon.style.pointerEvents = "";
-                }
-            });
-
-            // if not in list, make invisible
-            $scope.mapLayer.eachLayer(function(marker) {
-                if(allProfileIds.indexOf(marker.profile._id) == - 1 && marker.options && marker.options.icon && marker.options.icon.options &&
-                    marker.options.icon.options.className) {
-
-                    marker.setOpacity(0);
-                    marker._icon.style.pointerEvents = "none";
-                }
-            });
-
-        }, 300);
-
-    },true);
+        plotObsOnMap();
+    }, true);
     
     // filters
 
@@ -596,7 +598,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // add new layer to map
         if (newBaseLayer) {
             newBaseLayer.addTo($scope.map);
-            newBaseLayer.bringToFront();
+            //newBaseLayer.bringToFront();
         }
         // remove old layer from map (todo: should we keep it?)
         if ($scope.baseLayer) $scope.map.removeLayer($scope.baseLayer);
@@ -622,7 +624,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.mapLayer = L.mapbox.featureLayer().addTo($scope.map);
 
     // add zoom control to map
-    new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
+    //new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
+    L.control.zoomslider({ position: 'bottomright' }).addTo($scope.map);
 
     // add scale control to map
     //new L.control.scale().addTo($scope.map);
@@ -630,6 +633,248 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // map load event must be defined before we set initial zoom/location)
     var mapLoaded = $q.defer();
     $scope.map.on('load', function(e) { mapLoaded.resolve(); });
+
+    // setup heatmap
+    var heatMap = L.heatLayer([], {
+        radius: 10, blur: 15, 
+        maxZoom: $scope.map.getZoom() 
+    }).addTo($scope.map);
+
+    $scope.detailedZoomMin = 9;
+    $scope.map.on('zoomend', function(e) {
+        var zoom = $scope.map.getZoom();
+        if (zoom < $scope.detailedZoomMin) {
+            // show heatmap
+            heatMap.setOptions({
+                radius: 10, blur: 15,
+                maxZoom: (zoom + (zoom / 2))
+            });
+            // console.log("ZOOM:");
+            // console.log($scope.map.getZoom() + 4)
+            // console.log("showing heatmap. maxzoom = " + $scope.map.getZoom())
+            // hide markers
+        }
+        else {
+            // hide heatmap
+            heatMap.setOptions({
+                radius: 1, blur: 1, maxZoom: 20
+            });
+            // show markers
+        }
+
+        // only show map on lower zoom levels
+        // if (zoom < 9 ) {
+        //     //heatMap.setOpacity(.9);
+        // }
+        //else heatMap.setOpacity(0);
+
+        // if (zoom < 11) pruneCluster.Cluster.Size = 14;
+        // else if (zoom < 10) pruneCluster.Cluster.Size = 14;
+        // else if (zoom < 9) pruneCluster.Cluster.Size = 14;
+        // else if (zoom < 8) pruneCluster.Cluster.Size = 13;
+        // else if (zoom < 7) pruneCluster.Cluster.Size = 12;
+        // else if (zoom < 6) pruneCluster.Cluster.Size = 11;
+        // else if (zoom < 5) pruneCluster.Cluster.Size = 10;
+        // else if (zoom < 4) pruneCluster.Cluster.Size = 9;
+        // else if (zoom < 3) pruneCluster.Cluster.Size = 8;
+    });
+
+    // setup clustering  
+    var pruneCluster = new PruneClusterForLeaflet(); //30, 20);
+    // console.log(pruneCluster.Cluster.Margin);
+    pruneCluster.Cluster.Size = 8; 
+    $scope.map.addLayer(pruneCluster);
+    // $scope.map.on('zoomend', function(e) {
+    //     // set prunecluster threshold
+    //     var zoom = $scope.map.getZoom();
+    //     console.log("zoom: " + zoom);
+
+    //     // if (zoom < 11) pruneCluster.Cluster.Size = 14;
+    //     // else if (zoom < 10) pruneCluster.Cluster.Size = 14;
+    //     // else if (zoom < 9) pruneCluster.Cluster.Size = 14;
+    //     // else if (zoom < 8) pruneCluster.Cluster.Size = 13;
+    //     // else if (zoom < 7) pruneCluster.Cluster.Size = 12;
+    //     // else if (zoom < 6) pruneCluster.Cluster.Size = 11;
+    //     // else if (zoom < 5) pruneCluster.Cluster.Size = 10;
+    //     // else if (zoom < 4) pruneCluster.Cluster.Size = 9;
+    //     // else if (zoom < 3) pruneCluster.Cluster.Size = 8;
+    // });
+
+    $scope.clustersize = 8;
+    $scope.$watch('clustersize', function() {
+        pruneCluster.Cluster.Size = parseInt($scope.clustersize);
+        //console.log(pruneCluster.Cluster.Margin);
+        pruneCluster.ProcessView();
+        heatMap.setOptions({
+            radius: 10,
+            blur: 15,
+            maxZoom: $scope.map.getZoom()
+        });
+    }, true)
+
+    // render observation icons
+    pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
+        // detailed mode
+        if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
+            // set marker icon based on observation type
+            leafletMarker.setIcon(L.divIcon({
+                //className: 'count-icon-' + data.observation.type,
+                className: 'count-icon-test',
+                html: "",
+                iconSize: [14, 14]
+            }));
+
+            // clear existing bindings
+            leafletMarker.off('click');
+
+            // show popup on click
+            leafletMarker.on('click', function (e) {
+                var existingPopup = leafletMarker.getPopup();
+                // if popup doesn't exist, create it
+                if (!existingPopup) {
+                    // create scope for popup (true indicates isolate scope)
+                    var newScope = $scope.$new(true);
+                    newScope.profile = data.observation;
+                    // bind scope to pre-compiled popup template
+                    $scope.compiledPopup(newScope, function(clonedElement) {
+                        // bind popup with compiled template html
+                        leafletMarker.bindPopup(clonedElement[0], {
+                            className: 'popup-' + data.observation.type
+                        });
+                        // remove default click event (to disable opening of popup on click)
+                        // leafletMarker.off('click');
+
+                        // // new click event should load profile
+                        // leafletMarker.on('click', function(e) {
+                        //     //e.originalEvent.preventDefault();
+
+                        //     $location.path('/a/' + data.observation._id);
+                        //     $scope.$apply();
+                        // });
+                    });
+                    $scope.$apply();
+                    this.openPopup();
+                }
+            });
+        }
+        // heatmap mode
+        else {
+
+            // if single icon, style as cluster icon
+            leafletMarker.setIcon(L.divIcon({
+                className: 'prunecluster',
+                html: "<div><span>1</span></div>",
+                iconSize: [30, 30]
+            }));
+
+            // clear existing bindings
+            leafletMarker.off('click');
+
+            // zoom in on click
+            leafletMarker.on('click', function (e) {
+                $scope.map.setView(e.latlng, 11, { animate: true });
+            });
+
+        }
+    };
+
+    // render observation cluster icons
+    pruneCluster.BuildLeafletCluster = function(cluster, position) {
+        console.log("BUILDING CLUSTER FOR ZOOM LEVEL " + $scope.map.getZoom());
+        // create icon
+        var icon = pruneCluster.BuildLeafletClusterIcon(cluster);
+
+        // if in detailed mode, style icon accordingly
+        if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
+            icon.options.className += " detailed";
+        }
+         
+        // create marker
+        var m = new L.Marker(position, { icon: icon });
+
+          m.on('click', function() {
+            // Compute the  cluster bounds (it's slow : O(n))
+            var markersArea = pruneCluster.Cluster.FindMarkersInArea(cluster.bounds);
+            var b = pruneCluster.Cluster.ComputeBounds(markersArea);
+
+            if (b) {
+              var bounds = new L.LatLngBounds(
+                new L.LatLng(b.minLat, b.maxLng),
+                new L.LatLng(b.maxLat, b.minLng));
+
+              var zoomLevelBefore = pruneCluster._map.getZoom();
+              var zoomLevelAfter = pruneCluster._map.getBoundsZoom(bounds, false, new L.Point(20, 20, null));
+
+              // If the zoom level doesn't change
+              if (zoomLevelAfter === zoomLevelBefore) {
+                // Send an event for the LeafletSpiderfier
+                pruneCluster._map.fire('overlappingmarkers', {
+                  cluster: pruneCluster,
+                  markers: markersArea,
+                  center: m.getLatLng(),
+                  marker: m
+                });
+
+                pruneCluster._map.setView(position, zoomLevelAfter);
+              }
+              else {
+                pruneCluster._map.fitBounds(bounds);
+              }
+            }
+          });
+          m.on('mouseover', function() {
+            //do mouseover stuff here
+          });
+          m.on('mouseout', function() {
+            //do mouseout stuff here
+          });
+
+          return m;
+    };
+
+    // re-render observation icons when zoom level is changed
+    $scope.map.on('zoomend', function(e) {
+        // todo: only do this when zoom level change is significant ($scope.detailedZoomMin)
+        // if ($scope.map.getZoom() == ($scope.detailedZoomMin - 1)) {
+        //     console.log("DETAIL MODE OFF");
+        // }
+        // else if ($scope.map.getZoom() == $scope.detailedZoomMin) {
+        //     console.log("DETAIL MODE ON");
+        // }
+        // pruneCluster.ProcessView();
+        // pruneCluster.RedrawIcons();
+        // $scope.$apply();
+
+        // remove everything from map
+        // pruneCluster.ProcessView();
+
+        // var markerArray = [];
+        // for(var i in obsOnMap) {
+        //     markerArray.push(obsOnMap[i]);
+        // } 
+        //console.log("ZOOM END! " + $scope.map.getZoom());
+        // pruneCluster.ProcessView();
+        // plotObsOnMap();
+        // for (var i = 0; i < pruneCluster.Cluster._markers.length; i++) {
+        //     pruneCluster.Cluster._markers[i].data.forceIconRedraw = true;
+        // }
+
+        // not working...
+        obsOnMap = {};
+        pruneCluster.RemoveMarkers();
+        pruneCluster.ProcessView();
+        plotObsOnMap();
+    });
+
+    // keep track of location at cursor
+    $scope.map.on('mousemove', function(e) {
+        $scope.mapCursorLocation = e.latlng;
+        $scope.$apply();
+    });
+    $scope.map.on('mouseout', function(e) {
+        $scope.mapCursorLocation = null;
+        $scope.$apply();
+    });
 
     // set initial location and zoom level
     var defaultZoom = 13;
@@ -668,40 +913,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
 
     });
-
-    $scope.addToMap = function(profile) {
-        if (!profile.location) return;
-
-        var point = [profile.location[1],profile.location[0]];
-
-        // todo: check if point is within map bounds
-
-        var marker = L.marker(point, {
-            icon: L.divIcon({
-                className: 'count-icon-' + profile.type,
-                html: "",
-                iconSize: [14, 14]
-            })
-        });
-
-        // associate profile with marker
-        marker.profile = profile;
-
-        // create scope for popup (true indicates isolate scope)
-        var newScope = $scope.$new(true);
-        newScope.profile = profile;
-
-        // bind scope to pre-compiled popup template
-        $scope.compiledPopup(newScope, function(clonedElement) {
-
-            marker.bindPopup(clonedElement[0], {
-                className: 'popup-' + profile.type,
-                //minWidth: 180,
-            });
-        });
-
-        marker.addTo($scope.mapLayer);
-    }
 
     $scope.closeThis = function($event) {
         $event.preventDefault();
@@ -808,7 +1019,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // on map search select
     $scope.mapSearchSelect = function(location) {
         if (location.lat && location.lng)
-            $scope.map.setView([location.lat,location.lng], defaultZoom,{ animate: true});
+            $scope.map.setView([location.lat,location.lng], 
+                11, // zoom
+                { animate: true});
     }
 
     // load profiles
@@ -878,7 +1091,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // });
     }
 
+    // handle loading of observations
     if ($rootScope.isDemo === false) {
+
         $scope.loadingProfiles = true;
         $scope.loadProfiles(false);
         $scope.loadMyProfiles();
@@ -893,16 +1108,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $timeout.cancel($scope.loadProfilesTimer);
             $scope.loadProfilesTimer = $timeout(function(){
                 $scope.loadProfiles();
-            }, 2000);
+            }, 300);
         });
 
         $scope.map.on('zoomend', function() {
             $timeout.cancel($scope.loadProfilesTimer);
             $scope.loadProfilesTimer = $timeout(function(){
                 $scope.loadProfiles();
-            }, 2000);
+            }, 300);
             mixpanel.track("zoom", $scope.map.getZoom());
         });
+
     }
 
     // make sure map loads properly
@@ -1025,6 +1241,38 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         up: 4,
         down: 10
     }
+
+    // temporary demo stuff
+    // if ($rootScope.isDemo) {
+    //     var markers = [
+    //         {lat: 40.602484146302075, lng: -111.67482376098631},
+    //         {lat: 40.59753131967109, lng: -111.6844367980957},
+    //         {lat: 40.58254026662807, lng: -111.68289184570312},
+    //         {lat: 40.60287514330199, lng: -111.66091918945312},
+    //         {lat: 40.60261447888953, lng: -111.62675857543945},
+    //         {lat: 40.597009948152916, lng: -111.63087844848633},
+    //         {lat: 40.58645130010923, lng: -111.64392471313475},
+    //         {lat: 40.57967203006171, lng: -111.65594100952148},
+    //         {lat: 40.60105047106781, lng: -111.64976119995117},
+    //         {lat: 40.590622817080714, lng: -111.65130615234375},
+    //         {lat: 40.59635822803742, lng: -111.66864395141602},
+    //         {lat: 40.58684239087908, lng: -111.67516708374023},
+    //         {lat: 40.57458712662696, lng: -111.66641235351562},
+    //         {lat: 40.57328324298059, lng: -111.64392471313475},
+    //         {lat: 40.587103116788455, lng: -111.62847518920898},
+    //         {lat: 40.57915051929101, lng: -111.61645889282227},
+    //     ]
+    //     for (var i = 0; i < markers.length; i++) {
+    //         var newMarker = new L.marker(markers[i], { icon: new L.divIcon({
+    //             className: 'flag-icon',
+    //             html: '<i class="fa fa-flag"></i>',
+    //             iconSize: [16, 16]
+    //         }) } ).addTo($scope.map);
+
+    //         newMarker.bindPopup("<div style='padding:10px;padding-right:12px;'><b style='color:red;font-weight:bold;font-size:17px;    margin-bottom: 6px; display: inline-block;'><i class='fa fa-flag'></i>&nbsp;&nbsp;RED FLAG ALERT</b><br/><ul style='margin-bottom: 2px;padding-left: 20px;font-size:16px;'><li>12 inches of new snow</li><li>Wind loading reported in area</ul></div>")
+    //     }
+
+    // }
 
 
 });

@@ -1,4 +1,64 @@
 <section ng-controller="MapController">
+<style>
+.flag-icon {
+    color: red !important;
+    border: 2px solid red;
+    background: #fff;
+    border-radius: 200px;
+    width: 24px !important;
+    height: 24px !important;
+    text-align: center;
+}
+
+.leaflet-marker-icon.prunecluster {
+	transition: all 150ms;
+	background: transparent !important;
+	margin-left: -15px !important;
+    margin-top: -15px !important;
+    width: 30px !important;
+    height: 30px !important;
+    text-shadow: 
+    -1px -1px 0px #fff,
+    -1px 1px 0px #fff,
+    1px -1px 0px #fff,
+    1px 1px 0px #fff,
+
+    0px 0px 5px #000
+    ;
+}
+.leaflet-marker-icon.prunecluster div {
+	background: transparent !important;
+	margin: 0 !important;
+    height: 30px !important;
+    width: 30px !important;
+}
+.leaflet-marker-icon.prunecluster div span {
+    line-height: 30px !important;
+}
+.leaflet-marker-icon.prunecluster:hover {
+	background: rgba(255,255,255,.5) !important;
+}
+
+.leaflet-heatmap-layer {
+	opacity: 0.8;
+}
+
+
+
+
+.leaflet-marker-icon.prunecluster.detailed {
+	background: #fff !important;
+	border: 2px solid rgba(0,0,0,.5) !important;
+	text-shadow: none !important;
+}
+.leaflet-marker-icon.prunecluster.detailed div {
+    height: 26px !important;
+    width: 26px !important;
+}
+.leaflet-marker-icon.prunecluster.detailed div span {
+    line-height: 26px !important;
+}
+</style>
 	<section ng-hide="isFullScreen()" >
 		<div id="map-header" ng-hide="isDemo">
 
@@ -7,16 +67,16 @@
 				  <button type="button" class="btn btn-default dropdown-toggle">
 				  	<span>
 				  		<span style="margin-right:10px;">{{ 'type' | translate }}</span>
-				    	<div ng-repeat="type in ['profile','test','avy']" class="circle {{type}} {{ searchQuery.type[type] ? '' : 'empty' }}" style="position:relative;top:1px;"></div>
+				    	<div ng-repeat="type in ['snowpit','sp-profile','avy']" class="circle {{type}} {{ searchQuery.type[type] ? '' : 'empty' }}" style="position:relative;top:1px;"></div>
 				    </span>
 				    <span class="caret"></span>
 				  </button>
 			      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
 			    			
-				    	<li ng-click="type_select('profile')"><a>
+				    	<li ng-click="type_select('snowpit')"><a>
 				    	<div class="circle profile {{ searchQuery.type.profile ? '' : 'empty' }}"></div> {{ 'snowpit' | translate }}</a></li>
 
-				    	<li ng-click="type_select('test')"><a>
+				    	<li ng-click="type_select('sp-profile')"><a>
 				    	<div class="circle test {{ searchQuery.type.test ? '' : 'empty' }}"></div> {{ 'sp1_profile' | translate }}</a></li>
 
 				    	<li ng-click="type_select('avy')"><a>
@@ -159,6 +219,9 @@
 					    step="1">
 					</slider-new>
 			        </a></li></ul>
+
+			        <input ng-model="clustersize" type="number"/>
+			        {{ map.getZoom() }}
 			    </div>
 
 				<!--<div class="btn-group filter search">
@@ -337,6 +400,11 @@
 
 			        </a></li></ul>
 			    </div>
+
+			    <div style="background:rgba(255,255,255,.5);display:inline-block;" ng-show="mapCursorLocation">
+			    {{ formatters.formatLatLng(mapCursorLocation) }}
+			    {{ formatters.formatLatLngAsUTM(mapCursorLocation) }}
+			    </div>
 			</div>
 
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
@@ -375,10 +443,10 @@
 					  <button type="button" class="btn btn-default dropdown-toggle" style="border: none; color: #fff; padding: 0; font-size: 11px; font-weight: 500; background: #444; height: 26px; margin-top: 6px; line-height: 26px; border-top-right-radius: 99px; border-bottom-right-radius: 99px; padding-right: 10px;">
 					  	<span style="padding-left:4px;">
 
-					    	<span ng-show="type_unpublished == 'profile'">
+					    	<span ng-show="type_unpublished == 'snowpit'">
 					    	<div style="position:relative;top:1px;" class="circle profile"></div> Snowpits</span>
 
-					    	<span ng-show="type_unpublished == 'test'">
+					    	<span ng-show="type_unpublished == 'sp-profile'">
 					    	<div style="position:relative;top:1px;" class="circle test"></div> SP1 Profiles</span>
 
 					    	<span ng-show="type_unpublished == 'avy'">
@@ -389,10 +457,10 @@
 					  </button>
 				      	<ul class="dropdown-menu listSelect" role="menu" style="min-width:120px !important;height:auto;z-index:2000;">
 				    			
-					    	<li ng-click="set_type_unpublished('profile')" close-dropdown-on-click><a>
+					    	<li ng-click="set_type_unpublished('snowpit')" close-dropdown-on-click><a>
 					    	<div class="circle profile"></div> Snowpits</a></li>
 
-					    	<li ng-click="set_type_unpublished('test')" close-dropdown-on-click><a>
+					    	<li ng-click="set_type_unpublished('sp-profile')" close-dropdown-on-click><a>
 					    	<div class="circle test"></div> SP1 Profiles</a></li>
 
 					    	<li ng-click="set_type_unpublished('avy')" close-dropdown-on-click><a>
@@ -407,7 +475,7 @@
 					ng-show="selectedList == 'published'">
 					Pan & zoom the map to see more observations
 				</div>-->
-				<div ng-show="selectedList == 'my_unpublished' && type_unpublished == 'test'">
+				<div ng-show="selectedList == 'my_unpublished' && type_unpublished == 'sp-profile'">
 					<div style="float:left;font-weight:100;margin-left:10px;" ng-show="selectedProfiles.length">
 					<!-- {{ selectedProfiles.length }} profile{{ selectedProfiles.length == 1 ? '' : 's' }}  selected-->
 					</div>
@@ -440,16 +508,18 @@
 
 					class="side-list-item"
 
-					ng-click="href('/' + profile.type[0] + '/' + profile._id)" 
+					ng-click="href('/obs/' + profile._id)" 
 
 					ng-mouseover="hoverProfile(profile)"
 					ng-mouseout="hoverProfile()"
+
+					ng-if="map.getZoom() >= detailedZoomMin"
 					>
 
 						<div class="bar" bo-class="profile.type"></div>
 
-						<canvas bo-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
-						<canvas bo-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
+						<canvas bo-if="profile.type=='snowpit'" profile="profile" width="120" height="150"></canvas>
+						<canvas bo-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="150"></canvas>
 
 						<div bo-if="profile.type=='avy'" class="thumb"></div>
 
@@ -468,14 +538,14 @@
 
 						<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>
 
-						<div bo-if="profile.type=='profile' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
-						<div bo-if="profile.type=='test'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
+						<div bo-if="profile.type=='snowpit' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy'}} {{ ::profile.time | date:'h:mm a'}}</div>
+						<div bo-if="profile.type=='sp-profile'" class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 
-						<div class='lineItem' bo-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>
+						<div class='lineItem' bo-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
 							<span bo-if="profile.type == 'avy'">{{ ::profile.locationName }}</span>
 							<span bo-if="profile.metaData.location">{{ ::profile.metaData.location }}</span>
 						</div>
-						<div class="lineItem" bo-show="profile.type=='test'"><i class="fa fa-map-marker"></i>
+						<div class="lineItem" bo-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>
 							<span bo-if="profile.location.length">{{ ::profile.location[1] }}, {{ ::profile.location[0] }}</span>
 							<span bo-if="!profile.location || profile.location.length == 0">{{ 'no_location' | translate }}</span>
 						</div>
@@ -505,15 +575,15 @@
 				<div ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id" class="side-list-item">
 
 					<a style="padding:0px;color:#666;font-weight:100;" 
-					href="/{{ profile.type[0] }}/{{ profile._id }}" 
+					href="/ob/{{ profile._id }}" 
 					ng-mouseover="hoverProfile(profile)"
 					ng-mouseout="hoverProfile()"
 					old-ng-click="openProfile(profile)">
 
 						<div class="bar {{ profile.type }}"></div>
 
-						<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="150"></canvas>
-						<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="150"></canvas>
+						<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="150"></canvas>
+						<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="150"></canvas>
 						<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 						<div class='lineItem'><i class="fa fa-user"></i>{{profile.user.fullName}} 
@@ -531,11 +601,11 @@
 
 						<div class='lineItem'><i class="fa fa-group"></i>{{profile.organization.name}}</div>
 
-						<div ng-if="profile.type=='profile' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
-						<div ng-if="profile.type=='test'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+						<div ng-if="profile.type=='snowpit' || profile.type=='avy'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
+						<div ng-if="profile.type=='sp-profile'" class='lineItem'><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 
-						<div class='lineItem' ng-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.type == 'avy' ? profile.locationName : profile.metaData.location }}</div>
-						<div class="lineItem" ng-show="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+						<div class='lineItem' ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.type == 'avy' ? profile.locationName : profile.metaData.location }}</div>
+						<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
 							profile.location[1] + ', ' + profile.location[0] :
 							'NO LOCATION'
 							 }}</div>
@@ -557,7 +627,7 @@
 				</div>
 
 				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item">
-					<a href="{{ profile.type == 'test' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
+					<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
 
 						<div class="check" onclick="return false;">
 							<i class="fa" 
@@ -569,20 +639,20 @@
 
 						<!--<div class="bar {{ profile.type }}"></div>-->
 
-						<canvas ng-if="profile.type=='profile'" profile="profile" width="120" height="136"></canvas>
-						<canvas ng-if="profile.type=='test'" graph="profile.rows_micro" width="120" height="136"></canvas>
+						<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="136"></canvas>
+						<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="136"></canvas>
 						<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 						<div>
-							<div ng-hide="profile.type=='test'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Last edited <span am-time-ago="profile.updated"></span></div>
-							<div ng-show="profile.type=='test'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Uploaded <span am-time-ago="profile.created"></span></div>
+							<div ng-hide="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Last edited <span am-time-ago="profile.updated"></span></div>
+							<div ng-show="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Uploaded <span am-time-ago="profile.created"></span></div>
 
-							<div class="lineItem" ng-hide="profile.type=='test'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
-							<div class="lineItem" ng-show="profile.type=='test'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+							<div class="lineItem" ng-hide="profile.type=='sp-profile'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy'}} {{profile.time | date:'h:mm a'}}</div>
+							<div class="lineItem" ng-show="profile.type=='sp-profile'" ><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 
-							<div class="lineItem" ng-hide="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
+							<div class="lineItem" ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
 
-							<div class="lineItem" ng-show="profile.type=='test'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+							<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
 							profile.location[1] + ', ' + profile.location[0] :
 							'NO LOCATION'
 							 }}</div>
@@ -710,12 +780,13 @@
 								<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
 								<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
 							<br/>
-							<label style="margin-bottom:3px;">SLOPE</label>
+							<label>SLOPE</label>
 							MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /
 							AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
 							MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
 							<br/>
 							<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+							
 							<label>Munter rate up/down</label> <input type="number" ng-model="munterRate.up" style="width:34px;"/>
 							<input type="number" ng-model="munterRate.down" style="width:34px;"/>
 						</div>

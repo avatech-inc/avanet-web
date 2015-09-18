@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
     $rootScope.isDemo = false;
@@ -61,52 +61,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // ======= SEARCH =======
 
-    $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
-    var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, students: false };
-    $scope.searchQuery = {
-        days: 365,
+    $scope.obSearch = new ObSearch();
 
-        elev_low: 0,
-        elev_high: $scope.elevationMax,
-
-        aspect_low: 0,
-        aspect_high: 359,
-
-        slope_low: 0,
-        slope_high: 70,
-
-        text: '',
-
-        type: { profile: true, avy: true, test: true },
-
-        publisher: angular.copy(defaultPublisher)
-    }
-    $scope._searchQuery = angular.copy($scope.searchQuery);
-
-    // save search query in user settings
-    $scope.$watch('searchQuery',function(){
-        //todo
-    }, true);
-
-    $scope.isDefaultPublisher = function() {
-        if (!$scope.searchQuery) return false;
-
-        var publisher = $scope.searchQuery.publisher;
-        if (
-            (publisher.orgs == null || publisher.orgs.length == $scope.global.orgs.length) &&
-            (publisher.outsideOrgs == true) &&
-            (publisher.me == true) &&
-            (publisher.students == false)
-            )
-            return true;
-        else return false;
-    }
-    $scope.setDefaultPublisher = function() {
-        $scope.searchQuery.publisher = angular.copy(defaultPublisher);
-    }
-
-    $scope.searchObs = function() {
-        $scope._searchQuery = angular.copy($scope.searchQuery);
+    var searchObs = function() {
         // hide all markers
         angular.forEach(obsOnMap, function(marker) {
             marker.filtered = true;
@@ -115,8 +72,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // iterate through obs and filter
         angular.forEach($scope.profiles,function(ob) {
             ob.filtered = true;
-            if ($scope.doSearch(ob)) {
-                console.log("here!");
+            if ($scope.obSearch.doSearch(ob)) {
                 ob.filtered = false;
                 obsOnMap[ob._id].filtered = false;
                 obsOnMap[ob._id].data.filtered = false;
@@ -124,351 +80,48 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
         pruneCluster.ProcessView();
     }
-    
     // debounce search
     var _searchTimeout;
-    $scope.$watch('searchQuery',function(){
-        console.log("SEARCH!");
+    $scope.$watch('obSearch',function() {
         if (_searchTimeout) $timeout.cancel(_searchTimeout);
-        _searchTimeout = $timeout(function(){
-            $scope.searchObs();
-        }, 100);
+        _searchTimeout = $timeout(function() {
+            searchObs();
+        }, 120);
     }, true);
-
-    $scope.doSearch = function(profile){
-        var ok = true;
-
-        // only search through published profiles 
-        if (profile.type == 'profile' && !profile.published) return false;
-
-        if ($scope.search_type(profile) === false) ok = false;
-        if ($scope.search_date(profile) === false) ok = false;
-        if ($scope.search_text(profile) === false) ok = false;
-        if ($scope.search_publisher(profile) === false) ok = false;
-        if ($scope.search_elevation(profile) === false) ok = false;
-        if ($scope.search_aspect(profile) === false) ok = false;
-        if ($scope.search_slope(profile) === false) ok = false;
-
-        return ok;
-    }
-
-    // debounce plotting of filteredProfiles on map
-    var _mapTimeout;
-
-    var obsOnMap = {};
-    function plotObsOnMap() {
-        angular.forEach($scope.profiles,function(profile) {
-            // already on map
-            var existingMarker = obsOnMap[profile._id];
-            if (existingMarker) {
-                // if deleted, remove it from map and from list
-                if (profile.removed) {
-                    pruneCluster.RemoveMarkers([existingMarker]);
-                    delete obsOnMap[profile._id];
-                }
-            }
-            // not on map (ignore if removed)
-            else if (!profile.removed) {
-
-                var marker = new PruneCluster.Marker(profile.location[1], profile.location[0]);
-
-                // associate profile with marker
-                marker.data.observation = profile;
-                
-                // set observation type
-                //marker.category = 0;
-
-                // add to map
-                pruneCluster.RegisterMarker(marker);
-                // keep track of all markers placed on map
-                obsOnMap[profile._id] = marker;
-
-                // add to heatmap
-                //if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
-
-            }
-        });
-        // redraw prune cluster
-        pruneCluster.ProcessView();
-    }
-    // todo: debounce?
-    // $scope.$watch('filteredProfiles',function(){
-    //     plotObsOnMap();
-    // }, true);
     
-    // filters
+    // filters for my observations (published / unpublished)
 
     $scope.my_unpublished = function(profile) {
         if (profile.type != $scope.type_unpublished) return false;
-
         var ok = (profile.published === false && profile.user._id == $scope.global.user._id);
 
-        //if ($scope.search_date(profile) === false) ok = false;
-        if ($scope.search_text(profile) === false) ok = false;
-        if ($scope.search_elevation(profile) === false) ok = false;
-        if ($scope.search_aspect(profile) === false) ok = false;
-        if ($scope.search_slope(profile) === false) ok = false;
+        if ($scope.obSearch.search_text(profile) === false) ok = false;
+        if ($scope.obSearch.search_elevation(profile) === false) ok = false;
+        if ($scope.obSearch.search_aspect(profile) === false) ok = false;
+        if ($scope.obSearch.search_slope(profile) === false) ok = false;
 
         return ok;
     }
     $scope.my_published = function(profile) {
         var ok = (profile.published === true && profile.user._id == $scope.global.user._id);
 
-        if ($scope.search_type(profile) === false) ok = false;
-        //if ($scope.search_date(profile) === false) ok = false;
-        if ($scope.search_text(profile) === false) ok = false;
-        if ($scope.search_elevation(profile) === false) ok = false;
-        if ($scope.search_aspect(profile) === false) ok = false;
-        if ($scope.search_slope(profile) === false) ok = false;
+        if ($scope.obSearch.search_type(profile) === false) ok = false;
+        if ($scope.obSearch.search_text(profile) === false) ok = false;
+        if ($scope.obSearch.search_elevation(profile) === false) ok = false;
+        if ($scope.obSearch.search_aspect(profile) === false) ok = false;
+        if ($scope.obSearch.search_slope(profile) === false) ok = false;
 
         return ok;
     }
 
-    $scope.search_text = function(val) {
-        var needle = $scope.searchQuery.text.toLowerCase();
-        if (needle.length < 3) return true;
-
-        // build haystack
-        var haystack = [];
-
-        if (val.user.fullName) haystack.push(val.user.fullName.toLowerCase());
-        if (val.metaData && val.metaData.location) haystack.push(val.metaData.location.toLowerCase());
-        if (val.organization) haystack.push(val.organization.name.toLowerCase());
-
-        // search through haystack
-        for (var i = 0; i < haystack.length; i++) {
-            if (haystack[i].length == 0) continue;
-            if (haystack[i].indexOf(needle) != -1) return true;
-        }
-        return false;
+    $scope.type_unpublished = 'test';
+    $scope.set_type_unpublished = function(type) {
+        $scope.type_unpublished = type;
+        // clear selected profiles
+        $scope.selectedProfiles = [];
     }
 
-    $scope.search_publisher = function(val) {
-
-        //if ($scope.isDefaultPublisher()) return true;
-
-        var allowed = false;  
-
-        // my orgs
-        // console.log("orgs:");
-        // console.log($scope.searchQuery.publisher.orgs);
-        if ($scope.searchQuery.publisher.orgs) {
-            // if no organization specified, return null
-            if (!val.organization) allowed = false;
-
-            if (val.organization 
-                && !$scope.publisher_isOutsideOrg(val.organization._id)
-                && $scope.searchQuery.publisher.orgs.indexOf(val.organization._id) != -1) allowed = true;
-        } 
-        else if (!$scope.searchQuery.publisher.orgs) allowed = true;
-
-        // outside orgs
-        if (!val.organization || (val.organization && $scope.publisher_isOutsideOrg(val.organization._id))) {
-            // if ($scope.searchQuery.publisher.outsideOrgs == null) 
-            //     $scope.searchQuery.publisher.outsideOrgs = true;
-            allowed = $scope.searchQuery.publisher.outsideOrgs;
-        } 
-        //else if (!val.organization) allowed = $scope.searchQuery.publisher.outsideOrgs;
-
-        // students
-        if (val.user && val.user.student) {
-            //console.log("student? " + ($scope.searchQuery.publisher.students));
-            // if ($scope.searchQuery.publisher.students == null) 
-            //     $scope.searchQuery.publisher.students = true;
-
-            if (allowed === false && $scope.searchQuery.publisher.students) allowed = true;
-            else if (allowed === true && !$scope.searchQuery.publisher.students) allowed = false;
-        }
-
-        // me
-        if ($scope.searchQuery.publisher.me == null)
-            $scope.searchQuery.publisher.me = true;
-
-        if ($scope.searchQuery.publisher.me != null) {
-            if (val.user._id == $scope.global.user._id) {
-                //allowed = $scope.searchQuery.publisher.me;
-                if (allowed === false && $scope.searchQuery.publisher.me) allowed = true;
-                else if (allowed === true && !$scope.searchQuery.publisher.me) allowed = false;
-            }
-        }  
-
-        return allowed;
-    }
-    $scope.publisher_isOutsideOrg = function(orgId) {
-        for (var i = 0; i < $scope.global.orgs.length; i++) {
-            //console.log($scope.global.orgs[i]._id == orgId);
-            if ($scope.global.orgs[i]._id == orgId) return false;
-        }
-        return true;
-    }
-    $scope.publisher_isOrgSelected = function(orgId) {
-        if (!$scope.searchQuery.publisher.orgs) return true;
-        else return ($scope.searchQuery.publisher.orgs.indexOf(orgId) != -1);
-    }
-    $scope.publisher_selectOrg = function(orgId, exclusive) {
-        // if (exclusive === true) {
-        //     $scope.publisher_emptyQuery();
-        //     $scope.searchQuery.publisher.orgs = [orgId]; return;
-        // }
-
-        // if empty, add all orgs
-        if (!$scope.searchQuery.publisher.orgs) {
-            $scope.searchQuery.publisher.orgs = [];
-            angular.forEach($scope.global.orgs,function(org) { $scope.searchQuery.publisher.orgs.push(org._id) });
-        }
-
-        // if not in array, add
-        if ($scope.searchQuery.publisher.orgs.indexOf(orgId) == -1)
-            $scope.searchQuery.publisher.orgs.push(orgId);
-        // if already in array, remove
-        else {
-            for (var i = 0; i < $scope.searchQuery.publisher.orgs.length; i++) {
-                if ($scope.searchQuery.publisher.orgs[i] == orgId) { 
-                    $scope.searchQuery.publisher.orgs.splice(i, 1); break;
-                }
-            }
-        }
-    }
-    $scope.publisher_selectMyOrgs = function(exclusive) {
-        // if all orgs selected, select none
-        if ($scope.searchQuery.publisher.orgs == null 
-            || ($scope.searchQuery.publisher.orgs && $scope.searchQuery.publisher.orgs.length == $scope.global.orgs.length)) {
-
-            $scope.searchQuery.publisher.orgs = [];
-        }
-        // if none selected, add all orgs
-        else {
-            $scope.searchQuery.publisher.orgs = [];
-            angular.forEach($scope.global.orgs,function(org) { $scope.searchQuery.publisher.orgs.push(org._id) });
-        }
-    }
-    $scope.publisher_selectOutsideOrgs = function(exclusive) {
-        // if (exclusive === true) {
-        //     $scope.publisher_emptyQuery();
-        //     $scope.searchQuery.publisher.outsideOrgs = true; return;
-        // }
-        if ($scope.searchQuery.publisher.outsideOrgs != null) $scope.searchQuery.publisher.outsideOrgs = !$scope.searchQuery.publisher.outsideOrgs;
-        else $scope.searchQuery.publisher.outsideOrgs = false;
-    }
-
-    $scope.publisher_selectMe = function(exclusive) {
-        // if (exclusive === true) {
-        //     $scope.publisher_emptyQuery();
-        //     $scope.searchQuery.publisher.me = true; return;
-        // }
-        if ($scope.searchQuery.publisher.me != null) $scope.searchQuery.publisher.me = !$scope.searchQuery.publisher.me;
-        else $scope.searchQuery.publisher.me = false;
-    }
-
-    $scope.publisher_selectStudents = function(exclusive) {
-        // if (exclusive === true) {
-        //     $scope.publisher_emptyQuery();
-        //     $scope.searchQuery.publisher.students = true; return;
-        // }
-        if ($scope.searchQuery.publisher.students != null) $scope.searchQuery.publisher.students = !$scope.searchQuery.publisher.students;
-        else $scope.searchQuery.publisher.students = false;
-    }
-
-    $scope.publisher_emptyQuery = function() {
-        $scope.searchQuery.publisher = { outsideOrgs: false, orgs: [], me: false, students: false };
-    }
-
-    $scope.type_select = function(type) {
-        $scope.searchQuery.type[type] = !$scope.searchQuery.type[type];
-    }
-
-    $scope.search_type = function(val) { 
-        // var d = new Date();
-        // d.setDate(d.getDate() - $scope._searchQuery.days);
-
-        // if (new Date(val.date) > d) return true;
-        // else return false;
-        return ($scope.searchQuery.type[val.type]);
-    }
-
-    $scope.search_date = function(val) { 
-        var d = new Date();
-        d.setDate(d.getDate() - $scope._searchQuery.days);
-
-        if (new Date(val.date) > d) return true;
-        else return false;
-    }
-
-    $scope.search_elevation = function(val) { 
-        // if full range is selected, return everything (including profiles without elevation specified)
-        if ($scope._searchQuery.elev_low == 0 && $scope._searchQuery.elev_high == $scope.elevationMax) {
-            return true;
-        }
-        else if ((val.metaData && val.metaData.elevation) || val.elevation) {
-            var elevation;
-            if (val.metaData && val.metaData.elevation) elevation = val.metaData.elevation;
-            else elevation = val.elevation;
-
-            if (elevation >= $scope._searchQuery.elev_low &&
-                elevation <= $scope._searchQuery.elev_high ) return true;
-            else return false;
-        }
-        else return false;
-    }
-    $scope.search_aspect = function(val) { 
-        // if full range is selected, return everything (including profiles without aspect specified)
-        if ($scope._searchQuery.aspect_low == 0 && $scope._searchQuery.aspect_high == 359) {
-            return true;
-        }
-        else if ((val.metaData && val.metaData.aspect) || val.aspect) {
-            var aspect;
-            if (val.metaData && val.metaData.aspect) aspect = val.metaData.aspect;
-            else aspect = val.aspect;
-            
-            if ($scope._searchQuery.aspect_low > $scope._searchQuery.aspect_high) {
-                if (aspect >= $scope._searchQuery.aspect_low ||
-                    aspect <= $scope._searchQuery.aspect_high ) return true;
-            }
-            else if (aspect >= $scope._searchQuery.aspect_low &&
-                    aspect <= $scope._searchQuery.aspect_high ) return true;
-            
-            return false;
-        }
-        else return false;
-    }
-    $scope.search_slope = function(val) { 
-        // if full range is selected, return everything (including profiles without slope specified)
-        if ($scope._searchQuery.slope_low == 0 && $scope._searchQuery.slope_high == 70) {
-            return true;
-        }
-        else if ((val.metaData && val.metaData.slope) || val.slope) {
-            var slope;
-            if (val.metaData && val.metaData.slope) slope = val.metaData.slope;
-            else slope = val.slope;
-
-            if (slope >= $scope._searchQuery.slope_low &&
-                slope <= $scope._searchQuery.slope_high ) return true;
-            else return false;
-        }
-        else return false;
-    }
-
-    $scope.clearSearchElevation = function($event) {
-        $event.preventDefault();
-        $scope._searchQuery.elev_low = 0; 
-        $scope._searchQuery.elev_high = 9000;
-        $scope.searchQuery = angular.copy($scope._searchQuery);
-        return false;
-    }
-    $scope.clearSearchAspect = function($event) {
-        $event.preventDefault();
-        $scope._searchQuery.aspect_low = 0;
-        $scope._searchQuery.aspect_high = 359;
-        $scope.searchQuery = angular.copy($scope._searchQuery);
-        return false;
-    }
-    $scope.clearSearchSlope = function($event) {
-        $event.preventDefault();
-        $scope._searchQuery.slope_low = 0;
-        $scope._searchQuery.slope_high = 70;
-        $scope.searchQuery = angular.copy($scope._searchQuery);
-        return false;
-    }
+    // formatters
 
     $scope.formatElev = function(val) {
         if (!Global.user.settings) return;
@@ -493,22 +146,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.formatDegSlider = function(val) {
         return val + "°"
     }
-    // $scope.setAspect = function(deg) {
-    //     if ($scope._searchQuery.aspect_high < deg) $scope._searchQuery.aspect_high = deg;
-    //     else if ($scope._searchQuery.aspect_low > deg) $scope._searchQuery.aspect_low = deg;
-    //     else if (deg > $scope._searchQuery.aspect_low) $scope._searchQuery.aspect_low = deg;
-    //     else if (deg < $scope._searchQuery.aspect_high) $scope._searchQuery.aspect_high = deg;
-    // }
 
     // ======= END SEARCH =======
 
-
-    $scope.type_unpublished = 'test';
-    $scope.set_type_unpublished = function(type) {
-        $scope.type_unpublished = type;
-        // clear selected profiles
-        $scope.selectedProfiles = [];
-    }
+    // DRAFTS
 
     $scope.selectedProfiles = [];
     $scope.selectProfile = function(profile) {
@@ -558,6 +199,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
     }
 
+    // ---------------------------
+
 
     $scope.setBaseLayer = function(layer, clicked) {
 
@@ -567,11 +210,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         var newBaseLayer;
         if (layer.type == "TILE") {
-        // L.tileLayer.wms("http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", {
             var options = {
-               // layers: ['limits','vegetation','builtup_areas','designated_areas','hydrography','hypsography','water_saturated_soils','landforms','constructions','water_features','road_network','railway','populated_places','structures','power_network','boundaries','feature_names'], 
-              //  format: "image/png",
-               // version: "1.1.1",
                 zIndex: 2,
                 opacity: 1,
                 detectRetina: true,
@@ -660,10 +299,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 radius: 10, blur: 15,
                 maxZoom: (zoom + (zoom / 2))
             });
-            // console.log("ZOOM:");
-            // console.log($scope.map.getZoom() + 4)
-            // console.log("showing heatmap. maxzoom = " + $scope.map.getZoom())
-            // hide markers
         }
         else {
             // hide heatmap
@@ -672,56 +307,25 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             });
             // show markers
         }
-
-        // only show map on lower zoom levels
-        // if (zoom < 9 ) {
-        //     //heatMap.setOpacity(.9);
-        // }
-        //else heatMap.setOpacity(0);
-
-        // if (zoom < 11) pruneCluster.Cluster.Size = 14;
-        // else if (zoom < 10) pruneCluster.Cluster.Size = 14;
-        // else if (zoom < 9) pruneCluster.Cluster.Size = 14;
-        // else if (zoom < 8) pruneCluster.Cluster.Size = 13;
-        // else if (zoom < 7) pruneCluster.Cluster.Size = 12;
-        // else if (zoom < 6) pruneCluster.Cluster.Size = 11;
-        // else if (zoom < 5) pruneCluster.Cluster.Size = 10;
-        // else if (zoom < 4) pruneCluster.Cluster.Size = 9;
-        // else if (zoom < 3) pruneCluster.Cluster.Size = 8;
     });
 
     // setup clustering  
     var pruneCluster = new PruneClusterForLeaflet(); //30, 20);
     // console.log(pruneCluster.Cluster.Margin);
-    pruneCluster.Cluster.Size = 8; 
+    pruneCluster.Cluster.Size = 10; 
     $scope.map.addLayer(pruneCluster);
-    // $scope.map.on('zoomend', function(e) {
-    //     // set prunecluster threshold
-    //     var zoom = $scope.map.getZoom();
-    //     console.log("zoom: " + zoom);
 
-    //     // if (zoom < 11) pruneCluster.Cluster.Size = 14;
-    //     // else if (zoom < 10) pruneCluster.Cluster.Size = 14;
-    //     // else if (zoom < 9) pruneCluster.Cluster.Size = 14;
-    //     // else if (zoom < 8) pruneCluster.Cluster.Size = 13;
-    //     // else if (zoom < 7) pruneCluster.Cluster.Size = 12;
-    //     // else if (zoom < 6) pruneCluster.Cluster.Size = 11;
-    //     // else if (zoom < 5) pruneCluster.Cluster.Size = 10;
-    //     // else if (zoom < 4) pruneCluster.Cluster.Size = 9;
-    //     // else if (zoom < 3) pruneCluster.Cluster.Size = 8;
-    // });
-
-    $scope.clustersize = 8;
-    $scope.$watch('clustersize', function() {
-        pruneCluster.Cluster.Size = parseInt($scope.clustersize);
-        //console.log(pruneCluster.Cluster.Margin);
-        pruneCluster.ProcessView();
-        heatMap.setOptions({
-            radius: 10,
-            blur: 15,
-            maxZoom: $scope.map.getZoom()
-        });
-    }, true)
+    // $scope.clustersize = 10;
+    // $scope.$watch('clustersize', function() {
+    //     pruneCluster.Cluster.Size = parseInt($scope.clustersize);
+    //     //console.log(pruneCluster.Cluster.Margin);
+    //     pruneCluster.ProcessView();
+    //     heatMap.setOptions({
+    //         radius: 10,
+    //         blur: 15,
+    //         maxZoom: $scope.map.getZoom()
+    //     });
+    // }, true)
 
     // render observation icons
     pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
@@ -956,6 +560,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             pruneCluster.ProcessView();
         }, 100);
     };
+    // hide zoom control on hideMapButtons
+    $scope.$watch("hideMapButtons", function() {
+        $(".leaflet-control-zoomslider").css("opacity", $scope.hideMapButtons ? 0 : 1);
+    });
 
     $scope.$on('resizeMap', function() { 
         $timeout(function() { $scope.map.invalidateSize(); });
@@ -1019,6 +627,43 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 { animate: true});
     }
 
+    // plot obs on map
+    var obsOnMap = {};
+    function plotObsOnMap() {
+        angular.forEach($scope.profiles,function(profile) {
+            // already on map
+            var existingMarker = obsOnMap[profile._id];
+            if (existingMarker) {
+                // if deleted, remove it from map and from list
+                if (profile.removed) {
+                    pruneCluster.RemoveMarkers([existingMarker]);
+                    delete obsOnMap[profile._id];
+                }
+            }
+            // not on map (ignore if removed)
+            else if (!profile.removed) {
+
+                var marker = new PruneCluster.Marker(profile.location[1], profile.location[0]);
+
+                // associate profile with marker
+                marker.data.observation = profile;
+                
+                // set observation type
+                //marker.category = 0;
+
+                // add to map
+                pruneCluster.RegisterMarker(marker);
+                // keep track of all markers placed on map
+                obsOnMap[profile._id] = marker;
+
+                // add to heatmap
+                //if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
+
+            }
+        });
+        pruneCluster.ProcessView();
+    }
+
     // load profiles
     $scope.loadingNew = false;
     $scope.loadProfiles = function(showLoader) {
@@ -1058,33 +703,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // todo: make this like the "observations" service? (i.e. addorreplace)
             $scope.profiles = obs;
             plotObsOnMap();
-            $scope.searchObs();
+            searchObs();
 
             console.log("LOADED! " + (new Date().getTime() - d) + " ms");
 
             $scope.loadingProfiles = false;
             $scope.loadingNew = false;
         });
-
-        // $http.get('/v1/all-observations', 
-        // { params: { 
-        //     nelat: point_ne.lat, nelng: point_ne.lng, 
-        //     swlat: point_sw.lat, swlng: point_sw.lng, 
-        //     verbose: verbose
-        //   }, 
-        //   timeout: $scope.canceler.promise
-        // }).success(function(profiles) {
-
-        //     var d = new Date().getTime();
-        //     // todo: make this like the "observations" service? (i.e. addorreplace)
-        //     $scope.profiles = profiles;
-        //     $scope.filterProfiles();
-
-        //     console.log("LOADED! " + (new Date().getTime() - d) + " ms");
-
-        //     $scope.loadingProfiles = false;
-        //     $scope.loadingNew = false;
-        // });
     }
 
     // handle loading of observations

@@ -61,19 +61,15 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             for (var i = 0; i < _points.length; i++) {
                 new_points[i*2] = _points[i];
            }
-
            for (var i = 0; i < new_points.length; i++) {
                 if (!new_points[i]) {
                     var startPoint =  new google.maps.LatLng(new_points[i-1].lat, new_points[i-1].lng); 
                     var endPoint = new google.maps.LatLng(new_points[i+1].lat, new_points[i+1].lng); 
                     var percentage = 0.5; 
                     var middlePoint = google.maps.geometry.spherical.interpolate(startPoint, endPoint, percentage);
-                    // todo: wtf?????
-                    // new_points[i] = { lat: middlePoint.A, lng: middlePoint.F }
-                    new_points[i] = { lat: middlePoint.G, lng: middlePoint.K }
+                    new_points[i] = { lat: middlePoint.lat(), lng: middlePoint.lng() }
                 }
-          }
-
+            }
             return new_points;
         }
 
@@ -329,7 +325,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             var deleteWaypointbutton = document.createElement("button");
             popup.appendChild(deleteWaypointbutton);
-            deleteWaypointbutton.innerHTML = "delete waypoint";
+            deleteWaypointbutton.innerHTML = "<i class='ion-trash-a'></i>&nbsp;&nbsp;Delete Waypoint";
             deleteWaypointbutton.addEventListener("click", function() {
                 marker.closePopup();
                 marker.unbindPopup();
@@ -360,7 +356,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             var makeWaypointbutton = document.createElement("button");
             popup.appendChild(makeWaypointbutton);
-            makeWaypointbutton.innerHTML = "make waypoint";
+            makeWaypointbutton.innerHTML = '<i class="fa fa-map-marker"></i>&nbsp;&nbsp;Make Waypoint';
             makeWaypointbutton.addEventListener("click", function() {
                 if (marker._index == 0 || marker._index == _line.editing._markers.length - 1) {
                     console.log("can't create waypoint on start point or end point")
@@ -379,7 +375,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             var deleteButton = document.createElement("button");
             popup.appendChild(deleteButton);
-            deleteButton.innerHTML = "delete";
+            deleteButton.innerHTML = '<i class="ion-trash-a"></i>&nbsp;&nbsp;Delete';
             deleteButton.addEventListener("click", function() {
                 if (_line.editing._markers.length == 1) {
                     console.log("can't delete only point");

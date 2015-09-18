@@ -93,7 +93,10 @@
     "bulk_download" : "Bulk Data Download",
     "bulk_download_sp1_button" : "Download SP1 Data",
     "profile_photo": "Profile Photo",
-    "upload_profile_photo": "Upload profile photo"
+    "upload_profile_photo": "Upload profile photo",
+    "coordinates": "Coordinate System",
+    "decimalDegrees": "Decimal Degrees",
+    "UTM": "UTM"
   },
   "snowpit_editor": {
     "surface": "Surface",

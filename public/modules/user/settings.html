@@ -563,9 +563,6 @@ margin-bottom: 6px !important;
 				  <div class="form-group" name="password">
 				    <label class="col-sm-4 control-label">{{ 'settings.temperature' | translate }}</label>
 				    <div class="col-sm-8">
-				      
-
-
 						    <div class="btn-group">
 						        <label class="btn btn-default" ng-model="settings.tempUnits" btn-radio="0" uncheckable>{{ 'settings.celsius' | translate }}</label>
 						        <label class="btn btn-default" ng-model="settings.tempUnits" btn-radio="1" uncheckable>{{ 'settings.farenheit' | translate }}</label>
@@ -576,6 +573,20 @@ margin-bottom: 6px !important;
 				</div>
 			</div>
 
+			<div class="panel-body settings" style="border-bottom:1px solid #ddd;">
+		    	<div class="form-horizontal" role="form">
+				  <div class="form-group" name="password">
+				    <label class="col-sm-4 control-label">{{ 'settings.coordinates' | translate }}</label>
+				    <div class="col-sm-8">
+						    <div class="btn-group">
+						        <label class="btn btn-default" ng-model="settings.coordSystem" btn-radio="'dd'" uncheckable>{{ 'settings.decimalDegrees' | translate }}</label>
+						        <label class="btn btn-default" ng-model="settings.coordSystem" btn-radio="'utm'" uncheckable>{{ 'settings.UTM' | translate }}</label>
+						    </div>
+
+				    </div>
+				  </div>
+				</div>
+			</div>
 			<!--<div class="panel-body settings" style="border-bottom:0px solid #ddd;">
 		    	<div class="form-horizontal" role="form">
 				  <div class="form-group" name="password">

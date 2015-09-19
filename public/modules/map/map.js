@@ -529,13 +529,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     });
 
-    $scope.closeThis = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        var el = $($event.target).closest(".open");
-        el.data().$dropdownController.toggle()
-    };
-
     var hoverDelay;
     $scope.hoverProfile = function(profile) {
         // debounce

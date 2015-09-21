@@ -1,8 +1,8 @@
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
-    $rootScope.isDemo = false;
-    $scope.routeEditMode = false;
+    $rootScope.isDemo = true;
+    $scope.routeEditMode = true;
 
     if ($rootScope.isDemo) mixpanel.track("demo");
 
@@ -829,8 +829,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // ---------------------------------------------------
     // ----------------- ROUTE PLANNING ------------------
     // ---------------------------------------------------
-
-    $scope.routeControl = null;
 
     $scope._hoverOnLeg = function(index) {
         $scope.hoverOnLeg = index;

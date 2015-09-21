@@ -669,18 +669,15 @@
 
 
 			<route-planning terrain-layer="terrainLayer" map="map" route="route" 
+				control="routeControl"
+
 				hover-on-leg-map="hoverOnLegMap"
 				hover-on-leg="hoverOnLeg"
 				hover-on-point-map="hoverOnPointMap"
 				hover-on-point="hoverOnPoint"
 
-				test-munter-rate-up="munterRate.up"
-				test-munter-rate-down="munterRate.down"
-
 				munter-rate-up="munterRate.up"
 				munter-rate-down="munterRate.down"
-
-				control="routeControl"
 				></route-planning>
 
 			<style>
@@ -754,14 +751,15 @@
 			</style>
 
 			<div class="route-box">
-				<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;">ROUTE
+				<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;"><!--ROUTE-->
+				<input type="text" ng-model="route.name"/>
 
-					<div style="float:right;font-weight:500" ng-if="route && route.points.length > 1">
-						{{ formatters.formatKmOrMiles(route.terrain.distance) }} / 
+					<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-if="route && route.points.length > 1">
+						{{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
 						{{ formatTime(route.terrain.timeEstimateMinutes) }}
 					</div>
 				</div>
-				<div ng-if="!route" class="instruct">
+				<div ng-if="route.points.length == 0" class="instruct">
 					Click anywhere<br/>on the map to<br/>start your route
 				</div>
 				<div ng-if="route.points.length == 1" class="instruct">
@@ -769,7 +767,11 @@
 				</div>
 				<div ng-if="route && route.points.length > 1">
 					<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
-						<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a>
+
+						<a href="#" ng-click="routeControl.editing = !routeControl.editing">Edit: {{ routeControl.editing ? "on" : "off" }}</a><br/>
+						<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint">Auto-waypoint: {{ routeControl.autoWaypoint ? "on" : "off" }}</a><br/>
+						<a href="#" ng-click="route.downloadGPX()">Download GPX</a>
+
 						<div style="font-size:13px;">
 							<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
 							<label>VERTICAL</label> 
@@ -802,7 +804,7 @@
 								NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
 								VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
 								SLOPE: 
-								MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /
+								<!--MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /-->
 								AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
 								MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
 								<br/>
@@ -813,14 +815,17 @@
 								ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
 								<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 								<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
-								<span ng-hide="$index > 0 && $index == route.points.length - 1">{{ routePoint.waypoint.name }}</span>
-								<span ng-show="$index == route.points.length - 1">END</span>
-								<span ng-show="$index == 0">START</span>
+								<span style="font-weight:bold;">{{ route.waypointPrefix() }}{{ $index + 1 }}<span>&nbsp;
 
-								({{ formatters.formatElevation(routePoint.terrain.elevation) }}) 
+								<span style="font-weight:normal;">{{ routePoint.waypoint.name }}</span>
+								<!--<span ng-show="$index == route.points.length - 1">END</span>-->
+								<!--<span ng-show="$index == 0">START</span>-->
 
-								<div style="float:right;" ng-hide="$index == 0">
-									{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }} /
+								<!-- hide elevation for now
+								({{ formatters.formatElevation(routePoint.terrain.elevation) }})--> 
+
+								<div style="float: right; font-size: 12px; line-height: 13px; position: relative; bottom: 3px; text-align: right; font-weight: 500;" ng-hide="$index == 0">
+									{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>
 									{{ formatTime(routePoint.terrain.totalTimeEstimateMinutes) }}
 								</div>
 							</div>

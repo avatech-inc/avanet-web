@@ -17,12 +17,41 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
       control: '='
     },
     link: function(scope, element) {
+        scope.route = {
+            name: "Route Name",
+            terrain: {},
+            points: []
+        };
 
         scope.control = {
-            downloadGPX: function() {
-                downloadGPX();
-            }
+            editing: true,
+            autoWaypoint: false
         }
+
+        // hide icons when not in edit mode
+        scope.$watch("control.editing", function() {
+            if (scope.control.editing) {
+                $(".leaflet-editing-icon").not(".waypoint-icon").removeClass("hide");
+                angular.forEach(_line.editing._markers, function(marker) {
+                    marker.dragging.enable();
+                });
+            }
+            else {
+                $(".leaflet-editing-icon").not(".waypoint-icon").addClass("hide");
+                angular.forEach(_line.editing._markers, function(marker) {
+                    marker.dragging.disable();
+                });
+            }
+        }, true);
+
+        scope.route.waypointPrefix = function() {
+            if (!scope.route.name || scope.route.name.length == 0) return "W";
+            else return scope.route.name[0];
+        };
+
+        scope.route.downloadGPX = function() {
+            downloadGPX();
+        };
 
         scope.$watch("munterRateUp", function() {
             if (!elevationProfilePoints || scope.munterRateUp == null) return;
@@ -137,7 +166,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var nextPoint = _line.editing._markers[i + 1];
 
                 // if waypoint
-                if (thisPoint.waypoint) legIndex++;
+                if (thisPoint.waypoint) {
+                    legIndex++;
+                }
 
                 var segmentData = {
                     start: thisPoint._latlng,
@@ -153,19 +184,19 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 segment.segment = segmentData;
 
                 // add new point when clicking on a line segment
-                segment.on('mousedown', function(e) {
-                    // straighten out point on line
-                    // var newPoint = e.latlng;
-                    // newPoint = turf.pointOnLine(
-                    //     turf.linestring([
-                    //         [e.target.segment.start.lat, e.target.segment.start.lng],
-                    //         [e.target.segment.end.lat, e.target.segment.end.lng]
-                    //     ]),
-                    // );
-                    // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
-
-                    addPoint(e.latlng, e.target.segment.index + 1);
-                });
+                // segment.on('mousedown', function(e) {
+                //     if (!scope.control.editing) return;
+                //     // straighten out point on line
+                //     // var newPoint = e.latlng;
+                //     // newPoint = turf.pointOnLine(
+                //     //     turf.linestring([
+                //     //         [e.target.segment.start.lat, e.target.segment.start.lng],
+                //     //         [e.target.segment.end.lat, e.target.segment.end.lng]
+                //     //     ]),
+                //     // );
+                //     // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
+                //     addPoint(e.latlng, e.target.segment.index + 1);
+                // });
 
                 // elevation widget highlight
                 segment.on('mousemove', function(e) {
@@ -183,10 +214,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         function saveLinePoints() {
             $timeout(function(){
-                scope.route = {
-                    terrain: {},
-                    points: []
-                };
+                scope.route.terrain = {};
+                scope.route.points = [];
 
                 var legIndex = 0;
                 var lastWaypointIndex = 0;
@@ -244,9 +273,17 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // call updateMarkers to reload points
             _line.editing.updateMarkers();
 
-            angular.forEach(_line.editing._markers,function(marker) {
-                // if waypoint
-                if (waypoints[marker._index]) makeWaypoint(marker, waypoints[marker._index]);
+            angular.forEach(_line.editing._markers,function(marker, _index) {
+                // if first point and no waypoint, create
+                if (_index === 0 && !waypoints[marker._index]) makeWaypoint(marker);
+                // if last point and no waypoint, create
+                //else if (index === (_line.editing._markers.length - 1) && !waypoints[marker._index]) makeWaypoint(marker);
+                // if existing waypoint
+                else if (waypoints[marker._index]) makeWaypoint(marker, waypoints[marker._index]);
+                // auto-waypoint (only on "new" points at end of existing line, not new midpoints)
+                else if (scope.control.autoWaypoint && index == _index && index == _line.editing._poly._latlngs.length - 1) {
+                    makeWaypoint(marker);
+                }
                 // regular point
                 else makeRegularPoint(marker);
             });
@@ -257,19 +294,25 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         var preventEdit = false;
         _map.on('click', function(e) {
+            if (!scope.control.editing) return;
             if (preventEdit) return;
+            // add route polyline if it doesn't exist (only gets hit on first point)
             if (!_line) {
                 _line = L.polyline([], {});
                 lineGroup.addLayer(_line);
                 editHandler.enable();
 
-
-                // when line is edited (after point is dragged)
+                // event when line is edited (after point is dragged or midpoint added)
                 _line.on('edit', function(e) {
                     // prevent addition of new points for 1 second after moving point
                     // to prevent accidental addition of new point
                     preventEdit = true;
                     setTimeout(function() { preventEdit = false }, 1000);
+
+                    // handle new midpoints
+                    angular.forEach(_line.editing._markers,function(marker) {
+                        if (!marker.isPoint) makeRegularPoint(marker);
+                    });
 
                     updateElevationProfile();
                     updateSegments();
@@ -281,6 +324,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         });
 
         function makePoint(marker) {
+            // mark as a route planning point
+            marker.isPoint = true;
+
             // remove existing marker events
             marker.off('click');
             marker.off('mouseover');
@@ -296,97 +342,129 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 if (elevationWidget) elevationWidget.highlight();
                 $timeout(function(){ scope.hoverOnPointMap = null });
             });
+
+            // popup
+            marker.bindPopup("", { closeButton: true });   
+
+            marker.on('click', function() {
+                var leafletPopup = marker.getPopup();
+
+                // if (leafletPopup && marker.getPopup()._isOpen) {
+                //     console.log("close!");
+                //     marker.closePopup();
+                //     return;
+                // }
+                // console.log("here!");
+                // marker.unbindPopup();
+                    
+                var popup = document.createElement("div");
+                popup.style.padding = '5px';
+
+                if (marker.waypoint) {
+
+                    popup.appendChild($("<div style='font-weight:bold;'>" + scope.route.waypointPrefix() + marker.waypoint.index + "</div>")[0]);
+
+                    var nameInput = document.createElement("input");
+                    popup.appendChild(nameInput);
+                    nameInput.value = marker.waypoint.name;
+                    nameInput.onkeyup = function() {
+                        marker.waypoint.name = nameInput.value;
+                        saveLinePoints();
+                    }
+
+                    if (marker._index > 0) {
+                        var deleteWaypointbutton = document.createElement("button");
+                        popup.appendChild(deleteWaypointbutton);
+                        deleteWaypointbutton.innerHTML = "<i class='ion-trash-a'></i>&nbsp;&nbsp;Delete Waypoint";
+                        deleteWaypointbutton.addEventListener("click", function() {
+                            marker.closePopup();
+                            marker.unbindPopup();
+                            deleteWaypoint(marker);
+                            marker.fire('click');
+                        });
+                    }
+                }
+                else {
+                    var makeWaypointbutton = document.createElement("button");
+                    popup.appendChild(makeWaypointbutton);
+                    makeWaypointbutton.innerHTML = '<i class="fa fa-map-marker"></i>&nbsp;&nbsp;Make Waypoint';
+                    makeWaypointbutton.addEventListener("click", function() {
+                        // if (marker._index == 0 || marker._index == _line.editing._markers.length - 1) {
+                        //     console.log("can't create waypoint on start point or end point")
+                        //     return;
+                        // }
+
+                        marker.closePopup();
+                        marker.unbindPopup();
+                        makeWaypoint(marker);
+                        //marker.openPopup();
+                        marker.fire('click');
+
+                        updateElevationProfile();
+                        updateSegments();
+                        saveLinePoints();
+                    });
+
+                    var deleteButton = document.createElement("button");
+                    popup.appendChild(deleteButton);
+                    deleteButton.innerHTML = '<i class="ion-trash-a"></i>&nbsp;&nbsp;Delete';
+                    deleteButton.addEventListener("click", function() {
+                        if (_line.editing._markers.length == 1) {
+                            console.log("can't delete only point");
+                            return;
+                        }
+                        _line.editing._onMarkerClick({ target: marker });
+                        //makeRegularPoint(_line.editing._markers[marker._index + 1]);
+                        // todo: handle proper styling on delete. start/end points should be waypoints!
+                    });
+                }
+
+                leafletPopup.setContent(popup);
+
+                //marker.bindPopup(popup, { closeButton: true });   
+                // turn off default click events (for close/open)
+                //marker.off('click');
+                // open manually
+
+                //marker.openPopup();
+            });
         }
 
         function makeWaypoint(marker, waypointData) {
             makePoint(marker);
 
             marker.waypoint = {
-                name: 'Waypoint'
+                name: 'waypoint'
             };
             if (waypointData) marker.waypoint = waypointData;
 
             // add marker css class
             $(marker._icon).addClass("waypoint-icon");
 
-            // bind popup
-            marker.unbindPopup();
-
-            var popup = document.createElement("div");
-            popup.style.padding = '5px';
-
-            var nameInput = document.createElement("input");
-            popup.appendChild(nameInput);
-            nameInput.value = marker.waypoint.name;
-            nameInput.onkeyup = function() {
-                marker.waypoint.name = nameInput.value;
-                saveLinePoints();
-            }
-
-            var deleteWaypointbutton = document.createElement("button");
-            popup.appendChild(deleteWaypointbutton);
-            deleteWaypointbutton.innerHTML = "<i class='ion-trash-a'></i>&nbsp;&nbsp;Delete Waypoint";
-            deleteWaypointbutton.addEventListener("click", function() {
-                marker.closePopup();
-                marker.unbindPopup();
-                deleteWaypoint(marker);
-            });
-
-            marker.bindPopup(popup, { closeButton: false });
+            // keep track of waypoint index
+            calculateWaypointIndex();
         }
         function makeRegularPoint(marker) {
             makePoint(marker);
-
-            // remove existing marker click events
-            marker.off('click');
 
             if (marker.waypoint) delete marker.waypoint;
 
             // remove waypoint css class (if exists)
             $(marker._icon).removeClass("waypoint-icon");
 
-            // start point
-            if (marker._index == 0) $(marker._icon).addClass("start-icon");
-            // end point
-            if (marker._index == _line.editing._markers.length - 1 && _line.editing._markers.length > 1) $(marker._icon).addClass("end-icon");
+            // keep track of waypoint index
+            calculateWaypointIndex();
+        }
 
-            // bind popup
-            var popup = document.createElement("div");
-            popup.style.padding = '5px';
-
-            var makeWaypointbutton = document.createElement("button");
-            popup.appendChild(makeWaypointbutton);
-            makeWaypointbutton.innerHTML = '<i class="fa fa-map-marker"></i>&nbsp;&nbsp;Make Waypoint';
-            makeWaypointbutton.addEventListener("click", function() {
-                if (marker._index == 0 || marker._index == _line.editing._markers.length - 1) {
-                    console.log("can't create waypoint on start point or end point")
-                    return;
+        function calculateWaypointIndex() {     
+            // keep track of waypoint index
+            var waypointCount = 1;
+            angular.forEach(_line.editing._markers,function(_marker, _index) {
+                if (_marker.waypoint) {
+                    _marker.waypoint.index = waypointCount;
+                    waypointCount++;
                 }
-
-                marker.closePopup();
-                marker.unbindPopup();
-                makeWaypoint(marker);
-                marker.openPopup();
-
-                updateElevationProfile();
-                updateSegments();
-                saveLinePoints();
             });
-
-            var deleteButton = document.createElement("button");
-            popup.appendChild(deleteButton);
-            deleteButton.innerHTML = '<i class="ion-trash-a"></i>&nbsp;&nbsp;Delete';
-            deleteButton.addEventListener("click", function() {
-                if (_line.editing._markers.length == 1) {
-                    console.log("can't delete only point");
-                    return;
-                }
-                _line.editing._onMarkerClick({ target: marker });
-                //makeRegularPoint(_line.editing._markers[marker._index + 1]);
-                // todo: handle proper styling on delete. start/end points should be waypoints!
-            });
-
-            marker.bindPopup(popup, { closeButton: false });
         }
 
         function deleteWaypoint(marker) {

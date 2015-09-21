@@ -55,7 +55,7 @@
     opacity: 1;
     background: #c9d6e1 !important;
 
-    transition: width opacity 100ms;
+    transition: width opacity 120ms;
 
     &:hover {
         opacity: 1;
@@ -65,13 +65,12 @@
 }
 
 .leaflet-editing-icon[style*="opacity: 0.6"] {
-    display: none !important;
-    pointer-events: none !important;
-
-    // opacity: .3 !important;
-    // &:hover {
-    //  opacity: .6 !important;
-    // }
+    // display: none !important;
+    // pointer-events: none !important;
+    opacity: .3 !important;
+    &:hover {
+     opacity: .7 !important;
+    }
 }
 
 .leaflet-editing-icon.highlight {
@@ -93,20 +92,36 @@
     opacity: 1 !important;
 }
 .start-icon {
-    width: 16px !important;
-    height: 16px !important;
-    border-radius: 999px !important;
-    margin-top: -8px !important;
-    margin-left: -8px !important;
     background: #76FF7A  !important;
+
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
     border-width: 2px !important;
+    opacity: 1 !important;
+    // width: 16px !important;
+    // height: 16px !important;
+    // border-radius: 999px !important;
+    // margin-top: -8px !important;
+    // margin-left: -8px !important;
+    //border-width: 2px !important;
 }
 .end-icon {
-    width: 16px !important;
-    height: 16px !important;
-    border-radius: 999px !important;
-    margin-top: -8px !important;
-    margin-left: -8px !important;
     background: #FF91A4  !important;
+
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
     border-width: 2px !important;
+    opacity: 1 !important;
+    // width: 16px !important;
+    // height: 16px !important;
+    // border-radius: 999px !important;
+    // margin-top: -8px !important;
+    // margin-left: -8px !important;
+    //border-width: 2px !important;
 }

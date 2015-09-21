@@ -870,7 +870,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val != null) sum += val;
+                if (val !== null) sum += val;
             }
             return sum / list.length;
         }
@@ -880,7 +880,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val != null) min = Math.min(min, val);
+                if (val !== null) min = Math.min(min, val);
             }
             return min;
         }
@@ -890,7 +890,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val != null) max = Math.max(max, val);
+                if (val !== null) max = Math.max(max, val);
             }
             return max;
         }
@@ -900,7 +900,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val != null) sum += val;
+                if (val !== null) sum += val;
             }
             return sum;
         }
@@ -913,9 +913,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // get sines and cosines
             for (var i = 0; i < list.length; i++) {
                 var aspect = list[i][property];
-                if (aspect != null) {
+                if (aspect !== null) {
+                    aspect = parseInt(aspect);
                     // convert aspect degrees to radians
-                    aspect *= Math.PI / 180; 
+                    aspect *= (Math.PI / 180);
                     sines.push(Math.sin(aspect));
                     cosines.push(Math.cos(aspect));
                 }
@@ -929,7 +930,12 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var averageAspectRadians = Math.atan2(meanSine, meanCosine);
 
             // convert to degrees
-            return averageAspectRadians * (180 / Math.PI);;
+            var deg = averageAspectRadians * (180 / Math.PI);
+
+            // if negative, adjust
+            if (deg < 0) deg = 360 + deg;
+
+            return deg;
         }
     }
 }

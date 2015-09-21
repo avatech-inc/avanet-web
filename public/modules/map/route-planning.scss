@@ -67,7 +67,7 @@
 .leaflet-editing-icon[style*="opacity: 0.6"] {
     display: none !important;
     pointer-events: none !important;
-    
+
     // opacity: .3 !important;
     // &:hover {
     //  opacity: .6 !important;
@@ -75,7 +75,7 @@
 }
 
 .leaflet-editing-icon.highlight {
-    box-shadow: 0px 0px 0px 4px rgba(0,0,255,.3);
+    box-shadow: 0px 0px 0px 4px rgba(255,255,255,.7);
 }
 .leaflet-editing-icon.hide {
     opacity: 0 !important;

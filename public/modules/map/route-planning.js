@@ -71,7 +71,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 segment.setStyle({ color: 'transparent' });
                 if (segment.segment.legIndex == scope.hoverOnLeg) {
                     // highlight route leg
-                    segment.setStyle({ color: 'rgba(0,0,255,.4)' });
+                    segment.bringToBack();
+                    segment.setStyle({ color: 'rgba(255,255,255,1)' });
                     // todo: highlight in elevation profile
                 }
             });

@@ -30,20 +30,38 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         // hide icons when not in edit mode
         scope.$watch("control.editing", function() {
+            if (!_line) return;
             if (scope.control.editing) editingOn();
             else editingOff();
         }, true);
 
         function editingOn() {
-            $(".leaflet-editing-icon").not(".waypoint-icon").removeClass("hide");
+            // show all points
+            $(".leaflet-editing-icon").not(".waypoint-icon").not(".end-icon").removeClass("hide");
+            // enable point dragging
             angular.forEach(_line.editing._markers, function(marker) {
                 marker.dragging.enable();
             });
         }
         function editingOff() {
-            $(".leaflet-editing-icon").not(".waypoint-icon").addClass("hide");
+            // close popups
+            setTimeout(function() {
+                var popups = $(".leaflet-popup-close-button");
+                angular.forEach(popups, function(popup) { popup.click(); });
+            });
+            // hide all points that aren't waypoints
+            $(".leaflet-editing-icon").not(".waypoint-icon").not(".end-icon").addClass("hide");
+
             angular.forEach(_line.editing._markers, function(marker) {
+                // disable point dragging
                 marker.dragging.disable();
+                // convert end point into a waypoint
+                if (marker._index == _line.editing._markers.length - 1) {
+                    makeWaypoint(marker);
+                    updateElevationProfile();
+                    updateSegments();
+                    saveLinePoints();
+                }
             });
         }
 
@@ -66,7 +84,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         }, true);
 
         scope.$watch("hoverOnLeg", function(){
-            console.log("HOVER ON LEG: " + scope.hoverOnLeg);
+            //console.log("HOVER ON LEG: " + scope.hoverOnLeg);
             angular.forEach(lineSegmentGroup._layers, function(segment) {
                 segment.setStyle({ color: 'transparent' });
                 if (segment.segment.legIndex == scope.hoverOnLeg) {
@@ -78,7 +96,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             });
         }, true);
         scope.$watch("hoverOnPoint", function(){
-            console.log("HOVER ON POINT: " + scope.hoverOnPoint);
+            //console.log("HOVER ON POINT: " + scope.hoverOnPoint);
             if (!_line) return;
             angular.forEach(_line.editing._markers, function(marker) {
                 $(marker._icon).removeClass("highlight");
@@ -331,6 +349,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // mark as a route planning point
             marker.isPoint = true;
 
+            // if first point, add start class
+            if (marker._index == 0) $(marker._icon).addClass("start-icon");
+            // if last point, add end class
+            else if (marker._index == _line.editing._markers.length - 1) $(marker._icon).addClass("end-icon");
+
             // remove existing marker events
             marker.off('click');
             marker.off('mouseover');
@@ -348,7 +371,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             });
 
             // popup
-            marker.bindPopup("", { closeButton: true });   
+            marker.unbindPopup();
+            marker.bindPopup("test", { closeButton: true });   
 
             marker.on('click', function() {
                 var leafletPopup = marker.getPopup();
@@ -357,31 +381,32 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 popup.style.padding = '5px';
 
                 if (marker.waypoint) {
-
                     popup.appendChild($("<div style='font-weight:bold;'>" + scope.route.waypointPrefix() + marker.waypoint.index + "</div>")[0]);
 
                     var nameInput = document.createElement("input");
                     popup.appendChild(nameInput);
+                    nameInput.placeholder = "Waypoint Name";
                     nameInput.value = marker.waypoint.name;
                     nameInput.onkeyup = function() {
                         marker.waypoint.name = nameInput.value;
                         saveLinePoints();
                     }
 
-                    if (marker._index > 0) {
+                    if (marker._index > 0 && scope.control.editing) {
                         var deleteWaypointbutton = document.createElement("button");
                         popup.appendChild(deleteWaypointbutton);
-                        deleteWaypointbutton.innerHTML = "<i class='ion-trash-a'></i>&nbsp;&nbsp;Delete Waypoint";
+                        deleteWaypointbutton.innerHTML = "<i class='ion-trash-a'></i>&nbsp;&nbsp;Remove Waypoint";
                         deleteWaypointbutton.addEventListener("click", function() {
                             marker.closePopup();
-                            marker.unbindPopup();
                             deleteWaypoint(marker);
-                            if (scope.control.editing) {
-                                marker.fire('click');
-                            }
-                            else {
-                                editingOff();
-                            }
+
+                            marker.fire('click');
+                            // if (scope.control.editing) {
+                            //     marker.fire('click');
+                            // }
+                            // else {
+                            //     editingOff();
+                            // }
                         });
                     }
                 }
@@ -396,9 +421,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                         // }
 
                         marker.closePopup();
-                        marker.unbindPopup();
                         makeWaypoint(marker);
-                        //marker.openPopup();
                         marker.fire('click');
 
                         updateElevationProfile();
@@ -419,23 +442,18 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                         // todo: handle proper styling on delete. start/end points should be waypoints!
                     });
                 }
-
                 leafletPopup.setContent(popup);
-
-                //marker.bindPopup(popup, { closeButton: true });   
-                // turn off default click events (for close/open)
-                //marker.off('click');
-                // open manually
-
-                //marker.openPopup();
             });
         }
 
         function makeWaypoint(marker, waypointData) {
+            console.log("making waypoint!");
+            console.log(marker);
+
             makePoint(marker);
 
             marker.waypoint = {
-                name: 'waypoint'
+                name: ''
             };
             if (waypointData) marker.waypoint = waypointData;
 

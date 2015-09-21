@@ -133,19 +133,20 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 if (!$scope.utm || $scope.utm.zone === null) return;
 
                 // validate
-                if (isNaN(parseFloat($scope.utm.e))) $scope.invalidE = true;
+                if ($scope.utm.e.length > 8 || isNaN(parseFloat($scope.utm.e))) $scope.invalidE = true;
                 else $scope.invalidE = false;
-                if (isNaN(parseFloat($scope.utm.n))) $scope.invalidN = true;
+                if ($scope.utm.n.length > 8 || isNaN(parseFloat($scope.utm.n))) $scope.invalidN = true;
                 else $scope.invalidN = false;
                 if ($scope.invalidE || $scope.invalidN) return;
 
                 // conver to lat/lng
                 var latlng = new Array(2);
                 UTMXYToLatLon($scope.utm.e, $scope.utm.n, $scope.utm.zone, $scope.utm.hemisphere === "S", latlng);
-                //console.log(latlng);
-
+                
                 var lat = RadToDeg(latlng[0]);
                 var lng = RadToDeg(latlng[1]);
+
+                console.log([ lat, lng ]);
 
                 $scope.invalidLat = false;
                 $scope.invalidLng = false;

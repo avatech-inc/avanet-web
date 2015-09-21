@@ -30,19 +30,22 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
         // hide icons when not in edit mode
         scope.$watch("control.editing", function() {
-            if (scope.control.editing) {
-                $(".leaflet-editing-icon").not(".waypoint-icon").removeClass("hide");
-                angular.forEach(_line.editing._markers, function(marker) {
-                    marker.dragging.enable();
-                });
-            }
-            else {
-                $(".leaflet-editing-icon").not(".waypoint-icon").addClass("hide");
-                angular.forEach(_line.editing._markers, function(marker) {
-                    marker.dragging.disable();
-                });
-            }
+            if (scope.control.editing) editingOn();
+            else editingOff();
         }, true);
+
+        function editingOn() {
+            $(".leaflet-editing-icon").not(".waypoint-icon").removeClass("hide");
+            angular.forEach(_line.editing._markers, function(marker) {
+                marker.dragging.enable();
+            });
+        }
+        function editingOff() {
+            $(".leaflet-editing-icon").not(".waypoint-icon").addClass("hide");
+            angular.forEach(_line.editing._markers, function(marker) {
+                marker.dragging.disable();
+            });
+        }
 
         scope.route.waypointPrefix = function() {
             if (!scope.route.name || scope.route.name.length == 0) return "W";
@@ -349,14 +352,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             marker.on('click', function() {
                 var leafletPopup = marker.getPopup();
 
-                // if (leafletPopup && marker.getPopup()._isOpen) {
-                //     console.log("close!");
-                //     marker.closePopup();
-                //     return;
-                // }
-                // console.log("here!");
-                // marker.unbindPopup();
-                    
                 var popup = document.createElement("div");
                 popup.style.padding = '5px';
 
@@ -380,7 +375,12 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                             marker.closePopup();
                             marker.unbindPopup();
                             deleteWaypoint(marker);
-                            marker.fire('click');
+                            if (scope.control.editing) {
+                                marker.fire('click');
+                            }
+                            else {
+                                editingOff();
+                            }
                         });
                     }
                 }

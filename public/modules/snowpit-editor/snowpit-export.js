@@ -256,7 +256,9 @@ var formatters = {
             var zone = Math.floor((lng + 180.0) / 6) + 1;
 
             // convert lat decimal degrees to UTM band
-            var band = (-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : "";
+            //var band = (-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : "";
+            // for now, use hemispheres
+            var band = (lat > 0) ? "N" : "S";
 
             // get UTM
             var xy = new Array(2);

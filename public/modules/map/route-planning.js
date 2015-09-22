@@ -78,19 +78,20 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         scope.control.downloadPDF = function() {
             var pdfRows = [];
 
-            // PDF header
+            // PDF columns
             var columns = [   
                 { text: 'Leg', style: 'tableHeader', width: 24 },
                 { text: 'Name', style: 'tableHeader', width: '*' },
                 { text: 'UTM', style: 'tableHeader', width: 49 },
-                { text: 'Distance', style: 'tableHeader', width: 43 },
-                { text: 'Start Elevation', style: 'tableHeader', width: 43 },
-                { text: 'Net Elevation', style: 'tableHeader', width: 38 },
-                { text: 'Bearing', style: 'tableHeader', width: 45 },
-                { text: 'Time', style: 'tableHeader', width: 50 },
-                { text: 'Running Time', style: 'tableHeader', width: 50 }
+                { text: 'Distance', style: 'tableHeader', width: 44 },
+                { text: 'Start Elevation', style: 'tableHeader', width: 44 },
+                { text: 'Net Elevation', style: 'tableHeader', width: 40 },
+                { text: 'Bearing', style: 'tableHeader', width: 43 },
+                { text: 'Time', style: 'tableHeader', width: 55 },
+                { text: 'Running Time', style: 'tableHeader', width: 55 }
             ];
             pdfRows.push(columns);
+            // set colummn widths
             var columnWidths = [];
             for (var i = 0; i < columns.length; i++) { columnWidths.push(columns[i].width); }
 

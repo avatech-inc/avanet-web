@@ -278,6 +278,17 @@ var formatters = {
         if (time) str += " " + moment(time).format("h:mm a"); //todo: user setting 24 hour/ 12 hour clock
         if (str == "") str = "--";
         return str;
+    },
+    formatDuration: function(minutes) {
+        var str = "--";
+        if (minutes >= 60) {
+            var hours = minutes / 60;
+            var mins = Math.floor(minutes % 60);
+            str = Math.floor(hours) + " hr";
+            if (mins > 0) str += " " + mins + " min";
+        }
+        else str = Math.floor(minutes) + " min";
+        return str;
     }
 };
 

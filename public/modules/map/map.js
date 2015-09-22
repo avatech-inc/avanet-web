@@ -837,18 +837,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.hoverOnPoint = index;
     }
 
-    $scope.formatTime = function(minutes) {
-        var str = "";
-        if (minutes >= 60) {
-            var hours = minutes / 60;
-            var mins = Math.floor(minutes % 60);
-            str = Math.floor(hours) + " hr";
-            if (mins > 0) str += " " + mins + " min";
-        }
-        else str = Math.floor(minutes) + " min";
-        return str;
-    }
-
     $scope.munterRate = {
         up: 4,
         down: 10

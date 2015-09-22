@@ -756,7 +756,7 @@
 
 					<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-if="route && route.points.length > 1">
 						{{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
-						{{ formatTime(route.terrain.timeEstimateMinutes) }}
+						{{ formatters.formatDuration(route.terrain.timeEstimateMinutes) }}
 					</div>
 				</div>
 				<div ng-if="route.points.length == 0" class="instruct">
@@ -770,7 +770,8 @@
 
 						<a href="#" ng-click="routeControl.editing = !routeControl.editing">Edit: {{ routeControl.editing ? "on" : "off" }}</a><br/>
 						<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint">Auto-waypoint: {{ routeControl.autoWaypoint ? "on" : "off" }}</a><br/>
-						<a href="#" ng-click="route.downloadGPX()">Download GPX</a>
+						<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a><br/>
+						<a href="#" ng-click="routeControl.downloadPDF()">Download PDF</a>
 
 						<div style="font-size:13px;">
 							<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
@@ -799,7 +800,7 @@
 							ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 								<div class="side-line"></div>
 								DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
-								TIME: {{ formatTime(routePoint.leg.timeEstimateMinutes) }}<br/>
+								TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
 								BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
 								NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
 								VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
@@ -826,7 +827,7 @@
 
 								<div style="float: right; font-size: 12px; line-height: 13px; position: relative; bottom: 3px; text-align: right; font-weight: 500;" ng-hide="$index == 0">
 									{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>
-									{{ formatTime(routePoint.terrain.totalTimeEstimateMinutes) }}
+									{{ formatters.formatDuration(routePoint.terrain.totalTimeEstimateMinutes) }}
 								</div>
 							</div>
 

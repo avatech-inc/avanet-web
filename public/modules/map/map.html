@@ -58,6 +58,20 @@
 .leaflet-marker-icon.prunecluster.detailed div span {
     line-height: 26px !important;
 }
+
+.mapCoords {
+    background: rgba(255,255,255,.5);
+    line-height: 27px;
+    font-size: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,.2);
+    display: inline-block;
+    text-shadow: 0px 0px 10px #fff, 0px 0px 1px #fff;
+    pointer-events: none;
+    float:right;
+}
 </style>
 	<section ng-hide="isFullScreen()" >
 		<div id="map-header" ng-hide="isDemo">
@@ -401,9 +415,12 @@
 			        </a></li></ul>
 			    </div>
 
-			    <div style="background:rgba(255,255,255,.5);display:inline-block;" ng-show="mapCursorLocation">
+			    <div class="mapCoords" ng-show="mapCursorLocation">
 			    {{ formatters.formatLatLng(mapCursorLocation) }}
+			    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
 			    {{ formatters.formatLatLngAsUTM(mapCursorLocation) }}
+			    &nbsp;&nbsp;
+			    <b>WGS84</b>
 			    </div>
 			</div>
 

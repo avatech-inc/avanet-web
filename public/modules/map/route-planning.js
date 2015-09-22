@@ -76,25 +76,19 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             downloadGPX();
         };
         scope.control.downloadPDF = function() {
-            var pdfRows = [ 
-                // "test", 
-                // { text: 'nothing 1 interesting here', italics: true, color: 'gray' }, 
-                // { text: 'nothing 2 idfdfhnteresting here', italics: true, color: 'gray' }, 
-                // { text: 'nothing 3 interesting here', italics: true, color: 'gray' }
-            ];
-            //[100, '*', 200, '*']
+            var pdfRows = [];
 
             // PDF header
             var columns = [   
                 { text: 'Leg', style: 'tableHeader', width: 24 },
                 { text: 'Name', style: 'tableHeader', width: '*' },
-                { text: 'UTM', style: 'tableHeader', width: 50 },
-                { text: 'Distance', style: 'tableHeader', width: '*' },
-                { text: 'Start Elevation', style: 'tableHeader', width: 42 },
+                { text: 'UTM', style: 'tableHeader', width: 49 },
+                { text: 'Distance', style: 'tableHeader', width: 43 },
+                { text: 'Start Elevation', style: 'tableHeader', width: 43 },
                 { text: 'Net Elevation', style: 'tableHeader', width: 38 },
-                { text: 'Bearing', style: 'tableHeader', width: '*' },
-                { text: 'Time', style: 'tableHeader', width: '*' },
-                { text: 'Running Time', style: 'tableHeader', width: '*' }
+                { text: 'Bearing', style: 'tableHeader', width: 45 },
+                { text: 'Time', style: 'tableHeader', width: 50 },
+                { text: 'Running Time', style: 'tableHeader', width: 50 }
             ];
             pdfRows.push(columns);
             var columnWidths = [];
@@ -107,9 +101,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     scope.route.waypointPrefix() + (index + 1), 
                     point.waypoint ? point.waypoint.name : "",
                     { text: formatters.formatLatLngAsUTM({ lat: point.lat, lng: point.lng }), alignment: 'right' },
-                    point.leg ? formatters.formatKmOrMiles(point.leg.distance) : "",
-                    point.terrain ? formatters.formatElevation(point.terrain.elevation) : "",
-                    point.leg ? ((point.leg.elevationChange > 0 ? '+':'') + " " + formatters.formatElevation(point.leg.elevationChange)) : "",
+                    { text: point.leg ? formatters.formatKmOrMiles(point.leg.distance) : "", alignment: 'right' },
+                    { text: point.terrain ? formatters.formatElevation(point.terrain.elevation) : "", alignment: 'right' },
+                    { text: point.leg ? ((point.leg.elevationChange > 0 ? '+':'') + " " + formatters.formatElevation(point.leg.elevationChange)) : "", alignment: 'right' },
                     point.leg ? formatters.formatDirection(point.leg.bearing) : "",
                     point.leg ? formatters.formatDuration(point.leg.timeEstimateMinutes) : "",
                     point.terrain ? formatters.formatDuration(point.terrain.totalTimeEstimateMinutes) : ""

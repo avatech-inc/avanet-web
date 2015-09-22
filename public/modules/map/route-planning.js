@@ -17,6 +17,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
       control: '='
     },
     link: function(scope, element) {
+        var formatters = snowpitExport.formatters;
+
         scope.route = {
             name: "Route Name",
             terrain: {},
@@ -70,9 +72,92 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             else return scope.route.name[0];
         };
 
-        scope.route.downloadGPX = function() {
+        scope.control.downloadGPX = function() {
             downloadGPX();
         };
+        scope.control.downloadPDF = function() {
+            var pdfRows = [ 
+                // "test", 
+                // { text: 'nothing 1 interesting here', italics: true, color: 'gray' }, 
+                // { text: 'nothing 2 idfdfhnteresting here', italics: true, color: 'gray' }, 
+                // { text: 'nothing 3 interesting here', italics: true, color: 'gray' }
+            ];
+            //[100, '*', 200, '*']
+
+            // PDF header
+            var columns = [   
+                { text: 'Leg', style: 'tableHeader', width: 24 },
+                { text: 'Name', style: 'tableHeader', width: '*' },
+                { text: 'UTM', style: 'tableHeader', width: 50, alignment: 'right' },
+                { text: 'Distance', style: 'tableHeader', width: '*' },
+                { text: 'Start Elevation', style: 'tableHeader', width: 42 },
+                { text: 'Net Elevation', style: 'tableHeader', width: 38 },
+                { text: 'Bearing', style: 'tableHeader', width: '*' },
+                { text: 'Time', style: 'tableHeader', width: '*' },
+                { text: 'Running Time', style: 'tableHeader', width: '*' }
+            ];
+            pdfRows.push(columns);
+            var columnWidths = [];
+            for (var i = 0; i < columns.length; i++) { columnWidths.push(columns[i].width); }
+
+            // add rows
+            angular.forEach(scope.route.points,function(point, index) {
+                //pdfRows.push(+ JSON.stringify(point));
+                pdfRows.push([ 
+                    scope.route.waypointPrefix() + (index + 1), 
+                    point.waypoint ? point.waypoint.name : "",
+                    { text: formatters.formatLatLngAsUTM({ lat: point.lat, lng: point.lng }), alignment: 'right' },
+                    point.leg ? formatters.formatKmOrMiles(point.leg.distance) : "",
+                    point.terrain ? formatters.formatElevation(point.terrain.elevation) : "",
+                    point.leg ? ((point.leg.elevationChange > 0 ? '+':'') + " " + formatters.formatElevation(point.leg.elevationChange)) : "",
+                    point.leg ? formatters.formatDirection(point.leg.bearing) : "",
+                    point.leg ? formatters.formatDuration(point.leg.timeEstimateMinutes) : "",
+                    point.terrain ? formatters.formatDuration(point.terrain.totalTimeEstimateMinutes) : ""
+                ]);
+            });
+
+            // pdf layout
+            var docDefinition = {
+                content: [
+                    { text: scope.route.name, style: 'subheader' },
+                    {
+                        style: 'tableExample',
+                        table: {
+                            headerRows: 1,
+                            widths: columnWidths,
+                            body: pdfRows
+                        }
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        margin: [0, 0, 0, 10]
+                    },
+                    subheader: {
+                        fontSize: 16,
+                        bold: true,
+                        margin: [0, 10, 0, 5]
+                    },
+                    tableExample: {
+                        fontSize: 9,
+                        margin: [0, 5, 0, 15]
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 9,
+                        color: 'black'
+                    }
+                },
+                defaultStyle: {
+                    // alignment: 'justify'
+                }
+                
+            }
+            pdfMake.createPdf(docDefinition).open();
+            // .download()
+        }
 
         scope.$watch("munterRateUp", function() {
             if (!elevationProfilePoints || scope.munterRateUp == null) return;
@@ -594,6 +679,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
                 var previousElevation = points[i-1].elevation;
                 point.elevationDifference = point.elevation - previousElevation;
+                //console.log("ELEV: " + point.elevationDifference);
+
                 if (point.elevationDifference > 0) {
                     point.direction = "up";
                     point.verticalUp = point.elevationDifference;
@@ -706,10 +793,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     thisPoint.lat,
                     thisPoint.elevation,
                     thisPoint.slope,
-                    snowpitExport.formatters.formatDirection(thisPoint.aspect),
+                    formatters.formatDirection(thisPoint.aspect),
                     thisPoint.totalTimeEstimateMinutes,
                     thisPoint.totalDistance,
-                    snowpitExport.formatters.formatDirection(thisPoint.bearing)
+                    formatters.formatDirection(thisPoint.bearing)
                 ]);
             }
 
@@ -870,7 +957,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val !== null) sum += val;
+                if (val != null) sum += val;
             }
             return sum / list.length;
         }
@@ -880,7 +967,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val !== null) min = Math.min(min, val);
+                if (val != null) min = Math.min(min, val);
             }
             return min;
         }
@@ -890,7 +977,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val !== null) max = Math.max(max, val);
+                if (val != null) max = Math.max(max, val);
             }
             return max;
         }
@@ -900,7 +987,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 var val;
                 if (!property) val = list[i];
                 else val = list[i][property];
-                if (val !== null) sum += val;
+                if (val != null) sum += val;
             }
             return sum;
         }
@@ -913,7 +1000,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // get sines and cosines
             for (var i = 0; i < list.length; i++) {
                 var aspect = list[i][property];
-                if (aspect !== null) {
+                if (aspect != null) {
                     aspect = parseInt(aspect);
                     // convert aspect degrees to radians
                     aspect *= (Math.PI / 180);

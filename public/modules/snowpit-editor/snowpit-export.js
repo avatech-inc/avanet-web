@@ -283,7 +283,8 @@ var formatters = {
         var str = "--";
         if (minutes >= 60) {
             var hours = minutes / 60;
-            var mins = Math.floor(minutes % 60);
+            //var mins = Math.floor(minutes % 60);
+            var mins = parseInt(minutes % 60);
             str = Math.floor(hours) + " hr";
             if (mins > 0) str += " " + mins + " min";
         }

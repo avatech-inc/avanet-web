@@ -88,7 +88,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var columns = [   
                 { text: 'Leg', style: 'tableHeader', width: 24 },
                 { text: 'Name', style: 'tableHeader', width: '*' },
-                { text: 'UTM', style: 'tableHeader', width: 50, alignment: 'right' },
+                { text: 'UTM', style: 'tableHeader', width: 50 },
                 { text: 'Distance', style: 'tableHeader', width: '*' },
                 { text: 'Start Elevation', style: 'tableHeader', width: 42 },
                 { text: 'Net Elevation', style: 'tableHeader', width: 38 },
@@ -337,8 +337,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                             lng: thisPoint._latlng.lng,
                             waypoint: thisPoint.waypoint,
                             pointIndex: thisPoint._index,
-                            terrain: {},
-                            leg: {}
+                            // terrain: {},
+                            // leg: {}
                         };
 
                         // get leg

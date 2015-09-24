@@ -1,8 +1,8 @@
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
-    $rootScope.isDemo = true;
-    $scope.routeEditMode = true;
+    $rootScope.isDemo = false;
+    $scope.routeEditMode = false;
 
     if ($rootScope.isDemo) mixpanel.track("demo");
 
@@ -263,8 +263,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // init mapbox
     $scope.map = L.map('map', {
         zoomControl: false,
-        worldCopyJump: true,
-        minZoom: 2
+        minZoom: 2,
+        worldCopyJump: true
     });
 
     // disable scroll wheel zoom
@@ -285,24 +285,25 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.on('load', function(e) { mapLoaded.resolve(); });
 
     // setup heatmap
-    var heatMap = L.heatLayer([], {
-        radius: 10, blur: 15, 
-        maxZoom: $scope.map.getZoom() 
-    }).addTo($scope.map);
+    var heatMap;
+    // var heatMap = L.heatLayer([], {
+    //     radius: 10, blur: 15, 
+    //     maxZoom: $scope.map.getZoom() 
+    // }).addTo($scope.map);
 
     $scope.detailedZoomMin = 9;
     $scope.map.on('zoomend', function(e) {
         var zoom = $scope.map.getZoom();
         if (zoom < $scope.detailedZoomMin) {
             // show heatmap
-            heatMap.setOptions({
+            if (heatMap) heatMap.setOptions({
                 radius: 10, blur: 15,
                 maxZoom: (zoom + (zoom / 2))
             });
         }
         else {
             // hide heatmap
-            heatMap.setOptions({
+            if (heatMap) heatMap.setOptions({
                 radius: 1, blur: 1, maxZoom: 20
             });
             // show markers
@@ -492,7 +493,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
     // set initial location and zoom level
-    var defaultZoom = 13;
+    var defaultZoom = 7;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
     $scope.map.setView(initialLocation, defaultZoom);
@@ -650,7 +651,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 obsOnMap[profile._id] = marker;
 
                 // add to heatmap
-                //if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
+                if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
 
             }
         });
@@ -874,5 +875,15 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // }
 
+    // --------------------------------
+
+    // UTM Grid
+    var layer = new UTMGridLayer();
+    setTimeout(function(){
+        layer.addTo($scope.map);
+        layer.bringToFront();
+    }, 2000);
+    
+    //var grid = L.grid().addTo($scope.map);
 
 });

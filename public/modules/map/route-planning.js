@@ -96,18 +96,21 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             for (var i = 0; i < columns.length; i++) { columnWidths.push(columns[i].width); }
 
             // add rows
+            console.log("ROUTE POINTS:")
+            console.log(scope.route.points);
             angular.forEach(scope.route.points,function(point, index) {
+                var nextPoint = index != scope.route.points.length - 1 ? scope.route.points[index + 1] : null;
                 //pdfRows.push(+ JSON.stringify(point));
                 pdfRows.push([ 
                     scope.route.waypointPrefix() + (index + 1), 
                     point.waypoint ? point.waypoint.name : "",
                     { text: formatters.formatLatLngAsUTM({ lat: point.lat, lng: point.lng }), alignment: 'right' },
-                    { text: point.leg ? formatters.formatKmOrMiles(point.leg.distance) : "", alignment: 'right' },
+                    { text: nextPoint && nextPoint.leg ? formatters.formatKmOrMiles(nextPoint.leg.distance) : "", alignment: 'right' },
                     { text: point.terrain ? formatters.formatElevation(point.terrain.elevation) : "", alignment: 'right' },
-                    { text: point.leg ? ((point.leg.elevationChange > 0 ? '+':'') + " " + formatters.formatElevation(point.leg.elevationChange)) : "", alignment: 'right' },
-                    point.leg ? formatters.formatDirection(point.leg.bearing) : "",
-                    point.leg ? formatters.formatDuration(point.leg.timeEstimateMinutes) : "",
-                    point.terrain ? formatters.formatDuration(point.terrain.totalTimeEstimateMinutes) : ""
+                    { text:nextPoint &&  nextPoint.leg ? ((nextPoint.leg.elevationChange > 0 ? '+':'') + " " + formatters.formatElevation(nextPoint.leg.elevationChange)) : "", alignment: 'right' },
+                    nextPoint && nextPoint.leg ? formatters.formatDirection(nextPoint.leg.bearing) : "",
+                    nextPoint && nextPoint.leg ? formatters.formatDuration(nextPoint.leg.timeEstimateMinutes) : "",
+                    nextPoint && nextPoint.terrain ? formatters.formatDuration(nextPoint.terrain.totalTimeEstimateMinutes) : ""
                 ]);
             });
 
@@ -332,17 +335,21 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                             lng: thisPoint._latlng.lng,
                             waypoint: thisPoint.waypoint,
                             pointIndex: thisPoint._index,
-                            // terrain: {},
-                            // leg: {}
+                            terrain: {},
+                            leg: {}
                         };
 
                         // get leg
                         if (elevationProfilePoints) {
                             var legPoints = getLegPoints(lastWaypointIndex, thisPoint._index);
+                            // if (legPoints.length > 1) {
+                            //     scope.route.points[legIndex - 1].leg = calculateLineSegmentStats(legPoints);
+                            // }
                             pointDetails.leg = calculateLineSegmentStats(legPoints);
                             pointDetails.terrain = getElevationProfilePoint(thisPoint._index);
-                        }
+                        }   
 
+                        // set leg on every point so that we can highlight it
                         pointDetails.leg.index = legIndex;
 
                         scope.route.points.push(pointDetails);

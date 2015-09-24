@@ -20,30 +20,57 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
         // set line style
         ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = .8;
 
+        ctx.beginPath();
         // UTM zones
-        for (var i = 1; i <= 60; i++) {
+        for (var i = 0; i <= 60; i++) {
             var zoneBoundaryLng = (i * 6) - 180;
 
             if (zoneBoundaryLng < bounds._southWest.lng || zoneBoundaryLng > bounds._northEast.lng) continue;
 
-            var pixelTop = this._map.latLngToContainerPoint(new L.LatLng(bounds._northEast.lat, zoneBoundaryLng));
-            var pixelBottom = this._map.latLngToContainerPoint(new L.LatLng(bounds._southWest.lat, zoneBoundaryLng));
+            var latTop = bounds._northEast.lat;
+            if (latTop > 84) latTop = 84;
 
-            ctx.beginPath();
+            var latBottom = Math.max(-80, bounds._southWest.lat);
+            //if (latBottom < -80) latBottom = -80;
+
+            var pixelTop = this._map.latLngToContainerPoint(new L.LatLng(latTop, zoneBoundaryLng));
+            var pixelBottom = this._map.latLngToContainerPoint(new L.LatLng(latBottom, zoneBoundaryLng));
+
             ctx.moveTo(pixelTop.x ,pixelTop.y);
             ctx.lineTo(pixelBottom.x, pixelBottom.y);
-            ctx.closePath();
-            ctx.stroke();
         }
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        // set line style
+        ctx.strokeStyle = 'rgba(255, 60, 60, 0.4)';
+        // latitude bands
+        //(-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : ""; 
+        for (var i = 0; i < 21; i++) {
+            var bandDegrees = 8;
+            var bandBoundaryLat = (i * bandDegrees) - 80;
+
+            if (i == 20) bandBoundaryLat +=4;
+
+            var lngLeft = bounds._southWest.lng;
+            if (lngLeft < -180) lngLeft = -180;
+
+            var lngRight = bounds._northEast.lng;
+            if (lngRight > 180) lngRight = 180;
+
+            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, lngLeft));
+            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, lngRight));
+            
+            ctx.moveTo(pixelLeft.x ,pixelLeft.y);
+            ctx.lineTo(pixelRight.x, pixelRight.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
 
         // UTM grid
-
-        // var southernHemi = false;
-        // if (bounds._southWest.lat < 0 || bounds._northEast.lat < 0) southernHemi = true;
-
-        // get UTM of bounds
 
         if (bounds._southWest.lat < 0 && bounds._northEast.lat > 0) {
             drawUTMGrid(this._map, ctx, bounds, false);
@@ -60,8 +87,17 @@ var UTMGridLayer = L.CanvasLayer.extend({
     });
 function drawUTMGrid(_map, ctx, bounds, southernHemi) {
 
+    var zoom = _map.getZoom();
     // tick spacing (in meters)
     var divider = 100000;
+
+    if (zoom < 4) return;         
+    else if (zoom < 7)  divider = 100000;
+    else if (zoom < 10) divider = 100000 / 5;
+    else if (zoom < 13) divider = 100000 / 10; // 1km
+    else if (zoom < 15) divider = 100000 / 40;
+    else if (zoom < 18) divider = 100000 / 80;
+    //else if (zoom == 3) divider = 1000000;
 
     // set line style
     ctx.strokeStyle = 'rgba(0, 0, 255, 0.9)';

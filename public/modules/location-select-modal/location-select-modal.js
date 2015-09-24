@@ -82,8 +82,10 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
 
         // on map search select
         $scope.mapSearchSelect = function(location) {
-            if (location.lat && location.lng)
-                $scope.map.setView([location.lat,location.lng], 12,{ animate: true});
+            if (location.lat && location.lng) {
+                $scope.map.setView([location.lat,location.lng], 12,{ animate: false });
+                $scope.setLocation(location.lat, location.lng);
+            }
         }
 
         $scope.form.coordSystem = Global.user.settings.coordSystem;

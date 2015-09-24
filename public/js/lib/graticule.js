@@ -85,59 +85,45 @@ var UTMGridLayer = L.CanvasLayer.extend({
         //this.redraw();
       }
     });
-function drawUTMGrid(_map, ctx, bounds, southernHemi) {
 
+function drawUTMGrid(_map, ctx, bounds, southernHemi) {
     var zoom = _map.getZoom();
     // tick spacing (in meters)
-    var divider = 100000;
+    var div = 100000;
 
-    if (zoom < 4) return;         
-    else if (zoom < 7)  divider = 100000;
-    else if (zoom < 10) divider = 100000 / 5;
-    else if (zoom < 13) divider = 100000 / 10; // 1km
-    else if (zoom < 15) divider = 100000 / 40;
-    else if (zoom < 18) divider = 100000 / 80;
-    //else if (zoom == 3) divider = 1000000;
+    if (zoom < 6) return;         
+    else if (zoom == 6)  div = 100000 * 2;
+    else if (zoom < 8) div = 100000;
+    else if (zoom < 10) div = 100000 / 2;
+    else if (zoom < 13) div = 100000 / 10; // 1km
+    else if (zoom < 15) div = 100000 / 40;
+    else if (zoom < 18) div = 100000 / 80;
 
     // set line style
     ctx.strokeStyle = 'rgba(0, 0, 255, 0.9)';
     ctx.lineWidth = .8;
-
-    //var southernHemi = false;
-    //if (bounds._southWest.lat < 0 || bounds._northEast.lat < 0) southernHemi = true;
 
     var zoneSW = Math.floor((bounds._southWest.lng + 180.0) / 6) + 1;
     var zoneNE = Math.floor((bounds._northEast.lng + 180.0) / 6) + 1;
 
     var UTM_SW = new Array(2);
     LatLonToUTMXY(DegToRad(bounds._southWest.lat), DegToRad(bounds._southWest.lng), zoneSW, UTM_SW);
-
     var UTM_NE = new Array(2);
     LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(bounds._northEast.lng), zoneNE, UTM_NE);
 
-    // console.log("ZONES:");
-    // console.log(zoneSW + "-" + zoneNE);
-    // console.log("number of zones: " + (zoneNE - zoneSW + 1));
-    // console.log("SW: " + UTM_SW);
-    // console.log("NE: " + UTM_NE);
-    // console.log("-----------")
+    var utmTop    = (parseInt(UTM_NE[1] / div) * div) + div;
+    var utmBottom = (parseInt(UTM_SW[1] / div) * div) - div;
 
-    var utmTop = parseInt(UTM_NE[1] / divider) + 2;
-    var utmBottom = parseInt(UTM_SW[1] / divider) - 2;
-
-    if (bounds._southWest.lat < 0 && bounds._northEast.lat > 0) {
-        if (southernHemi) utmTop = 100;
+    if (bounds._southWest.lat < 0 && bounds._northEast.lat >= 0) {
+        if (southernHemi) utmTop = 10000000;
         else utmBottom = 0;
     }
-    // console.log("existing: " + utmBottom + "," + utmTop);
-    // console.log("south: " + southernHemi);
+    //console.log(zone + " UTM: " + utmBottom + "," + utmTop)
 
     for (var zone = zoneSW; zone <= zoneNE; zone++) {
-
         // get lng of zone
         var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
-        var zoneBoundaryLngRight = ((zone + 0) * 6) - 180;
-
+        var zoneBoundaryLngRight = (zone * 6) - 180;
         // get zone boundaries
         var zonePointNE = _map.latLngToContainerPoint(new L.LatLng(bounds._northEast.lat, zoneBoundaryLngLeft));
         var zonePointSW = _map.latLngToContainerPoint(new L.LatLng(bounds._southWest.lat, zoneBoundaryLngRight));
@@ -145,7 +131,6 @@ function drawUTMGrid(_map, ctx, bounds, southernHemi) {
         // clip canvas to boundaries of zone
         if (zoneNE != zoneSW) {
             ctx.save();
-
             ctx.beginPath();
             ctx.moveTo(zonePointNE.x, zonePointNE.y);
             ctx.lineTo(zonePointSW.x, zonePointNE.y);
@@ -155,58 +140,43 @@ function drawUTMGrid(_map, ctx, bounds, southernHemi) {
             ctx.clip();
         }
 
-        // utm coords
+        // multiple zones on screen
+        var utmLeft = 0;
+        var utmRight = 10000000;
 
-        var utmCoordsLeft = new Array(2);
-        LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(zoneBoundaryLngLeft), zone, utmCoordsLeft);
-
-        var utmCoordsRight = new Array(2);
-        LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(zoneBoundaryLngRight), zone, utmCoordsRight);
-
-        var utmLeft = parseInt(utmCoordsLeft[0] / divider) - 2;
-        var utmRight = parseInt(utmCoordsRight[0] / divider) + 2;
-
+        // only one zone on screen
         if (zone == zoneNE && zone == zoneSW) {
-            utmLeft = parseInt(UTM_SW[0] / divider) - 2;
-            utmRight = parseInt(UTM_NE[0] / divider) + 2;
+            utmLeft = (parseInt(UTM_SW[0] / div) * div) - div;
+            utmRight = (parseInt(UTM_NE[0] / div) * div) + div;
         }
-        else if (zone == zoneNE) {
-            utmRight = parseInt(UTM_SW[0] / divider) + 10;
-        }
-        else if (zone == zoneSW) {
-            utmLeft = parseInt(UTM_NE[0] / divider) - 10; // figure out more elegant way to calculate '10' (padding)
-        }
+        //console.log(zone + ": left: " + utmLeft + ", " + utmRight);
 
-        // horizontal lines
         ctx.beginPath();
-        for (var n = utmBottom; n <= utmTop; n++) {
-            for (var e = utmLeft; e <= utmRight; e++) {
+        // horizontal lines
+        for (var n = utmBottom; n <= utmTop; n += div) {
+            for (var e = utmLeft; e <= utmRight; e += div) {
                 // convert back to lat lng
                 var latlng = new Array(2);
-                UTMXYToLatLon(e * divider, n * divider, zone, southernHemi, latlng);
-                
-                var lat = RadToDeg(latlng[0]);
-                var lng = RadToDeg(latlng[1]);
+                UTMXYToLatLon(e, n, zone, southernHemi, latlng);
 
                 // get container point
-                var canvasPoint = _map.latLngToContainerPoint(new L.LatLng(lat, lng));
+                var canvasPoint = _map.latLngToContainerPoint(
+                    new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
 
                 if (e == utmLeft) ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else ctx.lineTo(canvasPoint.x, canvasPoint.y);
             }
         }
         // vertical lines
-        for (var e = utmLeft; e <= utmRight; e++) {
-            for (var n = utmBottom; n <= utmTop; n++) {
+        for (var e = utmLeft; e <= utmRight; e += div) {
+            for (var n = utmBottom; n <= utmTop; n += div) {
                 // convert back to lat lng
                 var latlng = new Array(2);
-                UTMXYToLatLon(e * divider, n * divider, zone, southernHemi, latlng);
-                
-                var lat = RadToDeg(latlng[0]);
-                var lng = RadToDeg(latlng[1]);
+                UTMXYToLatLon(e, n, zone, southernHemi, latlng);
 
                 // get container point
-                var canvasPoint = _map.latLngToContainerPoint(new L.LatLng(lat, lng));
+                var canvasPoint = _map.latLngToContainerPoint(
+                    new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
 
                 if (n == utmBottom) ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else ctx.lineTo(canvasPoint.x, canvasPoint.y);
@@ -217,6 +187,23 @@ function drawUTMGrid(_map, ctx, bounds, southernHemi) {
 
         // restore clipped zone
         if (zoneNE != zoneSW) ctx.restore();
+    }
+}
+
+function drawLines() {
+    for (var e = utmLeft; e <= utmRight; e += div) {
+        for (var n = utmBottom; n <= utmTop; n += div) {
+            // convert back to lat lng
+            var latlng = new Array(2);
+            UTMXYToLatLon(e, n , zone, southernHemi, latlng);
+
+            // get container point
+            var canvasPoint = _map.latLngToContainerPoint(
+                new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
+
+            if (n == utmBottom) ctx.moveTo(canvasPoint.x, canvasPoint.y);
+            else ctx.lineTo(canvasPoint.x, canvasPoint.y);
+        }
     }
 }
 

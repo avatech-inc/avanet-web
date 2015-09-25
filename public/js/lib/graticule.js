@@ -169,13 +169,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
       render: function() {
         var canvas = this.getCanvas();
         this.ctx = canvas.getContext('2d');
-
-        // scale
-        // if (!this.scaled) {
-        //     this.ctx.scale(2,2);
-        //     this.scaled = true;
-        // }
-
+        
         // clear canvas
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -247,7 +241,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
 
 
-L.Grid = L.LayerGroup.extend({
+var LatLngGridLayer = L.LayerGroup.extend({
     options: {
         xticks: 8,
         yticks: 5,
@@ -479,7 +473,3 @@ L.Grid = L.LayerGroup.extend({
     }
 
 });
-
-L.grid = function (options) {
-    return new L.Grid(options);
-};

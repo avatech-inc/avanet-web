@@ -889,10 +889,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             gridOverlayLayer = new UTMGridLayer();
         }
         else if (newOverlay == 'dd') {
-            gridOverlayLayer = L.grid();
+            gridOverlayLayer = new LatLngGridLayer();
         }
 
-        if (gridOverlayLayer) gridOverlayLayer.addTo($scope.map);
+        if (gridOverlayLayer) {
+            console.log("yooooooo")
+            gridOverlayLayer.addTo($scope.map);
+        }
     })
     
     //

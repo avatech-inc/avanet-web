@@ -24,13 +24,11 @@ L.CanvasLayer = L.Class.extend({
 initialize: function (options) {
     var self = this;
     options = options || {};
-    //this.project = this._project.bind(this);
     this.render = this.render.bind(this);
     L.Util.setOptions(this, options);
     this._canvas = this._createCanvas();
     // backCanvas for zoom animation
     this._backCanvas = this._createCanvas();
-    this._ctx = this._canvas.getContext('2d');
     this.currentAnimationFrame = -1;
     this.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                                 window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
@@ -177,8 +175,24 @@ initialize: function (options) {
 
   _reset: function () {
     var size = this._map.getSize();
-    this._canvas.width = size.x;
-    this._canvas.height = size.y;
+
+    if (window.devicePixelRatio > 1 ) {
+      this._canvas.width = size.x * window.devicePixelRatio;
+      this._canvas.height = size.y * window.devicePixelRatio;
+      this._canvas.style.width = size.x + "px";
+      this._canvas.style.height = size.y + "px";
+
+      this._backCanvas.width = size.x * window.devicePixelRatio;
+      this._backCanvas.height = size.y * window.devicePixelRatio;
+      this._backCanvas.style.width = size.x + "px";
+      this._backCanvas.style.height = size.y + "px";
+
+      this._canvas.getContext('2d').scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    else {
+      this._canvas.width = size.x;
+      this._canvas.height = size.y;
+    }
 
     // fix position
     var pos = L.DomUtil.getPosition(this._map.getPanes().mapPane);
@@ -188,13 +202,6 @@ initialize: function (options) {
     this.onResize();
     this._render();
   },
-
-  /*
-  _project: function(x) {
-    var point = this._map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
-    return [point.x, point.y];
-  },
-  */
 
   _updateOpacity: function () { },
 

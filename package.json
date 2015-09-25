@@ -9,7 +9,7 @@
     "npm": "2.14.x"
   },
   "scripts": {
-    "start": "server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "async": "^0.9.0",

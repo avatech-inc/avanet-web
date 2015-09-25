@@ -26,11 +26,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
         for (var _x = _x_min; _x <= _x_max; _x += div) {
 
             // draw labels
-            //this.ctx.font = '13px "roboto condensed"';
-            // this.ctx.shadowColor = "white";
-            // this.ctx.shadowOffsetX = 0; 
-            // this.ctx.shadowOffsetY = 0; 
-            // this.ctx.shadowBlur = 7;
             this.ctx.strokeStyle="rgba(255,255,255,.9)";
             this.ctx.lineWidth = 3;
 

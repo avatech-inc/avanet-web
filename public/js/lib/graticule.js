@@ -1,54 +1,81 @@
-
 var UTMGridLayer = L.CanvasLayer.extend({
 
-    drawLines: function(div, zone, southernHemi, utmBottom, utmTop, utmLeft, utmRight) {
+    getZonePixelBounds: function(zone) {
+        var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
+        var zoneBoundaryLngRight = (zone * 6) - 180;
+        return {
+            NE: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngRight)),
+            SE: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngRight)),
+            SW: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngLeft)),
+            NW: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngLeft))
+        }
+    },
+    getGridPixelBounds: function(zone) {
+        var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
+        var zoneBoundaryLngRight = (zone * 6) - 180;
+        return {
+            NE: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngRight)),
+            SE: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngRight)),
+            SW: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngLeft)),
+            NW: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngLeft))
+        }
+    },
 
-        var directions = ["h","v"];
-        for (var d = 0; d < directions.length; d++) {
-            var direction = directions[d];
+    drawGridLines: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
+        // set line style
+        this.ctx.strokeStyle = "rgba(0,0,0,.9)";
+        this.ctx.lineWidth = .8;
 
-            var _x_min = direction == "h" ? utmBottom : utmLeft;
-            var _x_max = direction == "h" ? utmTop : utmRight;
-            var _y_min = direction == "h" ? utmLeft : utmBottom;
-            var _y_max = direction == "h" ? utmRight : utmTop;
+        for (var _x = _x_min; _x <= _x_max; _x += div) {
+            var previousPoint = null;
+            for (var _y = _y_min; _y <= _y_max; _y += div) {
 
-            for (var _x = _x_min; _x <= _x_max; _x += div) {
-                var previousPoint = null;
-                for (var _y = _y_min; _y <= _y_max; _y += div) {
+                // start arc path
+                this.ctx.beginPath();
+
+                // utm easting and northing
+                var e = horizontal ? _y : _x;
+                var n = horizontal ? _x : _y;
+
+                // convert back to lat lng
+                var latlng = new Array(2);
+                UTMXYToLatLon(e, n, zone, southernHemi, latlng);
+
+                // get container point
+                var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
+
+                if (!previousPoint) this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
+                else {
+                    // if entirely out of zone bounds, ignore
+                    if (previousPoint.x > bounds.NE.x && canvasPoint.x > bounds.NE.x ||
+                        previousPoint.x < bounds.NW.x && canvasPoint.x < bounds.NW.x) {
+                        continue;
+                    }
+
+                    var firstPointLatLng = this._map.containerPointToLatLng(previousPoint);
+                    var lastPointLatLng = this._map.containerPointToLatLng(canvasPoint);
+
+                    var gc = new arc.GreatCircle(
+                        { x: lastPointLatLng.lng, y: lastPointLatLng.lat  },
+                        { x: firstPointLatLng.lng, y: firstPointLatLng.lat });
+
+                    // start arc path
                     this.ctx.beginPath();
 
-                    // convert back to lat lng
-                    var latlng = new Array(2);
-
-                    var e = direction == "h" ? _y : _x;
-                    var n = direction == "h" ? _x : _y;
-
-                    UTMXYToLatLon(e, n, zone, southernHemi, latlng);
-
-                    // get container point
-                    var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
-
-                    if (previousPoint) {
-                        var previousPointLatLng = this._map.containerPointToLatLng(previousPoint);
-                        var canvasPointLatLng = this._map.containerPointToLatLng(canvasPoint);
-
-                        var gc = new arc.GreatCircle(
-                            { x: canvasPointLatLng.lng, y: canvasPointLatLng.lat  },
-                            { x: previousPointLatLng.lng, y: previousPointLatLng.lat });
-
-                        var coords = gc.Arc(10).geometries[0].coords;
-                        if (coords && coords.length) {
-                            for (var c = 0; c < coords.length; c++) {
-                                var mapPoint = this._map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
-                                this.ctx.lineTo(mapPoint.x, mapPoint.y);
-                            }
+                    // draw arc as series of lines
+                    var coords = gc.Arc(arcPoints).geometries[0].coords;
+                    if (coords && coords.length) {
+                        for (var c = 0; c < coords.length; c++) {
+                            var mapPoint = this._map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
+                            this.ctx.lineTo(mapPoint.x, mapPoint.y);
                         }
                     }
-                    else this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
 
-                    previousPoint = canvasPoint;
-                    this.ctx.stroke();
-                }   
+                }
+                previousPoint = canvasPoint;
+
+                // draw line
+                this.ctx.stroke();
             }
         }
     },
@@ -88,46 +115,27 @@ var UTMGridLayer = L.CanvasLayer.extend({
         }
 
         for (var zone = zoneSW; zone <= zoneNE; zone++) {
-            // get lng of zone
-            var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
-            var zoneBoundaryLngRight = (zone * 6) - 180;
-            // get zone boundaries
-            var zonePointNE = this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngLeft));
-            var zonePointSE = this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngLeft));
-
-            var zonePointSW = this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngRight));
-            var zonePointNW = this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngRight));
+            var bounds = this.getZonePixelBounds(zone);
 
             // clip canvas to boundaries of zone
             if (zoneNE != zoneSW) {
                 this.ctx.save();
                 this.ctx.beginPath();
-                this.ctx.moveTo(zonePointNE.x, zonePointNE.y);
-                this.ctx.lineTo(zonePointSW.x, zonePointNE.y);
-                this.ctx.lineTo(zonePointSW.x, zonePointSW.y);
-                this.ctx.lineTo(zonePointNE.x, zonePointSW.y);
+                this.ctx.moveTo(bounds.NE.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.SW.y);
+                this.ctx.lineTo(bounds.NE.x, bounds.SW.y);
                 this.ctx.closePath();
                 this.ctx.clip();
             }
-
-            // var UTM_left = new Array(2);
-            // LatLonToUTMXY(DegToRad(bounds._southWest.lat), DegToRad(zoneBoundaryLngLeft), zone, UTM_left);
-            // var UTM_right = new Array(2);
-            // LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(zoneBoundaryLngRight), zone, UTM_right);
-            // var utmLeft = (parseInt(UTM_left[0] / div) * div) - (div * 2);
-            // var utmRight = (parseInt(UTM_right[0] / div) * div) + (div * 2);
 
             // based on min and max easting as per https://www.maptools.com/tutorials/utm/details
             var utmLeft  = 100000;
             var utmRight = 900000;
 
-            // set line style
-            this.ctx.strokeStyle = "rgba(0,0,0,.9)";
-            this.ctx.lineWidth = .8;
-
-            // horizontal lines
-            this.drawLines(div, zone, southernHemi, utmBottom, utmTop, utmLeft, utmRight, "h");
-            //this.drawLines(div, zone, southernHemi, utmBottom, utmTop, utmLeft, utmRight, "v");
+            // draw utm grid lines
+            this.drawGridLines(div, zone, bounds, southernHemi, utmBottom, utmTop, utmLeft, utmRight, true, 10); // horizontal
+            this.drawGridLines(div, zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // vertical
 
             // restore clipped zone
             if (zoneNE != zoneSW) this.ctx.restore();
@@ -142,21 +150,24 @@ var UTMGridLayer = L.CanvasLayer.extend({
         // get map bounds
         var bounds = this._map.getBounds();
 
-        // set lat bounds
+        // lat/lng bounds of utm grid
         this.latTop = Math.min(84, bounds._northEast.lat);
         this.latBottom = Math.max(-80, bounds._southWest.lat);
+        this.lngLeft = Math.max(-180, bounds._southWest.lng);
+        this.lngRight = Math.min(180, bounds._northEast.lng);
 
         // set line style
         this.ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
         this.ctx.lineWidth = .8;
 
         this.ctx.beginPath();
-        // draw UTM zones
+
+        // draw utm zones
         // every 6 degress longitude between -180 and 180
         for (var i = 0; i <= 60; i++) {
             var zoneBoundaryLng = (i * 6) - 180;
 
-            if (zoneBoundaryLng < bounds._southWest.lng || zoneBoundaryLng > bounds._northEast.lng) continue;
+            if (zoneBoundaryLng < this.lngLeft || zoneBoundaryLng > this.lngRight) continue;
             var pixelTop = this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLng));
             var pixelBottom = this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLng));
 
@@ -168,7 +179,8 @@ var UTMGridLayer = L.CanvasLayer.extend({
         this.ctx.beginPath();
         // set line style
         this.ctx.strokeStyle = 'rgba(255, 60, 60, 0.4)';
-        // latitude bands
+
+        // draw latitude bands
         // every 8 degress latitude between -84 and 80
         //(-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : ""; 
         for (var i = 0; i < 21; i++) {
@@ -178,31 +190,21 @@ var UTMGridLayer = L.CanvasLayer.extend({
             // northernmost band is 12 degrees tall
             if (i == 20) bandBoundaryLat +=4;
 
-            var lngLeft = bounds._southWest.lng;
-            if (lngLeft < -180) lngLeft = -180;
-
-            var lngRight = bounds._northEast.lng;
-            if (lngRight > 180) lngRight = 180;
-
-            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, lngLeft));
-            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, lngRight));
+            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, this.lngLeft));
+            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, this.lngRight));
             
             this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
             this.ctx.lineTo(pixelRight.x, pixelRight.y);
         }
         this.ctx.stroke();
 
-        // draw UTM grid
-        if (bounds._southWest.lat < 0 && bounds._northEast.lat > 0) {
+        // draw utm grid
+        if (this.latBottom < 0 && this.latTop > 0) {
             this.drawUTMGrid(bounds, false);
             this.drawUTMGrid(bounds, true);
         }
-        else if (bounds._southWest.lat < 0) {
-            this.drawUTMGrid(bounds, true);
-        }
-        else if (bounds._southWest.lat >=0) {
-            this.drawUTMGrid(bounds, false);
-        }
+        else if (this.latBottom <  0) this.drawUTMGrid(bounds, true);
+        else if (this.latBottom >= 0) this.drawUTMGrid(bounds, false);
         //this.redraw();
       }
     });

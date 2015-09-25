@@ -297,7 +297,7 @@
 
 			    <div class="btn-group dropup" dropdown>
 			      <button type="button" class="dropdown-toggle">
-			        <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span>
+			        <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;<span ng-show="terrainOverlay">&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span></span>
 			      </button>
 			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
 
@@ -428,6 +428,20 @@
 				        <div class='clearfix pad0'><label>Azimuth  </label><input type="range" id="azimuth"    min="-120" max="120" value="0" /></div><div class='clearfix pad0'><label>Depth    </label><input type="range" id="zfactor"    min="0.02" max="0.4" value="0.12" step="0.01" /></div>
 				        <div class='clearfix pad0'><label>Shadow   </label><input type="range" id="shadows"    min="0"    max="1.0" value="0.45"  step="0.01" /></div>
 				        <div class='clearfix pad0'><label>Highlight</label><input type="range" id="highlights" min="0"    max="1.0" value="0.45"  step="0.01" /></div>-->
+
+			        </a></li></ul>
+			    </div>
+
+			    <div class="btn-group dropup" dropdown>
+			      <button type="button" class="dropdown-toggle">
+			        <i class="ion-ios-grid-view-outline"></i> <span><b>Grid</b>&nbsp;<span ng-show="gridOverlay">&nbsp;{{ gridOverlay == 'dd' ? 'Decimal Degrees' : 'UTM' }}</span></span>
+			      </button>
+			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
+
+			      		<div class="btn-group" style="margin: 2px 6px;">
+					        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'dd'">Decimal Degrees</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'utm'">
+					        UTM</label>
+					    </div>
 
 			        </a></li></ul>
 			    </div>

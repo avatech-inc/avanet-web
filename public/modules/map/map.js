@@ -494,7 +494,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
     // set initial location and zoom level
-    var defaultZoom = 7;
+    var defaultZoom = 6;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
     $scope.map.setView(initialLocation, defaultZoom);
@@ -878,13 +878,23 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // --------------------------------
 
-    // UTM Grid
-    var layer = new UTMGridLayer();
-    setTimeout(function(){
-        layer.addTo($scope.map);
-        layer.bringToFront();
-    }, 2000);
+    var gridOverlayLayer;
+    $scope.$watch('gridOverlay', function(newOverlay, oldOverlay) {
+        if (newOverlay != oldOverlay && gridOverlayLayer) {
+            $scope.map.removeLayer(gridOverlayLayer);
+            gridOverlayLayer = null;
+        }
+
+        if (newOverlay == 'utm') {
+            gridOverlayLayer = new UTMGridLayer();
+        }
+        else if (newOverlay == 'dd') {
+            gridOverlayLayer = L.grid();
+        }
+
+        if (gridOverlayLayer) gridOverlayLayer.addTo($scope.map);
+    })
     
-    //var grid = L.grid().addTo($scope.map);
+    //
 
 });

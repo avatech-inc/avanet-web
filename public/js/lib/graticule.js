@@ -229,7 +229,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
       render: function() {
         var canvas = this.getCanvas();
         this.ctx = canvas.getContext('2d');
-        
+
         // clear canvas
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -286,11 +286,22 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
         // draw utm grid
         if (this.latBottom < 0 && this.latTop > 0) {
-            this.drawUTMGrid(bounds, false);
-            this.drawUTMGrid(bounds, true);
+            // draw equator
+            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngLeft));
+            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngRight));
+
+            this.ctx.strokeStyle = 'rgba(0,0,0,.35)';
+            this.ctx.lineWidth = 4;
+            this.ctx.beginPath();
+            this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
+            this.ctx.lineTo(pixelRight.x, pixelRight.y);
+            this.ctx.stroke();
+
+            this.drawUTMGrid(bounds, false); // northern hemi
+            this.drawUTMGrid(bounds, true); // southern hemi
         }
-        else if (this.latBottom <  0) this.drawUTMGrid(bounds, true);
-        else if (this.latBottom >= 0) this.drawUTMGrid(bounds, false);
+        else if (this.latBottom <  0) this.drawUTMGrid(bounds, true); // southern hemi
+        else if (this.latBottom >= 0) this.drawUTMGrid(bounds, false); // northern hemi
         //this.redraw();
       }
     });

@@ -7,26 +7,28 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
         if (zoom < 6) return;         
         else if (zoom == 6)  div = 100000 * 2;
-        else if (zoom < 8) div = 100000;
-        else if (zoom < 10) div = 100000 / 2;
-        else if (zoom < 13) div = 100000 / 10;
-        else if (zoom < 14) div = 100000 / 20;
-        else if (zoom < 15) div = 100000 / 40;
-        else if (zoom < 16) div = 100000 / 50;
-        else if (zoom < 17) div = 100000 / 100; // 1km
-        else if (zoom < 18) div = 100000 / 400;
-
-        // set line style
-        ctx.strokeStyle = 'rgba(0, 0, 255, 0.9)';
-        ctx.lineWidth = .8;
+        else if (zoom == 7) div = 100000;
+        else if (zoom == 8) div = 100000;
+        else if (zoom == 9) div = 100000;
+        else if (zoom == 10) div = 100000 / 2;
+        else if (zoom == 11) div = 100000 / 4;
+        else if (zoom == 12) div = 100000 / 10;
+        else if (zoom == 13) div = 100000 / 20;
+        else if (zoom == 14) div = 100000 / 40;
+        else if (zoom == 15) div = 100000 / 50;
+        else if (zoom == 16) div = 100000 / 100; // 1km
+        else if (zoom == 17) div = 100000 / 400;
 
         var zoneSW = Math.floor((bounds._southWest.lng + 180.0) / 6) + 1;
         var zoneNE = Math.floor((bounds._northEast.lng + 180.0) / 6) + 1;
 
+        var latTop = Math.min(84, bounds._northEast.lat);
+        var latBottom = Math.max(-80, bounds._southWest.lat);
+
         var UTM_SW = new Array(2);
-        LatLonToUTMXY(DegToRad(bounds._southWest.lat), DegToRad(bounds._southWest.lng), zoneSW, UTM_SW);
+        LatLonToUTMXY(DegToRad(latBottom), DegToRad(bounds._southWest.lng), zoneSW, UTM_SW);
         var UTM_NE = new Array(2);
-        LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(bounds._northEast.lng), zoneNE, UTM_NE);
+        LatLonToUTMXY(DegToRad(latTop), DegToRad(bounds._northEast.lng), zoneNE, UTM_NE);
 
         var utmTop    = (parseInt(UTM_NE[1] / div) * div) + div;
         var utmBottom = (parseInt(UTM_SW[1] / div) * div) - div;
@@ -35,7 +37,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
             if (southernHemi) utmTop = 10000000;
             else utmBottom = 0;
         }
-        console.log(zone + " UTM: " + utmBottom + "," + utmTop)
 
         for (var zone = zoneSW; zone <= zoneNE; zone++) {
             // get lng of zone
@@ -43,7 +44,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
             var zoneBoundaryLngRight = (zone * 6) - 180;
             // get zone boundaries
             var zonePointNE = _map.latLngToContainerPoint(new L.LatLng(bounds._northEast.lat, zoneBoundaryLngLeft));
+            var zonePointSE = _map.latLngToContainerPoint(new L.LatLng(bounds._southWest.lat, zoneBoundaryLngLeft));
+
             var zonePointSW = _map.latLngToContainerPoint(new L.LatLng(bounds._southWest.lat, zoneBoundaryLngRight));
+            var zonePointNW = _map.latLngToContainerPoint(new L.LatLng(bounds._northEast.lat, zoneBoundaryLngRight));
 
             // clip canvas to boundaries of zone
             if (zoneNE != zoneSW) {
@@ -57,50 +61,94 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 ctx.clip();
             }
 
-            // multiple zones on screen
-            var utmLeft = 0;
-            var utmRight = 10000000;
+            // var UTM_left = new Array(2);
+            // LatLonToUTMXY(DegToRad(bounds._southWest.lat), DegToRad(zoneBoundaryLngLeft), zone, UTM_left);
+            // var UTM_right = new Array(2);
+            // LatLonToUTMXY(DegToRad(bounds._northEast.lat), DegToRad(zoneBoundaryLngRight), zone, UTM_right);
+            // var utmLeft = (parseInt(UTM_left[0] / div) * div) - (div * 2);
+            // var utmRight = (parseInt(UTM_right[0] / div) * div) + (div * 2);
 
-            // only one zone on screen
-            if (zone == zoneNE && zone == zoneSW) {
-                utmLeft = (parseInt(UTM_SW[0] / div) * div) - div;
-                utmRight = (parseInt(UTM_NE[0] / div) * div) + div;
-            }
-            //console.log(zone + ": left: " + utmLeft + ", " + utmRight);
+            // min and max easting as per https://www.maptools.com/tutorials/utm/details
+            var utmLeft  = 100000;
+            var utmRight = 900000;
 
-            ctx.beginPath();
+            console.log("LEFT: " + utmLeft + "," + utmRight);
+
+            // set line style
+            ctx.strokeStyle = "rgba(0,0,0,.9)";
+            ctx.lineWidth = .8;
+
             // horizontal lines
             for (var n = utmBottom; n <= utmTop; n += div) {
+                var previousPoint = null;
                 for (var e = utmLeft; e <= utmRight; e += div) {
+                    ctx.beginPath();
+
                     // convert back to lat lng
                     var latlng = new Array(2);
                     UTMXYToLatLon(e, n, zone, southernHemi, latlng);
 
                     // get container point
-                    var canvasPoint = _map.latLngToContainerPoint(
-                        new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
+                    var canvasPoint = _map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
 
-                    if (e == utmLeft) ctx.moveTo(canvasPoint.x, canvasPoint.y);
-                    else ctx.lineTo(canvasPoint.x, canvasPoint.y);
+                    if (previousPoint) {
+                        var previousPointLatLng = _map.containerPointToLatLng(previousPoint);
+                        var canvasPointLatLng = _map.containerPointToLatLng(canvasPoint);
+
+                        var gc = new arc.GreatCircle(
+                            { x: canvasPointLatLng.lng, y: canvasPointLatLng.lat  },
+                            { x: previousPointLatLng.lng, y: previousPointLatLng.lat });
+
+                        var coords = gc.Arc(10).geometries[0].coords;
+                        if (coords && coords.length) {
+                            for (var c = 0; c < coords.length; c++) {
+                                var mapPoint = _map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
+                                ctx.lineTo(mapPoint.x, mapPoint.y);
+                            }
+                        }
+                    }
+                    else ctx.moveTo(canvasPoint.x, canvasPoint.y);
+
+                    previousPoint = canvasPoint;
+                    ctx.stroke();
                 }
             }
+
             // vertical lines
             for (var e = utmLeft; e <= utmRight; e += div) {
+                var previousPoint = null;
                 for (var n = utmBottom; n <= utmTop; n += div) {
+                    ctx.beginPath();
+
                     // convert back to lat lng
                     var latlng = new Array(2);
                     UTMXYToLatLon(e, n, zone, southernHemi, latlng);
 
                     // get container point
-                    var canvasPoint = _map.latLngToContainerPoint(
-                        new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
+                    var canvasPoint = _map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
 
-                    if (n == utmBottom) ctx.moveTo(canvasPoint.x, canvasPoint.y);
-                    else ctx.lineTo(canvasPoint.x, canvasPoint.y);
+                    if (previousPoint) {
+                        var previousPointLatLng = _map.containerPointToLatLng(previousPoint);
+                        var canvasPointLatLng = _map.containerPointToLatLng(canvasPoint);
+
+                        var gc = new arc.GreatCircle(
+                            { x: canvasPointLatLng.lng, y: canvasPointLatLng.lat  },
+                            { x: previousPointLatLng.lng, y: previousPointLatLng.lat });
+
+                        var coords = gc.Arc(5).geometries[0].coords;
+                        if (coords && coords.length) {
+                            for (var c = 0; c < coords.length; c++) {
+                                var mapPoint = _map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
+                                ctx.lineTo(mapPoint.x, mapPoint.y);
+                            }
+                        }
+                    }
+                    else ctx.moveTo(canvasPoint.x, canvasPoint.y);
+
+                    previousPoint = canvasPoint;
+                    ctx.stroke();
                 }
             }
-            ctx.closePath();
-            ctx.stroke();
 
             // restore clipped zone
             if (zoneNE != zoneSW) ctx.restore();
@@ -139,7 +187,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
             ctx.moveTo(pixelTop.x ,pixelTop.y);
             ctx.lineTo(pixelBottom.x, pixelBottom.y);
         }
-        ctx.closePath();
         ctx.stroke();
 
         ctx.beginPath();
@@ -167,7 +214,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
             ctx.moveTo(pixelLeft.x ,pixelLeft.y);
             ctx.lineTo(pixelRight.x, pixelRight.y);
         }
-        ctx.closePath();
         ctx.stroke();
 
         // draw UTM grid
@@ -187,6 +233,44 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
 //////////////////////////////
 
+// function checkLineIntersection(line1StartX, line1StartY, line1EndX, line1EndY, line2StartX, line2StartY, line2EndX, line2EndY) {
+//     // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) and booleans for whether line segment 1 or line segment 2 contain the point
+//     var denominator, a, b, numerator1, numerator2, result = {
+//         x: null,
+//         y: null,
+//         onLine1: false,
+//         onLine2: false
+//     };
+//     denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX)) - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
+//     if (denominator == 0) {
+//         return result;
+//     }
+//     a = line1StartY - line2StartY;
+//     b = line1StartX - line2StartX;
+//     numerator1 = ((line2EndX - line2StartX) * a) - ((line2EndY - line2StartY) * b);
+//     numerator2 = ((line1EndX - line1StartX) * a) - ((line1EndY - line1StartY) * b);
+//     a = numerator1 / denominator;
+//     b = numerator2 / denominator;
+
+//     // if we cast these lines infinitely in both directions, they intersect here:
+//     result.x = line1StartX + (a * (line1EndX - line1StartX));
+//     result.y = line1StartY + (a * (line1EndY - line1StartY));
+// /*
+//         // it is worth noting that this should be the same as:
+//         x = line2StartX + (b * (line2EndX - line2StartX));
+//         y = line2StartX + (b * (line2EndY - line2StartY));
+//         */
+//     // if line1 is a segment and line2 is infinite, they intersect if:
+//     if (a > 0 && a < 1) {
+//         result.onLine1 = true;
+//     }
+//     // if line2 is a segment and line1 is infinite, they intersect if:
+//     if (b > 0 && b < 1) {
+//         result.onLine2 = true;
+//     }
+//     // if line1 and line2 are segments, they intersect if both of the above are true
+//     return result;
+// };
 
 /*
  * L.Grid displays a grid of lat/lng lines on the map.
@@ -428,3 +512,246 @@ L.Grid = L.LayerGroup.extend({
 L.grid = function (options) {
     return new L.Grid(options);
 };
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+var D2R = Math.PI / 180;
+var R2D = 180 / Math.PI;
+
+var Coord = function(lon,lat) {
+    this.lon = lon;
+    this.lat = lat;
+    this.x = D2R * lon;
+    this.y = D2R * lat;
+};
+
+Coord.prototype.view = function() {
+    return String(this.lon).slice(0, 4) + ',' + String(this.lat).slice(0, 4);
+};
+
+Coord.prototype.antipode = function() {
+    var anti_lat = -1 * this.lat;
+    var anti_lon = (this.lon < 0) ? 180 + this.lon : (180 - this.lon) * -1;
+    return new Coord(anti_lon, anti_lat);
+};
+
+var LineString = function() {
+    this.coords = [];
+    this.length = 0;
+};
+
+LineString.prototype.move_to = function(coord) {
+    this.length++;
+    this.coords.push(coord);
+};
+
+var Arc = function(properties) {
+    this.properties = properties || {};
+    this.geometries = [];
+};
+
+Arc.prototype.json = function() {
+    if (this.geometries.length <= 0) {
+        return {'geometry': { 'type': 'LineString', 'coordinates': null },
+                'type': 'Feature', 'properties': this.properties
+               };
+    } else if (this.geometries.length == 1) {
+        return {'geometry': { 'type': 'LineString', 'coordinates': this.geometries[0].coords },
+                'type': 'Feature', 'properties': this.properties
+               };
+    } else {
+        var multiline = [];
+        for (var i = 0; i < this.geometries.length; i++) {
+            multiline.push(this.geometries[i].coords);
+        }
+        return {'geometry': { 'type': 'MultiLineString', 'coordinates': multiline },
+                'type': 'Feature', 'properties': this.properties
+               };
+    }
+};
+
+var GreatCircle = function(start,end,properties) {
+    if (!start || start.x === undefined || start.y === undefined) {
+        throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
+    }
+    if (!end || end.x === undefined || end.y === undefined) {
+        throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");
+    }
+    this.start = new Coord(start.x,start.y);
+    this.end = new Coord(end.x,end.y);
+    this.properties = properties || {};
+
+    var w = this.start.x - this.end.x;
+    var h = this.start.y - this.end.y;
+    var z = Math.pow(Math.sin(h / 2.0), 2) +
+                Math.cos(this.start.y) *
+                   Math.cos(this.end.y) *
+                     Math.pow(Math.sin(w / 2.0), 2);
+    this.g = 2.0 * Math.asin(Math.sqrt(z));
+
+    if (this.g == Math.PI) {
+        throw new Error('it appears ' + start.view() + ' and ' + end.view() + " are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");
+    } else if (isNaN(this.g)) {
+        throw new Error('could not calculate great circle between ' + start + ' and ' + end);
+    }
+};
+
+/*
+ * http://williams.best.vwh.net/avform.htm#Intermediate
+ */
+GreatCircle.prototype.interpolate = function(f) {
+    var A = Math.sin((1 - f) * this.g) / Math.sin(this.g);
+    var B = Math.sin(f * this.g) / Math.sin(this.g);
+    var x = A * Math.cos(this.start.y) * Math.cos(this.start.x) + B * Math.cos(this.end.y) * Math.cos(this.end.x);
+    var y = A * Math.cos(this.start.y) * Math.sin(this.start.x) + B * Math.cos(this.end.y) * Math.sin(this.end.x);
+    var z = A * Math.sin(this.start.y) + B * Math.sin(this.end.y);
+    var lat = R2D * Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+    var lon = R2D * Math.atan2(y, x);
+    return [lon, lat];
+};
+
+
+
+/*
+ * Generate points along the great circle
+ */
+GreatCircle.prototype.Arc = function(npoints,options) {
+    var first_pass = [];
+    if (!npoints || npoints <= 2) {
+        first_pass.push([this.start.lon, this.start.lat]);
+        first_pass.push([this.end.lon, this.end.lat]);
+    } else {
+        var delta = 1.0 / (npoints - 1);
+        for (var i = 0; i < npoints; ++i) {
+            var step = delta * i;
+            var pair = this.interpolate(step);
+            first_pass.push(pair);
+        }
+    }
+    /* partial port of dateline handling from:
+      gdal/ogr/ogrgeometryfactory.cpp
+      TODO - does not handle all wrapping scenarios yet
+    */
+    var bHasBigDiff = false;
+    var dfMaxSmallDiffLong = 0;
+    // from http://www.gdal.org/ogr2ogr.html
+    // -datelineoffset:
+    // (starting with GDAL 1.10) offset from dateline in degrees (default long. = +/- 10deg, geometries within 170deg to -170deg will be splited)
+    var dfDateLineOffset = options && options.offset ? options.offset : 10;
+    var dfLeftBorderX = 180 - dfDateLineOffset;
+    var dfRightBorderX = -180 + dfDateLineOffset;
+    var dfDiffSpace = 360 - dfDateLineOffset;
+
+    // https://github.com/OSGeo/gdal/blob/7bfb9c452a59aac958bff0c8386b891edf8154ca/gdal/ogr/ogrgeometryfactory.cpp#L2342
+    for (var j = 1; j < first_pass.length; ++j) {
+        var dfPrevX = first_pass[j-1][0];
+        var dfX = first_pass[j][0];
+        var dfDiffLong = Math.abs(dfX - dfPrevX);
+        if (dfDiffLong > dfDiffSpace &&
+            ((dfX > dfLeftBorderX && dfPrevX < dfRightBorderX) || (dfPrevX > dfLeftBorderX && dfX < dfRightBorderX))) {
+            bHasBigDiff = true;
+        } else if (dfDiffLong > dfMaxSmallDiffLong) {
+            dfMaxSmallDiffLong = dfDiffLong;
+        }
+    }
+
+    var poMulti = [];
+    if (bHasBigDiff && dfMaxSmallDiffLong < dfDateLineOffset) {
+        var poNewLS = [];
+        poMulti.push(poNewLS);
+        for (var k = 0; k < first_pass.length; ++k) {
+            var dfX0 = parseFloat(first_pass[k][0]);
+            if (k > 0 &&  Math.abs(dfX0 - first_pass[k-1][0]) > dfDiffSpace) {
+                var dfX1 = parseFloat(first_pass[k-1][0]);
+                var dfY1 = parseFloat(first_pass[k-1][1]);
+                var dfX2 = parseFloat(first_pass[k][0]);
+                var dfY2 = parseFloat(first_pass[k][1]);
+                if (dfX1 > -180 && dfX1 < dfRightBorderX && dfX2 == 180 &&
+                    k+1 < first_pass.length &&
+                   first_pass[k-1][0] > -180 && first_pass[k-1][0] < dfRightBorderX)
+                {
+                     poNewLS.push([-180, first_pass[k][1]]);
+                     k++;
+                     poNewLS.push([first_pass[k][0], first_pass[k][1]]);
+                     continue;
+                } else if (dfX1 > dfLeftBorderX && dfX1 < 180 && dfX2 == -180 &&
+                     k+1 < first_pass.length &&
+                     first_pass[k-1][0] > dfLeftBorderX && first_pass[k-1][0] < 180)
+                {
+                     poNewLS.push([180, first_pass[k][1]]);
+                     k++;
+                     poNewLS.push([first_pass[k][0], first_pass[k][1]]);
+                     continue;
+                }
+
+                if (dfX1 < dfRightBorderX && dfX2 > dfLeftBorderX)
+                {
+                    // swap dfX1, dfX2
+                    var tmpX = dfX1;
+                    dfX1 = dfX2;
+                    dfX2 = tmpX;
+                    // swap dfY1, dfY2
+                    var tmpY = dfY1;
+                    dfY1 = dfY2;
+                    dfY2 = tmpY;
+                }
+                if (dfX1 > dfLeftBorderX && dfX2 < dfRightBorderX) {
+                    dfX2 += 360;
+                }
+
+                if (dfX1 <= 180 && dfX2 >= 180 && dfX1 < dfX2)
+                {
+                    var dfRatio = (180 - dfX1) / (dfX2 - dfX1);
+                    var dfY = dfRatio * dfY2 + (1 - dfRatio) * dfY1;
+                    poNewLS.push([first_pass[k-1][0] > dfLeftBorderX ? 180 : -180, dfY]);
+                    poNewLS = [];
+                    poNewLS.push([first_pass[k-1][0] > dfLeftBorderX ? -180 : 180, dfY]);
+                    poMulti.push(poNewLS);
+                }
+                else
+                {
+                    poNewLS = [];
+                    poMulti.push(poNewLS);
+                }
+                poNewLS.push([dfX0, first_pass[k][1]]);
+            } else {
+                poNewLS.push([first_pass[k][0], first_pass[k][1]]);
+            }
+        }
+    } else {
+        // add normally
+        var poNewLS0 = [];
+        poMulti.push(poNewLS0);
+        for (var l = 0; l < first_pass.length; ++l) {
+            poNewLS0.push([first_pass[l][0],first_pass[l][1]]);
+        }
+    }
+
+    var arc = new Arc(this.properties);
+    for (var m = 0; m < poMulti.length; ++m) {
+        var line = new LineString();
+        arc.geometries.push(line);
+        var points = poMulti[m];
+        for (var j0 = 0; j0 < points.length; ++j0) {
+            line.move_to(points[j0]);
+        }
+    }
+    return arc;
+};
+
+if (typeof window === 'undefined') {
+  // nodejs
+  module.exports.Coord = Coord;
+  module.exports.Arc = Arc;
+  module.exports.GreatCircle = GreatCircle;
+
+} else {
+  // browser
+  var arc = {};
+  arc.Coord = Coord;
+  arc.Arc = Arc;
+  arc.GreatCircle = GreatCircle;
+}

@@ -24,12 +24,37 @@ var UTMGridLayer = L.CanvasLayer.extend({
     drawGridLines: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
         // set line style
         this.ctx.strokeStyle = "rgba(0,0,0,.9)";
-        this.ctx.lineWidth = .8;
+        this.ctx.lineWidth = 1;
 
         for (var _x = _x_min; _x <= _x_max; _x += div) {
             var previousPoint = null;
-            for (var _y = _y_min; _y <= _y_max; _y += div) {
 
+            // var e = horizontal ? _y : _x;
+            // var n = horizontal ? _x : _y;
+            // label
+
+            this.ctx.font=+'13px "roboto condensed"';
+            if (horizontal) {
+                var _UTM_SW = new Array(2);
+                LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng), zone, _UTM_SW);
+
+                var _latlng = new Array(2);
+                UTMXYToLatLon(_UTM_SW[0], _x, zone, southernHemi, _latlng);
+               
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
+                this.ctx.fillText(_x, 4, _canvasPoint.y - 3);
+            }
+            else  {
+                var _UTM_NE = new Array(2);
+                LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng), zone, _UTM_NE);
+
+                var _latlng = new Array(2);
+                UTMXYToLatLon(_x, _UTM_NE[1], zone, southernHemi, _latlng);
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
+                this.ctx.fillText(_x, _canvasPoint.x + 3, 10);
+            }
+
+            for (var _y = _y_min; _y <= _y_max; _y += div) {
                 // start arc path
                 this.ctx.beginPath();
 
@@ -144,6 +169,13 @@ var UTMGridLayer = L.CanvasLayer.extend({
       render: function() {
         var canvas = this.getCanvas();
         this.ctx = canvas.getContext('2d');
+
+        // scale
+        // if (!this.scaled) {
+        //     this.ctx.scale(2,2);
+        //     this.scaled = true;
+        // }
+
         // clear canvas
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -158,7 +190,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
         // set line style
         this.ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
-        this.ctx.lineWidth = .8;
+        this.ctx.lineWidth = 1;
 
         this.ctx.beginPath();
 

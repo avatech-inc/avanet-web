@@ -22,18 +22,19 @@ var UTMGridLayer = L.CanvasLayer.extend({
     },
 
     drawGridLines: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
-        // set line style
-        this.ctx.strokeStyle = "rgba(0,0,0,.9)";
-        this.ctx.lineWidth = 1;
 
         for (var _x = _x_min; _x <= _x_max; _x += div) {
-            var previousPoint = null;
 
-            // var e = horizontal ? _y : _x;
-            // var n = horizontal ? _x : _y;
-            // label
+            // draw labels
+            //this.ctx.font = '13px "roboto condensed"';
+            // this.ctx.shadowColor = "white";
+            // this.ctx.shadowOffsetX = 0; 
+            // this.ctx.shadowOffsetY = 0; 
+            // this.ctx.shadowBlur = 7;
+            this.ctx.strokeStyle="rgba(255,255,255,.9)";
+            this.ctx.lineWidth = 3;
 
-            this.ctx.font=+'13px "roboto condensed"';
+            // northing
             if (horizontal) {
                 var _UTM_SW = new Array(2);
                 LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng), zone, _UTM_SW);
@@ -42,18 +43,77 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 UTMXYToLatLon(_UTM_SW[0], _x, zone, southernHemi, _latlng);
                
                 var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
-                this.ctx.fillText(_x, 4, _canvasPoint.y - 3);
+                
+                // if not equator
+                if (_x < 9999999 && _x > 0) {
+                    var _text = _x.toString();
+                    // pad 6-digit northing with leading zero
+                    if (_text.length == 6) _text = "0" + _text;
+
+                    var leftText = _text.substr(0, 2);
+                    var middleText = _text.substr(2, 2);
+                    var rightText = _text.substring(3, _text.length - 1);
+
+                    this.ctx.font = '11px "roboto condensed"';
+                    var leftTextWidth = this.ctx.measureText(leftText).width + 1;
+                    this.ctx.strokeText(leftText, 4, _canvasPoint.y - 4);
+                    this.ctx.fillText(leftText, 4, _canvasPoint.y - 4);
+
+                    this.ctx.font = '14px "roboto condensed"';
+                    var middleTextWidth = this.ctx.measureText(middleText).width + 1;
+                    this.ctx.strokeText(middleText, 4 + leftTextWidth, _canvasPoint.y - 2);
+                    this.ctx.fillText(middleText, 4 + leftTextWidth, _canvasPoint.y - 2);
+
+                    this.ctx.font = '11px "roboto condensed"';
+                    this.ctx.strokeText(rightText,4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 4);
+                    this.ctx.fillText(rightText, 4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 4);
+                }
             }
+            // easting
             else  {
                 var _UTM_NE = new Array(2);
                 LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng), zone, _UTM_NE);
 
                 var _latlng = new Array(2);
                 UTMXYToLatLon(_x, _UTM_NE[1], zone, southernHemi, _latlng);
+
                 var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
-                this.ctx.fillText(_x, _canvasPoint.x + 3, 10);
+                
+                // is outside zone and map bounds?
+                var rightPoint = _canvasPoint.x + this.ctx.measureText(_x).width + 10;
+                var outside = (_canvasPoint.x < bounds.NW.x ||
+                    _canvasPoint.x > bounds.NE.x ||
+                    _canvasPoint.x < 0 ||
+                    rightPoint > bounds.NE.x);
+
+                // if not outside bounds, draw
+                if (!outside) {
+                    var leftText = _x.toString().substr(0, 1);
+                    var middleText = _x.toString().substr(1, 2);
+                    var rightText = _x.toString().substr(3, 4);
+
+                    this.ctx.font = '11px "roboto condensed"';
+                    var leftTextWidth = this.ctx.measureText(leftText).width + 1;
+                    this.ctx.strokeText(leftText, _canvasPoint.x + 4, 12);
+                    this.ctx.fillText(leftText, _canvasPoint.x + 4, 12);
+
+                    this.ctx.font = '14px "roboto condensed"';
+                    var middleTextWidth = this.ctx.measureText(middleText).width + 1;
+                    this.ctx.strokeText(middleText, _canvasPoint.x + 4 + leftTextWidth, 14);
+                    this.ctx.fillText(middleText, _canvasPoint.x + 4 + leftTextWidth, 14);
+
+                    this.ctx.font = '11px "roboto condensed"';
+                    this.ctx.strokeText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
+                    this.ctx.fillText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
+                }
             }
 
+            // set line style
+            this.ctx.strokeStyle = "rgba(0,0,0,.9)";
+            this.ctx.lineWidth = 1;
+
+            // draw lines
+            var previousPoint = null;
             for (var _y = _y_min; _y <= _y_max; _y += div) {
                 // start arc path
                 this.ctx.beginPath();

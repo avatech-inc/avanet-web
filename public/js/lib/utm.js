@@ -405,15 +405,50 @@ function MapXYToLatLon (x, y, lambda0, philambda)
 */
 function LatLonToUTMXY (lat, lon, zone, xy)
 {
-    MapLatLonToXY (lat, lon, UTMCentralMeridian (zone), xy);
+    if (!xy) xy = new Array(2);
 
-    /* Adjust easting and northing for UTM system. */
+    var _lat = RadToDeg(lat);
+    var _lng = RadToDeg(lon);
+
+    // get lat band
+    var band = (-80<=_lat&&_lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((_lat+80)/8)) : "";
+
+    // get zone
+    var zone = Math.floor((_lng + 180) / 6) + 1;
+
+    // Norway exception (32V)
+    if(_lat >= 56.0 && _lat < 64.0 && _lng >= 3.0 && _lng < 12.0) {
+        zone = 32;
+    }
+    // Svalbard exceptions
+    if (_lat >= 72.0 && _lat < 84.0) {
+      if( _lng >= 0.0  && _lng <  9.0) 
+        zone = 31;
+      else if( _lng >= 9.0  && _lng < 21.0)
+        zone = 33;
+      else if(_lng >= 21.0 && _lng < 33.0)
+        zone = 35;
+      else if(_lng >= 33.0 && _lng < 42.0) 
+        zone = 37;
+    }
+
+    // get central meridian of zone
+    var meridian = UTMCentralMeridian(zone);
+
+    // get xy easting and northing
+    MapLatLonToXY(lat, lon, meridian, xy);
+
+    // adjust xy easting and northing for UTM
     xy[0] = xy[0] * UTMScaleFactor + 500000.0;
     xy[1] = xy[1] * UTMScaleFactor;
-    if (xy[1] < 0.0)
-        xy[1] = xy[1] + 10000000.0;
+    if (xy[1] < 0.0) xy[1] = xy[1] + 10000000.0;
 
-    return zone;
+    return {
+        x: xy[0],
+        y: xy[1],
+        zone: zone,
+        band: band
+    };
 }
 
 

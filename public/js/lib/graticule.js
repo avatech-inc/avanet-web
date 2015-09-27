@@ -63,8 +63,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 // get container point
                 var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng.lat), RadToDeg(latlng.lng)));
 
-                //console.log("latlng: " + RadToDeg(latlng.lat) + ", " + RadToDeg(latlng.lng) + " | " + canvasPoint.x + ", " + canvasPoint.y);
-
                 if (!previousPoint) this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else {
                     // if entirely out of zone bounds, ignore
@@ -75,28 +73,39 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
                     var firstPointLatLng = this._map.containerPointToLatLng(previousPoint);
                     var lastPointLatLng = this._map.containerPointToLatLng(canvasPoint);
-
-                    var gc = new arc.GreatCircle(
-                        { x: lastPointLatLng.lng, y: lastPointLatLng.lat  },
-                        { x: firstPointLatLng.lng, y: firstPointLatLng.lat });
-
+                   
                     // start arc path
                     this.ctx.beginPath();
 
                     // draw arc as series of lines
-                    var coords = gc.Arc(arcPoints).geometries[0].coords;
-                    if (coords && coords.length) {
-                        for (var c = 0; c < coords.length; c++) {
-                            var mapPoint = this._map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
-                            this.ctx.lineTo(mapPoint.x, mapPoint.y);
+                    var gc = new arc.GreatCircle(
+                        { x: lastPointLatLng.lng, y: lastPointLatLng.lat  },
+                        { x: firstPointLatLng.lng, y: firstPointLatLng.lat })
+                    .Arc(arcPoints, { offset: 10 });
+
+                    // var coords = gc.geometries[0].coords;
+                    // if (gc.geometries.length > 1)
+                    //     console.log(gc.geometries)
+                    // if arc is split due to dateline
+                    //if (gc.geometries.length == 2) coords = gc.geometries[1].coords;
+
+                    for (var i = 0; i < gc.geometries.length; i++) {
+                        this.ctx.beginPath();
+                        var coords = gc.geometries[i].coords;
+                        if (coords && coords.length) {
+                            for (var c = 0; c < coords.length; c++) {
+                                var mapPoint = this._map.latLngToContainerPoint(new L.LatLng(coords[c][1], coords[c][0]));
+                                this.ctx.lineTo(mapPoint.x, mapPoint.y);
+                            }
                         }
+                        this.ctx.stroke();
                     }
 
                 }
                 previousPoint = canvasPoint;
 
                 // draw line
-                this.ctx.stroke();
+                //this.ctx.stroke();
             }
         }
     },

@@ -292,9 +292,12 @@ var UTMGridLayer = L.CanvasLayer.extend({
         this.lngLeft = Math.max(-180, mapBounds._southWest.lng);
         this.lngRight = Math.min(180, mapBounds._northEast.lng);
 
-        // utm zone and lat band bounds
-        this.zoneLeft = Math.floor((this.lngLeft + 180.0) / 6) + 1;
-        this.zoneRight = Math.floor((this.lngRight + 180.0) / 6) + 1;
+        // get utm zone and lat band bounds
+
+        // pad zones by 1 on each side to account for exception irregularities
+        this.zoneLeft = Math.floor((this.lngLeft + 180.0) / 6) + 1 - 1;
+        this.zoneRight = Math.floor((this.lngRight + 180.0) / 6) + 1 + 1;
+
         this.bandTop = Math.floor((this.latTop+80)/8);
         this.bandBottom = Math.floor((this.latBottom+80)/8);
 

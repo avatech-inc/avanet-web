@@ -393,12 +393,6 @@ function MapXYToLatLon (x, y, lambda0, philambda)
 *          If zone is less than 1 or greater than 60, the routine
 *          will determine the appropriate zone from the value of lon.
 *
-* Outputs:
-*   xy - A 2-element array where the UTM x and y values will be stored.
-*
-* Returns:
-*   The UTM zone used for calculating the values of x and y.
-*
 */
 function LatLonToUTMXY(lat, lon, zone, xy)
 {
@@ -462,13 +456,6 @@ function LatLonToUTMXY(lat, lon, zone, xy)
 *	zone - The UTM zone in which the point lies.
 *	southhemi - True if the point is in the southern hemisphere;
 *               false otherwise.
-*
-* Outputs:
-*	latlon - A 2-element array containing the latitude and
-*            longitude of the point, in radians.
-*
-* Returns:
-*	The function does not return a value.
 *
 */
 function UTMXYToLatLon(x, y, zone, southhemi, latlon)

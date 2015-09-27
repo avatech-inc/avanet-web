@@ -47,9 +47,9 @@ var UTMGridLayer = L.CanvasLayer.extend({
             NW: this._map.latLngToContainerPoint(new L.LatLng(latTop, lngLeft))
         }
     },
-    drawGridLines: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
+    drawGridLines: function(zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
         // draw lines
-        for (var _x = _x_min; _x <= _x_max; _x += div) {
+        for (var _x = _x_min; _x <= _x_max; _x += this.div) {
             // set line style
             //this.ctx.strokeStyle = "rgba(0,0,0,.9)";
             this.ctx.strokeStyle = 'rgba(63,168,208,.9)';
@@ -57,7 +57,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
 
             // draw lines
             var previousPoint = null;
-            for (var _y = _y_min; _y <= _y_max; _y += div) {
+            for (var _y = _y_min; _y <= _y_max; _y += this.div) {
                 // start arc path
                 this.ctx.beginPath();
 
@@ -106,9 +106,9 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
         }
     },
-    drawGridLabels: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
+    drawGridLabels: function(zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
         
-        for (var _x = _x_min; _x <= _x_max; _x += div) {
+        for (var _x = _x_min; _x <= _x_max; _x += this.div) {
 
             this.ctx.fillStyle='rgba(17,143,189,.9)'; // text color
             this.ctx.strokeStyle='rgba(255,255,255,.9)'; // text stroke color
@@ -200,27 +200,27 @@ var UTMGridLayer = L.CanvasLayer.extend({
     drawUTMGrid: function() {
         var zoom = this._map.getZoom();
         // tick spacing (in meters)
-        var div = 100000;
+        this.div = 100000;
 
         if (zoom < 6) return;         
-        else if (zoom == 6)  div = 100000 * 2;
-        else if (zoom == 7) div = 100000;
-        else if (zoom == 8) div = 100000;
-        else if (zoom == 9) div = 100000;
-        else if (zoom == 10) div = 100000 / 2;
-        else if (zoom == 11) div = 100000 / 4;
-        else if (zoom == 12) div = 100000 / 10;
-        else if (zoom == 13) div = 100000 / 20;
-        else if (zoom == 14) div = 100000 / 40;
-        else if (zoom == 15) div = 100000 / 50;
-        else if (zoom == 16) div = 100000 / 100; // 1km
-        else if (zoom == 17) div = 100000 / 400;
+        else if (zoom == 6) this.div = 100000 * 2;
+        else if (zoom == 7) this.div = 100000;
+        else if (zoom == 8) this.div = 100000;
+        else if (zoom == 9) this.div = 100000;
+        else if (zoom == 10) this.div = 100000 / 2;
+        else if (zoom == 11) this.div = 100000 / 4;
+        else if (zoom == 12) this.div = 100000 / 10;
+        else if (zoom == 13) this.div = 100000 / 20;
+        else if (zoom == 14) this.div = 100000 / 40;
+        else if (zoom == 15) this.div = 100000 / 50;
+        else if (zoom == 16) this.div = 100000 / 100; // 1km
+        else if (zoom == 17) this.div = 100000 / 400;
         
         var UTM_NE  = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng));
         var UTM_SW =  LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng));
        
-        var utmTop    = (parseInt(UTM_NE.y / div) * div) + div;
-        var utmBottom = (parseInt(UTM_SW.y / div) * div) - div;
+        var utmTop    = (parseInt(UTM_NE.y / this.div) * this.div) + this.div;
+        var utmBottom = (parseInt(UTM_SW.y / this.div) * this.div) - this.div;
 
         // based on min and max easting as per https://www.maptools.com/tutorials/utm/details
         var utmLeft  = 100000;
@@ -255,18 +255,18 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 }
 
                 // draw utm grid lines
-                this.drawGridLines(div, zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
-                this.drawGridLines(div, zone, bounds, southernHemi, utmLeft, utmRight, _utmBottom, _utmTop, false, 4); // easting
+                this.drawGridLines(zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
+                this.drawGridLines(zone, bounds, southernHemi, utmLeft, utmRight, _utmBottom, _utmTop, false, 4); // easting
 
                 // restore clipped zone bounds
                 this.ctx.restore();
 
                 // draw easting labels for each zone
-                this.drawGridLabels(div, zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // easting
+                this.drawGridLabels(zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // easting
 
                 // draw northing labels only for left-most zone
                 if (zone == this.zoneLeft)  {
-                    this.drawGridLabels(div, zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
+                    this.drawGridLabels(zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
                 }
             }
         }

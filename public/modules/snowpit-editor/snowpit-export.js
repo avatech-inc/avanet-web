@@ -253,21 +253,19 @@ var formatters = {
 
         if (lat && lng) {
             // calculate UTM zone
-            var zone = Math.floor((lng + 180.0) / 6) + 1;
-
+            //var zone = Math.floor((lng + 180.0) / 6) + 1;
             // convert lat decimal degrees to UTM band
             //var band = (-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : "";
             // for now, use hemispheres
-            var band = (lat > 0) ? "N" : "S";
+            //var band = (lat > 0) ? "N" : "S";
 
             // get UTM
-            var xy = new Array(2);
-            LatLonToUTMXY (DegToRad(lat), DegToRad(lng), zone, xy);
+            var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
 
             // format
-            s += zone + band + " ";
-            s += xy[0].toFixed(0) + "E ";
-            s += xy[1].toFixed(0) + "N";
+            s += utm.zone + utm.band + " ";
+            s += utm.x.toFixed(0) + " "; // E
+            s += utm.y.toFixed(0) + ""; // N
         }
         else s = "--"
         return s;

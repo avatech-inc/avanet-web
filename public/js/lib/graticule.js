@@ -276,6 +276,36 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
         }
       },
+      drawZoneBorders: function() {
+        this.ctx.strokeStyle = 'rgba(255, 60, 60, .9)';
+        this.ctx.lineWidth = 1;
+
+        this.ctx.beginPath();
+        for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
+            for (var band = this.bandBottom; band <= this.bandTop; band++) {
+                var bounds = this.getZonePixelBounds(zone, band);
+                // if no bounds (non-existant band, i.e. 32X), continue
+                if (!bounds) continue;
+
+                this.ctx.moveTo(bounds.NE.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.SW.y);
+                this.ctx.lineTo(bounds.NE.x, bounds.SW.y);
+            }
+        }
+        this.ctx.stroke();
+      },
+      drawEquator: function() {
+        var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngLeft));
+        var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngRight));
+
+        this.ctx.strokeStyle = 'rgba(63,168,208,.4)';
+        this.ctx.lineWidth = 4;
+        this.ctx.beginPath();
+        this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
+        this.ctx.lineTo(pixelRight.x, pixelRight.y);
+        this.ctx.stroke();
+      },
       render: function() {
         var canvas = this.getCanvas();
         this.ctx = canvas.getContext('2d');
@@ -304,40 +334,11 @@ var UTMGridLayer = L.CanvasLayer.extend({
         this.bothHemispheres = (this.latBottom < 0 && this.latTop >= 0);
 
         // if both hemispheres are on the same map, draw equator
-        if (this.bothHemispheres) {
-            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngLeft));
-            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngRight));
+        if (this.bothHemispheres) this.drawEquator();
 
-            this.ctx.strokeStyle = 'rgba(63,168,208,.4)';
-            this.ctx.lineWidth = 4;
-            this.ctx.beginPath();
-            this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
-            this.ctx.lineTo(pixelRight.x, pixelRight.y);
-            this.ctx.stroke();
-        }
-
-        // draw utm grid
         this.drawUTMGrid();
 
-        // draw zone and lat band borders
-
-        this.ctx.strokeStyle = 'rgba(255, 60, 60, .9)';
-        this.ctx.lineWidth = 1;
-
-        this.ctx.beginPath();
-        for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
-            for (var band = this.bandBottom; band <= this.bandTop; band++) {
-                var bounds = this.getZonePixelBounds(zone, band);
-                // if no bounds (non-existant band, i.e. 32X), continue
-                if (!bounds) continue;
-
-                this.ctx.moveTo(bounds.NE.x, bounds.NE.y);
-                this.ctx.lineTo(bounds.SW.x, bounds.NE.y);
-                this.ctx.lineTo(bounds.SW.x, bounds.SW.y);
-                this.ctx.lineTo(bounds.NE.x, bounds.SW.y);
-            }
-        }
-        this.ctx.stroke();
+        this.drawZoneBorders();
 
         //this.redraw();
       }

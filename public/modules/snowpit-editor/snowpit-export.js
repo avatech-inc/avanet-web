@@ -237,7 +237,7 @@ var formatters = {
 
         return s;
     },
-    formatLatLngAsUTM: function(point) {
+    formatLatLngAsUTM: function(point, html) {
         if (!point) return "--"
         var s = "";
 
@@ -255,10 +255,27 @@ var formatters = {
         // get utm
         var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
 
+        var e = utm.x.toFixed(0);
+
+        var n = utm.y.toFixed(0);
+        if (n.length == 6) n = "0" + n;
+
+        var _e = e;
+        var _n = n;
+        if (html) {
+            _e = e.substr(0, 1);
+            _e += "<span>" + e.substr(1, 2) + "</span>";
+            _e += e.substr(3, 3);
+
+            _n = n.substr(0, 2);
+            _n += "<span>" + n.substr(2, 2) + "</span>";
+            _n += n.substr(4, 3);
+        }
+
         // format
         s += utm.zone + utm.band + " ";
-        s += utm.x.toFixed(0) + " "; // E
-        s += utm.y.toFixed(0) + ""; // N
+        s += _e + " ";
+        s += _n;
 
         return s;
     },

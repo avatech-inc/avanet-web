@@ -72,6 +72,11 @@
     pointer-events: none;
     float:right;
 }
+.mapCoords .utm span {
+	font-size: 1.21em;
+	position: relative;
+	top: 2px;
+}
 
 
 
@@ -449,7 +454,7 @@
 			    <div class="mapCoords" ng-show="mapCursorLocation">
 			    {{ formatters.formatLatLng(mapCursorLocation) }}
 			    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-			    {{ formatters.formatLatLngAsUTM(mapCursorLocation) }}
+			    <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>
 			    &nbsp;&nbsp;
 			    <b>WGS84</b>
 			    </div>

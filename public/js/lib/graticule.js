@@ -23,6 +23,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
         } 
         // Svalbard
         else if (latBand == "X") {
+            // "removed" zones
             if (zone == 32 || zone == 34 || zone == 36) {
                 return null;
             }
@@ -51,7 +52,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
         // draw lines
         for (var _x = _x_min; _x <= _x_max; _x += this.div) {
             // set line style
-            //this.ctx.strokeStyle = "rgba(0,0,0,.9)";
             this.ctx.strokeStyle = 'rgba(63,168,208,.9)';
             this.ctx.lineWidth = 1;
 
@@ -106,6 +106,35 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
         }
     },
+    drawLabel: function(x, y, meters, easting) {
+        var _text = meters.toString();
+        // pad with leading 0 for northing
+        if (!easting && _text.length == 6) _text = "0" + _text;
+
+        var leftText = _text.substr(0, easting ? 1 : 2);
+        var middleText = _text.substr(easting ? 1 : 2, 2);
+        var rightText = _text.substr(easting ? 3 : 4, 3);
+
+        this.ctx.font = '11px "roboto condensed"';
+        var leftTextWidth = this.ctx.measureText(leftText).width + 1;
+        this.ctx.strokeText(leftText, x, y);
+        this.ctx.fillText(leftText, x, y);
+
+        this.ctx.font = '14px "roboto condensed"';
+        var middleTextWidth = this.ctx.measureText(middleText).width + 1;
+        this.ctx.strokeText(middleText, x + leftTextWidth, y + 2);
+        this.ctx.fillText(middleText, x + leftTextWidth, y + 2);
+
+        this.ctx.font = '11px "roboto condensed"';
+        var rightTextWidth = this.ctx.measureText(rightText).width + 1;
+        this.ctx.strokeText(rightText,x + leftTextWidth + middleTextWidth, y);
+        this.ctx.fillText(rightText, x + leftTextWidth + middleTextWidth, y);
+        
+        var direction = easting ? "E" : "N";
+        this.ctx.font = 'italic 10px "roboto condensed"';
+        this.ctx.strokeText("m" + direction, x + leftTextWidth + middleTextWidth + rightTextWidth, y);
+        this.ctx.fillText("m" + direction, x + leftTextWidth + middleTextWidth + rightTextWidth, y);
+    },
     drawGridLabels: function(zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
         
         for (var _x = _x_min; _x <= _x_max; _x += this.div) {
@@ -122,38 +151,12 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng.lat), RadToDeg(_latlng.lng)));
                 
                 // is outside map bounds?
-                // (also prevents collision with easting labels)
-                var outside = (_canvasPoint.y - 36 < 0);
+                var outside = (_canvasPoint.y - 36 < 0 || // '-36' prevents collision with top easting labels
+                    // hide equator label
+                    _x >= 9999999 || 
+                    _x <= 0);
 
-                // if not equator and not outside bounds, draw
-                if (_x < 9999999 && _x > 0 && !outside) {
-                    var _text = _x.toString();
-                    // pad 6-digit northing with leading zero
-                    if (_text.length == 6) _text = "0" + _text;
-
-                    var leftText = _text.substr(0, 2);
-                    var middleText = _text.substr(2, 2);
-                    var rightText = _text.substring(3, _text.length - 1);
-
-                    this.ctx.font = '11px "roboto condensed"';
-                    var leftTextWidth = this.ctx.measureText(leftText).width + 1;
-                    this.ctx.strokeText(leftText, 4, _canvasPoint.y - 6);
-                    this.ctx.fillText(leftText, 4, _canvasPoint.y - 6);
-
-                    this.ctx.font = '14px "roboto condensed"';
-                    var middleTextWidth = this.ctx.measureText(middleText).width + 1;
-                    this.ctx.strokeText(middleText, 4 + leftTextWidth, _canvasPoint.y - 4);
-                    this.ctx.fillText(middleText, 4 + leftTextWidth, _canvasPoint.y - 4);
-
-                    this.ctx.font = '11px "roboto condensed"';
-                    var rightTextWidth = this.ctx.measureText(rightText).width + 1;
-                    this.ctx.strokeText(rightText,4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 6);
-                    this.ctx.fillText(rightText, 4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 6);
-                    
-                    // this.ctx.font = 'italic 10px "roboto condensed"';
-                    // this.ctx.strokeText('mN',4 + leftTextWidth + middleTextWidth + rightTextWidth, _canvasPoint.y - 6);
-                    // this.ctx.fillText('mN', 4 + leftTextWidth + middleTextWidth + rightTextWidth, _canvasPoint.y - 6);
-                }
+                if (!outside) this.drawLabel(4, _canvasPoint.y - 6, _x, false);
             }
             // easting
             else  {
@@ -169,31 +172,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
                     _canvasPoint.x < 6 || // make sure tick mark is visible before labeling
                     rightPoint > bounds.NE.x);
 
-                // if not outside bounds, draw
-                if (!outside) {
-                    var leftText = _x.toString().substr(0, 1);
-                    var middleText = _x.toString().substr(1, 2);
-                    var rightText = _x.toString().substr(3, 4);
-
-                    this.ctx.font = '11px "roboto condensed"';
-                    var leftTextWidth = this.ctx.measureText(leftText).width + 1;
-                    this.ctx.strokeText(leftText, _canvasPoint.x + 4, 12);
-                    this.ctx.fillText(leftText, _canvasPoint.x + 4, 12);
-
-                    this.ctx.font = '14px "roboto condensed"';
-                    var middleTextWidth = this.ctx.measureText(middleText).width + 1;
-                    this.ctx.strokeText(middleText, _canvasPoint.x + 4 + leftTextWidth, 14);
-                    this.ctx.fillText(middleText, _canvasPoint.x + 4 + leftTextWidth, 14);
-
-                    this.ctx.font = '11px "roboto condensed"';
-                    var rightTextWidth = this.ctx.measureText(rightText).width + 1;
-                    this.ctx.strokeText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
-                    this.ctx.fillText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
-
-                    // this.ctx.font = 'italic 10px "roboto condensed"';
-                    // this.ctx.strokeText('mE', _canvasPoint.x + 4 + leftTextWidth + middleTextWidth + rightTextWidth, 12);
-                    // this.ctx.fillText('mE', _canvasPoint.x + 4 + leftTextWidth + middleTextWidth + rightTextWidth, 12);
-                }
+                if (!outside) this.drawLabel(_canvasPoint.x + 4, 12, _x, true);
             }
         }
     },
@@ -223,8 +202,8 @@ var UTMGridLayer = L.CanvasLayer.extend({
         var utmBottom = (parseInt(UTM_SW.y / this.div) * this.div) - this.div;
 
         // based on min and max easting as per https://www.maptools.com/tutorials/utm/details
-        var utmLeft  = 100000;
-        var utmRight = 900000;
+        this.utmLeft  = 100000;
+        this.utmRight = 900000;
 
         for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
             for (var band = this.bandBottom; band <= this.bandTop; band++) {

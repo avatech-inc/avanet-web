@@ -148,6 +148,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
             // northing
             if (horizontal) {
                 var _UTM_SW = LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng));
+                var _UTM_SW = LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this.lngLeft));
                 var _latlng = UTMXYToLatLon(_UTM_SW.x, _x, zone, southernHemi);
                
                 var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng.lat), RadToDeg(_latlng.lng)));
@@ -163,6 +164,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
             // easting
             else  {
                 var _UTM_NE = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng));
+                var _UTM_NE = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this.lngRight));
                 var _latlng = UTMXYToLatLon(_x, _UTM_NE.y, zone, southernHemi);
 
                 var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng.lat), RadToDeg(_latlng.lng)));

@@ -26,22 +26,11 @@ var UTMGridLayer = L.CanvasLayer.extend({
         } 
         // Svalbard
         else if (latBand == "X") {
-            // "removed" zones
-            if (zone == 32 || zone == 34 || zone == 36) {
-                return null;
-            }
-            else if (zone == 31) {
-                lngLeft = 0; lngRight = 9;
-            }
-            else if (zone == 33) {
-                lngLeft = 9; lngRight = 21;
-            }
-            else if (zone == 35) {
-                lngLeft = 21; lngRight = 33;
-            }
-            else if (zone == 37) {
-                lngLeft = 33; lngRight = 42;
-            }
+            if (zone == 32 || zone == 34 || zone == 36) return null; // "removed" zones
+            else if (zone == 31) { lngLeft = 0; lngRight = 9; }
+            else if (zone == 33) { lngLeft = 9; lngRight = 21; }
+            else if (zone == 35) { lngLeft = 21; lngRight = 33; }
+            else if (zone == 37) { lngLeft = 33; lngRight = 42; }
         }
 
         return {
@@ -139,15 +128,12 @@ var UTMGridLayer = L.CanvasLayer.extend({
         // this.ctx.fillText("m" + direction, x + leftTextWidth + middleTextWidth + rightTextWidth, y);
     },
     drawGridLabels: function(zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
+        this.ctx.fillStyle='rgba(17,143,189,.9)'; // text color
+        this.ctx.strokeStyle='rgba(255,255,255,.8)'; // text stroke color
+        this.ctx.lineWidth = 3;
         for (var _x = _x_min; _x <= _x_max; _x += this.div) {
-
-            this.ctx.fillStyle='rgba(17,143,189,.9)'; // text color
-            this.ctx.strokeStyle='rgba(255,255,255,.8)'; // text stroke color
-            this.ctx.lineWidth = 3;
-
             // northing
             if (horizontal) {
-                var _UTM_SW = LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng));
                 var _UTM_SW = LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this.lngLeft));
                 var _latlng = UTMXYToLatLon(_UTM_SW.x, _x, zone, southernHemi);
                
@@ -163,7 +149,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
             // easting
             else  {
-                var _UTM_NE = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng));
                 var _UTM_NE = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this.lngRight));
                 var _latlng = UTMXYToLatLon(_x, _UTM_NE.y, zone, southernHemi);
 

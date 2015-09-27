@@ -66,11 +66,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 var n = horizontal ? _x : _y;
 
                 // convert back to lat lng
-                var latlng = new Array(2);
-                UTMXYToLatLon(e, n, zone, southernHemi, latlng);
+                var latlng = UTMXYToLatLon(e, n, zone, southernHemi);
 
                 // get container point
-                var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng[0]), RadToDeg(latlng[1])));
+                var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng.lat), RadToDeg(latlng.lng)));
 
                 if (!previousPoint) this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else {
@@ -118,10 +117,9 @@ var UTMGridLayer = L.CanvasLayer.extend({
             // northing
             if (horizontal) {
                 var _UTM_SW = LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng));
-                var _latlng = new Array(2);
-                UTMXYToLatLon(_UTM_SW.x, _x, zone, southernHemi, _latlng);
+                var _latlng = UTMXYToLatLon(_UTM_SW.x, _x, zone, southernHemi);
                
-                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng.lat), RadToDeg(_latlng.lng)));
                 
                 // is outside map bounds?
                 // (also prevents collision with easting labels)
@@ -160,10 +158,9 @@ var UTMGridLayer = L.CanvasLayer.extend({
             // easting
             else  {
                 var _UTM_NE = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng));
-                var _latlng = new Array(2);
-                UTMXYToLatLon(_x, _UTM_NE.y, zone, southernHemi, _latlng);
+                var _latlng = UTMXYToLatLon(_x, _UTM_NE.y, zone, southernHemi);
 
-                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng[0]), RadToDeg(_latlng[1])));
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(_latlng.lat), RadToDeg(_latlng.lng)));
                 
                 // is outside zone and map bounds?
                 var rightPoint = _canvasPoint.x + this.ctx.measureText(_x).width + 10;

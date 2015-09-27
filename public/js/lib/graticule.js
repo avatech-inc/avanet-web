@@ -1,32 +1,58 @@
 var UTMGridLayer = L.CanvasLayer.extend({
 
-    getZonePixelBounds: function(zone) {
-        var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
-        var zoneBoundaryLngRight = (zone * 6) - 180;
-        return {
-            NE: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngRight)),
-            SE: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngRight)),
-            SW: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngLeft)),
-            NW: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngLeft))
-        }
-    },
-    getGridPixelBounds: function(zone) {
-        var zoneBoundaryLngLeft = ((zone - 1) * 6) - 180;
-        var zoneBoundaryLngRight = (zone * 6) - 180;
-        return {
-            NE: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngRight)),
-            SE: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngRight)),
-            SW: this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLngLeft)),
-            NW: this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLngLeft))
-        }
-    },
+    getZonePixelBounds: function(zone, band) {
 
+        if (band > 19) band = 19;
+        var latBand = "CDEFGHJKLMNPQRSTUVWX".charAt(band);
+
+        var lngLeft = ((zone - 1) * 6) - 180;
+        var lngRight = (zone * 6) - 180;
+
+        var latBottom = ((band + 1) * 8) - 88;
+        var latTop = ((band + 1) * 8) - 80;
+
+        // band X is 12 degrees
+        if (latBand == "X") latTop = 84;
+
+        // exceptions
+
+        // Norway 31V & 32V
+        if (latBand == "V") {
+            if (zone == 31) lngRight = 3;
+            else if (zone == 32) lngLeft = 3;
+        } 
+        // Svalbard
+        else if (latBand == "X") {
+            if (zone == 32 || zone == 34 || zone == 36) {
+                return null;
+            }
+            else if (zone == 31) {
+                lngLeft = 0; lngRight = 9;
+            }
+            else if (zone == 33) {
+                lngLeft = 9; lngRight = 21;
+            }
+            else if (zone == 35) {
+                lngLeft = 21; lngRight = 33;
+            }
+            else if (zone == 37) {
+                lngLeft = 33; lngRight = 42;
+            }
+        }
+
+        return {
+            NE: this._map.latLngToContainerPoint(new L.LatLng(latTop, lngRight)),
+            SE: this._map.latLngToContainerPoint(new L.LatLng(latBottom, lngRight)),
+            SW: this._map.latLngToContainerPoint(new L.LatLng(latBottom, lngLeft)),
+            NW: this._map.latLngToContainerPoint(new L.LatLng(latTop, lngLeft))
+        }
+    },
     drawGridLines: function(div, zone, bounds, southernHemi, _x_min, _x_max, _y_min, _y_max, horizontal, arcPoints) {
-
         // draw lines
         for (var _x = _x_min; _x <= _x_max; _x += div) {
             // set line style
-            this.ctx.strokeStyle = "rgba(0,0,0,.9)";
+            //this.ctx.strokeStyle = "rgba(0,0,0,.9)";
+            this.ctx.strokeStyle = 'rgba(63,168,208,.9)';
             this.ctx.lineWidth = 1;
 
             // draw lines
@@ -85,14 +111,14 @@ var UTMGridLayer = L.CanvasLayer.extend({
         
         for (var _x = _x_min; _x <= _x_max; _x += div) {
 
-            this.ctx.strokeStyle="rgba(255,255,255,.9)";
+            this.ctx.fillStyle='rgba(17,143,189,.9)'; // text color
+            this.ctx.strokeStyle='rgba(255,255,255,.9)'; // text stroke color
             this.ctx.lineWidth = 3;
 
             // northing
             if (horizontal) {
                 var _UTM_SW = new Array(2);
                 LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng), zone, _UTM_SW);
-
                 var _latlng = new Array(2);
                 UTMXYToLatLon(_UTM_SW[0], _x, zone, southernHemi, _latlng);
                
@@ -136,7 +162,6 @@ var UTMGridLayer = L.CanvasLayer.extend({
             else  {
                 var _UTM_NE = new Array(2);
                 LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng), zone, _UTM_NE);
-
                 var _latlng = new Array(2);
                 UTMXYToLatLon(_x, _UTM_NE[1], zone, southernHemi, _latlng);
 
@@ -177,7 +202,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
         }
     },
-    drawUTMGrid: function(bounds, southernHemi) {
+    drawUTMGrid: function() {
         var zoom = this._map.getZoom();
         // tick spacing (in meters)
         var div = 100000;
@@ -195,28 +220,24 @@ var UTMGridLayer = L.CanvasLayer.extend({
         else if (zoom == 15) div = 100000 / 50;
         else if (zoom == 16) div = 100000 / 100; // 1km
         else if (zoom == 17) div = 100000 / 400;
+        
+        var UTM_NE  = LatLonToUTMXY(DegToRad(this.latTop), DegToRad(this._map.getBounds()._northEast.lng));
+        var UTM_SW =  LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(this._map.getBounds()._southWest.lng));
+       
+        var utmTop    = (parseInt(UTM_NE.y / div) * div) + div;
+        var utmBottom = (parseInt(UTM_SW.y / div) * div) - div;
 
-        var zoneSW = Math.floor((bounds._southWest.lng + 180.0) / 6) + 1;
-        var zoneNE = Math.floor((bounds._northEast.lng + 180.0) / 6) + 1;
+        // based on min and max easting as per https://www.maptools.com/tutorials/utm/details
+        var utmLeft  = 100000;
+        var utmRight = 900000;
 
-        var UTM_SW = new Array(2);
-        LatLonToUTMXY(DegToRad(this.latBottom), DegToRad(bounds._southWest.lng), zoneSW, UTM_SW);
-        var UTM_NE = new Array(2);
-        LatLonToUTMXY(DegToRad(this.latTop), DegToRad(bounds._northEast.lng), zoneNE, UTM_NE);
+        for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
+            for (var band = this.bandBottom; band <= this.bandTop; band++) {
+                var bounds = this.getZonePixelBounds(zone, band);
+                // if no bounds (non-existant band, i.e. 32X), continue
+                if (!bounds) continue;
 
-        var utmTop    = (parseInt(UTM_NE[1] / div) * div) + div;
-        var utmBottom = (parseInt(UTM_SW[1] / div) * div) - div;
-
-        if (bounds._southWest.lat < 0 && bounds._northEast.lat >= 0) {
-            if (southernHemi) utmTop = 10000000;
-            else utmBottom = 0;
-        }
-
-        for (var zone = zoneSW; zone <= zoneNE; zone++) {
-            var bounds = this.getZonePixelBounds(zone);
-
-            // clip canvas to boundaries of zone
-            if (zoneNE != zoneSW) {
+                // clip canvas to boundaries of zone
                 this.ctx.save();
                 this.ctx.beginPath();
                 this.ctx.moveTo(bounds.NE.x, bounds.NE.y);
@@ -225,25 +246,33 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 this.ctx.lineTo(bounds.NE.x, bounds.SW.y);
                 this.ctx.closePath();
                 this.ctx.clip();
-            }
 
-            // based on min and max easting as per https://www.maptools.com/tutorials/utm/details
-            var utmLeft  = 100000;
-            var utmRight = 900000;
+                _utmTop = utmTop;
+                _utmBottom = utmBottom;
 
-            // draw utm grid lines
-            this.drawGridLines(div, zone, bounds, southernHemi, utmBottom, utmTop, utmLeft, utmRight, true, 10); // northing
-            this.drawGridLines(div, zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // easting
+                // hemisphere based on lat band
+                var southernHemi = (band < 10);
 
-            // restore clipped zone bounds
-            if (zoneNE != zoneSW) this.ctx.restore();
+                // if both hemispheres are in view, adjust utm top/bottom
+                if (this.bothHemispheres) {
+                    if (southernHemi) _utmTop = 10000000;
+                    else _utmBottom = 0;
+                }
 
-            // draw easting labels for each zone
-            this.drawGridLabels(div, zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // easting
+                // draw utm grid lines
+                this.drawGridLines(div, zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
+                this.drawGridLines(div, zone, bounds, southernHemi, utmLeft, utmRight, _utmBottom, _utmTop, false, 4); // easting
 
-            // draw northing labels only for left-most zone
-            if (zone == zoneSW)  {
-                this.drawGridLabels(div, zone, bounds, southernHemi, utmBottom, utmTop, utmLeft, utmRight, true, 10); // northing
+                // restore clipped zone bounds
+                this.ctx.restore();
+
+                // draw easting labels for each zone
+                this.drawGridLabels(div, zone, bounds, southernHemi, utmLeft, utmRight, utmBottom, utmTop, false, 4); // easting
+
+                // draw northing labels only for left-most zone
+                if (zone == this.zoneLeft)  {
+                    this.drawGridLabels(div, zone, bounds, southernHemi, _utmBottom, _utmTop, utmLeft, utmRight, true, 10); // northing
+                }
             }
         }
       },
@@ -255,74 +284,58 @@ var UTMGridLayer = L.CanvasLayer.extend({
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // get map bounds
-        var bounds = this._map.getBounds();
+        var mapBounds = this._map.getBounds();
 
         // lat/lng bounds of utm grid
-        this.latTop = Math.min(84, bounds._northEast.lat);
-        this.latBottom = Math.max(-80, bounds._southWest.lat);
-        this.lngLeft = Math.max(-180, bounds._southWest.lng);
-        this.lngRight = Math.min(180, bounds._northEast.lng);
+        this.latTop = Math.min(84, mapBounds._northEast.lat);
+        this.latBottom = Math.max(-80, mapBounds._southWest.lat);
+        this.lngLeft = Math.max(-180, mapBounds._southWest.lng);
+        this.lngRight = Math.min(180, mapBounds._northEast.lng);
 
-        // set line style
-        this.ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
-        this.ctx.lineWidth = 1;
+        // utm zone and lat band bounds
+        this.zoneLeft = Math.floor((this.lngLeft + 180.0) / 6) + 1;
+        this.zoneRight = Math.floor((this.lngRight + 180.0) / 6) + 1;
+        this.bandTop = Math.floor((this.latTop+80)/8);
+        this.bandBottom = Math.floor((this.latBottom+80)/8);
 
-        this.ctx.beginPath();
+        this.bothHemispheres = (this.latBottom < 0 && this.latTop >= 0);
 
-        // draw utm zones
-        // every 6 degress longitude between -180 and 180
-        for (var i = 0; i <= 60; i++) {
-            var zoneBoundaryLng = (i * 6) - 180;
-
-            if (zoneBoundaryLng < this.lngLeft || zoneBoundaryLng > this.lngRight) continue;
-            var pixelTop = this._map.latLngToContainerPoint(new L.LatLng(this.latTop, zoneBoundaryLng));
-            var pixelBottom = this._map.latLngToContainerPoint(new L.LatLng(this.latBottom, zoneBoundaryLng));
-
-            this.ctx.moveTo(pixelTop.x ,pixelTop.y);
-            this.ctx.lineTo(pixelBottom.x, pixelBottom.y);
-        }
-        this.ctx.stroke();
-
-        this.ctx.beginPath();
-        // set line style
-        this.ctx.strokeStyle = 'rgba(255, 60, 60, 0.4)';
-
-        // draw latitude bands
-        // every 8 degress latitude between -84 and 80
-        //(-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : ""; 
-        for (var i = 0; i < 21; i++) {
-            var bandDegrees = 8;
-            var bandBoundaryLat = (i * bandDegrees) - 80;
-
-            // northernmost band is 12 degrees tall
-            if (i == 20) bandBoundaryLat +=4;
-
-            var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, this.lngLeft));
-            var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(bandBoundaryLat, this.lngRight));
-            
-            this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
-            this.ctx.lineTo(pixelRight.x, pixelRight.y);
-        }
-        this.ctx.stroke();
-
-        // draw utm grid
-        if (this.latBottom < 0 && this.latTop > 0) {
-            // draw equator
+        // if both hemispheres are on the same map, draw equator
+        if (this.bothHemispheres) {
             var pixelLeft = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngLeft));
             var pixelRight = this._map.latLngToContainerPoint(new L.LatLng(0, this.lngRight));
 
-            this.ctx.strokeStyle = 'rgba(0,0,0,.35)';
+            this.ctx.strokeStyle = 'rgba(63,168,208,.4)';
             this.ctx.lineWidth = 4;
             this.ctx.beginPath();
             this.ctx.moveTo(pixelLeft.x ,pixelLeft.y);
             this.ctx.lineTo(pixelRight.x, pixelRight.y);
             this.ctx.stroke();
-
-            this.drawUTMGrid(bounds, false); // northern hemi
-            this.drawUTMGrid(bounds, true); // southern hemi
         }
-        else if (this.latBottom <  0) this.drawUTMGrid(bounds, true); // southern hemi
-        else if (this.latBottom >= 0) this.drawUTMGrid(bounds, false); // northern hemi
+
+        // draw utm grid
+        this.drawUTMGrid();
+
+        // draw zone and lat band borders
+
+        this.ctx.strokeStyle = 'rgba(255, 60, 60, .9)';
+        this.ctx.lineWidth = 1;
+
+        this.ctx.beginPath();
+        for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
+            for (var band = this.bandBottom; band <= this.bandTop; band++) {
+                var bounds = this.getZonePixelBounds(zone, band);
+                // if no bounds (non-existant band, i.e. 32X), continue
+                if (!bounds) continue;
+
+                this.ctx.moveTo(bounds.NE.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.NE.y);
+                this.ctx.lineTo(bounds.SW.x, bounds.SW.y);
+                this.ctx.lineTo(bounds.NE.x, bounds.SW.y);
+            }
+        }
+        this.ctx.stroke();
+
         //this.redraw();
       }
     });

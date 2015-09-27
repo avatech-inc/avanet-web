@@ -380,9 +380,6 @@ function MapXYToLatLon (x, y, lambda0, philambda)
     return;
 }
 
-
-
-
 /*
 * LatLonToUTMXY
 *
@@ -403,7 +400,7 @@ function MapXYToLatLon (x, y, lambda0, philambda)
 *   The UTM zone used for calculating the values of x and y.
 *
 */
-function LatLonToUTMXY (lat, lon, zone, xy)
+function LatLonToUTMXY(lat, lon, zone, xy)
 {
     if (!xy) xy = new Array(2);
 
@@ -474,8 +471,10 @@ function LatLonToUTMXY (lat, lon, zone, xy)
 *	The function does not return a value.
 *
 */
-function UTMXYToLatLon (x, y, zone, southhemi, latlon)
+function UTMXYToLatLon(x, y, zone, southhemi, latlon)
 {
+    if (!latlon) latlon = new Array(2);
+
     var cmeridian;
     	
     x -= 500000.0;
@@ -490,5 +489,8 @@ function UTMXYToLatLon (x, y, zone, southhemi, latlon)
     cmeridian = UTMCentralMeridian (zone);
     MapXYToLatLon (x, y, cmeridian, latlon);
     	
-    return;
+    return {
+        lat: latlon[0],
+        lng: latlon[1]
+    };
 }

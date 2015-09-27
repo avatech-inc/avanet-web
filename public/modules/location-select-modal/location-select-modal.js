@@ -110,21 +110,15 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
 
             }
             else if ($scope.form.coordSystem == "utm") {
-
-                // convert lat decimal degrees to UTM band
-                var band = (lat > 0) ? "N" : "S";
-
                 // get UTM
-                var zone = Math.floor((lng + 180.0) / 6) + 1;
-                var xy = new Array(2);
-                LatLonToUTMXY (DegToRad(lat), DegToRad(lng), zone, xy);
+                var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
 
                 // set UTM
                 if (!$scope.utm) $scope.utm = {};
-                $scope.utm.zone = zone;
+                $scope.utm.zone = utm.zone;
                 $scope.utm.hemisphere = (lat > 0) ? "N" : "S";
-                $scope.utm.e = parseInt(xy[0].toFixed(0));
-                $scope.utm.n = parseInt(xy[1].toFixed(0));
+                $scope.utm.e = parseInt(utm.x.toFixed(0));
+                $scope.utm.n = parseInt(utm.y.toFixed(0));
             }
         }
 
@@ -142,11 +136,10 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 if ($scope.invalidE || $scope.invalidN) return;
 
                 // conver to lat/lng
-                var latlng = new Array(2);
-                UTMXYToLatLon($scope.utm.e, $scope.utm.n, $scope.utm.zone, $scope.utm.hemisphere === "S", latlng);
+                var latlng = UTMXYToLatLon($scope.utm.e, $scope.utm.n, $scope.utm.zone, $scope.utm.hemisphere === "S");
                 
-                var lat = RadToDeg(latlng[0]);
-                var lng = RadToDeg(latlng[1]);
+                var lat = RadToDeg(latlng.lat);
+                var lng = RadToDeg(latlng.lng);
 
                 console.log([ lat, lng ]);
 

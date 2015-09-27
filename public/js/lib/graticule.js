@@ -123,8 +123,13 @@ var UTMGridLayer = L.CanvasLayer.extend({
                     this.ctx.fillText(middleText, 4 + leftTextWidth, _canvasPoint.y - 4);
 
                     this.ctx.font = '11px "roboto condensed"';
+                    var rightTextWidth = this.ctx.measureText(rightText).width + 1;
                     this.ctx.strokeText(rightText,4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 6);
                     this.ctx.fillText(rightText, 4 + leftTextWidth + middleTextWidth, _canvasPoint.y - 6);
+                    
+                    // this.ctx.font = 'italic 10px "roboto condensed"';
+                    // this.ctx.strokeText('mN',4 + leftTextWidth + middleTextWidth + rightTextWidth, _canvasPoint.y - 6);
+                    // this.ctx.fillText('mN', 4 + leftTextWidth + middleTextWidth + rightTextWidth, _canvasPoint.y - 6);
                 }
             }
             // easting
@@ -161,8 +166,13 @@ var UTMGridLayer = L.CanvasLayer.extend({
                     this.ctx.fillText(middleText, _canvasPoint.x + 4 + leftTextWidth, 14);
 
                     this.ctx.font = '11px "roboto condensed"';
+                    var rightTextWidth = this.ctx.measureText(rightText).width + 1;
                     this.ctx.strokeText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
                     this.ctx.fillText(rightText, _canvasPoint.x + 4 + leftTextWidth + middleTextWidth, 12);
+
+                    // this.ctx.font = 'italic 10px "roboto condensed"';
+                    // this.ctx.strokeText('mE', _canvasPoint.x + 4 + leftTextWidth + middleTextWidth + rightTextWidth, 12);
+                    // this.ctx.fillText('mE', _canvasPoint.x + 4 + leftTextWidth + middleTextWidth + rightTextWidth, 12);
                 }
             }
         }

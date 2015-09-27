@@ -225,7 +225,7 @@ var formatters = {
         if (!point) return "--"
         var s = "";
 
-        if (point.lat && point.lng) {
+        if (point.lat != null && point.lng != null) {
             s+= point.lat.toFixed(5) + ", "
             s+= point.lng.toFixed(5)
         }
@@ -242,7 +242,7 @@ var formatters = {
         var s = "";
 
         var lat, lng;
-        if (point.lat && point.lng) {
+        if (point.lat != null && point.lng != null) {
             lat = point.lat;
             lng = point.lng;
         }
@@ -250,24 +250,16 @@ var formatters = {
             lat = point[1];
             lng = point[0];
         }
+        else return "--";
 
-        if (lat && lng) {
-            // calculate UTM zone
-            //var zone = Math.floor((lng + 180.0) / 6) + 1;
-            // convert lat decimal degrees to UTM band
-            //var band = (-80<=lat&&lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((lat+80)/8)) : "";
-            // for now, use hemispheres
-            //var band = (lat > 0) ? "N" : "S";
+        // get utm
+        var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
 
-            // get UTM
-            var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
+        // format
+        s += utm.zone + utm.band + " ";
+        s += utm.x.toFixed(0) + " "; // E
+        s += utm.y.toFixed(0) + ""; // N
 
-            // format
-            s += utm.zone + utm.band + " ";
-            s += utm.x.toFixed(0) + " "; // E
-            s += utm.y.toFixed(0) + ""; // N
-        }
-        else s = "--"
         return s;
     },
     formatDate: function(date,time) {

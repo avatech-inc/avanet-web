@@ -182,9 +182,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
             _this.drawGridLabels(zone, bounds, southernHemi, _this.utmLeft, _this.utmRight, utmBottom, utmTop, false, 4);
 
             // draw northing labels only for left-most zone
-            if (zone == _this.zoneLeft)  {
+            if (zone == _this.zoneLeft + 1)  {
                 _this.drawGridLabels(zone, bounds, southernHemi, utmBottom, utmTop, _this.utmLeft, _this.utmRight, true, 10);
             }
+            //else console.log(zone + "/" + _this.zoneLeft);
         });
     },
     drawUTMGrid: function() {

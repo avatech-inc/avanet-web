@@ -63,6 +63,8 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 // get container point
                 var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(RadToDeg(latlng.lat), RadToDeg(latlng.lng)));
 
+                //console.log("latlng: " + RadToDeg(latlng.lat) + ", " + RadToDeg(latlng.lng) + " | " + canvasPoint.x + ", " + canvasPoint.y);
+
                 if (!previousPoint) this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else {
                     // if entirely out of zone bounds, ignore
@@ -200,7 +202,7 @@ var UTMGridLayer = L.CanvasLayer.extend({
         for (var zone = this.zoneLeft; zone <= this.zoneRight; zone++) {
             for (var band = this.bandBottom; band <= this.bandTop; band++) {
                 // ignore padding
-                if (zone < 1 || zone > 60) return;
+                if (zone < 1 || zone > 60) continue;
 
                 var bounds = this.getZonePixelBounds(zone, band);
                 // if no bounds (non-existant band, i.e. 32X), continue

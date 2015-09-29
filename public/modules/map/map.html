@@ -444,7 +444,7 @@
 			      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
 
 			      		<div class="btn-group" style="margin: 2px 6px;">
-					        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'dd'">Decimal Degrees</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'utm'">
+					        <!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'dd'">Decimal Degrees</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'utm'">
 					        UTM</label>
 					    </div>
 
@@ -820,11 +820,12 @@
 				</div>
 				<div ng-if="route && route.points.length > 1">
 					<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
-
-						<a href="#" ng-click="routeControl.editing = !routeControl.editing">Edit: {{ routeControl.editing ? "on" : "off" }}</a><br/>
-						<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint">Auto-waypoint: {{ routeControl.autoWaypoint ? "on" : "off" }}</a><br/>
-						<a href="#" ng-click="routeControl.downloadGPX()">Download GPX</a><br/>
-						<a href="#" ng-click="routeControl.downloadPDF()">Download PDF</a>
+						<div style="padding-left:6px;padding-bottom:8px;">
+							<a href="#" ng-click="routeControl.editing = !routeControl.editing"><i class="fa fa{{ routeControl.editing ? '-check' : '' }}-square-o" style="width:13px;"></i> Editing</a>&nbsp;&nbsp;&nbsp;
+							<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint"><i class="fa fa{{ routeControl.autoWaypoint ? '-check' : '' }}-square-o" style="width:13px;"></i> Auto-waypoint</a>&nbsp;&nbsp;&nbsp;
+							<a href="#" ng-click="routeControl.downloadGPX()"><i class="fa fa-file-excel-o"></i> GPX</a>&nbsp;&nbsp;&nbsp;
+							<a href="#" ng-click="routeControl.downloadPDF()"><i class="fa fa-file-pdf-o"></i> PDF</a>
+						</div>
 
 						<div style="font-size:13px;">
 							<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}

@@ -494,7 +494,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
     // set initial location and zoom level
-    var defaultZoom = 6;
+    var defaultZoom = 13;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
     if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
     $scope.map.setView(initialLocation, defaultZoom);
@@ -893,7 +893,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
 
         if (gridOverlayLayer) {
-            console.log("yooooooo")
+            //console.log("yooooooo")
             gridOverlayLayer.addTo($scope.map);
             gridOverlayLayer.setZIndex(99999);
         }

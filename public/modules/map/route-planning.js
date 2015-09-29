@@ -468,7 +468,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 popup.style.padding = '5px';
 
                 if (marker.waypoint) {
-                    popup.appendChild($("<div style='font-weight:bold;'>" + scope.route.waypointPrefix() + marker.waypoint.index + "</div>")[0]);
+                    popup.appendChild($("<div style='font-weight:bold;position:relative;bottom:2px;margin-right:20px;'>" + scope.route.waypointPrefix() + marker.waypoint.index + "</div>")[0]);
 
                     var nameInput = document.createElement("input");
                     popup.appendChild(nameInput);
@@ -498,6 +498,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     }
                 }
                 else {
+                    popup.appendChild($("<div style='font-weight:bold;position:relative;bottom:2px;margin-right:20px;'>Route Point<br/></div>")[0]);
                     var makeWaypointbutton = document.createElement("button");
                     popup.appendChild(makeWaypointbutton);
                     makeWaypointbutton.innerHTML = '<i class="fa fa-map-marker"></i>&nbsp;&nbsp;Make Waypoint';

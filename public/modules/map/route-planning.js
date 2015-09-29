@@ -80,11 +80,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             // PDF columns
             var columns = [   
-                { text: 'Leg', style: 'tableHeader', width: 24 },
+                { text: '', style: 'tableHeader', width: 24 },
                 { text: 'Name', style: 'tableHeader', width: '*' },
                 { text: 'UTM', style: 'tableHeader', width: 49 },
                 { text: 'Distance', style: 'tableHeader', width: 44 },
-                { text: 'Start Elevation', style: 'tableHeader', width: 44 },
+                { text: 'Elevation', style: 'tableHeader', width: 44 },
                 { text: 'Net Elevation', style: 'tableHeader', width: 40 },
                 { text: 'Bearing', style: 'tableHeader', width: 43 },
                 { text: 'Time', style: 'tableHeader', width: 55 },

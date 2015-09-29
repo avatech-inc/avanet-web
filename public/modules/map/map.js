@@ -279,7 +279,11 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     L.control.zoomslider({ position: 'bottomright' }).addTo($scope.map);
 
     // add scale control to map
-    //new L.control.scale().addTo($scope.map);
+    L.control.scale({
+        metric: true,
+        imperial: true,
+        position: 'topleft'
+    }).addTo($scope.map);
 
     // map load event must be defined before we set initial zoom/location)
     var mapLoaded = $q.defer();

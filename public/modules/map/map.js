@@ -763,6 +763,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
     setTimeout(function(){
         terrainLayer.addTo($scope.map);
+        terrainLayer.setZIndex(99998);
     }, 100);
 
     $scope.$watch('overlayOpacity', function() {

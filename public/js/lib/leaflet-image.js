@@ -61,6 +61,7 @@ module.exports = function leafletImage(map, callback) {
     function handleTileLayer(layer, callback) {
         var isCanvasLayer = (layer instanceof L.TileLayer.Canvas),
             canvas = document.createElement('canvas');
+        var layerOpacity = parseFloat(layer.options.opacity);
 
         canvas.width = dimensions.x;
         canvas.height = dimensions.y;
@@ -121,22 +122,24 @@ module.exports = function leafletImage(map, callback) {
 
         tileQueue.awaitAll(tileQueueFinish);
 
-        function canvasTile(tile, tilePos, tileSize, callback) {
+        function canvasTile(tile, tilePos, tileSize, layerOpacity, callback) {
             callback(null, {
                 img: tile,
                 pos: tilePos,
-                size: tileSize
+                size: tileSize,
+                opacity: layerOpacity
             });
         }
 
-        function loadTile(url, tilePos, tileSize, callback) {
+        function loadTile(url, tilePos, tileSize, layerOpacity, callback) {
             var im = new Image();
             im.crossOrigin = '';
             im.onload = function() {
                 callback(null, {
                     img: this,
                     pos: tilePos,
-                    size: tileSize
+                    size: tileSize,
+                    opacity: layerOpacity
                 });
             };
             im.onerror = function(e) {

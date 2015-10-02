@@ -62,13 +62,12 @@
 		</script>
 		<!-- end rollbar -->
 
-		<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-image/v0.0.4/leaflet-image.js'></script>
-
     	<!-- MapBox / Leaflet -->
     	<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
     	<script type="text/javascript">
     		L.mapbox.accessToken = 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg';
       		L.mapbox.config.FORCE_HTTPS = true;
+        	//L_PREFER_CANVAS = true;
     	</script>
 		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
 
@@ -142,6 +141,9 @@
 
 		<!-- Leaflet Heatmap plugin -->
 		<script type="text/javascript" src='/js/lib/leaflet-heat.js'></script>
+
+		<!-- Leaflet Image Export plugin -->
+		<script type="text/javascript" src='/js/lib/leaflet-image.js'></script>
 
 		<!-- Leaflet Canvas Layer plugin -->
 		<script type="text/javascript" src='/js/lib/leaflet_canvas_layer.js'></script>

@@ -54,6 +54,20 @@ module.exports = function leafletImage(map, callback) {
         // if SVG layer, ignore
         if (!isSVG)
             layerQueue.defer(handlePathRoot, map._pathRoot);
+        else {
+            var SVGstring = new XMLSerializer().serializeToString(map._pathRoot);
+            console.log(SVGstring);
+             var _canvas = document.createElement('canvas');
+            _canvas.width = dimensions.x * multiplier;
+            _canvas.height = dimensions.y * multiplier;
+            var _ctx = _canvas.getContext('2d');
+            //_ctx.drawSvg(SVGstring, 0, 0, _canvas.width, _canvas.height);
+            //console.log(_ctx.getImageData(0, 0, _canvas.width, _canvas.height));
+
+            canvg(_canvas, SVGstring)
+
+            layerQueue.defer(handleCanvasLayer, _canvas);
+        }
     } 
     else if (map._panes && map._panes.overlayPane.firstChild) {
         layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
@@ -203,8 +217,8 @@ module.exports = function leafletImage(map, callback) {
         var bounds = map.getPixelBounds(),
             origin = map.getPixelOrigin(),
             canvas = document.createElement('canvas');
-        canvas.width = dimensions.x;
-        canvas.height = dimensions.y;
+        canvas.width = dimensions.x * multiplier;
+        canvas.height = dimensions.y * multiplier;
         var ctx = canvas.getContext('2d');
         var pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin);
         ctx.drawImage(root, pos.x, pos.y);

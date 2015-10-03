@@ -63,11 +63,13 @@
 		<!-- end rollbar -->
 
     	<!-- MapBox / Leaflet -->
+    	<script type="text/javascript">
+        	//L_PREFER_CANVAS = true;
+    	</script>
     	<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
     	<script type="text/javascript">
     		L.mapbox.accessToken = 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg';
       		L.mapbox.config.FORCE_HTTPS = true;
-        	//L_PREFER_CANVAS = true;
     	</script>
 		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
 
@@ -93,6 +95,12 @@
 
 		<!-- google web fonts (ended up downloading roboto)-->
 		<!--<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>-->
+
+
+		<!-- canvg: canvas-svg converter -->
+		<script type="text/javascript" src="http://gabelerner.github.io/canvg/rgbcolor.js"></script> 
+		<script type="text/javascript" src="http://gabelerner.github.io/canvg/StackBlur.js"></script>
+		<script type="text/javascript" src="http://gabelerner.github.io/canvg/canvg.js"></script> 
 
 		<!--if lt IE 9-->
 		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -289,10 +297,10 @@
   		<script src="/modules/map/terrain-worker.js"></script>
   		<script src="/modules/map-search/map-search.js"></script>
   		<script src="/modules/observations/observations.js"></script>
-  		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>
   		<script src="/modules/profiles/profiles.js"></script>
+  		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/publish-modal/modal.js"></script>
   		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>

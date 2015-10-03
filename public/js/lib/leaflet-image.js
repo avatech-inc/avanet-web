@@ -49,33 +49,18 @@ module.exports = function leafletImage(map, callback) {
         // }
     });
 
+    // paths
     if (map._pathRoot) {
-        var isSVG = map._pathRoot.constructor.toString().indexOf("SVGSVGElement") != -1;
-        // if SVG layer, ignore
-        if (!isSVG)
-            layerQueue.defer(handlePathRoot, map._pathRoot);
-        else {
-            var SVGstring = new XMLSerializer().serializeToString(map._pathRoot);
-            console.log(SVGstring);
-             var _canvas = document.createElement('canvas');
-            _canvas.width = dimensions.x * multiplier;
-            _canvas.height = dimensions.y * multiplier;
-            var _ctx = _canvas.getContext('2d');
-            //_ctx.drawSvg(SVGstring, 0, 0, _canvas.width, _canvas.height);
-            //console.log(_ctx.getImageData(0, 0, _canvas.width, _canvas.height));
-
-            canvg(_canvas, SVGstring)
-
-            layerQueue.defer(handleCanvasLayer, _canvas);
-        }
+        layerQueue.defer(handlePathRoot, map._pathRoot);
     } 
-    else if (map._panes && map._panes.overlayPane.firstChild) {
-        layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
-    }
+    // else if (map._panes && map._panes.overlayPane.firstChild) {
+    //     layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
+    // }
+
+    // makers
     //map.eachLayer(drawMarkerLayer);
+
     layerQueue.awaitAll(layersDone);
-
-
 
     // function drawMarkerLayer(l) {
     //     if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
@@ -150,8 +135,8 @@ module.exports = function leafletImage(map, callback) {
             if (tilePoint.y >= 0) {
                 // draw canvas tile layer
                 //if (isCanvasLayer) {
-                    var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
-                    tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
+                var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
+                tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
                 //} 
                 // // draw regular image tile layer
                 // else {
@@ -205,10 +190,7 @@ module.exports = function leafletImage(map, callback) {
         }
         function drawTile(d) {
             if (d.opacity != null) ctx.globalAlpha = d.opacity;
-            console.log(d.img.naturalWidth);
-
             ctx.drawImage(d.img, Math.floor(d.pos.x * multiplier), Math.floor(d.pos.y * multiplier), d.size * multiplier, d.size * multiplier);
-
             if (d.opacity != null) ctx.globalAlpha = 1;
         }
     }
@@ -216,28 +198,50 @@ module.exports = function leafletImage(map, callback) {
     function handlePathRoot(root, callback) {
         var bounds = map.getPixelBounds(),
             origin = map.getPixelOrigin(),
-            canvas = document.createElement('canvas');
+            pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin),
+            can = root,
+            canvasMultiplier = multiplier;
+
+        // if SVG, convert to canvas
+        if (root.constructor.toString().indexOf("SVGSVGElement") != -1) {
+            var newSVG = root.cloneNode(true);
+            var width = parseInt(root.getAttribute('width') * 2);
+            var height = parseInt(root.getAttribute('height') * 2);
+            newSVG.setAttribute('height', height);
+            newSVG.setAttribute('width', width);
+
+            // get SVG string
+            var SVGstring = new XMLSerializer().serializeToString(newSVG);
+            // viewBox attribute maintains scale
+            SVGstring = "<svg viewBox='" + root.getAttribute("viewBox") + "'>" + SVGstring.substr(SVGstring.indexOf(">") + 1);
+
+            // draw SVG to canvas
+            var _canvas = document.createElement('canvas');
+            _canvas.width = width;
+            _canvas.height = height; 
+            canvg(_canvas, SVGstring, { ignoreMouse: true, ignoreAnimation: true });//, scaleWidth: width, scaleHeight: height }) 
+
+            can = _canvas;
+            canvasMultiplier = 1;
+        }
+
+        // draw canvas
+        var canvas = document.createElement('canvas');
         canvas.width = dimensions.x * multiplier;
         canvas.height = dimensions.y * multiplier;
         var ctx = canvas.getContext('2d');
-        var pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin);
-        ctx.drawImage(root, pos.x, pos.y);
-        callback(null, {
-            canvas: canvas
-        });
+        ctx.drawImage(can, pos.x * multiplier, pos.y * multiplier, can.width * canvasMultiplier, can.height * canvasMultiplier);
+        callback(null, { canvas: canvas });
     }
 
     function handleCanvasLayer(root, callback) {
-        var bounds = map.getPixelBounds(),
-            origin = map.getPixelOrigin(),
-            canvas = document.createElement('canvas');
+        var canvas = document.createElement('canvas');
         canvas.width = dimensions.x * multiplier;
         canvas.height = dimensions.y * multiplier;
+
         var ctx = canvas.getContext('2d');
         ctx.drawImage(root, 0, 0, root.width, root.height);
-        callback(null, {
-            canvas: canvas
-        });
+        callback(null, { canvas: canvas });
     }
 
     // function handleMarkerLayer(marker, callback) {

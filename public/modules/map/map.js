@@ -221,7 +221,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution;
             if (layer.subdomains) options.subdomains = layer.subdomains;
 
-            newBaseLayer = L.tileLayer(layer.template, options);
+            var _url = layer.template;
+            if (layer.proxy) {
+                var _url = "http://localhost:4000/?url=" +
+                    _url.substr(_url.indexOf("://") + 3);
+            }
+
+            newBaseLayer = L.tileLayer(_url, options);
         }
         else if (layer.type == "WMS") {
             var options = {
@@ -237,13 +243,59 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
             if (layer.version) options.version = layer.version;
 
-          newBaseLayer = L.tileLayer.wms(layer.template, options);
+            newBaseLayer = L.tileLayer.wms(layer.template, options);
         }
         else if (layer.type == "MAPBOX") {
             var options = {};
             if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution;
             newBaseLayer = L.mapbox.tileLayer(layer.id, options);
         }
+
+    
+        // allow cross origin on tiles (prevents 'tainted canvas' issue on export)
+        newBaseLayer.on("tileloadstart", function(e) {
+            if (e.tile) {
+                // if ((layer.type == "TILE" && layer.proxy) ||
+                //     layer.type == "MAPBOX")
+                e.tile.crossOrigin = "";
+            }
+
+            if (e.url) {
+                //var xhr = new XMLHttpRequest;
+                //xhr.open("GET", e.url, true);
+                //xhr.crossOrigin = "";
+
+                // $.ajax({
+                //   url: e.url,
+                //   dataType: "txt",
+                //   success: function(data) {
+                //     console.log("hey!!!!!!!!")
+                //     console.log(data);
+                //   }
+                // });
+
+                // var xhr = createCORSRequest("GET", e.url);
+                // //xhr.responseType = "arraybuffer";
+                // xhr.onload = function() {
+                //     if (xhr.status != 200) return;
+                //     var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+
+                //     var png = new PNG(data);
+                //     if (png) {
+                //         var pixels = png.decodePixels();
+                //         console.log(pixels);
+                //         // terrainLayer.PNG_cache[tile_id] = pixels;
+                //         // PNG_data = new Uint8ClampedArray(pixels).buffer;
+
+                //         // redraw();
+                //         // terrainLayer.redrawQueue.push(redraw);
+                //     }
+                // };
+                // xhr.send();
+            }
+        });
+
+
 
         // add new layer to map
         if (newBaseLayer) {
@@ -264,7 +316,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map = L.map('map', {
         zoomControl: false,
         minZoom: 2,
-        maxZoom: 19,
+        maxZoom: 18, // 19
         worldCopyJump: true
     });
 
@@ -808,6 +860,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // });
 
     // custom terrain visualization
+    $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
     $scope.customTerrain = {
         color: '#ffcc00',
 
@@ -904,6 +957,21 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
     })
     
+//     setTimeout(function(){
+//     leafletImage($scope.map, function(err, canvas) {
+//                 // console.log(err);
+//                 // var img = document.createElement('img');
+//                 // var dimensions = $scope.map.getSize();
+//                 // img.width = dimensions.x;
+//                 // img.height = dimensions.y;
+//                 // img.src = canvas.toDataURL();
+
+//                 window.open(canvas.toDataURL(), '_blank');
+//                 // snapshot.innerHTML = '';
+//                 // snapshot.appendChild(img);
+//             });
+// },5000)
+
     //
 
 });

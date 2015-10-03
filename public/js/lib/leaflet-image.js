@@ -8,9 +8,11 @@ module.exports = function leafletImage(map, callback) {
     var dimensions = map.getSize(),
         layerQueue = new queue(1);
 
+    var multiplier = window.devicePixelRatio;
+
     var canvas = document.createElement('canvas');
-    canvas.width = dimensions.x;
-    canvas.height = dimensions.y;
+    canvas.width = dimensions.x * multiplier;
+    canvas.height = dimensions.y * multiplier;
     var ctx = canvas.getContext('2d');
 
     // dummy canvas image when loadTile get 404 error
@@ -24,25 +26,48 @@ module.exports = function leafletImage(map, callback) {
 
     // layers are drawn in the same order as they are composed in the DOM:
     // tiles, paths, and then markers
-    map.eachLayer(drawTileLayer);
+
+    // 1. base map
+    map.eachLayer(function(l) {
+        if (l instanceof L.TileLayer && !l.overlayType) {
+            layerQueue.defer(handleTileLayer, l);
+        }
+    });
+    // 2. terrain overlay
+    map.eachLayer(function(l) {
+        if (l instanceof L.TileLayer && l.overlayType) {
+            layerQueue.defer(handleTileLayer, l);
+        }
+    });
+    // 3. graticule overlay
+    map.eachLayer(function(l) {handleCanvasLayer
+        if (l instanceof L.CanvasLayer) {
+            layerQueue.defer(handleCanvasLayer, l._canvas);
+        }
+        //   if (l._heat) {
+        //     layerQueue.defer(handlePathRoot, l._canvas);
+        // }
+    });
+
     if (map._pathRoot) {
-        layerQueue.defer(handlePathRoot, map._pathRoot);
-    } else if (map._panes && map._panes.overlayPane.firstChild) {
+        var isSVG = map._pathRoot.constructor.toString().indexOf("SVGSVGElement") != -1;
+        // if SVG layer, ignore
+        if (!isSVG)
+            layerQueue.defer(handlePathRoot, map._pathRoot);
+    } 
+    else if (map._panes && map._panes.overlayPane.firstChild) {
         layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
     }
-    map.eachLayer(drawMarkerLayer);
+    //map.eachLayer(drawMarkerLayer);
     layerQueue.awaitAll(layersDone);
 
-    function drawTileLayer(l) {
-        if (l instanceof L.TileLayer) layerQueue.defer(handleTileLayer, l);
-        else if (l._heat) layerQueue.defer(handlePathRoot, l._canvas);
-    }
 
-    function drawMarkerLayer(l) {
-        if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
-            layerQueue.defer(handleMarkerLayer, l);
-        }
-    }
+
+    // function drawMarkerLayer(l) {
+    //     if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
+    //         layerQueue.defer(handleMarkerLayer, l);
+    //     }
+    // }
 
     function done() {
         callback(null, canvas);
@@ -59,12 +84,13 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleTileLayer(layer, callback) {
-        var isCanvasLayer = (layer instanceof L.TileLayer.Canvas),
-            canvas = document.createElement('canvas');
+        var isCanvasLayer = (layer instanceof L.TileLayer.Canvas || layer instanceof L.TileLayer.Terrain);
+        var canvas = document.createElement('canvas');
+
         var layerOpacity = parseFloat(layer.options.opacity);
 
-        canvas.width = dimensions.x;
-        canvas.height = dimensions.y;
+        canvas.width = dimensions.x * multiplier;
+        canvas.height = dimensions.y * multiplier;
 
         var ctx = canvas.getContext('2d'),
             bounds = map.getPixelBounds(),
@@ -101,22 +127,23 @@ module.exports = function leafletImage(map, callback) {
         tiles.forEach(function(tilePoint) {
             var originalTilePoint = tilePoint.clone();
 
-            if (layer._adjustTilePoint) {
-                layer._adjustTilePoint(tilePoint);
-            }
+            if (layer._adjustTilePoint) layer._adjustTilePoint(tilePoint);
 
             var tilePos = layer._getTilePos(originalTilePoint)
                 .subtract(bounds.min)
                 .add(origin);
 
             if (tilePoint.y >= 0) {
-                if (isCanvasLayer) {
+                // draw canvas tile layer
+                //if (isCanvasLayer) {
                     var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
-                    tileQueue.defer(canvasTile, tile, tilePos, tileSize);
-                } else {
-                    var url = addCacheString(layer.getTileUrl(tilePoint));
-                    tileQueue.defer(loadTile, url, tilePos, tileSize);
-                }
+                    tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
+                //} 
+                // // draw regular image tile layer
+                // else {
+                //     var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
+                //     tileQueue.defer(canvasTile, img, tilePos, tileSize, layerOpacity);
+                // }
             }
         });
 
@@ -162,10 +189,13 @@ module.exports = function leafletImage(map, callback) {
             data.forEach(drawTile);
             callback(null, { canvas: canvas });
         }
-
         function drawTile(d) {
-            ctx.drawImage(d.img, Math.floor(d.pos.x), Math.floor(d.pos.y),
-                d.size, d.size);
+            if (d.opacity != null) ctx.globalAlpha = d.opacity;
+            console.log(d.img.naturalWidth);
+
+            ctx.drawImage(d.img, Math.floor(d.pos.x * multiplier), Math.floor(d.pos.y * multiplier), d.size * multiplier, d.size * multiplier);
+
+            if (d.opacity != null) ctx.globalAlpha = 1;
         }
     }
 
@@ -183,40 +213,53 @@ module.exports = function leafletImage(map, callback) {
         });
     }
 
-    function handleMarkerLayer(marker, callback) {
-        var canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d'),
-            pixelBounds = map.getPixelBounds(),
-            minPoint = new L.Point(pixelBounds.min.x, pixelBounds.min.y),
-            pixelPoint = map.project(marker.getLatLng()),
-            isBase64 = /^data\:/.test(marker._icon.src),
-            url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
-            im = new Image(),
-            options = marker.options.icon.options,
-            size = options.iconSize,
-            pos = pixelPoint.subtract(minPoint),
-            anchor = L.point(options.iconAnchor || size && size.divideBy(2, true));
-
-        if (size instanceof L.Point) size = [size.x, size.y];
-
-        var x = pos.x - size[0] + anchor.x,
-            y = pos.y - anchor.y;
-
-        canvas.width = dimensions.x;
-        canvas.height = dimensions.y;
-        im.crossOrigin = '';
-
-        im.onload = function() {
-            ctx.drawImage(this, x, y, size[0], size[1]);
-            callback(null, {
-                canvas: canvas
-            });
-        };
-
-        im.src = url;
-
-        if (isBase64) im.onload();
+    function handleCanvasLayer(root, callback) {
+        var bounds = map.getPixelBounds(),
+            origin = map.getPixelOrigin(),
+            canvas = document.createElement('canvas');
+        canvas.width = dimensions.x * multiplier;
+        canvas.height = dimensions.y * multiplier;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(root, 0, 0, root.width, root.height);
+        callback(null, {
+            canvas: canvas
+        });
     }
+
+    // function handleMarkerLayer(marker, callback) {
+    //     var canvas = document.createElement('canvas'),
+    //         ctx = canvas.getContext('2d'),
+    //         pixelBounds = map.getPixelBounds(),
+    //         minPoint = new L.Point(pixelBounds.min.x, pixelBounds.min.y),
+    //         pixelPoint = map.project(marker.getLatLng()),
+    //         isBase64 = /^data\:/.test(marker._icon.src),
+    //         url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
+    //         im = new Image(),
+    //         options = marker.options.icon.options,
+    //         size = options.iconSize,
+    //         pos = pixelPoint.subtract(minPoint),
+    //         anchor = L.point(options.iconAnchor || size && size.divideBy(2, true));
+
+    //     if (size instanceof L.Point) size = [size.x, size.y];
+
+    //     var x = pos.x - size[0] + anchor.x,
+    //         y = pos.y - anchor.y;
+
+    //     canvas.width = dimensions.x;
+    //     canvas.height = dimensions.y;
+    //     im.crossOrigin = '';
+
+    //     im.onload = function() {
+    //         ctx.drawImage(this, x, y, size[0], size[1]);
+    //         callback(null, {
+    //             canvas: canvas
+    //         });
+    //     };
+
+    //     im.src = url;
+
+    //     if (isBase64) im.onload();
+    // }
 
     function addCacheString(url) {
         return url + ((url.match(/\?/)) ? '&' : '?') + 'cache=' + (+new Date());
@@ -307,4 +350,3 @@ module.exports = function leafletImage(map, callback) {
 },{}]},{},[1])
 (1)
 });
-;

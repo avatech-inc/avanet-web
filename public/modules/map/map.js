@@ -1,3 +1,5 @@
+var _tileCache = {};
+
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
@@ -251,51 +253,15 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             newBaseLayer = L.mapbox.tileLayer(layer.id, options);
         }
 
-    
-        // allow cross origin on tiles (prevents 'tainted canvas' issue on export)
+        // support cross origin on tiles (prevents 'tainted canvas' issue on export)
         newBaseLayer.on("tileloadstart", function(e) {
             if (e.tile) {
-                // if ((layer.type == "TILE" && layer.proxy) ||
-                //     layer.type == "MAPBOX")
                 e.tile.crossOrigin = "";
-            }
-
-            if (e.url) {
-                //var xhr = new XMLHttpRequest;
-                //xhr.open("GET", e.url, true);
-                //xhr.crossOrigin = "";
-
-                // $.ajax({
-                //   url: e.url,
-                //   dataType: "txt",
-                //   success: function(data) {
-                //     console.log("hey!!!!!!!!")
-                //     console.log(data);
-                //   }
-                // });
-
-                // var xhr = createCORSRequest("GET", e.url);
-                // //xhr.responseType = "arraybuffer";
-                // xhr.onload = function() {
-                //     if (xhr.status != 200) return;
-                //     var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
-
-                //     var png = new PNG(data);
-                //     if (png) {
-                //         var pixels = png.decodePixels();
-                //         console.log(pixels);
-                //         // terrainLayer.PNG_cache[tile_id] = pixels;
-                //         // PNG_data = new Uint8ClampedArray(pixels).buffer;
-
-                //         // redraw();
-                //         // terrainLayer.redrawQueue.push(redraw);
-                //     }
-                // };
-                // xhr.send();
+                // 'src' needs to be set after 'crossOrigin'
+                // without this hack, the 'origin' header isn't properly sent
+                e.tile.src = e.tile.src
             }
         });
-
-
 
         // add new layer to map
         if (newBaseLayer) {

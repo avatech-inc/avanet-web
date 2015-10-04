@@ -209,7 +209,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var _declination = (declination - 90) * Math.PI/180;
 
             // length of declination line
-            var length = 400;
+            var length = 360;
             var y = arrow_canvas.height - 5
             var endPointX = x + length * Math.cos(declination);
             var endPointY = y + length * Math.sin(declination);

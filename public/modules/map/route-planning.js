@@ -175,9 +175,105 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 }
                 
             }
-            pdfMake.createPdf(docDefinition).open();
+
+            var declination = scope.getDeclination();
+            var gridNoth = scope.getGridNorth();
+            //var mils = Math.round(declination * 17.777777777778);
+            console.log("declination: " + declination);
+            console.log("gridNoth: " + gridNoth);
+
+            // draw declination legend
+            var arrow_canvas = document.createElement("canvas");
+            arrow_canvas.height = 500;
+            arrow_canvas.width = 500;
+            var ctx = arrow_canvas.getContext("2d");
+
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,arrow_canvas.width,arrow_canvas.height);
+
+            var x = arrow_canvas.width / 2;
+
+            // draw north star
+            drawStar(ctx, x, 30, 5, 20, 10);
+
+            // draw true north line
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "black";
+            ctx.beginPath();
+            ctx.moveTo(x, arrow_canvas.height - 5);
+            ctx.lineTo(x, 54);
+
+            // adjust declination angle for canvas
+            declination -= 90;
+            // convert to radians
+            declination *= Math.PI/180;
+
+            // length of declination line
+            var length = 400;
+            var y = arrow_canvas.height - 5
+            var endPointX = x + length * Math.cos(declination);
+            var endPointY = y + length * Math.sin(declination);
+            ctx.moveTo(x, y);
+            ctx.lineTo(endPointX, endPointY);
+            ctx.stroke();
+
+            // draw arrow at end of line
+            var endPointX2 = x + (length + 20) * Math.cos(declination);
+            var endPointY2 = y + (length + 20) * Math.sin(declination);
+            var endRadians = Math.atan((endPointY2-y)/(endPointX2-x))
+                + ((endPointX2>x)?90:-90)*Math.PI/180;
+            drawArrow(ctx, endPointX2, endPointY2, endRadians);
+
+            function drawArrow(ctx, x, y, radians) {
+                ctx.fillStyle = "black";
+                ctx.save();
+                ctx.beginPath();
+                ctx.translate(x,y);
+                ctx.rotate(radians);
+                if (radians < 0) {
+                    ctx.moveTo(2,0);
+                    ctx.lineTo(2,50);
+                    ctx.lineTo(-16,60);
+                }
+                else {
+                    ctx.moveTo(-2,0);
+                    ctx.lineTo(16,60);
+                    ctx.lineTo(-2,50);
+                }
+                ctx.closePath();
+                ctx.restore();
+                ctx.fill();
+            }
+            function drawStar(ctx, cx,cy,spikes,outerRadius,innerRadius){
+              var rot=Math.PI/2*3;
+              var x=cx;
+              var y=cy;
+              var step=Math.PI/spikes;
+
+              ctx.fillStyle = "black";
+              ctx.beginPath();
+              ctx.moveTo(cx,cy-outerRadius)
+              for(i=0;i<spikes;i++){
+                x=cx+Math.cos(rot)*outerRadius;
+                y=cy+Math.sin(rot)*outerRadius;
+                ctx.lineTo(x,y)
+                rot+=step
+
+                x=cx+Math.cos(rot)*innerRadius;
+                y=cy+Math.sin(rot)*innerRadius;
+                ctx.lineTo(x,y)
+                rot+=step
+              }
+              ctx.lineTo(cx,cy-outerRadius)
+              ctx.fill();
+              ctx.closePath();
+            }
+
+
+            //pdfMake.createPdf(docDefinition).open();
             // .download()
         }
+
 
         scope.$watch("munterRateUp", function() {
             if (!elevationProfilePoints || scope.munterRateUp == null) return;

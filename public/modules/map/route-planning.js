@@ -272,6 +272,22 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             //pdfMake.createPdf(docDefinition).open();
             // .download()
+            leafletImage(scope.map, function(err, canvas) {
+
+                console.log("width: " + canvas.width);
+
+                docDefinition.content.push({
+                    image: canvas.toDataURL('image/jpeg',1),
+                    width: (canvas.width / 2) * .635 // todo: this last multiplier is needed for same pixel accuracy as screen- why?
+                });
+                docDefinition.content.push({
+                    image: arrow_canvas.toDataURL('image/jpeg',1),
+                    width: 150,
+                });
+                pdfMake.createPdf(docDefinition).download();
+
+                //window.open(canvas.toDataURL('image/jpeg',1), '_blank');
+            });
         }
 
 

@@ -35,13 +35,14 @@ module.exports = function leafletImage(map, callback) {
     });
     // 2. terrain overlay
     map.eachLayer(function(l) {
-        if (l instanceof L.TileLayer && l.overlayType) {
+        if (l instanceof L.TileLayer && l.overlayType)
             layerQueue.defer(handleTileLayer, l);
         }
     });
     // 3. graticule overlay
-    map.eachLayer(function(l) {handleCanvasLayer
-        if (l instanceof L.CanvasLayer) {
+    // todo: this needs to be revisited if we ever add additional L.CanvasLayer layers
+    map.eachLayer(function(l) {
+        if (l instanceof L.CanvasLayer)
             layerQueue.defer(handleCanvasLayer, l._canvas);
         }
         //   if (l._heat) {

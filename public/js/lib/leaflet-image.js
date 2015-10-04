@@ -83,7 +83,7 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleTileLayer(layer, callback) {
-        var isCanvasLayer = (layer instanceof L.TileLayer.Canvas || layer instanceof L.TileLayer.Terrain);
+        //var isCanvasLayer = (layer instanceof L.TileLayer.Canvas || layer instanceof L.TileLayer.Terrain);
         var canvas = document.createElement('canvas');
 
         var layerOpacity = parseFloat(layer.options.opacity);
@@ -109,6 +109,13 @@ module.exports = function leafletImage(map, callback) {
             ((origin.y / tileSize) - Math.floor(origin.y / tileSize)) * tileSize
         );
 
+        // handle over-zoom
+        if (layer._tiles && Object.keys(layer._tiles).length > 0) {
+            tileSize = layer._tiles[Object.keys(layer._tiles)[0]].clientHeight;
+        }
+        // otherwise, don't render layer
+        else return;
+
         var tileBounds = L.bounds(
             bounds.min.divideBy(tileSize)._floor(),
             bounds.max.divideBy(tileSize)._floor()),
@@ -128,21 +135,14 @@ module.exports = function leafletImage(map, callback) {
 
             if (layer._adjustTilePoint) layer._adjustTilePoint(tilePoint);
 
-            var tilePos = layer._getTilePos(originalTilePoint)
-                .subtract(bounds.min)
-                .add(origin);
+            var tilePos = layer._getTilePos(originalTilePoint).subtract(bounds.min).add(origin);
 
             if (tilePoint.y >= 0) {
-                // draw canvas tile layer
-                //if (isCanvasLayer) {
                 var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
+                // if tile isn't found, ignore
+                if (!tile) return;
+                // otherwise, put in render queue
                 tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
-                //} 
-                // // draw regular image tile layer
-                // else {
-                //     var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
-                //     tileQueue.defer(canvasTile, img, tilePos, tileSize, layerOpacity);
-                // }
             }
         });
 

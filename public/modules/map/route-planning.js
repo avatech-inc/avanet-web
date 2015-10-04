@@ -249,15 +249,22 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                     ctx.lineTo(2,50);
                     ctx.lineTo(-16,60);
                 }
-                else {
+                else if (radians > 0) {
                     ctx.moveTo(-2,0);
                     ctx.lineTo(16,60);
                     ctx.lineTo(-2,50);
+                }
+                else {
+                    ctx.moveTo(0,0);
+                    ctx.lineTo(16,60);
+                    ctx.lineTo(0,50);
+                    ctx.lineTo(-16,60);
                 }
                 ctx.closePath();
                 ctx.restore();
                 ctx.fill();
             }
+            
             function drawStar(ctx, cx,cy,spikes,outerRadius,innerRadius){
               var rot=Math.PI/2*3;
               var x=cx;

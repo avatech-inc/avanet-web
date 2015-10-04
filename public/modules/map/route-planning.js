@@ -238,6 +238,16 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             ctx.fillText("MN", mn_x, 0);
             ctx.restore();
 
+            // draw angle label
+            ctx.font = "48px Arial";
+            var declinationText = Math.abs(declination).toFixed(1);
+            if (declinationText.indexOf(".0") > -1) declinationText = declinationText.substring(0,declinationText.indexOf("."));
+            declinationText += "°";
+            var midPointX = x + (length / 2) * Math.cos(_declination);
+            var midPointY = y + (length / 2) * Math.sin(_declination);
+            ctx.fillText(declinationText, midPointX + (declination >= 0 ? 25 : -25 - ctx.measureText(declinationText).width), midPointY);
+
+
             function drawArrow(ctx, x, y, radians) {
                 ctx.fillStyle = "black";
                 ctx.save();

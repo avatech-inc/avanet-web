@@ -204,6 +204,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             ctx.moveTo(x, arrow_canvas.height - 5);
             ctx.lineTo(x, 54);
 
+            declination = 20;
+
             // adjust declination angle for canvas
             declination -= 90;
             // convert to radians
@@ -224,6 +226,17 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var endRadians = Math.atan((endPointY2-y)/(endPointX2-x))
                 + ((endPointX2>x)?90:-90)*Math.PI/180;
             drawArrow(ctx, endPointX2, endPointY2, endRadians);
+
+            // draw 'MN' label at end of line{
+            ctx.fillStyle = "black";
+            ctx.font = "37px Arial"
+            var endPointX3 = x + (length + 38) * Math.cos(declination);
+            var endPointY3 = y + (length + 38) * Math.sin(declination);
+            ctx.save();
+            ctx.translate(endPointX3,endPointY3);
+            ctx.rotate(endRadians);
+            ctx.fillText("MN", -30, 0);
+            ctx.restore();
 
             function drawArrow(ctx, x, y, radians) {
                 ctx.fillStyle = "black";
@@ -283,7 +296,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 });
                 docDefinition.content.push({
                     image: arrow_canvas.toDataURL('image/jpeg',1),
-                    width: 150,
+                    width: 100,
                 });
                 pdfMake.createPdf(docDefinition).download();
 

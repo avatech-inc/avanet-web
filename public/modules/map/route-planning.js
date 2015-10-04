@@ -205,12 +205,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var northLineY = (declination == 0) ? 120 : 62;
             ctx.lineTo(x, northLineY);
 
-            declination = 20;
-
-            // adjust declination angle for canvas
-            declination -= 90;
-            // convert to radians
-            declination *= Math.PI/180;
+            // adjust declination angle for canvas and convert to radians
+            var _declination = (declination - 90) * Math.PI/180;
 
             // length of declination line
             var length = 400;

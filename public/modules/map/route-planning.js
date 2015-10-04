@@ -177,13 +177,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 
             }
 
-            var declination = scope.getDeclination();
-            var gridNoth = scope.getGridNorth();
-            //var mils = Math.round(declination * 17.777777777778);
-            console.log("declination: " + declination);
-            console.log("gridNoth: " + gridNoth);
+            // draw declination arrow legend
 
-            // draw declination legend
+            var declination = scope.getDeclination();
+            //var mils = Math.round(declination * 17.777777777778);
+
+            //var gridNoth = scope.getGridNorth();
+
             var arrow_canvas = document.createElement("canvas");
             arrow_canvas.height = 500;
             arrow_canvas.width = 500;

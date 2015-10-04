@@ -75,6 +75,12 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
         scope.control.downloadGPX = function() {
             downloadGPX();
         };
+        scope.getDeclination = function() {
+            var center = scope.map.getCenter();
+            var currentYear = new Date().getFullYear() + ((new Date().getMonth() + 1) / 12.0);  
+            var declination = new WorldMagneticModel().declination(0, center.lat, center.lng, currentYear);
+            return declination;
+        },
         scope.control.downloadPDF = function() {
             var pdfRows = [];
 

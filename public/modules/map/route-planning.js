@@ -211,15 +211,15 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // length of declination line
             var length = 360;
             var y = arrow_canvas.height - 5
-            var endPointX = x + length * Math.cos(declination);
-            var endPointY = y + length * Math.sin(declination);
+            var endPointX = x + length * Math.cos(_declination);
+            var endPointY = y + length * Math.sin(_declination);
             ctx.moveTo(x, y);
             ctx.lineTo(endPointX, endPointY);
             ctx.stroke();
 
             // draw arrow at end of line
-            var endPointX2 = x + (length + 20) * Math.cos(declination);
-            var endPointY2 = y + (length + 20) * Math.sin(declination);
+            var endPointX2 = x + (length + 20) * Math.cos(_declination);
+            var endPointY2 = y + (length + 20) * Math.sin(_declination);
             var endRadians = Math.atan((endPointY2-y)/(endPointX2-x))
                 + ((endPointX2>x)?90:-90)*Math.PI/180;
             drawArrow(ctx, endPointX2, endPointY2, endRadians);
@@ -227,8 +227,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // draw 'MN' label at end of line{
             ctx.fillStyle = "black";
             ctx.font = "37px Arial"
-            var endPointX3 = x + (length + 38) * Math.cos(declination);
-            var endPointY3 = y + (length + 38) * Math.sin(declination);
+            var endPointX3 = x + (length + 38) * Math.cos(_declination);
+            var endPointY3 = y + (length + 38) * Math.sin(_declination);
             ctx.save();
             ctx.translate(endPointX3,endPointY3);
             ctx.rotate(endRadians);

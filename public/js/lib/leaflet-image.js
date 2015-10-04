@@ -29,28 +29,25 @@ module.exports = function leafletImage(map, callback) {
 
     // 1. base map
     map.eachLayer(function(l) {
-        if (l instanceof L.TileLayer && !l.overlayType) {
+        if (l instanceof L.TileLayer && !l.overlayType)
             layerQueue.defer(handleTileLayer, l);
-        }
     });
     // 2. terrain overlay
     map.eachLayer(function(l) {
         if (l instanceof L.TileLayer && l.overlayType)
             layerQueue.defer(handleTileLayer, l);
-        }
     });
     // 3. graticule overlay
     // todo: this needs to be revisited if we ever add additional L.CanvasLayer layers
     map.eachLayer(function(l) {
         if (l instanceof L.CanvasLayer)
             layerQueue.defer(handleCanvasLayer, l._canvas);
-        }
         //   if (l._heat) {
         //     layerQueue.defer(handlePathRoot, l._canvas);
         // }
     });
 
-    // paths
+    // // paths
     if (map._pathRoot) {
         layerQueue.defer(handlePathRoot, map._pathRoot);
     } 

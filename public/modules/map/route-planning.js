@@ -81,6 +81,22 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var declination = new WorldMagneticModel().declination(0, center.lat, center.lng, currentYear);
             return declination;
         },
+        scope.getGridNorth = function() {
+            var center = scope.map.getCenter();
+            // get utm at center
+            var utm_center = LatLonToUTMXY(DegToRad(center.lat), DegToRad(center.lng));
+            var utm_top = LatLonToUTMXY(DegToRad(scope.map.getBounds()._northEast.lat), DegToRad(center.lng));
+            // get easting at center
+            var e = utm_center.x;
+            // get lat lng of easting at top of map
+            var top = UTMXYToLatLon(e, utm_top.y, utm_center.zone, center.lat < 0);
+            // get bearing between center point and top point
+            var bearing = turf.bearing(
+                turf.point([ center.lng, center.lat ]),
+                turf.point([ RadToDeg(top.lng), RadToDeg(top.lat) ])
+            );
+            return bearing;
+        },
         scope.control.downloadPDF = function() {
             var pdfRows = [];
 

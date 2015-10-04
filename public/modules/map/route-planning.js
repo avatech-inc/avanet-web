@@ -232,7 +232,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             ctx.save();
             ctx.translate(endPointX3,endPointY3);
             ctx.rotate(endRadians);
-            ctx.fillText("MN", -30, 0);
+            var mn_x = -30;
+            if (declination > 0 && declination < 5) mn_x = -3;
+            else if (declination < 0 && declination > -5) mn_x = -(ctx.measureText("MN").width - 3);
+            ctx.fillText("MN", mn_x, 0);
             ctx.restore();
 
             function drawArrow(ctx, x, y, radians) {

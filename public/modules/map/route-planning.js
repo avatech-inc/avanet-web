@@ -202,7 +202,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             ctx.strokeStyle = "black";
             ctx.beginPath();
             ctx.moveTo(x, arrow_canvas.height - 5);
-            ctx.lineTo(x, 54);
+            var northLineY = (declination == 0) ? 120 : 62;
+            ctx.lineTo(x, northLineY);
 
             declination = 20;
 

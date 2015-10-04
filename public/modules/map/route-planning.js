@@ -195,7 +195,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             var x = arrow_canvas.width / 2;
 
             // draw north star
-            drawStar(ctx, x, 30, 5, 20, 10);
+            drawStar(ctx, x, 30, 5, 26, 13);
 
             // draw true north line
             ctx.lineWidth = 4;

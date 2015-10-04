@@ -296,7 +296,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 });
                 docDefinition.content.push({
                     image: arrow_canvas.toDataURL('image/jpeg',1),
-                    width: 100,
+                    width: 70,
                 });
                 pdfMake.createPdf(docDefinition).download();
 

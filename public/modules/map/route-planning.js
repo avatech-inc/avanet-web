@@ -138,6 +138,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
 
             // pdf layout
             var docDefinition = {
+                pageSize: 'letter',
                 content: [
                     { text: scope.route.name, style: 'subheader' },
                     {

@@ -97,6 +97,142 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             );
             return bearing;
         },
+        scope.getDPI = function() {
+            var dpi = document.createElement("div");
+            dpi.setAttribute("style","height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;pointer-events:none;opacity:0;");
+            document.body.appendChild(dpi);
+            var dpi_x = dpi.offsetWidth;
+            // var dpi_y = dpi.offsetHeight;
+            // var width = screen.width / dpi_x;
+            // var height = screen.height / dpi_y;
+            document.body.removeChild(dpi);
+            dpi = null;
+            return dpi_x;
+        }
+        scope.getScale = function() {
+            var center = scope.map.getCenter();
+            var bounds = scope.map.getBounds();
+
+            var distance = new L.LatLng(center.lat, bounds._southWest.lng).distanceTo(new L.LatLng(center.lat, bounds._northEast.lng));
+            var metersPerPixel = distance / scope.map.getSize().x;
+            //var pixelsPerMeter = scope.map.getSize().x / distance;
+            console.log("map width: " + scope.map.getSize().x)
+            console.log("map distance: " + distance + " m");
+            console.log("m/pixel: " + metersPerPixel);
+            console.log("DPI: " + scope.getDPI());
+            var inchesPerMeter = 39.3701;
+            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getDPI());
+            console.log("MAP SCALE: 1:" + mapScale)
+
+            var scaleWidth = 420;
+            var marginLeft = 30;
+            var marginRight = 30;
+
+            var canvas = document.createElement("canvas");
+            canvas.width = (scaleWidth + marginLeft + marginRight) * 2;
+            canvas.height = 100 * 2;
+
+            var ctx = canvas.getContext('2d');
+            ctx.scale(2,2);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0,0,canvas.width / 2, canvas.height / 2);
+
+            var topY = 20;
+            var scaleBarHeight = 6;
+            // how many meters can we fit?
+            var scaleMeters = scaleWidth * metersPerPixel;
+
+            // metric units
+            console.log("meters: " + scaleMeters);
+            var units;
+            // .5 km
+            if (scaleMeters > 1000 && scaleMeters <= 2000) units = 500;
+            // 1000km              
+            else if (scaleMeters > 4000000) units = 1000000;
+            // 500km
+            else if (scaleMeters > 1000000) units = 500000;
+            // 200km
+            else if (scaleMeters > 400000) units = 200000;
+            // 100km
+            else if (scaleMeters > 200000) units = 100000;
+            // 40km
+            else if (scaleMeters > 160000) units = 50000;
+            // 20km
+            else if (scaleMeters > 80000) units = 20000;
+            // 10km
+            else if (scaleMeters > 40000) units = 10000;
+            // 5km
+            else if (scaleMeters > 20000) units = 5000;
+            // 2km
+            else if (scaleMeters > 10000) units = 2000;
+            // 1 km
+            else if (scaleMeters > 1000) units = 1000;
+            // 100 m
+            else if (scaleMeters > 200) units = 100;
+            // 50m
+            else units = 50;
+            var max = Math.floor(scaleMeters / units) * units;
+
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "black";
+
+            // draw label
+            ctx.fillStyle = "black";
+            ctx.font = "10px Arial";
+            var labelText = "0";
+            ctx.fillText(labelText, marginLeft - (ctx.measureText(labelText).width / 2), topY - 4);
+
+            var totalUnits = max / units;
+            console.log("max: " + max);
+            console.log("totalUnits: " + totalUnits);
+            for (var i = 1; i <= totalUnits; i++) {
+                var pixelsPerKm = units / metersPerPixel;
+                var left_x = pixelsPerKm * (i - 1);
+                var right_x = pixelsPerKm * i;
+                // draw label
+                ctx.fillStyle = "black";
+                ctx.font = "10px Arial";
+
+                var labelText = units >= 500 ? i * (units / 1000) : i * units;
+
+                //      if (units == 1000000)   labelText = (i * 1000) // 1000 km
+                //      if (units == 500000)   labelText = (i * 500) // 500 km
+                // else if (units == 200000)   labelText = (i * 200) // 200 km
+                // else if (units == 100000)   labelText = (i * 100) // 100 km
+                // else if (units == 50000)    labelText = (i * 50) // 20 km
+                // else if (units == 20000)    labelText = (i * 20) // 20 km
+                // else if (units == 10000)    labelText = (i * 10) // 10 km 
+                // else if (units == 5000)     labelText = (i * 5)  //  5 km
+                // else if (units == 2000)     labelText = (i * 2)  //  2 km
+                // else if (units == 1000)     labelText = (i)      //  1 km
+                // else if (units == 500)      labelText = (i / 2)  // .5 km
+
+                // else if (units == 100)      labelText = (i * 100)// 100 meters
+                // else if (units == 50)       labelText = (i * 50) // 50 meters
+
+                var unitsText = units <= 100 ? "m" : "km"
+                ctx.fillText(i < totalUnits ? labelText : labelText + " " + unitsText, right_x + marginLeft - (ctx.measureText(labelText).width / 2), topY - 4);
+
+                // draw box
+                ctx.beginPath();
+                ctx.moveTo(left_x + marginLeft, topY);
+                ctx.lineTo(right_x + marginLeft, topY);
+                ctx.lineTo(right_x + marginLeft, topY + scaleBarHeight);
+                ctx.lineTo(left_x + marginLeft, topY + scaleBarHeight);
+                ctx.lineTo(left_x + marginLeft, topY);
+
+                // draw center line
+                if ((i + 1) % 2 == 0) {
+                    ctx.moveTo(marginLeft + left_x, topY + (scaleBarHeight / 2));
+                    ctx.lineTo(marginLeft + right_x, topY + (scaleBarHeight / 2));
+                }
+                ctx.stroke();
+            }
+
+
+            document.body.appendChild(canvas);
+            canvas.setAttribute("style","position: absolute; top:0;left:0;z-index:999999;width:" + (canvas.width / 2) + "px;height:" + (canvas.height / 2) + "px");
+        }   
         scope.control.downloadPDF = function() {
             var pdfRows = [];
 
@@ -185,6 +321,15 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 scope.getDeclination(),
                 scope.getGridNorth()
             );
+            // var scale_canvas = DrawScaleCanvas(
+            //     scope.getDeclination(),
+            //     scope.getGridNorth()
+            // );
+        
+            // get scale
+            // calculate distance from left to right of map in pixels
+
+            scope.getScale();
 
             //pdfMake.createPdf(docDefinition).open();
             // .download()
@@ -199,6 +344,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 docDefinition.content.push({
                     image: arrow_canvas.toDataURL('image/jpeg',1),
                     width: 70,
+                });
+                 docDefinition.content.push({
+                    image: scale_canvas.toDataURL('image/jpeg',1),
+                    width: 300,
                 });
                 pdfMake.createPdf(docDefinition).download();
 

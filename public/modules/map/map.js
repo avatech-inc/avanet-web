@@ -281,7 +281,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // init mapbox
     $scope.map = L.map('map', {
         zoomControl: false,
-        minZoom: 2,
+        minZoom: 3,
         maxZoom: 18, // 19
         worldCopyJump: true
     });

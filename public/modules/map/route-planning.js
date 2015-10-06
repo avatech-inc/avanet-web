@@ -725,8 +725,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 plotElevationProfile();
 
                 // add waypoints to elevation profile
-                angular.forEach(_line.editing._markers,function(marker) {
-                    if (marker.waypoint) elevationWidget.addWaypoint(marker._latlng);
+                angular.forEach(_line.editing._markers,function(marker, i) {
+                    if (marker.waypoint && marker.waypoint != 1 && i != _line.editing._markers.length - 1) elevationWidget.addWaypoint(marker._latlng);
                 });
 
                 saveLinePoints();

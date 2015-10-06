@@ -1,3 +1,6 @@
+// By Andrew Sohn
+// (C) 2015 Avatech, Inc.
+
 function DrawScaleCanvas(metersPerPixel) {
 
     var scaleWidth = 430;
@@ -22,7 +25,7 @@ function DrawScaleCanvas(metersPerPixel) {
         // append to page for easy testing
         // document.body.appendChild(canvas);
         // canvas.setAttribute("style","position: absolute; top:0;left:0;z-index:999999;width:" + (canvas.width / 2) + "px;height:" + (canvas.height / 2) + "px");
-        
+
         return canvas;
     }
 

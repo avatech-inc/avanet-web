@@ -941,7 +941,7 @@ window.ElevationWidget = function() {
                     .attr('x2', item.xDiagCoord)
                     .attr('y2', this._height())
                     .attr("class", "elevation-profile-waypoint")
-                    .attr("style", "stroke: yellow; pointer-events: none;")
+                    .attr("style", "stroke: black; pointer-events: none;")
                     .classed('hidden', false);
 
                         // pointG.append("svg:circle")

@@ -217,8 +217,30 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             var scale_canvas = DrawScaleCanvas(metersPerPixel);//, true);
             //DrawScaleCanvas(metersPerPixel, false);
 
-            //pdfMake.createPdf(docDefinition).open();
-            // .download()
+            // convert elevation profile SVG to canvas
+            var svg = $(".elevation-widget svg")[0];
+
+            var width = parseInt(svg.getAttribute('width') * 2);
+            var height = parseInt(svg.getAttribute('height') * 2);
+
+            // svg styles
+            var SVGstyles = "<defs><style type='text/css'>";
+            SVGstyles += ".axis line, .axis path { fill: none; stroke: #000; stroke-width: 1 }";
+            SVGstyles += ".tick text { font-size: 12px; color: #000; }";
+            SVGstyles += ".area { fill: #aaa; }";
+            SVGstyles += "</style></defs>";
+
+            // get svg string
+            var SVGstring = new XMLSerializer().serializeToString(svg);
+            // viewBox allows for scaling
+            SVGstring = "<svg viewBox='0 0 " + svg.getAttribute('width') + " " + svg.getAttribute('height') + "' style='background:white'>" + SVGstyles + SVGstring.substr(SVGstring.indexOf(">") + 1);
+           
+            var elev_canvas = document.createElement("canvas");
+            elev_canvas.width = width;
+            elev_canvas.height = height;
+            canvg(elev_canvas, SVGstring, { ignoreMouse: true, ignoreAnimation: true });//, scaleWidth: width, scaleHeight: height }) 
+
+
             leafletImage(scope.map, function(err, canvas) {
 
                 console.log("scale canvas width: " + scale_canvas.width);

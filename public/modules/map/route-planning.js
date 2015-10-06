@@ -204,6 +204,14 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 scope.getGridNorth()
             );
 
+            function formatMeters(meters) {
+                if (meters >= 1000) {
+                    var km = parseInt(meters) / 1000;
+                    if (km % 1 != 0) return $filter('number')(km, 1)+ " km";
+                    else return $filter('number')(km, 0)+ " km";
+                }
+                else return $filter('number')(meters, 0) + " m";
+            }
 
             // calculate map scale variables
             var metersPerPixel = scope.getMetersPerPixel();

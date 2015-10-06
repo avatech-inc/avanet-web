@@ -217,6 +217,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // console.log("feetPerInch: " + feetPerInch)
             // console.log("metersPerCm: " + metersPerCm)
 
+            // draw map scale
             var scale_canvas = DrawScaleCanvas(metersPerPixel);
 
             // convert elevation profile SVG to canvas

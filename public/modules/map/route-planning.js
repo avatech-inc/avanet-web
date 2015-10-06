@@ -244,7 +244,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
 
                 docDefinition.content.push({
                     image: elev_canvas.toDataURL('image/png',1),
-                    width: 533
+                    width: 545
                 });
 
                 docDefinition.content.push({

@@ -15,21 +15,21 @@ function DrawDeclinationCanvas(declination, gridNorth) {
     var x = arrow_canvas.width / 2;
 
     // draw north star
-    drawStar(ctx, x, 30, 5, 26, 13);
+    drawStar(ctx, x, 50, 5, 26, 13);
 
     // draw true north line
     ctx.lineWidth = 4;
     ctx.strokeStyle = "black";
     ctx.beginPath();
     ctx.moveTo(x, arrow_canvas.height - 5);
-    var northLineY = (declination == 0) ? 120 : 62;
+    var northLineY = (declination == 0) ? 140 : 82;
     ctx.lineTo(x, northLineY);
 
     // adjust declination angle for canvas and convert to radians
     var _declination = (declination - 90) * Math.PI/180;
 
     // length of declination line
-    var dec_length = arrow_canvas.height - 140;
+    var dec_length = arrow_canvas.height - 160;
     var y = arrow_canvas.height - 5
     var endPointX = x + dec_length * Math.cos(_declination);
     var endPointY = y + dec_length * Math.sin(_declination);

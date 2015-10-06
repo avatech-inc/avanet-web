@@ -212,6 +212,14 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 }
                 else return $filter('number')(meters, 0) + " m";
             }
+            function formatFeet(feet) {
+                if (feet >= 5280) {
+                    var miles = parseInt(feet) / 5280;
+                    if (miles % 1 != 0) return $filter('number')(miles, 1) + " mi";
+                    else return $filter('number')(miles, 0) + " mi";
+                }
+                else return $filter('number')(feet, 0) + " ft";
+            }
 
             // calculate map scale variables
             var metersPerPixel = scope.getMetersPerPixel();

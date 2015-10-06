@@ -202,14 +202,10 @@ module.exports = function leafletImage(map, callback) {
 
         // if SVG, convert to canvas
         if (root.constructor.toString().indexOf("SVGSVGElement") != -1) {
-            var newSVG = root.cloneNode(true);
             var width = parseInt(root.getAttribute('width') * 2);
             var height = parseInt(root.getAttribute('height') * 2);
-            newSVG.setAttribute('height', height);
-            newSVG.setAttribute('width', width);
-
             // get SVG string
-            var SVGstring = new XMLSerializer().serializeToString(newSVG);
+            var SVGstring = new XMLSerializer().serializeToString(root);
             // viewBox attribute maintains scale
             SVGstring = "<svg viewBox='" + root.getAttribute("viewBox") + "'>" + SVGstring.substr(SVGstring.indexOf(">") + 1);
 

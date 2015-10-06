@@ -282,13 +282,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                         fontSize: 8.6,
                         columns:[{
                             text: ["SCALE  ",  { text: "1:" + $filter('number')(mapScale, 0), bold: true }],
-                            width: 'auto', margin: [0, 0, 14, 0], noWrap: true
+                            width: 'auto', margin: [0, 0, 14, 0]
                         },{
-                            text: ["1 in = ",  { text: "1,776 ft", bold: true }],
-                            width: 'auto', margin: [0, 0, 14, 0], noWrap: true
+                            text: ["1 in = ",  { text: formatFeet(feetPerInch), bold: true }],
+                            width: 'auto', margin: [0, 0, 14, 0]
                         },{
-                            text: ["1 cm = ",  { text: "200 m", bold: true }],
-                            width: '*', noWrap: true
+                            text: ["1 cm = ",  { text: formatMeters(metersPerCm), bold: true }],
+                            width: '*'
                         }]
                     }, {
                         image: scale_canvas.toDataURL('image/jpeg',1),

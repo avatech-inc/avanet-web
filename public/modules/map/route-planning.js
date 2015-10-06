@@ -139,8 +139,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             for (var i = 0; i < columns.length; i++) { columnWidths.push(columns[i].width); }
 
             // add rows
-            console.log("ROUTE POINTS:")
-            console.log(scope.route.points);
+            // console.log("ROUTE POINTS:")
+            // console.log(scope.route.points);
             angular.forEach(scope.route.points,function(point, index) {
                 var nextPoint = index != scope.route.points.length - 1 ? scope.route.points[index + 1] : null;
                 //pdfRows.push(+ JSON.stringify(point));

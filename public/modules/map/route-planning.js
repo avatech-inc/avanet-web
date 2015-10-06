@@ -243,7 +243,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
 
             leafletImage(scope.map, function(err, canvas) {
 
-                console.log("scale canvas width: " + scale_canvas.width);
+                docDefinition.content.push({
+                    image: elev_canvas.toDataURL('image/png',1),
+                    width: 533
+                });
 
                 docDefinition.content.push({
                     image: canvas.toDataURL('image/jpeg',1),

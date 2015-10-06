@@ -204,12 +204,18 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 scope.getGridNorth()
             );
 
-            // draw map scale
-            var metersPerPixel = scope.getMetersPerPixel();
 
+            // calculate map scale variables
+            var metersPerPixel = scope.getMetersPerPixel();
             var inchesPerMeter = 39.3701;
-            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getDPI());
-            //console.log("MAP SCALE: 1:" + mapScale)
+            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getPixelsPerInch());
+            var feetPerInch = Math.round(mapScale / 12.0);
+            var pixelsPerCm = scope.getPixelsPerInch() / 2.54;
+            var metersPerCm = Math.round(metersPerPixel * pixelsPerCm);
+            // todo: when above 1 mile or 1 km, show in mile and km
+            // console.log("MAP SCALE: 1:" + mapScale)
+            // console.log("feetPerInch: " + feetPerInch)
+            // console.log("metersPerCm: " + metersPerCm)
 
             var scale_canvas = DrawScaleCanvas(metersPerPixel);
 

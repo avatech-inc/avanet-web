@@ -20,9 +20,9 @@ function DrawScaleCanvas(metersPerPixel) {
         ctx.drawImage(miles_canvas, 0, canvas_height);
 
         // append to page for easy testing
-        document.body.appendChild(canvas);
-        canvas.setAttribute("style","position: absolute; top:0;left:0;z-index:999999;width:" + (canvas.width / 2) + "px;height:" + (canvas.height / 2) + "px");
-      
+        // document.body.appendChild(canvas);
+        // canvas.setAttribute("style","position: absolute; top:0;left:0;z-index:999999;width:" + (canvas.width / 2) + "px;height:" + (canvas.height / 2) + "px");
+        
         return canvas;
     }
 

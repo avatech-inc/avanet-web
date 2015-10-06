@@ -719,7 +719,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 elevationProfilePoints = receivedPoints;
 
                 // calculate route stats/time, etc.
-                calculateRouteStats()
+                calculateRouteStats();
 
                 // plot elevation profile
                 plotElevationProfile();

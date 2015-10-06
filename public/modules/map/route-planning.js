@@ -228,7 +228,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                     width: (canvas.width / 2) * .635 // todo: this last multiplier is needed for same pixel accuracy as screen- why?
                 });
                 docDefinition.content.push({
-                    margin: [0, 4, 0,0],
+                    margin: [0, 8, 0,0],
                     columns: [{
                         image: arrow_canvas.toDataURL('image/jpeg',1),
                         width: 70,

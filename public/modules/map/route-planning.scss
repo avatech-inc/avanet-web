@@ -1,6 +1,3 @@
-
-/* elevation profile */
-
 .elevation-widget .background {
     background-color: transparent;
     font-size: 12px;
@@ -8,11 +5,11 @@
 .elevation-widget .axis line,
 .elevation-widget .axis path {
     fill: none;
-    stroke: #0d1821;
-    stroke-width: 2
+    stroke: #333;
+    stroke-width: 1
 }
 .elevation-widget .area {
-    fill: #777
+    fill: #888
 }
 .elevation-widget .mouse-focus-line {
     pointer-events: none;
@@ -36,6 +33,9 @@
 }
 .elevation-widget .mouse-drag {
     fill: rgba(23, 74, 117, .4)
+}
+.elevation-widget .tick text {
+    font-size: 11px;
 }
 
 

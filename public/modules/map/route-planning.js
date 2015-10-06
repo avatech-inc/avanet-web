@@ -214,12 +214,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getDPI());
             //console.log("MAP SCALE: 1:" + mapScale)
 
-            var scale_canvas = DrawScaleCanvas(metersPerPixel);//, true);
-            //DrawScaleCanvas(metersPerPixel, false);
+            var scale_canvas = DrawScaleCanvas(metersPerPixel);
 
             // convert elevation profile SVG to canvas
-            var svg = $(".elevation-widget svg")[0];
 
+            var svg = $(".elevation-widget svg")[0];
             var width = parseInt(svg.getAttribute('width') * 2);
             var height = parseInt(svg.getAttribute('height') * 2);
 

@@ -97,14 +97,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             );
             return bearing;
         },
-        scope.getDPI = function() {
+        scope.getPixelsPerInch = function() {
             var dpi = document.createElement("div");
             dpi.setAttribute("style","height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;pointer-events:none;opacity:0;");
             document.body.appendChild(dpi);
             var dpi_x = dpi.offsetWidth;
-            // var dpi_y = dpi.offsetHeight;
-            // var width = screen.width / dpi_x;
-            // var height = screen.height / dpi_y;
             document.body.removeChild(dpi);
             dpi = null;
             return dpi_x;

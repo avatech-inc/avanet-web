@@ -102,7 +102,7 @@ function DrawScaleCanvas(metersPerPixel) {
 
         // draw extension label
         ctx.fillStyle = "black";
-        ctx.font = "12px Arial";
+        ctx.font = "11px Arial";
         var labelText;
         if (metric) labelText = units >= 500 ? units / 1000 : units;
         else labelText = formatMiles(units);

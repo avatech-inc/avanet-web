@@ -1,4 +1,4 @@
-angular.module('avatech').directive('routePlanning', function($http, $timeout, Global, snowpitExport) {
+angular.module('avatech').directive('routePlanning', function($http, $timeout, $filter, Global, snowpitExport) {
   return {
     restrict: 'E',
     scope: { 
@@ -206,20 +206,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
                 scope.getDeclination(),
                 scope.getGridNorth()
             );
-            // var scale_canvas = DrawScaleCanvas(
-            //     scope.getDeclination(),
-            //     scope.getGridNorth()
-            // );
-        
-            // get scale
-            // calculate distance from left to right of map in pixels
 
+            // draw map scale
             var metersPerPixel = scope.getMetersPerPixel();
 
-             // console.log("DPI: " + scope.getDPI());
-            // var inchesPerMeter = 39.3701;
-            // var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getDPI());
-            // console.log("MAP SCALE: 1:" + mapScale)
+            var inchesPerMeter = 39.3701;
+            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getDPI());
+            //console.log("MAP SCALE: 1:" + mapScale)
 
             var scale_canvas = DrawScaleCanvas(metersPerPixel);//, true);
             //DrawScaleCanvas(metersPerPixel, false);
@@ -228,22 +221,39 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, G
             // .download()
             leafletImage(scope.map, function(err, canvas) {
 
-                console.log("width: " + canvas.width);
+                console.log("scale canvas width: " + scale_canvas.width);
 
                 docDefinition.content.push({
                     image: canvas.toDataURL('image/jpeg',1),
                     width: (canvas.width / 2) * .635 // todo: this last multiplier is needed for same pixel accuracy as screen- why?
                 });
                 docDefinition.content.push({
-                    image: arrow_canvas.toDataURL('image/jpeg',1),
-                    width: 70,
-                });
-                 docDefinition.content.push({
-                    image: scale_canvas.toDataURL('image/jpeg',1),
-                    width: (scale_canvas.width / 2), // * .635
+                    margin: [0, 4, 0,0],
+                    columns: [{
+                        image: arrow_canvas.toDataURL('image/jpeg',1),
+                        width: 70,
+                    }, 
+                    [{  
+                        margin: [17, 2.6, 0, 4.2],
+                        fontSize: 8.6,
+                        columns:[{
+                            text: ["SCALE  ",  { text: "1:" + $filter('number')(mapScale, 0), bold: true }],
+                            width: 'auto', margin: [0, 0, 14, 0], noWrap: true
+                        },{
+                            text: ["1 in = ",  { text: "1,776 ft", bold: true }],
+                            width: 'auto', margin: [0, 0, 14, 0], noWrap: true
+                        },{
+                            text: ["1 cm = ",  { text: "200 m", bold: true }],
+                            width: '*', noWrap: true
+                        }]
+                    }, {
+                        image: scale_canvas.toDataURL('image/jpeg',1),
+                        width: (scale_canvas.width / 2) * .635
+                    }]
+                    ]
                 });
                 pdfMake.createPdf(docDefinition).download();
-
+                // for testing
                 //window.open(canvas.toDataURL('image/jpeg',1), '_blank');
             });
         }

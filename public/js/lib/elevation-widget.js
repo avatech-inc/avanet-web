@@ -122,7 +122,7 @@ window.ElevationWidget = function() {
             .attr("width", this._width())
             .attr("height", this._height())
             .style("fill", "none")
-            .style("stroke", "none")
+            .style("stroke", "#000")
             .style("pointer-events", "all");
 
         if (L.Browser.touch) {

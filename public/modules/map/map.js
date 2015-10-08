@@ -290,18 +290,19 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.scrollWheelZoom.disable();
 
     // add markers layer
-    $scope.mapLayer = L.mapbox.featureLayer().addTo($scope.map);
+    //$scope.mapLayer = L.mapbox.featureLayer().addTo($scope.map);
+    $scope.mapLayer = L.layerGroup().addTo($scope.map);
 
     // add zoom control to map
     //new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
     L.control.zoomslider({ position: 'bottomright' }).addTo($scope.map);
 
     // add scale control to map
-    L.control.scale({
-        metric: true,
-        imperial: true,
-        position: 'topleft'
-    }).addTo($scope.map);
+    // L.control.scale({
+    //     metric: true,
+    //     imperial: true,
+    //     position: 'topleft'
+    // }).addTo($scope.map);
 
     // map load event must be defined before we set initial zoom/location)
     var mapLoaded = $q.defer();
@@ -774,13 +775,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // init terrain layer
     $scope.overlayOpacity = .5;
-    var terrainLayer = $scope.terrainLayer = L.tileLayer.terrain({
+    var terrainLayer = $scope.terrainLayer = newTerrainLayer({
         zIndex: 999,
         opacity: $scope.overlayOpacity,
         maxNativeZoom: 13
-    });
+    }).addTo($scope.map);
+
     setTimeout(function(){
-        terrainLayer.addTo($scope.map);
+        //terrainLayer.addTo($scope.map);
         terrainLayer.setZIndex(99998);
     }, 100);
 
@@ -793,6 +795,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // workers.forEach(function (worker) {
         //     worker.postMessage('clear');
         // });
+    });
+    $scope.map.on('zoomstart', function(e) {
+        terrainLayer.redrawQueue = [];
     });
 
     // set terrain overlay
@@ -843,6 +848,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if ($scope.customTerrain.color.indexOf('#') == 0) $scope.customTerrain.color = $scope.customTerrain.color.substr(1);
 
         terrainLayer.customParams = angular.copy($scope.customTerrain);
+        //terrainLayer.redrawQueue = [];
         terrainLayer.needsRedraw = true;
 
     }, true);

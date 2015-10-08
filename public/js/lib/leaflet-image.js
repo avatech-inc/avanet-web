@@ -72,6 +72,27 @@ module.exports = function leafletImage(map, callback) {
         done();
     }
 
+    function latLngToTilePoint(lat, lng, zoom) {
+        lat *= (Math.PI/180);
+        return {
+            x: parseInt(Math.floor( (lng + 180) / 360 * (1<<zoom) )),
+            y: parseInt(Math.floor( (1 - Math.log(Math.tan(lat) + 1 / Math.cos(lat)) / Math.PI) / 2 * (1<<zoom) ))
+        }
+    }
+
+    function getPos(tile) {
+        var parentPos = map._container.getBoundingClientRect(),
+        childrenPos = tile.el.getBoundingClientRect(),
+        relativePos = {};
+
+        relativePos.top = childrenPos.top - parentPos.top,
+        relativePos.right = childrenPos.right - parentPos.right,
+        relativePos.bottom = childrenPos.bottom - parentPos.bottom,
+        relativePos.left = childrenPos.left - parentPos.left;
+
+        return relativePos;
+    }
+
     function handleTileLayer(layer, callback) {
         var canvas = document.createElement('canvas');
 

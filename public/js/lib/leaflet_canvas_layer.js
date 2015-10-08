@@ -72,12 +72,12 @@ initialize: function (options) {
       }, this);
     }
 
-    map.on({ 'viewreset': this._reset }, this);
-    map.on('move', this.redraw, this);
-    map.on('resize', this._reset, this);
     map.on({
-        'zoomanim': this._animateZoom,
-        'zoomend': this._endZoomAnim
+      'viewreset': this._reset,
+      'move': this.redraw,
+      'resize': this._reset,
+      'zoomanim': this._animateZoom,
+      'zoomend': this._endZoomAnim
     }, this);
 
     if(this.options.tileLoader) {
@@ -185,9 +185,7 @@ initialize: function (options) {
 
     // fix position
     var pos = L.DomUtil.getPosition(this._map.getPanes().mapPane);
-    if (pos) {
-      L.DomUtil.setPosition(this._canvas, { x: -pos.x, y: -pos.y });
-    }
+    if (pos) L.DomUtil.setPosition(this._canvas, { x: -pos.x, y: -pos.y });
     this.onResize();
     this._render();
   },

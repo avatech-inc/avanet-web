@@ -221,6 +221,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // calculate map scale variables
             var metersPerPixel = scope.getMetersPerPixel();
             var inchesPerMeter = 39.3701;
+            // var pixelsPerMeter = metersPerPixel * 
+            // console.log("pixelsPerMeter: " + pixelsPerMeter);
             var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getPixelsPerScreenInch());
             var feetPerInch = Math.round(mapScale / 12.0);
             var pixelsPerCm = scope.getPixelsPerScreenInch() / 2.54;
@@ -1014,7 +1016,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
 
         function downloadGPX() {
             var mapScale = 50000; // 1:{mapScale} ft
-            var metersPerPixel = mapScale / 39.3701 / 96;
+            var metersPerPixel = mapScale / 39.3701 / scope.getPixelsPerScreenInch();
             var zoom = Math.log((156543.03392 / metersPerPixel) * Math.cos(scope.map.getCenter().lat * Math.PI / 180)) / Math.log(2);
             scope.map.setZoom(zoom);
             // todo: if a map scale is explicitly selected, make sure it stays in that scale as map moves

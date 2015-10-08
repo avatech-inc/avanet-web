@@ -1,5 +1,4 @@
-
-    L.TileLayer.Terrain = L.TileLayer.extend({
+  L.TileLayer.Terrain = L.TileLayer.extend({
         options: {
             async: false
         },

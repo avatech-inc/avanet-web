@@ -186,7 +186,6 @@ module.exports = function leafletImage(map, callback) {
         }
         function drawTile(d) {
             if (d.opacity != null) ctx.globalAlpha = d.opacity;
-            ctx.drawImage(d.img, Math.floor(d.pos.x * multiplier), Math.floor(d.pos.y * multiplier), d.size * multiplier, d.size * multiplier);
             if (d.opacity != null) ctx.globalAlpha = 1;
         }
     }

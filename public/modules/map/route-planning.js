@@ -289,7 +289,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                         }]
                     }, {
                         image: scale_canvas.toDataURL('image/jpeg',1),
-                        width: (scale_canvas.width / 2) * .635
+                        width: (scale_canvas.width / 4) * .635
                     }]
                     ]
                 });

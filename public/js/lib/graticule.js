@@ -276,6 +276,11 @@ var UTMGridLayer = L.CanvasLayer.extend({
         var zoom = this._map.getZoom();
         // tick spacing (in meters)
         this.div = 100000;
+
+        // todo: this is a temporary fix to handle fractional map zoom, 
+        // let's think of a better way to calculate this dynamically 
+        // based on zoom level
+        zoom = parseInt(zoom);
         
         if (zoom < 6) this.div = null;
         else if (zoom == 6) this.div = 100000 * 2;

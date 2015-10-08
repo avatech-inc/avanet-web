@@ -49,8 +49,6 @@ initialize: function (options) {
   },
 
   onAdd: function (map) {
-    console.log("MAP");
-    console.log(map);
     this._map = map;
 
     // add container with the canvas to the tile pane

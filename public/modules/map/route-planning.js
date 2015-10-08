@@ -134,7 +134,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // console.log(scope.route.points);
             angular.forEach(scope.route.points,function(point, index) {
                 var nextPoint = index != scope.route.points.length - 1 ? scope.route.points[index + 1] : null;
-                //pdfRows.push(+ JSON.stringify(point));
                 pdfRows.push([ 
                     scope.route.waypointPrefix() + (index + 1), 
                     point.waypoint ? point.waypoint.name : "",

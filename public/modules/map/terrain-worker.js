@@ -1,6 +1,3 @@
-//importScripts("zlib.js");
-//importScripts("png.js");
-
 self.dems = {};
 
 onmessage = function (e) {

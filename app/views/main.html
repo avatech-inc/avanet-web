@@ -37,8 +37,8 @@
 		  <link rel="stylesheet" href="/css/common.css">
 		  <link rel="stylesheet" href="/css/map/map.css">
 		  <link rel="stylesheet" href="/css/map/route-planning.css">
-		  <link rel="stylesheet" href="/css/map-search/map-search.css">
 		  <link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
+		  <link rel="stylesheet" href="/css/map-search/map-search.css">
 		  <link rel="stylesheet" href="/css/user/login.css">
 		  <!-- endinject -->
 
@@ -66,12 +66,16 @@
     	<script type="text/javascript">
         	//L_PREFER_CANVAS = true;
     	</script>
-    	<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+    	<!--<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
     	<script type="text/javascript">
     		L.mapbox.accessToken = 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg';
       		L.mapbox.config.FORCE_HTTPS = true;
     	</script>
-		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />-->
+
+		<script src="/js/lib/leaflet.js"></script>
+		<link  href='/js/lib/leaflet.css' rel='stylesheet' />
+
 
 		<!-- Leaflet Draw -->
 		<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
@@ -297,12 +301,13 @@
   		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/field-tests/field-tests.js"></script>
   		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+  		<script src="/modules/map/TerrainLayer.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
   		<script src="/modules/map/ob-search.js"></script>
   		<script src="/modules/map/route-planning.js"></script>
-  		<script src="/modules/map/terrain-layer.js"></script>
   		<script src="/modules/map/terrain-worker.js"></script>
+  		<script src="/modules/map/~terrain-layer.js"></script>
   		<script src="/modules/map-search/map-search.js"></script>
   		<script src="/modules/observations/observations.js"></script>
   		<script src="/modules/organizations/organizations.js"></script>

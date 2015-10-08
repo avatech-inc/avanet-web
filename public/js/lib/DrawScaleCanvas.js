@@ -7,8 +7,8 @@ function DrawScaleCanvas(metersPerPixel) {
     var marginLeft = 30;
     var marginRight = 180;
 
-    var canvas_width = (scaleWidth + marginLeft + marginRight) * 2;
-    var canvas_height = 34 * 2;
+    var canvas_width = (scaleWidth + marginLeft + marginRight) * 4;
+    var canvas_height = 34 * 4;
 
     // combine into one canvas and return
     function combineCanvases() {
@@ -44,7 +44,7 @@ function DrawScaleCanvas(metersPerPixel) {
         canvas.height = canvas_height;
 
         var ctx = canvas.getContext('2d');
-        ctx.scale(2,2);
+        ctx.scale(4,4);
         ctx.fillStyle = "white";
         ctx.fillRect(0,0,canvas.width / 2, canvas.height / 2);
 
@@ -140,10 +140,10 @@ function DrawScaleCanvas(metersPerPixel) {
 
             // draw box
             ctx.beginPath();
-            ctx.moveTo(left_x + marginLeft, topY);
-            ctx.lineTo(right_x + marginLeft, topY);
-            ctx.lineTo(right_x + marginLeft, topY + scaleBarHeight);
-            ctx.lineTo(left_x + marginLeft, topY + scaleBarHeight);
+            ctx.moveTo(Math.round(left_x + marginLeft), topY);
+            ctx.lineTo(Math.round(right_x + marginLeft), topY);
+            ctx.lineTo(Math.round(right_x + marginLeft), topY + scaleBarHeight);
+            ctx.lineTo(Math.round(left_x + marginLeft), topY + scaleBarHeight);
 
             // draw center line / fill
             if (i > 0 && i % 2 == 0) {
@@ -156,8 +156,8 @@ function DrawScaleCanvas(metersPerPixel) {
             if (i == 0) {
                 var boxWidth = right_x / 5;
                 for (var b = 0; b < 5; b++) {
-                    ctx.moveTo(0 + marginLeft + (boxWidth * b), topY);
-                    ctx.lineTo(0 + marginLeft + (boxWidth * b), topY + scaleBarHeight);
+                    ctx.moveTo(Math.round(0 + marginLeft + (boxWidth * b)), topY - .5);
+                    ctx.lineTo(Math.round(0 + marginLeft + (boxWidth * b)), topY + scaleBarHeight + .5);
                     // draw center line / fill
                     if (b % 2 == 0) {
                         // ctx.moveTo(marginLeft + 0 + (boxWidth * b), topY + (scaleBarHeight / 2));

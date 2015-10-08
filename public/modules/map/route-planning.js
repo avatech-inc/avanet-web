@@ -427,6 +427,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
 
                 var segment = L.polyline([thisPoint._latlng, nextPoint._latlng], {
                     color: 'transparent',
+                    opacity: .5,
                     weight: 12 // allows for a wider clickable area
                 });
                 segment.segment = segmentData;
@@ -554,7 +555,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             if (preventEdit) return;
             // add route polyline if it doesn't exist (only gets hit on first point)
             if (!_line) {
-                _line = L.polyline([], {});
+                _line = L.polyline([], { opacity: .5 });
                 lineGroup.addLayer(_line);
                 editHandler.enable();
 

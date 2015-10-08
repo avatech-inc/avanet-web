@@ -37,10 +37,11 @@ module.exports = function leafletImage(map, callback) {
         // }
     });
 
-    // // paths
-    if (map._pathRoot) {
-        layerQueue.defer(handlePathRoot, map._pathRoot);
-    } 
+    // SVG paths
+    var overlayPane = map.getPanes().overlayPane;
+    if (overlayPane) {
+        layerQueue.defer(handlePathRoot, overlayPane.childNodes[0]);
+    }
 
 
     // else if (map._panes && map._panes.overlayPane.firstChild) {
@@ -186,16 +187,26 @@ module.exports = function leafletImage(map, callback) {
         }
         function drawTile(d) {
             if (d.opacity != null) ctx.globalAlpha = d.opacity;
+            ctx.drawImage(d.img, 
+                Math.floor(d.pos.x * multiplier), // x
+                Math.floor(d.pos.y * multiplier), // y
+                d.size * multiplier, // width
+                d.size * multiplier  // height
+            );
             if (d.opacity != null) ctx.globalAlpha = 1;
         }
     }
 
     function handlePathRoot(root, callback) {
+        console.log("ROOT:");
+        console.log(root);
+
         var bounds = map.getPixelBounds(),
             origin = map.getPixelOrigin(),
             pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin),
             can = root,
             canvasMultiplier = multiplier;
+
 
         // if SVG, convert to canvas
         if (root.constructor.toString().indexOf("SVGSVGElement") != -1) {

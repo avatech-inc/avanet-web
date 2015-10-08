@@ -113,48 +113,57 @@ module.exports = function leafletImage(map, callback) {
             return callback();
         }
 
-        var offset = new L.Point(
-            ((origin.x / tileSize) - Math.floor(origin.x / tileSize)) * tileSize,
-            ((origin.y / tileSize) - Math.floor(origin.y / tileSize)) * tileSize
-        );
-
-        console.log("LAYER:");
-        console.log(layer);
-
+        var tileSize, tileSizeBase;
         // get size of tile
         if (layer._tiles && Object.keys(layer._tiles).length > 0) {
             //tileSize = layer._tiles[Object.keys(layer._tiles)[0]].clientHeight;
-            tileSize = layer._tiles[Object.keys(layer._tiles)[0]].el.clientHeight;
+            tileSize = layer._tiles[Object.keys(layer._tiles)[0]].el.getBoundingClientRect().width;
+            tileSizeBase = layer._tiles[Object.keys(layer._tiles)[0]].el.clientHeight;
         }
         // if no tiles available, don't continue
         else return;
 
-        var tileBounds = L.bounds(
-            bounds.min.divideBy(tileSize)._floor(),
-            bounds.max.divideBy(tileSize)._floor()),
-            tiles = [],
-            center = tileBounds.getCenter(),
-            j, i, point,
-            tileQueue = new queue(1);
 
-        for (j = tileBounds.min.y; j <= tileBounds.max.y; j++) {
-            for (i = tileBounds.min.x; i <= tileBounds.max.x; i++) {
+        var tiles = [], tileQueue = new queue(1);
+
+        var mapBounds = map.getBounds();
+        var tileBounds_NE = latLngToTilePoint(mapBounds._northEast.lat, mapBounds._northEast.lng, map.getZoom());
+        var tileBounds_SW = latLngToTilePoint(mapBounds._southWest.lat, mapBounds._southWest.lng, map.getZoom());
+
+        tileBounds_NE.x -= 5;
+        tileBounds_NE.y += 5;
+        tileBounds_SW.x += 5;
+        tileBounds_SW.y -= 5;
+
+        tileBounds_NE.x *= (256 / tileSizeBase);
+        tileBounds_NE.y *= (256 / tileSizeBase);
+        tileBounds_SW.x *= (256 / tileSizeBase);
+        tileBounds_SW.y *= (256 / tileSizeBase);
+
+        tileBounds_NE.x = Math.round(tileBounds_NE.x);
+        tileBounds_NE.y = Math.round(tileBounds_NE.y);
+        tileBounds_SW.x = Math.round(tileBounds_SW.x);
+        tileBounds_SW.y = Math.round(tileBounds_SW.y);
+
+        var tileBounds = L.bounds(
+            L.point(tileBounds_SW.x, tileBounds_NE.y),
+            L.point(tileBounds_NE.x, tileBounds_SW.y)
+        );
+        for (var j = tileBounds.min.y; j <= tileBounds.max.y; j++) {
+            for (var i = tileBounds.min.x; i <= tileBounds.max.x; i++) {
                 tiles.push(new L.Point(i, j));
             }
         }
+
         tiles.forEach(function(tilePoint) {
-            var originalTilePoint = tilePoint.clone();
-
-            if (layer._adjustTilePoint) layer._adjustTilePoint(tilePoint);
-
-            var tilePos = layer._getTilePos(originalTilePoint).subtract(bounds.min).add(origin);
-
             if (tilePoint.y >= 0) {
                 //var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
                 var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y + ":" + layer._tileZoom];
                 // if tile isn't found, ignore
                 if (!tile) return;
-                // otherwise, put in render queue
+
+                var tilePos = getPos(tile);
+                tilePos = { x: tilePos.left, y: tilePos.top }
                 //tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
                 tileQueue.defer(canvasTile, tile.el, tilePos, tileSize, layerOpacity);
             }

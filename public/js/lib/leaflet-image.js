@@ -2,7 +2,6 @@
 return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var queue = require('./queue');
 
-// leaflet-image
 module.exports = function leafletImage(map, callback) {
 
     var dimensions = map.getSize(),
@@ -15,15 +14,6 @@ module.exports = function leafletImage(map, callback) {
     canvas.height = dimensions.y * multiplier;
     var ctx = canvas.getContext('2d');
 
-    // dummy canvas image when loadTile get 404 error
-    // and layer don't have errorTileUrl
-    var dummycanvas = document.createElement('canvas');
-    dummycanvas.width = 1;
-    dummycanvas.height = 1;
-    var dummyctx = dummycanvas.getContext('2d');
-    dummyctx.fillStyle = 'rgba(0,0,0,0)';
-    dummyctx.fillRect(0, 0, 1, 1);
-
     // layers are drawn in the same order as they are composed in the DOM:
     // tiles, paths, and then markers
 
@@ -34,7 +24,7 @@ module.exports = function leafletImage(map, callback) {
     });
     // 2. terrain overlay
     map.eachLayer(function(l) {
-        if (l instanceof L.TileLayer && l.overlayType)
+        if (l.overlayType)
             layerQueue.defer(handleTileLayer, l);
     });
     // 3. graticule overlay
@@ -51,6 +41,8 @@ module.exports = function leafletImage(map, callback) {
     if (map._pathRoot) {
         layerQueue.defer(handlePathRoot, map._pathRoot);
     } 
+
+
     // else if (map._panes && map._panes.overlayPane.firstChild) {
     //     layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
     // }
@@ -81,7 +73,6 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handleTileLayer(layer, callback) {
-        //var isCanvasLayer = (layer instanceof L.TileLayer.Canvas || layer instanceof L.TileLayer.Terrain);
         var canvas = document.createElement('canvas');
 
         var layerOpacity = parseFloat(layer.options.opacity);
@@ -107,11 +98,15 @@ module.exports = function leafletImage(map, callback) {
             ((origin.y / tileSize) - Math.floor(origin.y / tileSize)) * tileSize
         );
 
-        // handle over-zoom
+        console.log("LAYER:");
+        console.log(layer);
+
+        // get size of tile
         if (layer._tiles && Object.keys(layer._tiles).length > 0) {
-            tileSize = layer._tiles[Object.keys(layer._tiles)[0]].clientHeight;
+            //tileSize = layer._tiles[Object.keys(layer._tiles)[0]].clientHeight;
+            tileSize = layer._tiles[Object.keys(layer._tiles)[0]].el.clientHeight;
         }
-        // otherwise, don't render layer
+        // if no tiles available, don't continue
         else return;
 
         var tileBounds = L.bounds(
@@ -127,7 +122,6 @@ module.exports = function leafletImage(map, callback) {
                 tiles.push(new L.Point(i, j));
             }
         }
-
         tiles.forEach(function(tilePoint) {
             var originalTilePoint = tilePoint.clone();
 
@@ -136,11 +130,13 @@ module.exports = function leafletImage(map, callback) {
             var tilePos = layer._getTilePos(originalTilePoint).subtract(bounds.min).add(origin);
 
             if (tilePoint.y >= 0) {
-                var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
+                //var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y];
+                var tile = layer._tiles[tilePoint.x + ':' + tilePoint.y + ":" + layer._tileZoom];
                 // if tile isn't found, ignore
                 if (!tile) return;
                 // otherwise, put in render queue
-                tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
+                //tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
+                tileQueue.defer(canvasTile, tile.el, tilePos, tileSize, layerOpacity);
             }
         });
 
@@ -153,33 +149,6 @@ module.exports = function leafletImage(map, callback) {
                 size: tileSize,
                 opacity: layerOpacity
             });
-        }
-
-        function loadTile(url, tilePos, tileSize, layerOpacity, callback) {
-            var im = new Image();
-            im.crossOrigin = '';
-            im.onload = function() {
-                callback(null, {
-                    img: this,
-                    pos: tilePos,
-                    size: tileSize,
-                    opacity: layerOpacity
-                });
-            };
-            im.onerror = function(e) {
-                // use canvas instead of errorTileUrl if errorTileUrl get 404
-                if (layer.options.errorTileUrl != '' && e.target.errorCheck === undefined) {
-                    e.target.errorCheck = true;
-                    e.target.src = layer.options.errorTileUrl;
-                } else {
-                    callback(null, {
-                        img: dummycanvas,
-                        pos: tilePos,
-                        size: tileSize
-                    });
-                }
-            };
-            im.src = url;
         }
 
         function tileQueueFinish(err, data) {

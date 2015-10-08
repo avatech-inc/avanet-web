@@ -104,8 +104,7 @@ module.exports = function leafletImage(map, callback) {
         var ctx = canvas.getContext('2d'),
             bounds = map.getPixelBounds(),
             origin = map.getPixelOrigin(),
-            zoom = map.getZoom(),
-            tileSize = layer.options.tileSize;
+            zoom = map.getZoom();
 
         if (zoom > layer.options.maxZoom ||
             zoom < layer.options.minZoom ||

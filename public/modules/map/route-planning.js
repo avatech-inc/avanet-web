@@ -227,7 +227,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             var metersPerCm = Math.round(metersPerPixel * pixelsPerCm);
             // todo: when above 1 mile or 1 km, show in mile and km
             // console.log("MAP SCALE: 1:" + mapScale)
-            // console.log("feetPerInch: " + feetPerInch)
+            console.log("metersPerPixel: " + metersPerPixel)
             // console.log("metersPerCm: " + metersPerCm)
 
             // draw map scale

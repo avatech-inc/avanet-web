@@ -1,9 +1,6 @@
 if(typeof(L) !== 'undefined') {
-/**
- * full canvas layer implementation for Leaflet
- */
 
-L.CanvasLayer = L.Class.extend({
+L.CanvasLayer = L.Layer.extend({
 
   includes: [L.Mixin.Events, L.Mixin.TileLoader],
 
@@ -46,12 +43,14 @@ initialize: function (options) {
     canvas.style.left = 0;
     canvas.style.pointerEvents = "none";
     canvas.style.zIndex = this.options.zIndex || 0;
-    var className = 'leaflet-tile-container leaflet-zoom-animated';
+    var className = 'leaflet-tile-container leaflet-zoom-hide'; // leaflet-zoom-animated';
     canvas.setAttribute('class', className);
     return canvas;
   },
 
   onAdd: function (map) {
+    console.log("MAP");
+    console.log(map);
     this._map = map;
 
     // add container with the canvas to the tile pane
@@ -131,14 +130,6 @@ initialize: function (options) {
     return this._canvas;
   },
 
-  getAttribution: function() {
-    return this.options.attribution;
-  },
-
-  draw: function() {
-    return this._reset();
-  },
-
   onRemove: function (map) {
     this._container.parentNode.removeChild(this._container);
     map.off({
@@ -165,13 +156,13 @@ initialize: function (options) {
     this._canvas.style.zIndex = zIndex;
   },
 
-  bringToFront: function () {
-    return this;
-  },
+  // bringToFront: function () {
+  //   return this;
+  // },
 
-  bringToBack: function () {
-    return this;
-  },
+  // bringToBack: function () {
+  //   return this;
+  // },
 
   _reset: function () {
     var size = this._map.getSize();
@@ -234,4 +225,4 @@ initialize: function (options) {
 
 });
 
-} //L defined
+}

@@ -158,6 +158,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                             headerRows: 1,
                             widths: columnWidths,
                             body: pdfRows
+                        },
+                        layout: {
+                            hLineWidth: function() { return .5 },
+                            vLineWidth: function() { return .5 }
                         }
                     }
                 ],

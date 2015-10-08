@@ -97,7 +97,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             );
             return bearing;
         },
-        scope.getPixelsPerInch = function() {
+        scope.getPixelsPerScreenInch = function() {
             var dpi = document.createElement("div");
             dpi.setAttribute("style","height: 1in; width: 1in; left: 100%; position: fixed; top: 100%;pointer-events:none;opacity:0;");
             document.body.appendChild(dpi);
@@ -221,9 +221,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // calculate map scale variables
             var metersPerPixel = scope.getMetersPerPixel();
             var inchesPerMeter = 39.3701;
-            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getPixelsPerInch());
+            var mapScale = Math.round(inchesPerMeter * metersPerPixel * scope.getPixelsPerScreenInch());
             var feetPerInch = Math.round(mapScale / 12.0);
-            var pixelsPerCm = scope.getPixelsPerInch() / 2.54;
+            var pixelsPerCm = scope.getPixelsPerScreenInch() / 2.54;
             var metersPerCm = Math.round(metersPerPixel * pixelsPerCm);
             // todo: when above 1 mile or 1 km, show in mile and km
             // console.log("MAP SCALE: 1:" + mapScale)

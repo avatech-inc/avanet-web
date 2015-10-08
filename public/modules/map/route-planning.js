@@ -107,13 +107,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             return dpi_x;
         }
         scope.getMetersPerPixel = function() {
-            var center = scope.map.getCenter();
-            var bounds = scope.map.getBounds();
-
-            var distance = new L.LatLng(center.lat, bounds._southWest.lng).distanceTo(new L.LatLng(center.lat, bounds._northEast.lng));
-            var metersPerPixel = distance / scope.map.getSize().x;
-            
-           return metersPerPixel;
+           return (156543.03392 * Math.cos(scope.map.getCenter().lat * Math.PI / 180) / Math.pow(2, scope.map.getZoom()));
         }   
         scope.control.downloadPDF = function() {
             var pdfRows = [];

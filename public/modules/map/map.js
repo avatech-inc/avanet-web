@@ -3,8 +3,8 @@ var _tileCache = {};
 angular.module('avatech.system').controller('MapController', function ($rootScope, $q, $scope, $state, $location, $modal, $http, $timeout, $compile, Profiles, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
-    $rootScope.isDemo = true;
-    $scope.routeEditMode = true;
+    $rootScope.isDemo = false;
+    $scope.routeEditMode = false;
 
     if ($rootScope.isDemo) mixpanel.track("demo");
 
@@ -873,38 +873,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         up: 4,
         down: 10
     }
-
-    // temporary demo stuff
-    // if ($rootScope.isDemo) {
-    //     var markers = [
-    //         {lat: 40.602484146302075, lng: -111.67482376098631},
-    //         {lat: 40.59753131967109, lng: -111.6844367980957},
-    //         {lat: 40.58254026662807, lng: -111.68289184570312},
-    //         {lat: 40.60287514330199, lng: -111.66091918945312},
-    //         {lat: 40.60261447888953, lng: -111.62675857543945},
-    //         {lat: 40.597009948152916, lng: -111.63087844848633},
-    //         {lat: 40.58645130010923, lng: -111.64392471313475},
-    //         {lat: 40.57967203006171, lng: -111.65594100952148},
-    //         {lat: 40.60105047106781, lng: -111.64976119995117},
-    //         {lat: 40.590622817080714, lng: -111.65130615234375},
-    //         {lat: 40.59635822803742, lng: -111.66864395141602},
-    //         {lat: 40.58684239087908, lng: -111.67516708374023},
-    //         {lat: 40.57458712662696, lng: -111.66641235351562},
-    //         {lat: 40.57328324298059, lng: -111.64392471313475},
-    //         {lat: 40.587103116788455, lng: -111.62847518920898},
-    //         {lat: 40.57915051929101, lng: -111.61645889282227},
-    //     ]
-    //     for (var i = 0; i < markers.length; i++) {
-    //         var newMarker = new L.marker(markers[i], { icon: new L.divIcon({
-    //             className: 'flag-icon',
-    //             html: '<i class="fa fa-flag"></i>',
-    //             iconSize: [16, 16]
-    //         }) } ).addTo($scope.map);
-
-    //         newMarker.bindPopup("<div style='padding:10px;padding-right:12px;'><b style='color:red;font-weight:bold;font-size:17px;    margin-bottom: 6px; display: inline-block;'><i class='fa fa-flag'></i>&nbsp;&nbsp;RED FLAG ALERT</b><br/><ul style='margin-bottom: 2px;padding-left: 20px;font-size:16px;'><li>12 inches of new snow</li><li>Wind loading reported in area</ul></div>")
-    //     }
-
-    // }
 
     // --------------------------------
 

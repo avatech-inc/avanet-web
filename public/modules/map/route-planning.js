@@ -744,7 +744,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
 
             // sample every 10m
             var sampleCount = Math.round((distance * 1000) / 10);
-            //console.log("SAMPLE COUNT: " + sampleCount);
 
             // keep track of original points
             for (var i = 0; i < points.length;i++) {

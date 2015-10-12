@@ -756,9 +756,6 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 points = interpolate(points);
             }
 
-            //console.log("INTERPOLATED: " + points.length);
-            //console.log(points);
-
             terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
                 console.log("TERRAIN DATA DOWNLOAD COMPLETE!");
                 if (!receivedPoints || receivedPoints.length == 0) return;

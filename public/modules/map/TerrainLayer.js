@@ -102,7 +102,7 @@ var newTerrainLayer = function (options) {
         //make zoom level 12 underzoomed from 13
         if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
 
-        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);
 
         terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
@@ -265,7 +265,7 @@ var newTerrainLayer = function (options) {
         if (callback) terrainLayer.callbacks[requestId] = callback;
 
         // send point to tile worker
-        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + zoom;
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);
 
         var worker = terrainLayer.workers[tile_id];
         if (worker != null) worker.postMessage({ id: tile_id, requestId: requestId, 

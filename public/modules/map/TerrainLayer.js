@@ -2,7 +2,7 @@
 // (C) 2015 Avatech, Inc.
 
 var newTerrainLayer = function (options) {
-    options.underzoom = true;
+    options.underzoom = false;
     var terrainLayer = new L.GridLayer(options);
 
     terrainLayer.createTile = function(coords) {

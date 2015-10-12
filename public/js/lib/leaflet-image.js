@@ -43,20 +43,35 @@ module.exports = function leafletImage(map, callback) {
         layerQueue.defer(handlePathRoot, overlayPane.childNodes[0]);
     }
 
+    // markers
+    console.log("overlay panes:");
+    console.log(map.getPanes().markerPane);
 
-    // else if (map._panes && map._panes.overlayPane.firstChild) {
-    //     layerQueue.defer(handlePathRoot, map._panes.overlayPane.firstChild);
-    // }
+    map.eachLayer(function(l) {
+        // if (l instanceof L.Layer)
+        //     layerQueue.defer(handleCanvasLayer, l._canvas);
+        // //   if (l._heat) {
+        // //     layerQueue.defer(handlePathRoot, l._canvas);
+        // // }
+        //leaflet-marker-icon leaflet-div-icon leaflet-editing-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable end-icon
+        if (l._icon && (
+            l._icon.className.indexOf("start-icon") > -1 ||
+            l._icon.className.indexOf("end-icon") > -1 ||
+            l._icon.className.indexOf("waypoint-icon") > -1
+            )) {
 
-    // makers
+            //drawMarkerLayer(l);
+            layerQueue.defer(handleMarkerLayer, l);
+        }
+    });
     //map.eachLayer(drawMarkerLayer);
 
     layerQueue.awaitAll(layersDone);
 
     // function drawMarkerLayer(l) {
-    //     if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
+    //     //if (l instanceof L.Marker && l.options.icon instanceof L.Icon) {
     //         layerQueue.defer(handleMarkerLayer, l);
-    //     }
+    //     //}
     // }
 
     function done() {
@@ -81,9 +96,9 @@ module.exports = function leafletImage(map, callback) {
         }
     }
 
-    function getPos(tile) {
+    function getPos(mapItem) {
         var parentPos = map._container.getBoundingClientRect(),
-        childrenPos = tile.el.getBoundingClientRect(),
+        childrenPos = mapItem.getBoundingClientRect(),
         relativePos = {};
 
         relativePos.top = childrenPos.top - parentPos.top,
@@ -117,7 +132,6 @@ module.exports = function leafletImage(map, callback) {
         var tileSize, tileSizeBase;
         // get size of tile
         if (layer._tiles && Object.keys(layer._tiles).length > 0) {
-            //tileSize = layer._tiles[Object.keys(layer._tiles)[0]].clientHeight;
             tileSize = layer._tiles[Object.keys(layer._tiles)[0]].el.getBoundingClientRect().width;
             tileSizeBase = layer._tiles[Object.keys(layer._tiles)[0]].el.clientHeight;
         }
@@ -163,7 +177,7 @@ module.exports = function leafletImage(map, callback) {
                 // if tile isn't found, ignore
                 if (!tile) return;
 
-                var tilePos = getPos(tile);
+                var tilePos = getPos(tile.el);
                 tilePos = { x: tilePos.left, y: tilePos.top }
                 //tileQueue.defer(canvasTile, tile, tilePos, tileSize, layerOpacity);
                 tileQueue.defer(canvasTile, tile.el, tilePos, tileSize, layerOpacity);
@@ -198,15 +212,11 @@ module.exports = function leafletImage(map, callback) {
     }
 
     function handlePathRoot(root, callback) {
-        console.log("ROOT:");
-        console.log(root);
-
         var bounds = map.getPixelBounds(),
             origin = map.getPixelOrigin(),
             pos = L.DomUtil.getPosition(root).subtract(bounds.min).add(origin),
             can = root,
             canvasMultiplier = multiplier;
-
 
         // if SVG, convert to canvas
         if (root.constructor.toString().indexOf("SVGSVGElement") != -1) {
@@ -246,43 +256,34 @@ module.exports = function leafletImage(map, callback) {
         callback(null, { canvas: canvas });
     }
 
-    // function handleMarkerLayer(marker, callback) {
-    //     var canvas = document.createElement('canvas'),
-    //         ctx = canvas.getContext('2d'),
-    //         pixelBounds = map.getPixelBounds(),
-    //         minPoint = new L.Point(pixelBounds.min.x, pixelBounds.min.y),
-    //         pixelPoint = map.project(marker.getLatLng()),
-    //         isBase64 = /^data\:/.test(marker._icon.src),
-    //         url = isBase64 ? marker._icon.src : addCacheString(marker._icon.src),
-    //         im = new Image(),
-    //         options = marker.options.icon.options,
-    //         size = options.iconSize,
-    //         pos = pixelPoint.subtract(minPoint),
-    //         anchor = L.point(options.iconAnchor || size && size.divideBy(2, true));
+    function handleMarkerLayer(marker, callback) {
+        var canvas = document.createElement('canvas'),
+            ctx = canvas.getContext('2d'),
+            size = marker._icon.getBoundingClientRect().width;
 
-    //     if (size instanceof L.Point) size = [size.x, size.y];
+        console.log("MARKER");
+        var SVGstring;
+        var bgimg = $(marker._icon).css('background-image');
+        if (bgimg && bgimg.indexOf("<svg") > -1) {
+            SVGstring = bgimg.substring(bgimg.indexOf("viewBox"));
+            SVGstring = "<svg " + SVGstring.substring(0,SVGstring.length - 2);
+            SVGstring = SVGstring.replace(/\\/g,'');
+            console.log(SVGstring);
 
-    //     var x = pos.x - size[0] + anchor.x,
-    //         y = pos.y - anchor.y;
+            var _canvas = document.createElement('canvas');
+            _canvas.width = _canvas.height = size * multiplier;
+            canvg(_canvas, SVGstring, { ignoreMouse: true, ignoreAnimation: true }); 
 
-    //     canvas.width = dimensions.x;
-    //     canvas.height = dimensions.y;
-    //     im.crossOrigin = '';
+            canvas.width = dimensions.x * multiplier;
+            canvas.height = dimensions.y * multiplier;
 
-    //     im.onload = function() {
-    //         ctx.drawImage(this, x, y, size[0], size[1]);
-    //         callback(null, {
-    //             canvas: canvas
-    //         });
-    //     };
+            var x = getPos(marker._icon).left;
+            var y = getPos(marker._icon).top;
 
-    //     im.src = url;
+            ctx.drawImage(_canvas, x * multiplier, y * multiplier, size * multiplier, size * multiplier);
+        }
 
-    //     if (isBase64) im.onload();
-    // }
-
-    function addCacheString(url) {
-        return url + ((url.match(/\?/)) ? '&' : '?') + 'cache=' + (+new Date());
+        callback(null, { canvas: canvas });
     }
 };
 

@@ -230,7 +230,7 @@ var newTerrainLayer = function (options) {
         // get container point of original lat lng
         var containerPoint = terrainLayer._map.latLngToContainerPoint(L.latLng(lat,lng));
 
-        // subtract clicked queried point from nw container point to get point within tile
+        // subtract queried point from nw container point to get point within tile
         var pointInTile = {
             x: containerPoint.x - nwContainerPoint.x,
             y: containerPoint.y - nwContainerPoint.y

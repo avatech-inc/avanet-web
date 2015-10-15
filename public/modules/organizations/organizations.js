@@ -1,6 +1,5 @@
 
-angular.module('avatech').controller('OrganizationsController', ['$scope', '$q', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular',
-function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular) { 
+angular.module('avatech').controller('OrganizationsController', function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular) { 
     $scope.global = Global;
 
     $scope.newOrg = {};
@@ -176,4 +175,4 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         }
     }
 
-}]);
+});

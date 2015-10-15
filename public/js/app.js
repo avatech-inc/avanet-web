@@ -9,6 +9,7 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'avatech.system',
     'avatech.profiles',
     'colorpicker.module',
+    'credit-cards'
 ]);
 
 angular.module('avatech.system', []);
@@ -25,8 +26,6 @@ angular.module('avatech.profiles', []);
 //          }
 //      };
 // });
-
-
 
 // angular.module('avatech').factory('Lightbox', function() {    
 //     return {

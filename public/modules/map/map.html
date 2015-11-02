@@ -496,6 +496,7 @@
 
 				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
 				<div ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id" class="side-list-item">
+				<!--<div ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id" class="side-list-item">
 
 					<a style="padding:0px;color:#666;font-weight:100;" 
 					href="/obs/{{ profile._id }}" 
@@ -524,6 +525,7 @@
 					</a>
 
 				</div>
+				</div>-->
 			</div>
 
 			<!-- My Observations: Unpublished -->

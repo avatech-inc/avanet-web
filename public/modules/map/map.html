@@ -7,7 +7,10 @@
 				  <button type="button" class="btn btn-default dropdown-toggle">
 				  	<span style="padding-right:3px;">{{ 'type' | translate }}</span> 
 
+			        <span class="caret" ng-show="obSearch.isDefaultType()"></span>
+			        <span style="color:#999;" ng-hide="obSearch.isDefaultType()">...</span>
 
+				  </button>
 				 	</ul>
 				</div>
 

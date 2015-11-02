@@ -95,14 +95,17 @@
 /* popup close button */
 .leaflet-popup-close-button, 
 .map-tooltip.closable .close {
+	color: #fff !important;
 	background-position: -4px -56px !important;
 	width: 17px !important;
 	height: 17px !important;
-	//background-color: #fff;
 	border-radius: 91px !important;
 	top: 5px !important;
 	right: 5px !important;
-	//display: none;
+
+	&:hover {
+		color: #222 !important;
+	}
 }
 
 .leaflet-popup-content-wrapper {

@@ -358,7 +358,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
             // set marker icon based on observation type
             leafletMarker.setIcon(L.divIcon({
-                //className: 'count-icon-' + data.observation.type,
                 className: 'count-icon ' + data.observation.type,
                 html: "",
                 iconSize: [33, 52]

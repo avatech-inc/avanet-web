@@ -336,21 +336,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // setup clustering  
     var pruneCluster = new PruneClusterForLeaflet(); //30, 20);
-    // console.log(pruneCluster.Cluster.Margin);
     pruneCluster.Cluster.Size = 10; 
     $scope.map.addLayer(pruneCluster);
-
-    // $scope.clustersize = 10;
-    // $scope.$watch('clustersize', function() {
-    //     pruneCluster.Cluster.Size = parseInt($scope.clustersize);
-    //     //console.log(pruneCluster.Cluster.Margin);
-    //     pruneCluster.ProcessView();
-    //     heatMap.setOptions({
-    //         radius: 10,
-    //         blur: 15,
-    //         maxZoom: $scope.map.getZoom()
-    //     });
-    // }, true)
 
     // render observation icons
     pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {

@@ -638,83 +638,35 @@
   border-radius:3px;
   width:90px;
   border:1px solid rgba(0,0,0,0.4);
-  }
-  .menu-ui a {
-    font-size:13px;
-    color:#404040;
-    display:block;
-    margin:0;padding:0;
-    padding:8px;
-    text-decoration:none;
-    border-bottom:1px solid rgba(0,0,0,0.25);
-    text-align:center;
-    }
-    .menu-ui a:first-child {
-      border-radius:3px 3px 0 0;
-      }
-    .menu-ui a:last-child {
-      border:none;
-      border-radius:0 0 3px 3px;
-      }
-    .menu-ui a:hover {
-      background:#f8f8f8;
-      color:#404040;
-      }
-    .menu-ui a.active {
-      background:#3887BE;
-      color:#FFF;
-      }
-      .menu-ui a.active:hover {
-        background:#3074a4;
-        }
-
-    a:hover { text-decoration: none !important; }
-    .container { width: 100% !important; }
-
-
-    /* map layers */
-
-    .mapLayers {
-		position: absolute;
-		bottom: 10px;
-		left: 10px;
-		right: 50px;
-		z-index: 1001;
-		height: 29px;
-	}
-    .mapLayers .btn-group  {
-		display:inline-block;
-		white-space: nowrap;
-		vertical-align: top;
-	}
-    .mapLayers .btn-group >button {
-		border: 1px solid #999;
-		background: rgba(255,255,255,.8);
-		border-radius: 3px;
-		box-shadow: none !important;
-		padding-right:10px;
-		height: 29px;
-		width:auto;
-		display:inline-block;
-		white-space: nowrap;
-		text-shadow:0px 0px 2px #fff;
-		transition: background 150ms;
-	}
-    .mapLayers .btn-group >button:hover {
-    	background: #fff;
-	}
-    .mapLayers .btn-group >button i {
-    	margin-left:3px;
-		margin-right:4px;
-		font-size: 19px;
-		position: relative;
-		bottom: 1px;
-	}
-    .mapLayers .btn-group >button >span {
-    	font-size: 12px;
-		position: relative;
-		bottom: 4px;
-	}
+}
+.menu-ui a {
+	font-size:13px;
+	color:#404040;
+	display:block;
+	margin:0;padding:0;
+	padding:8px;
+	text-decoration:none;
+	border-bottom:1px solid rgba(0,0,0,0.25);
+	text-align:center;
+}
+.menu-ui a:first-child {
+  border-radius:3px 3px 0 0;
+}
+.menu-ui a:last-child {
+  border:none;
+  border-radius:0 0 3px 3px;
+}
+.menu-ui a:hover {
+  background:#f8f8f8;
+  color:#404040;
+}
+.menu-ui a.active {
+  background:#3887BE;
+  color:#FFF;
+}	
+.menu-ui a.active:hover {
+	background:#3074a4;
+}
 
 	.mapLayers .layerName {
 		font-size:12px;white-space:nowrap;margin-bottom:1px;cursor:pointer;
@@ -1046,7 +998,6 @@
 			opacity: 1;
 			/*border-bottom:2px solid #ffcc00;*/
 		}
-
 
 
 

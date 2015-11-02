@@ -15,6 +15,12 @@
 			        	<i class="ion-close-round"></i>
 			        </span>
 				  </button>
+			      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+				    	<li ng-repeat="obType in obSearch.observationTypes"
+				    		ng-click="obSearch.type_select(obType)"
+				    	><a><i class="fa" ng-class="obSearch.searchQuery.type[obType] ? 'fa-check-square' : 'fa-square-o'"></i>
+			    			{{ 'observation_types.' + obType | translate }}</a>
+				    	</li>
 				 	</ul>
 				</div>
 

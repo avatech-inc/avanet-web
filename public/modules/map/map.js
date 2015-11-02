@@ -94,7 +94,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // filters for my observations (published / unpublished)
 
     $scope.my_unpublished = function(profile) {
-        if (profile.type != $scope.type_unpublished) return false;
         var ok = (profile.published === false && profile.user._id == $scope.global.user._id);
 
         if ($scope.obSearch.search_text(profile) === false) ok = false;
@@ -114,13 +113,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if ($scope.obSearch.search_slope(profile) === false) ok = false;
 
         return ok;
-    }
-
-    $scope.type_unpublished = 'test';
-    $scope.set_type_unpublished = function(type) {
-        $scope.type_unpublished = type;
-        // clear selected profiles
-        $scope.selectedProfiles = [];
     }
 
     // formatters
@@ -576,7 +568,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     $scope.$on('goToUnpublished', function() { 
         $scope.selectedList = 'my_unpublished';
-        $scope.type_unpublished = 'test';
     });
 
     $scope.$on('profileLoaded', function(e, profile) {

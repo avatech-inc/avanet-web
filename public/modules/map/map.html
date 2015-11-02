@@ -372,41 +372,12 @@
 							>{{ 'unpublished' | translate }}</button>
 					</div>
 
-					<div class="btn-group filter" dropdown 
-					style="float:left;"
-					ng-show="selectedList == 'my_unpublished'">
-					  <button type="button" class="btn btn-default dropdown-toggle" style="border: none; color: #fff; padding: 0; font-size: 11px; font-weight: 500; background: #444; height: 26px; margin-top: 6px; line-height: 26px; border-top-right-radius: 99px; border-bottom-right-radius: 99px; padding-right: 10px;">
-					  	<span style="padding-left:4px;">
-
-					    	<span ng-show="type_unpublished == 'snowpit'">
-					    	<div style="position:relative;top:1px;" class="circle profile"></div> Snowpits</span>
-
-					    	<span ng-show="type_unpublished == 'sp-profile'">
-					    	<div style="position:relative;top:1px;" class="circle test"></div> SP1 Profiles</span>
-
-					    	<span ng-show="type_unpublished == 'avy'">
-					    	<div style="position:relative;top:1px;" class="circle avy"></div> Avalanches</span>
-
-					    </span>
-					    <span class="caret"></span>
-					  </button>
-				      	<ul class="dropdown-menu listSelect" role="menu" style="min-width:120px !important;height:auto;z-index:2000;">
-				    			
-					    	<li ng-click="set_type_unpublished('snowpit')" close-dropdown-on-click><a>
-					    	<div class="circle profile"></div> Snowpits</a></li>
-
-					    	<li ng-click="set_type_unpublished('sp-profile')" close-dropdown-on-click><a>
-					    	<div class="circle test"></div> SP1 Profiles</a></li>
-
-					    	<li ng-click="set_type_unpublished('avy')" close-dropdown-on-click><a>
-					    	<div class="circle avy"></div> Avalanches</a></li>
-					 	</ul>
-					</div>
+					
 				</div>
 			</div>
 
 			<div class="list-bottom">
-				<div ng-show="selectedList == 'my_unpublished' && type_unpublished == 'sp-profile'">
+				<div ng-show="selectedList == 'my_unpublished'">
 					<div style="float:left;font-weight:100;margin-left:10px;" ng-show="selectedProfiles.length">
 					</div>
 

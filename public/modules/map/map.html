@@ -463,6 +463,13 @@
 						<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>
 
 						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
+
+						<!--<div class='lineItem' ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.type == 'avy' ? profile.locationName : profile.metaData.location }}</div>
+						<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+							profile.location[1] + ', ' + profile.location[0] :
+							'NO LOCATION'
+							 }}</div>-->
+
 					</a>
 				</div>
 			</script>

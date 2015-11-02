@@ -501,8 +501,6 @@
 					ng-mouseout="hoverProfile()"
 					old-ng-click="openProfile(profile)">
 
-						<div class="bar {{ profile.type }}"></div>
-
 						<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="150"></canvas>
 						<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="150"></canvas>
 						<div ng-if="profile.type=='avy'" class="thumb"></div>

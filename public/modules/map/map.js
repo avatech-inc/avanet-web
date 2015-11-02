@@ -379,7 +379,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                     $scope.compiledPopup(newScope, function(clonedElement) {
                         // bind popup with compiled template html
                         leafletMarker.bindPopup(clonedElement[0], {
-                            className: 'popup-' + data.observation.type
                         });
                         // remove default click event (to disable opening of popup on click)
                         // leafletMarker.off('click');

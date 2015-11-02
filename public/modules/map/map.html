@@ -448,16 +448,12 @@
 					<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
 				</div>
 
-				<div ng-show="profiles.length == 0" style="text-align:center;font-size:16px;color:#333;padding:14px;padding-top:30px;">
-					See how easy it is to record your manual snow profiles with <b>Snowpit Editor</b>
-					<br/><br/>
-					<a class="btn btn-lg btn-primary" href="/profiles/new">
-					Create A Manual Profile
-					</a>
+				<div ng-show="filteredProfiles.length == 0" style="text-align:center;font-size:16px;color:#333;padding:14px;padding-top:30px;font-style:italic;">
+					{{ 'no_obs_found' | translate }}
 				</div>
-				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
 
-				<div bindonce ng-repeat="profile in ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" 
+				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+				<div bindonce ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" 
 
 					class="side-list-item short"
 

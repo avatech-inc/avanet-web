@@ -26,6 +26,16 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	        publisher: angular.copy(defaultPublisher)
 	    }
 
+	    this.observationTypes = [
+	        "avalanche",
+	        "weather",
+	        "wind",
+	        "snowpack",
+	        "snowpack-test",
+	        "snowpit",
+	        "sp-profile",
+	    ];
+
 	    this.search_text = function(val) {
 	        var needle = this.searchQuery.text.toLowerCase();
 	        if (needle.length < 3) return true;

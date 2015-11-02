@@ -298,6 +298,10 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 		    	self.searchQuery.type[obType] = true;
 		    });
 	    }
+	    // add all observation types to query as default
+	    this.setDefaultType();
+
+
 	}
 
 });

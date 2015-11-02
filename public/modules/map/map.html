@@ -567,8 +567,6 @@
 							ng-click="selectProfile(profile);" ></i>
 						</div>
 
-						<!--<div class="bar {{ profile.type }}"></div>-->
-
 						<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="136"></canvas>
 						<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="136"></canvas>
 						<div ng-if="profile.type=='avy'" class="thumb"></div>

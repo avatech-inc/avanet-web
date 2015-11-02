@@ -361,7 +361,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 //className: 'count-icon-' + data.observation.type,
                 className: 'count-icon ' + data.observation.type,
                 html: "",
-                iconSize: [14, 14]
+                iconSize: [33, 52]
             }));
 
             // clear existing bindings

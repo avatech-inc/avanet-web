@@ -2,6 +2,8 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 	return function() {
 
+		// defaults
+
 		this.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
 
 		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, students: false };

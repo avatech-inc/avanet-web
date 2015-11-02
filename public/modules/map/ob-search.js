@@ -21,7 +21,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 	        text: '',
 
-	        type: { profile: true, avy: true, test: true },
+	        type: {},
 
 	        publisher: angular.copy(defaultPublisher)
 	    }

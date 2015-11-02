@@ -1,6 +1,5 @@
-angular.module('avatech').service('Observations', [
-	'$q', '$rootScope', '$timeout', '$interval', 'Global', '$http',
-	function($q, $rootScope, $timeout, $interval, Global, $http) {
+angular.module('avatech').service('Observations', 
+    function($q, $rootScope, $timeout, $interval, Global, $http, Restangular) {
 
 	var self=this;
 
@@ -75,5 +74,5 @@ angular.module('avatech').service('Observations', [
   //       	$http.post("/v1/tests", observation);
   //       }
 	};
-}]);
+});
 

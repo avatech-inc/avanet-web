@@ -5,16 +5,7 @@
 				<div class="btn-group filter" dropdown style=""
 					ng-hide="selectedList == 'my_unpublished'">
 				  <button type="button" class="btn btn-default dropdown-toggle">
-				  	<span>
-				  		<span style="margin-right:10px;">{{ 'type' | translate }}</span>
-				    	<div ng-repeat="type in ['snowpit','sp-profile','avy']" class="circle {{type}} {{ obSearch.searchQuery.type[type] ? '' : 'empty' }}" style="position:relative;top:1px;"></div>
-				    </span>
-				    <span class="caret"></span>
-				  </button>
-			      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
-			    			
-				    	<li ng-click="obSearch.type_select('snowpit')"><a>
-				    	<div class="circle profile {{ obSearch.searchQuery.type.profile ? '' : 'empty' }}"></div> {{ 'snowpit' | translate }}</a></li>
+				  	<span style="padding-right:3px;">{{ 'type' | translate }}</span> 
 
 				    	<li ng-click="obSearch.type_select('sp-profile')"><a>
 				    	<div class="circle test {{ obSearch.searchQuery.type.test ? '' : 'empty' }}"></div> {{ 'sp1_profile' | translate }}</a></li>

@@ -1,10 +1,7 @@
 <div bindonce="profile">
 
 <div class="popup-title">
-<span bo-if='profile.type=="profile"'>Snowpit</span>
-<span bo-if='profile.type=="test"'>SP1 Profile</span>
-<span bo-if='profile.type=="avy"'>Avalanche</span>
-
+<span>{{ 'observation_types.' + profile.type | translate }}</span>
 <div class='expand'><i class='fa fa-search-plus'></i></div>
 </div>
 

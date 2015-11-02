@@ -437,10 +437,6 @@
 			<!-- My Observations: Published -->
 			<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
 
-				<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-					<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
-				</div>
-
 				<div ng-show="filteredProfiles2.length == 0" style="no-obs-found">{{ 'no_obs_found' | translate }}</div>
 
 				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
@@ -451,10 +447,6 @@
 			<div class="list-holder marginTop" scrollable 
 			ng-class="{ 'marginBottom': selectedProfiles.length > 0 }"
 			ng-show="selectedList == 'my_unpublished'" always-visible="true">
-
-				<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-				<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
-				</div>
 
 				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
 					<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">

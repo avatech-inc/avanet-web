@@ -54,21 +54,21 @@
 			      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
 
 				    	<li ng-click="obSearch.publisher_selectMe()"
-				    		ng-dblclick="obSearch.publisher_selectMe(true)"><a><i class="fa {{ obSearch.searchQuery.publisher.me || obSearch.searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o' }}"></i>Me</a></li>
+				    		ng-dblclick="obSearch.publisher_selectMe(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.me || obSearch.searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o'"></i>Me</a></li>
 
 				    	<li ng-show="global.orgs && global.orgs.length > 1"
 				    		ng-click="obSearch.publisher_selectMyOrgs()"
-			    			ng-dblclick="obSearch.publisher_selectMyOrgs(true)"><a><i class="fa {{ obSearch.searchQuery.publisher.orgs == null || (obSearch.searchQuery.publisher.orgs && obSearch.searchQuery.publisher.orgs.length == global.orgs.length) ? 'fa-check-square' : 'fa-square-o' }}"></i>My Organizations</a></li>
+			    			ng-dblclick="obSearch.publisher_selectMyOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.orgs == null || (obSearch.searchQuery.publisher.orgs && obSearch.searchQuery.publisher.orgs.length == global.orgs.length) ? 'fa-check-square' : 'fa-square-o'"></i>My Organizations</a></li>
 
 				    	<li ng-repeat="org in global.orgs" 
 				    		ng-click="obSearch.publisher_selectOrg(org._id)"
-				    		ng-dblclick="obSearch.publisher_selectOrg(org._id, true)"><a><i ng-style="{ 'padding-left': (global.orgs && global.orgs.length > 1 ? '26px' :''), 'margin-right': (global.orgs && global.orgs.length > 1 ? '20px' :'') }" class="fa {{ obSearch.publisher_isOrgSelected(org._id) ? 'fa-check-square' : 'fa-square-o' }}"></i>{{ org.name }}</a></li>
+				    		ng-dblclick="obSearch.publisher_selectOrg(org._id, true)"><a><i ng-style="{ 'padding-left': (global.orgs && global.orgs.length > 1 ? '26px' :''), 'margin-right': (global.orgs && global.orgs.length > 1 ? '20px' :'') }" class="fa" ng-class="obSearch.publisher_isOrgSelected(org._id) ? 'fa-check-square' : 'fa-square-o'"></i>{{ org.name }}</a></li>
 
 			    		<li ng-click="obSearch.publisher_selectOutsideOrgs()"
-			    			ng-dblclick="obSearch.publisher_selectOutsideOrgs(true)"><a><i class="fa {{ obSearch.searchQuery.publisher.outsideOrgs || obSearch.searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o' }}"></i>Outside Organizations</a></li>
+			    			ng-dblclick="obSearch.publisher_selectOutsideOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.outsideOrgs || obSearch.searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o'"></i>Outside Organizations</a></li>
 			    			
 				    	<li ng-click="obSearch.publisher_selectStudents()"
-				    		ng-dblclick="obSearch.publisher_selectStudents(true)"><a><i class="fa {{ obSearch.searchQuery.publisher.students || obSearch.searchQuery.publisher.students == null ? 'fa-check-square' : 'fa-square-o' }}"></i>Students</a></li>
+				    		ng-dblclick="obSearch.publisher_selectStudents(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.students || obSearch.searchQuery.publisher.students == null ? 'fa-check-square' : 'fa-square-o'"></i>Students</a></li>
 				    </ul>
 			    </div>
 

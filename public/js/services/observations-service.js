@@ -51,27 +51,29 @@ angular.module('avatech').service('Observations', [
 		replaceObservation(observation);
 
         // update on server
-        if (observation.type == 'test') {
-        	$http.post("/v1/tests", observation);
-        }
+        // todo: update!
+        // if (observation.type == 'test') {
+        // 	$http.post("/v1/tests", observation);
+        // }
 	};
 
 	this.remove = function(observation) {
-		var index = -1;
-        for (var i = 0; i < self.observations.length; i++) {
-        	var _observation = self.observations[i];
-        	if (_observation.type == observation.type && _observation._id == observation._id) {
-        		index = i;
-        		break;
-        	}
-        }
-        if (index > -1) self.observations.splice(index, 1);
+         // todo: update!
+		// var index = -1;
+  //       for (var i = 0; i < self.observations.length; i++) {
+  //       	var _observation = self.observations[i];
+  //       	if (_observation.type == observation.type && _observation._id == observation._id) {
+  //       		index = i;
+  //       		break;
+  //       	}
+  //       }
+  //       if (index > -1) self.observations.splice(index, 1);
 
-        // update on server
-        if (observation.type == 'test') {
-			observation.removed = true;
-        	$http.post("/v1/tests", observation);
-        }
+  //       // update on server
+  //       if (observation.type == 'test') {
+		// 	observation.removed = true;
+  //       	$http.post("/v1/tests", observation);
+  //       }
 	};
 }]);
 

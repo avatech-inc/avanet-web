@@ -12,10 +12,15 @@ angular.module('avatech').service('Observations',
 	};
 
 	this.sync = function(callback) {
-		$http.get('/v1/all-observations/mine', { params: { last: lastSync } }
-        ).success(function(observations) {
-            for (var i = 0; i < observations.length; i++) {
-            	addOrReplace(observations[i]);
+        Restangular.all("users/" + Global.user._id + "/observations")
+        .getList({
+            verbose: false,
+            last: lastSync
+        })
+        .then(function(obs) {
+
+          for (var i = 0; i < obs.length; i++) {
+                addOrReplace(obs[i]);
             }
             // keep track of last sync
             lastSync = new Date();

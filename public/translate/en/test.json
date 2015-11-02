@@ -69,6 +69,7 @@
   "views": "Views",
   "height": "Height",
   "depth": "Depth",
+  "no_obs_found": "No observations found",
   "settings" : {
     "user_information" : "User Information",
     "full_name" : "Full Name",

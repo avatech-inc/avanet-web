@@ -360,7 +360,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             leafletMarker.setIcon(L.divIcon({
                 className: 'count-icon ' + data.observation.type,
                 html: "",
-                iconSize: [33, 52]
+                iconSize: [30, 50]
             }));
 
             // clear existing bindings
@@ -886,7 +886,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             gridOverlayLayer = new UTMGridLayer();
         }
         else if (newOverlay == 'dd') {
-            gridOverlayLayer = new LatLngGridLayer();
+            //gridOverlayLayer = new LatLngGridLayer();
         }
 
         if (gridOverlayLayer) {

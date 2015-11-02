@@ -285,6 +285,12 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	        this.searchQuery.publisher = angular.copy(defaultPublisher);
 	    }
 
+	    this.isDefaultType = function() {
+	    	var trueCount = 0;
+	    	angular.forEach(this.searchQuery.type, function(obType) { 
+	    		if (obType) trueCount++;
+	    	});
+	    	return trueCount == Object.keys(this.observationTypes).length;
 	}
 
 });

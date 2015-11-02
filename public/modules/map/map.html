@@ -454,6 +454,8 @@
 				<div bindonce ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" 
 
 					class="side-list-item short"
+			<script type="text/ng-template" id="observationListItemTemplate">
+			  <div bindonce class="side-list-item short"
 
 					ng-click="href('/obs/' + profile._id)" 
 
@@ -481,6 +483,7 @@
 
 						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 				</div>
+			</script>
 			</div>
 
 			<!-- My Observations: Published -->

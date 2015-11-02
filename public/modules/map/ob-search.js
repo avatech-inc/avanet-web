@@ -291,6 +291,13 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	    		if (obType) trueCount++;
 	    	});
 	    	return trueCount == Object.keys(this.observationTypes).length;
+	    }
+	    this.setDefaultType = function() {
+		    var self = this;
+		    angular.forEach(this.observationTypes, function(obType) {
+		    	self.searchQuery.type[obType] = true;
+		    });
+	    }
 	}
 
 });

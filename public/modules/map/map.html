@@ -440,20 +440,6 @@
 
 			<div class="loading-overlay" ng-show="loadingNew"></div>
 
-			<!-- Map Observations -->
-			<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published'"
-				>
-
-				<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-					<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
-				</div>
-
-				<div ng-show="filteredProfiles.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
-
-				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
-				<div bindonce ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" 
-
-					class="side-list-item short"
 			<script type="text/ng-template" id="observationListItemTemplate">
 			  <div bindonce class="side-list-item short"
 
@@ -484,6 +470,19 @@
 						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 				</div>
 			</script>
+
+			<!-- Map Observations -->
+			<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published'"
+				>
+
+				<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+					<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+				</div>
+
+				<div ng-show="filteredProfiles.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+
+				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+				<ng-include src="'observationListItemTemplate'" ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id"  />
 			</div>
 
 			<!-- My Observations: Published -->

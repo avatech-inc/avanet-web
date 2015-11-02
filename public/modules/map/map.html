@@ -10,6 +10,10 @@
 			        <span class="caret" ng-show="obSearch.isDefaultType()"></span>
 			        <span style="color:#999;" ng-hide="obSearch.isDefaultType()">...</span>
 
+			        <span class="removeFilter" ng-hide="obSearch.isDefaultType()"
+			        	ng-mousedown="obSearch.setDefaultType()">
+			        	<i class="ion-close-round"></i>
+			        </span>
 				  </button>
 				 	</ul>
 				</div>

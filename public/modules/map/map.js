@@ -359,7 +359,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // set marker icon based on observation type
             leafletMarker.setIcon(L.divIcon({
                 //className: 'count-icon-' + data.observation.type,
-                className: 'count-icon-test',
+                className: 'count-icon ' + data.observation.type,
                 html: "",
                 iconSize: [14, 14]
             }));

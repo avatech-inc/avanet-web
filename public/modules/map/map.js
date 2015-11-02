@@ -604,29 +604,29 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // pan to location
             $scope.map.panTo({ lat: profile.location[1], lng: profile.location[0] });
 
-            $scope.mapLayer.eachLayer(function(marker) {
+            // $scope.mapLayer.eachLayer(function(marker) {
                 
-                marker.setIcon(L.divIcon({
-                    className: "count-icon-" + marker.profile.type,
-                    html: "",
-                    iconSize: [14, 14]
-                }));
-                marker.setZIndexOffset(-1000);
+            //     marker.setIcon(L.divIcon({
+            //         className: "count-icon-" + marker.profile.type,
+            //         html: "",
+            //         iconSize: [14, 14]
+            //     }));
+            //     marker.setZIndexOffset(-1000);
 
-                console.log(marker.profile.type + "," + profile.type);
+            //     console.log(marker.profile.type + "," + profile.type);
 
-                if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id &&
-                    marker.options && marker.options.icon && marker.options.icon.options &&
-                    marker.options.icon.options.className) {
+            //     if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id &&
+            //         marker.options && marker.options.icon && marker.options.icon.options &&
+            //         marker.options.icon.options.className) {
 
-                    marker.setIcon(L.divIcon({
-                        className: "count-icon-" + marker.profile.type + ' selected',
-                        html: "",
-                        iconSize: [14, 14]
-                    }));
-                    marker.setZIndexOffset(1000);
-                }
-            });
+            //         marker.setIcon(L.divIcon({
+            //             className: "count-icon-" + marker.profile.type + ' selected',
+            //             html: "",
+            //             iconSize: [14, 14]
+            //         }));
+            //         marker.setZIndexOffset(1000);
+            //     }
+            // });
 
         });
     });

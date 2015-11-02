@@ -131,5 +131,14 @@
   "select_location": {
     "instructions": "Drag the map to select your location",
     "select_button": "Select this location"
+  },
+  "observation_types": {
+    "avalanche": "Avalanche",
+    "weather": "Weather",
+    "wind": "Wind",
+    "snowpack": "Snowpack",
+    "snowpack-test": "Snowpack Test",
+    "sp-profile": "SP Profile",
+    "snowpit": "Snowpit"
   }
 }

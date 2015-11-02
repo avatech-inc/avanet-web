@@ -96,6 +96,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.my_unpublished = function(profile) {
         var ok = (profile.published === false && profile.user._id == $scope.global.user._id);
 
+        if ($scope.obSearch.search_type(profile) === false) ok = false;
         if ($scope.obSearch.search_text(profile) === false) ok = false;
         if ($scope.obSearch.search_elevation(profile) === false) ok = false;
         if ($scope.obSearch.search_aspect(profile) === false) ok = false;

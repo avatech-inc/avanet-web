@@ -457,7 +457,7 @@
 				<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
 				</div>
 
-				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item">
+				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
 					<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
 
 						<div class="check" onclick="return false;">
@@ -473,8 +473,8 @@
 						<div ng-if="profile.type=='avy'" class="thumb"></div>
 
 						<div>
-							<div ng-hide="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Last edited <span am-time-ago="profile.updated"></span></div>
-							<div ng-show="profile.type=='sp-profile'" style="color:#999;font-style:italic;padding-left:88px;margin-bottom:2px;font-size:12px;">Uploaded <span am-time-ago="profile.created"></span></div>
+							<div ng-show="profile.type=='snowpit'" class="last-edit">Last edited <span am-time-ago="profile.updated"></span></div>
+							<div ng-show="profile.type=='sp-profile'" class="last-edit">Uploaded <span am-time-ago="profile.created"></span></div>
 
 							<div class="lineItem"><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 

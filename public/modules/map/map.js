@@ -416,6 +416,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         // hacky yet highly performant way to determine if there is a red flag in the cluster
         var redFlagInCluster = cluster.stats[1] > 0;
+
+        // add redFlag class if red flag is in the cluster
+        if (redFlagInCluster) icon.options.className += " redFlag";
          
         // create marker
         var m = new L.Marker(position, { icon: icon });

@@ -386,13 +386,6 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     comment.heightClient = _itemHeight;
                 });
 
-                // first comment placement
-                // if (comments.length > 0) {
-                //     if (comments[0].depthClient < 0) {
-                //         comments[0].depthGraph = comments[0].depthClient = 0;
-                //     }
-                // }
-
                 // if last comment is over the bottom edge, pull it up
                 var lastComment = comments[comments.length - 1];
                 if (lastComment) {

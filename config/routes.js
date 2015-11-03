@@ -69,25 +69,25 @@ module.exports = function(app) {
     //--------------------------------------------------------------------------------
 
     // SMS
-    var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');
-    app.get('/send-app-sms', function(req,res) {
-        console.log(req.query.num);
-        twilio.sendMessage({
-            to: req.query.num, // Any number Twilio can deliver to
-            from: '+14355039000', // A number you bought from Twilio and can use for outbound communication
-            body: 'Download the AvaNet app: https://avanet.avatech.com/app' // body of the SMS message
-        }, function(err, responseData) { //this function is executed when a response is received from Twilio
-            console.log(responseData);
-            if (!err) { // "err" is an error received during the request, if any
-                // "responseData" is a JavaScript object containing data received from Twilio.
-                // A sample response from sending an SMS message is here (click "JSON" to see how the data appears in JavaScript):
-                // http://www.twilio.com/docs/api/rest/sending-sms#example-1
-                // console.log(responseData.from); // outputs "+14506667788"
-                // console.log(responseData.body); // outputs "word"
-            }
-        });
-        res.json({});
-    });
+    // var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');
+    // app.get('/send-app-sms', function(req,res) {
+    //     console.log(req.query.num);
+    //     twilio.sendMessage({
+    //         to: req.query.num, // Any number Twilio can deliver to
+    //         from: '+14355039000', // A number you bought from Twilio and can use for outbound communication
+    //         body: 'Download the AvaNet app: https://avanet.avatech.com/app' // body of the SMS message
+    //     }, function(err, responseData) { //this function is executed when a response is received from Twilio
+    //         console.log(responseData);
+    //         if (!err) { // "err" is an error received during the request, if any
+    //             // "responseData" is a JavaScript object containing data received from Twilio.
+    //             // A sample response from sending an SMS message is here (click "JSON" to see how the data appears in JavaScript):
+    //             // http://www.twilio.com/docs/api/rest/sending-sms#example-1
+    //             // console.log(responseData.from); // outputs "+14506667788"
+    //             // console.log(responseData.body); // outputs "word"
+    //         }
+    //     });
+    //     res.json({});
+    // });
     
     //app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 

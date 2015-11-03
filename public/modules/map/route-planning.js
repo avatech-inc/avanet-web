@@ -1048,16 +1048,19 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 '  </metadata>\n';
 
             // waypoints
-            // for (var i = 0; i < _line.editing._markers.length; i++) {
-            //     var thisPoint = _line.editing._markers[i];
-            //     if (thisPoint.waypoint) {
-            //         gpx +=  '  <wpt lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n' +
-            //                 '    <name><![CDATA[' + thisPoint.waypoint.name + ']]></name>\n' +
-            //                 '    <desc><![CDATA[]]></desc>\n' +
-            //                 '  </wpt>\n';
-            //     }
-            // }
-
+            var wayPointIndex = 0;
+            for (var i = 0; i < _line.editing._markers.length; i++) {
+                var thisPoint = _line.editing._markers[i];
+                if (thisPoint.waypoint || i == 0 || i == _line.editing._markers.length - 1) {
+                    wayPointIndex++;
+                    gpx +=  '  <wpt lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n';
+                    //gpx +=  '    <name><![CDATA[' + thisPoint.waypoint.name + ']]></name>\n';
+                    gpx +=  '    <name><![CDATA[' + scope.route.waypointPrefix() + wayPointIndex + ']]></name>\n';
+                    if (thisPoint.waypoint && thisPoint.waypoint.name) 
+                        gpx += '    <desc><![CDATA[' + thisPoint.waypoint.name + ']]></desc>\n';
+                    gpx +=  '  </wpt>\n';
+                }
+            }
 
             // route start
             gpx +=  '<rte>' +

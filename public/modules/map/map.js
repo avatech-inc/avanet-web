@@ -886,23 +886,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             gridOverlayLayer.addTo($scope.map);
             gridOverlayLayer.setZIndex(99999);
         }
-    })
-    
-//     setTimeout(function(){
-//     leafletImage($scope.map, function(err, canvas) {
-//                 // console.log(err);
-//                 // var img = document.createElement('img');
-//                 // var dimensions = $scope.map.getSize();
-//                 // img.width = dimensions.x;
-//                 // img.height = dimensions.y;
-//                 // img.src = canvas.toDataURL();
-
-//                 window.open(canvas.toDataURL(), '_blank');
-//                 // snapshot.innerHTML = '';
-//                 // snapshot.appendChild(img);
-//             });
-// },5000)
-
-    //
+    });
 
 });

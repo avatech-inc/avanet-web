@@ -21,6 +21,9 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             canvas.height *= window.devicePixelRatio;
             canvas.width *= window.devicePixelRatio;
         }
+
+        var graphHeight = canvas.height;
+        var graphWidth = canvas.width;
     }
   };
 });

@@ -387,7 +387,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             leafletMarker.on('click', function (e) {
                 $scope.map.setView(e.latlng, 11, { animate: true });
             });
-
         }
     };
 
@@ -441,13 +440,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
               }
             }
           });
-          m.on('mouseover', function() {
-            //do mouseover stuff here
-          });
-          m.on('mouseout', function() {
-            //do mouseout stuff here
-          });
-
           return m;
     };
 

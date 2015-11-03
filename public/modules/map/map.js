@@ -34,8 +34,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return $scope.routeEditMode;
     }
 
-    $scope.showList = true;
-
     $scope.mapLayers = mapLayers;
 
     // which list to show in side bar

@@ -650,6 +650,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 // associate profile with marker
                 marker.data.observation = profile;
 
+                // this looks hacky but it's by far the most performant way to do this
+                // (uses the PruneCluster lib's 'category' feature)
+                marker.category = + profile.redFlag;
+
                 // add to map
                 pruneCluster.RegisterMarker(marker);
                 // keep track of all markers placed on map

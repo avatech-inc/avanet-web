@@ -26,6 +26,9 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
         var graphWidth = canvas.width;
 
         function render() {
+            // convert string to JSON
+            var points = [];
+            if (scope.points != "") points = JSON.parse(scope.points);
         }
     }
   };

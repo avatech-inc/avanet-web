@@ -55,6 +55,11 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             if (points.length == 0) return
 
             // otherwise, continue...
+
+            // calculate
+
+            // draw points
+            
         }
     }
   };

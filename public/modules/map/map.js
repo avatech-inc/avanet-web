@@ -365,16 +365,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                         leafletMarker.bindPopup(clonedElement[0], {
                             offset: new L.Point(0, -10)
                         });
-                        // remove default click event (to disable opening of popup on click)
-                        // leafletMarker.off('click');
-
-                        // // new click event should load profile
-                        // leafletMarker.on('click', function(e) {
-                        //     //e.originalEvent.preventDefault();
-
-                        //     $location.path('/a/' + data.observation._id);
-                        //     $scope.$apply();
-                        // });
                     });
                     $scope.$apply();
                     this.openPopup();
@@ -383,7 +373,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
         // heatmap mode
         else {
-
             // if single icon, style as cluster icon
             leafletMarker.setIcon(L.divIcon({
                 className: 'prunecluster',

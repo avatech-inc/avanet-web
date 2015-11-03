@@ -1020,11 +1020,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // scope.map.setZoom(zoom);
             // todo: if a map scale is explicitly selected, make sure it stays in that scale as map moves
 
-            var minlat = '40.59382';
-            var minlon = '-111.65113';
+            // var minlat = '40.59382';
+            // var minlon = '-111.65113';
 
-            var maxlat = '40.6090005';
-            var maxlon = '-111.60976';
+            // var maxlat = '40.6090005';
+            // var maxlon = '-111.60976';
 
             // calculate bounds
             var bounds = new google.maps.LatLngBounds();
@@ -1032,8 +1032,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 var thisPoint = _line.editing._markers[i];
                 bounds.extend(new google.maps.LatLng(thisPoint._latlng.lat, thisPoint._latlng.lng));
             }
-            console.log("BOUNDS:");
-            console.log(bounds);
+            // console.log("BOUNDS:");
+            // console.log(bounds);
 
             var gpx = 
                 '<?xml version="1.0"?>\n' +

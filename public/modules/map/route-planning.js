@@ -1074,8 +1074,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 var thisPoint = _line.editing._markers[i];
                 //if (thisPoint.waypoint) legIndex++;
                 gpx += '    <rtept lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n';
-                if (thisPoint.waypoint) {
-                    gpx += '      <name><![' + thisPoint.waypoint.name + ']]></name>\n';
+                if (thisPoint.waypoint || i == 0 || i == _line.editing._markers.length - 1) {
+                    // console.log("WAYPOINT:");
+                    // console.log(thisPoint.waypoint.name);
+                    wayPointIndex++;
+                    gpx += '      <name><![CDATA[' + scope.route.waypointPrefix() + wayPointIndex + ']]></name>\n';
+                    if (thisPoint.waypoint && thisPoint.waypoint.name) 
+                        gpx += '      <desc><![CDATA[' + thisPoint.waypoint.name + ']]></desc>\n';
                 }
                 gpx += '    </rtept>\n';
             }

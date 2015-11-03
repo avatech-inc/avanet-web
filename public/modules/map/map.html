@@ -390,7 +390,8 @@
 
 						<canvas bo-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="150"></canvas>
 
-						<div bo-if="profile.type!='snowpit' && profile.type!='sp-profile'" class="thumb">
+						<div bo-if="profile.type!='snowpit' && profile.type!='sp-profile'" class="thumb"
+						 ng-class="{ redFlag: profile.redFlag }">
 							<img src="/img/markers/{{ profile.type }}-icon.png"/>
 						</div>
 

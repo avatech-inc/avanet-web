@@ -800,22 +800,20 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
     // sun exposure stuff
+    // $scope.sunHours = 17;
+    // var _debounce;
+    // $scope.$watch('sunHours', function() {
+    //     if (_debounce) $timeout.cancel(_debounce);
+    //     _debounce = $timeout(function(){
+    //         $scope.sunDate = new Date(); 
+    //         $scope.sunDate.setTime(Date.parse("2015 01 01"));
+    //         $scope.sunDate.setHours($scope.sunHours);
+    //         if ($scope.sunHours % 1 == .5) $scope.sunDate.setMinutes(30);
 
-    $scope.sunHours = 17;
-    var _debounce;
-    $scope.$watch('sunHours', function() {
-        if (_debounce) $timeout.cancel(_debounce);
-        _debounce = $timeout(function(){
-            $scope.sunDate = new Date(); 
-            $scope.sunDate.setTime(Date.parse("2015 01 01"));
-            $scope.sunDate.setHours($scope.sunHours);
-            if ($scope.sunHours % 1 == .5) $scope.sunDate.setMinutes(30);
-
-            terrainLayer.sunDate = angular.copy($scope.sunDate);
-            terrainLayer.needsRedraw = true
-        }, 50);
-
-    },true);
+    //         terrainLayer.sunDate = angular.copy($scope.sunDate);
+    //         terrainLayer.needsRedraw = true
+    //     }, 50);
+    // },true);
 
     // custom terrain visualization
     $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;

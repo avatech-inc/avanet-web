@@ -68,6 +68,8 @@ gulp.task('combine-minify', function() {
     }))
 
     .pipe(assets)
+
+    // minify CSS
     .pipe(gulpif('*.css', minifyCSS()))
 
     // string console.log statements

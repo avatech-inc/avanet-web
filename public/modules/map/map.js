@@ -1,5 +1,3 @@
-var _tileCache = {};
-
 angular.module('avatech.system').controller('MapController', function ($rootScope, $scope, $q, $state, $location, $modal, $http, $timeout, $compile, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 

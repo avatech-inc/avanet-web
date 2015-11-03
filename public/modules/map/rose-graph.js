@@ -36,6 +36,11 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             // stroke style
             context.lineWidth = 3;
             context.strokeStyle = "#000";
+
+            // draw circle
+            context.beginPath();
+            context.arc(graphWidth / 2, graphWidth / 2, (graphWidth / 2) - 1, 0, 2 * Math.PI);
+            context.stroke();
         }
     }
   };

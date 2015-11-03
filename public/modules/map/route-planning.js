@@ -512,6 +512,9 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
         }
 
         function addPoint(latlng, index) {
+            // this prevents a bug where addPoint is triggered without a latLng object
+            if (!latlng) return;
+
             if (index == null) index = _line.editing._poly._latlngs.length;
 
             console.log("LINE:");

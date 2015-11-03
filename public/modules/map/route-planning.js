@@ -1014,10 +1014,10 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
         }
 
         function downloadGPX() {
-            var mapScale = 50000; // 1:{mapScale} ft
-            var metersPerPixel = mapScale / 39.3701 / scope.getPixelsPerScreenInch();
-            var zoom = Math.log((156543.03392 / metersPerPixel) * Math.cos(scope.map.getCenter().lat * Math.PI / 180)) / Math.log(2);
-            scope.map.setZoom(zoom);
+            // var mapScale = 50000; // 1:{mapScale} ft
+            // var metersPerPixel = mapScale / 39.3701 / scope.getPixelsPerScreenInch();
+            // var zoom = Math.log((156543.03392 / metersPerPixel) * Math.cos(scope.map.getCenter().lat * Math.PI / 180)) / Math.log(2);
+            // scope.map.setZoom(zoom);
             // todo: if a map scale is explicitly selected, make sure it stays in that scale as map moves
 
             var minlat = '40.59382';

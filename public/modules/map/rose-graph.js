@@ -50,6 +50,11 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
                 context.lineTo(radius + radius * Math.cos(angle), radius + radius * Math.sin(angle));
             }
             context.stroke();
+
+            // if no points, return
+            if (points.length == 0) return
+
+            // otherwise, continue...
         }
     }
   };

@@ -29,6 +29,9 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             // convert string to JSON
             var points = [];
             if (scope.points != "") points = JSON.parse(scope.points);
+
+            // clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
     }
   };

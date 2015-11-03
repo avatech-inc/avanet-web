@@ -1044,6 +1044,9 @@ a:hover { text-decoration: none !important; }
     box-shadow: 0px 0px 1px #fff;
 	text-shadow: none !important;
 }
+.leaflet-marker-icon.prunecluster.detailed.redFlag {
+	background: rgba(219,31,38,.9) !important;
+}
 .leaflet-marker-icon.prunecluster.detailed div {
     height: 26px !important;
     width: 26px !important;

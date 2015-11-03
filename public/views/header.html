@@ -64,7 +64,7 @@
           <a style="font-weight:500;color:#fff;" href="/observations">My Observations</a>
         </li>-->
 
-        <li class="dropdown" ng-hide="global.user.student === true || isDemo">
+        <li class="dropdown" ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
           <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown">{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}

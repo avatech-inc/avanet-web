@@ -346,7 +346,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             leafletMarker.setIcon(L.divIcon({
                 className: markerClass,
                 html: "",
-                iconSize: [30, 50]
+                iconSize: [30, 45]
             }));
 
             // clear existing bindings

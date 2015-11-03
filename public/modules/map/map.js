@@ -259,7 +259,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // add new layer to map
         if (newBaseLayer) {
             newBaseLayer.addTo($scope.map);
-            //newBaseLayer.bringToFront();
         }
         // remove old layer from map (todo: should we keep it?)
         if ($scope.baseLayer) $scope.map.removeLayer($scope.baseLayer);

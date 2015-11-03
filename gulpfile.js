@@ -97,6 +97,7 @@ gulp.task('combine-minify', function() {
     // }))
     //.pipe(gulpif('*.js', sourcemaps.write('./')))
 
+    // add all assets to dist folder
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
     //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))

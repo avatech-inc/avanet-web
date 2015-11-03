@@ -14,6 +14,13 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
 
         var canvas = element[0];
         var context = canvas.getContext('2d');
+
+        // scale for retina
+        if (window.devicePixelRatio > 1) {
+            context.scale(window.devicePixelRatio, window.devicePixelRatio);
+            canvas.height *= window.devicePixelRatio;
+            canvas.width *= window.devicePixelRatio;
+        }
     }
   };
 });

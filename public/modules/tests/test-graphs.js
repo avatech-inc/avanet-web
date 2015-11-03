@@ -1,4 +1,3 @@
-
 angular.module('avatech').directive('graphBig', function() {
   return {
     restrict: 'A',

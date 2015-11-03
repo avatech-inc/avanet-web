@@ -649,9 +649,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
                 // associate profile with marker
                 marker.data.observation = profile;
-                
-                // set observation type
-                //marker.category = 0;
 
                 // add to map
                 pruneCluster.RegisterMarker(marker);

@@ -62,8 +62,7 @@ gulp.task('compass', ['clean-css'], function() {
 gulp.task('combine-minify', function() {
     var assets = useref.assets({ searchPath: 'public' });
 
-    // todo: does this have to be _dist?
-  return gulp.src('_dist2/app/views/main.html')
+    return gulp.src('_dist2/app/views/main.html')
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
     }))

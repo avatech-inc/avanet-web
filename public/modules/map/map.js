@@ -336,9 +336,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
         // detailed mode
         if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
+            var markerClass = 'count-icon';
             // set marker icon based on observation type
             leafletMarker.setIcon(L.divIcon({
-                className: 'count-icon ' + data.observation.type,
+                className: markerClass,
                 html: "",
                 iconSize: [30, 50]
             }));

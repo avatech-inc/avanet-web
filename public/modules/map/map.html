@@ -440,6 +440,8 @@
 			ng-class="{ 'marginBottom': selectedProfiles.length > 0 }"
 			ng-show="selectedList == 'my_unpublished'" always-visible="true">
 
+				<div ng-show="filteredDrafts.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+				
 				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
 					<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
 

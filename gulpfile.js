@@ -75,7 +75,7 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.js', stripDebug()))
 
     // sourcemaps
-    .pipe(gulpif('*.js', sourcemaps.init()))
+    //.pipe(gulpif('*.js', sourcemaps.init()))
 
     // ng-anneotate (add [] style annotations to controllers for minifcation)
     .pipe(gulpif('*.js', ngAnnotate()))

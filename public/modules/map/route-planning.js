@@ -1069,6 +1069,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                     '<src>AllTrails</src>\n';
 
             // route points
+            wayPointIndex = 0;
             for (var i = 0; i < _line.editing._markers.length; i++) {
                 var thisPoint = _line.editing._markers[i];
                 //if (thisPoint.waypoint) legIndex++;

@@ -41,6 +41,15 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             context.beginPath();
             context.arc(graphWidth / 2, graphWidth / 2, (graphWidth / 2) - 1, 0, 2 * Math.PI);
             context.stroke();
+
+            // draw aspect slices
+            var radius = graphWidth / 2;
+            for (var i = 1; i <= 8; i++) {
+                var angle = (67.5 + (45 * i)) * (Math.PI/180);
+                context.moveTo(radius, radius);
+                context.lineTo(radius + radius * Math.cos(angle), radius + radius * Math.sin(angle));
+            }
+            context.stroke();
         }
     }
   };

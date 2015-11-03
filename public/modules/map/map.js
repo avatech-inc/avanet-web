@@ -339,6 +339,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             var markerClass = 'count-icon';
             // append observation type to class
             markerClass += ' ' + data.observation.type
+            // append redFlag
+            if (data.observation.redFlag) markerClass += ' redFlag';
+
             // set marker icon based on observation type
             leafletMarker.setIcon(L.divIcon({
                 className: markerClass,

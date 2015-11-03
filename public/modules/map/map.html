@@ -403,6 +403,7 @@
 						</div>
 
 						<div class='lineItem'><i class="fa fa-user"></i>{{ ::profile.user.fullName}} 
+	                  		<span bo-show="profile.user.userType == 'pro' || profile.user.userType == 'pro+'" class='pro-badge'>PRO</span>
 						</div>
 
 						<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>

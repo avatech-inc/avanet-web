@@ -101,7 +101,6 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
     //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))
-
     .pipe(gulpif('*.html', gulp.dest('_dist2/app/views')))
 
     //.on('end', done);

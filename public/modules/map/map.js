@@ -413,6 +413,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
             icon.options.className += " detailed";
         }
+
+        // hacky yet highly performant way to determine if there is a red flag in the cluster
+        var redFlagInCluster = cluster.stats[1] > 0;
          
         // create marker
         var m = new L.Marker(position, { icon: icon });

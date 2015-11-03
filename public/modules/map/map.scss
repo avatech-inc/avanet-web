@@ -809,6 +809,9 @@ a:hover { text-decoration: none !important; }
 	    margin-left: -6px;
 	    margin-top: -6px;
 	}
+	&.redFlag {
+		background: #db1f26;
+	}
 }
 .side-list-item.short canvas,
 .side-list-item.short .thumb {

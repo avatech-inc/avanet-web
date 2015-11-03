@@ -575,6 +575,15 @@
 .count-icon.wind { background-image: url(/img/markers/wind.png); }
 .count-icon.snowpit { background-image: url(/img/markers/snowpit.png); }
 
+// red flags
+.count-icon.avalanche.redFlag { background-image: url(/img/markers/avalanche-red.png); }
+.count-icon.snowpack-test.redFlag { background-image: url(/img/markers/snowpack-test-red.png); }
+.count-icon.snowpack.redFlag { background-image: url(/img/markers/snowpack-red.png); }
+.count-icon.weather.redFlag { background-image: url(/img/markers/weather-red.png); }
+.count-icon.sp-profile.redFlag { background-image: url(/img/markers/sp-profile-red.png);}
+.count-icon.wind.redFlag { background-image: url(/img/markers/wind-red.png); }
+.count-icon.snowpit.redFlag { background-image: url(/img/markers/snowpit-red.png); }
+
 /*.count-icon.tiny,.count-icon-test.tiny {
 	border: none;
 	width:40%;

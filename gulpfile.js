@@ -72,7 +72,7 @@ gulp.task('combine-minify', function() {
     // minify CSS
     .pipe(gulpif('*.css', minifyCSS()))
 
-    // string console.log statements
+    // strip 'console.log' statements
     .pipe(gulpif('*.js', stripDebug()))
 
     // sourcemaps

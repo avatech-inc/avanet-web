@@ -153,9 +153,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.selectedProfiles.splice(index, 1);
             return false;
         }
-
         $scope.selectedProfiles.push(profile);
-
         return false;
     }
     $scope.getProfileSelectedIndex = function(profile) {

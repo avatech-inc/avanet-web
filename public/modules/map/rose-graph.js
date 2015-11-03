@@ -32,6 +32,10 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
 
             // clear canvas
             context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // stroke style
+            context.lineWidth = 3;
+            context.strokeStyle = "#000";
         }
     }
   };

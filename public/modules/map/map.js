@@ -817,10 +817,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     },true);
 
-    // $scope.map.on('click', function(e) {
-    //     terrainLayer.initiateGetTerrainData(e.latlng.lat, e.latlng.lng);
-    // });
-
     // custom terrain visualization
     $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
     $scope.customTerrain = {

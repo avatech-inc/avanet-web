@@ -385,11 +385,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
         // });
         // var routePlanningToolbar = new L.Control.RoutePlanningToolbar({}).addTo(_map);
 
-        _map.on('zoomend', function(e) {
-            //plotElevationProfile();
-            console.log("MAP ZOOM: " + _map.getZoom());
-            // todo: if zoom level 11, disable route editing
-        });
+        // _map.on('zoomend', function(e) {
+        //     //plotElevationProfile();
+        //     console.log("MAP ZOOM: " + _map.getZoom());
+        //     // todo: if zoom level 11, disable route editing
+        // });
 
         var _line;
 

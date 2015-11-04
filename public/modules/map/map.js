@@ -426,7 +426,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                   center: m.getLatLng(),
                   marker: m
                 });
-
                 pruneCluster._map.setView(position, zoomLevelAfter);
               }
               else pruneCluster._map.fitBounds(bounds);

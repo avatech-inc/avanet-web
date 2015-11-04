@@ -429,9 +429,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
                 pruneCluster._map.setView(position, zoomLevelAfter);
               }
-              else {
-                pruneCluster._map.fitBounds(bounds);
-              }
+              else pruneCluster._map.fitBounds(bounds);
             }
           });
           return m;

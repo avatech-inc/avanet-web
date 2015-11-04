@@ -264,7 +264,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.global.setUserSetting("defaultMap", layer.alias);
     }
 
-    // init mapbox
+    // init leaflet map
     $scope.map = L.map('map', {
         zoomControl: false,
         minZoom: 3,

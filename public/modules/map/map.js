@@ -405,7 +405,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         var m = new L.Marker(position, { icon: icon });
 
           m.on('click', function() {
-            // Compute the  cluster bounds (it's slow : O(n))
+            // compute the  cluster bounds (it's slow : O(n))
             var markersArea = pruneCluster.Cluster.FindMarkersInArea(cluster.bounds);
             var b = pruneCluster.Cluster.ComputeBounds(markersArea);
 
@@ -417,9 +417,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
               var zoomLevelBefore = pruneCluster._map.getZoom();
               var zoomLevelAfter = pruneCluster._map.getBoundsZoom(bounds, false, new L.Point(20, 20, null));
 
-              // If the zoom level doesn't change
+              // if the zoom level doesn't change
               if (zoomLevelAfter === zoomLevelBefore) {
-                // Send an event for the LeafletSpiderfier
+                // send an event for the LeafletSpiderfier
                 pruneCluster._map.fire('overlappingmarkers', {
                   cluster: pruneCluster,
                   markers: markersArea,

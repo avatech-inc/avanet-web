@@ -243,10 +243,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // support cross origin on tiles (prevents 'tainted canvas' issue on export)
         newBaseLayer.on("tileloadstart", function(e) {
             if (e.tile) {
-                e.tile.crossOrigin = "";
-                // 'src' needs to be set after 'crossOrigin'
-                // without this hack, the 'origin' header isn't properly sent
-                e.tile.src = e.tile.src
+                // e.tile.crossOrigin = "";
+                // // 'src' needs to be set after 'crossOrigin'
+                // // without this hack, the 'origin' header isn't properly sent
+                // e.tile.src = e.tile.src
             }
         });
 

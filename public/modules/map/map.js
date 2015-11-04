@@ -436,6 +436,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
 
     // re-render observation icons when zoom level is changed
+    var previousZoom;
+    $scope.map.on('zoomstart', function(e) {
+        previousZoom = $scope.map.getZoom();
+    });
     $scope.map.on('zoomend', function(e) {
         // todo: only do this when zoom level change is significant ($scope.detailedZoomMin)
         // if ($scope.map.getZoom() == ($scope.detailedZoomMin - 1)) {

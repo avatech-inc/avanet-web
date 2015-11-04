@@ -237,7 +237,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         else if (layer.type == "MAPBOX") {
             var options = {};
             if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution;
-            newBaseLayer = L.mapbox.tileLayer(layer.id, options);
+           // newBaseLayer = L.mapbox.tileLayer(layer.id, options);
+
+            newBaseLayer = L.tileLayer('https://{s}.tiles.mapbox.com/v4/{layerId}/{z}/{x}/{y}{retina}.png?access_token={accessToken}', {
+                accessToken: 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg',
+                layerId: layer.id,
+                retina: L.Browser.retina ? '@2x' : '',
+                attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+            });
         }
 
         // support cross origin on tiles (prevents 'tainted canvas' issue on export)

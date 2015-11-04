@@ -403,20 +403,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
          
         // create marker
         var m = new L.Marker(position, { icon: icon });
-
-          m.on('click', function() {
+        m.on('click', function() {
             // compute the  cluster bounds (it's slow : O(n))
             var markersArea = pruneCluster.Cluster.FindMarkersInArea(cluster.bounds);
             var b = pruneCluster.Cluster.ComputeBounds(markersArea);
-
             if (b) {
-              var bounds = new L.LatLngBounds(
-                new L.LatLng(b.minLat, b.maxLng),
-                new L.LatLng(b.maxLat, b.minLng));
-
+              var bounds = new L.LatLngBounds(new L.LatLng(b.minLat, b.maxLng), new L.LatLng(b.maxLat, b.minLng));
               var zoomLevelBefore = pruneCluster._map.getZoom();
               var zoomLevelAfter = pruneCluster._map.getBoundsZoom(bounds, false, new L.Point(20, 20, null));
-
               // if the zoom level doesn't change
               if (zoomLevelAfter === zoomLevelBefore) {
                 // send an event for the LeafletSpiderfier
@@ -430,8 +424,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
               }
               else pruneCluster._map.fitBounds(bounds);
             }
-          });
-          return m;
+        });
+        return m;
     };
 
     // re-render observation icons when zoom level is changed

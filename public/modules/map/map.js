@@ -287,8 +287,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.mapLayer = L.layerGroup().addTo($scope.map);
 
     // add zoom control to map
-    //new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
-    L.control.zoomslider({ position: 'bottomright' }).addTo($scope.map);
+    new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
+    //L.control.zoomslider({ position: 'bottomright' }).addTo($scope.map);
 
     // add scale control to map
     // L.control.scale({

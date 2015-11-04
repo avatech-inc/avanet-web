@@ -523,14 +523,16 @@
 					Click on the map<br/>to place the next<br/>point on your route
 				</div>
 				<div ng-if="route && route.points.length > 1">
-					<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
-						<div style="padding-left:6px;padding-bottom:8px;">
+					<div style="padding:9px 0px 8px 4px;border-bottom: 1px solid #ddd;">
+						<div style="padding-left:6px;">
 							<a href="#" ng-click="routeControl.editing = !routeControl.editing"><i class="fa fa{{ routeControl.editing ? '-check' : '' }}-square-o" style="width:13px;"></i> Editing</a>&nbsp;&nbsp;&nbsp;
 							<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint"><i class="fa fa{{ routeControl.autoWaypoint ? '-check' : '' }}-square-o" style="width:13px;"></i> Auto-waypoint</a>&nbsp;&nbsp;&nbsp;
 							<a href="#" ng-click="routeControl.downloadGPX()"><i class="fa fa-file-excel-o"></i> GPX</a>&nbsp;&nbsp;&nbsp;
 							<a href="#" ng-click="routeControl.downloadPDF()"><i class="fa fa-file-pdf-o"></i> PDF</a>
 						</div>
+					</div>
 
+					<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
 						<div style="font-size:13px;">
 							<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
 							<label>VERTICAL</label> 

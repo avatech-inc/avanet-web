@@ -442,12 +442,18 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
     $scope.map.on('zoomend', function(e) {
         // todo: only do this when zoom level change is significant ($scope.detailedZoomMin)
-        // if ($scope.map.getZoom() == ($scope.detailedZoomMin - 1)) {
-        //     console.log("DETAIL MODE OFF");
-        // }
-        // else if ($scope.map.getZoom() == $scope.detailedZoomMin) {
-        //     console.log("DETAIL MODE ON");
-        // }
+        //if ($scope.map.getZoom() == ($scope.detailedZoomMin - 1)) {
+        if (previousZoom < 11 && $scope.map.getZoom() == 11) {
+            console.log("DETAIL MODE ON");
+            // pruneCluster.RedrawIcons();
+            // pruneCluster.ProcessView();
+        }
+        //else if ($scope.map.getZoom() == $scope.detailedZoomMin) {
+        else if (previousZoom > 10 && $scope.map.getZoom() == 10) {
+            console.log("DETAIL MODE OFF");
+            // pruneCluster.RedrawIcons();
+            // pruneCluster.ProcessView();
+        }
         // pruneCluster.ProcessView();
         // pruneCluster.RedrawIcons();
         // $scope.$apply();

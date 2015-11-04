@@ -301,7 +301,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     //     maxZoom: $scope.map.getZoom() 
     // }).addTo($scope.map);
 
-    $scope.detailedZoomMin = 9;
+    $scope.detailedZoomMin = 11;
     $scope.map.on('zoomend', function(e) {
         var zoom = $scope.map.getZoom();
         if (zoom < $scope.detailedZoomMin) {

@@ -211,10 +211,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             if (layer.subdomains) options.subdomains = layer.subdomains;
 
             var _url = layer.template;
-            if (layer.proxy) {
-                var _url = "http://localhost:4000/?url=" +
-                    _url.substr(_url.indexOf("://") + 3);
-            }
+            // if (layer.proxy) {
+            //     var _url = "http://localhost:4000/?url=" +
+            //         _url.substr(_url.indexOf("://") + 3);
+            // }
 
             newBaseLayer = L.tileLayer(_url, options);
         }

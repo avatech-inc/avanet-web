@@ -23,7 +23,7 @@ var newTerrainLayer = function (options) {
     terrainLayer.getTileSize = function () {
         var map = this._map,
             options = this.options,
-            zoom = map.getZoom() + options.zoomOffset,
+            zoom = map.getZoom(),
             zoomN = options.maxNativeZoom;
 
         // increase tile size when overzooming

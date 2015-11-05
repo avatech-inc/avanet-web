@@ -81,7 +81,8 @@ angular.module('avatech.system').controller('AdminUsersController', function ($s
 "United Kingdom"];
 
     $scope.getUsers = function() {
-        Users.query({}, function(users) {
+        Restangular.all('users').getList()
+        .then(function(users) {
             $scope.users = users;
 
             var emails = {};

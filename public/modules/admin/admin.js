@@ -7,11 +7,8 @@ angular.module('avatech').controller('AdminController', ['$scope', '$location', 
     {
         title: 'Organizations',
         template: '/modules/admin/orgs.html'
-    },
-    {
-        title: 'Preorders',
-        template: '/modules/admin/orders.html'
-    }];
+    }
+    ];
 
     // select first page
     $scope.selectedPage = $scope.pages[2];

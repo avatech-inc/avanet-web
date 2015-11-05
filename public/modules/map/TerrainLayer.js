@@ -99,8 +99,8 @@ var newTerrainLayer = function (options) {
         var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
 
         if (zoom > terrainLayer.options.maxNativeZoom) zoom = terrainLayer.options.maxNativeZoom;
-        //make zoom level 12 underzoomed from 13
-        if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
+        // make zoom level 12 underzoomed from 13
+        if (terrainLayer.options.underzoom) if (parseInt(zoom) == 12) zoom = 13;
 
         var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);
 
@@ -220,7 +220,7 @@ var newTerrainLayer = function (options) {
 
         // adjust zoom level for overzoom
         var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
-        if (terrainLayer.options.underzoom) { if (zoom == 12) zoom = 13; }
+        if (terrainLayer.options.underzoom) { if (parseInt(zoom) == 12) zoom = 13; }
         // get xyz of clicked tile based on clicked lat/lng
         var tilePoint = latLngToTilePoint(lat, lng, zoom);
         // get nw lat/lng of tile
@@ -244,7 +244,7 @@ var newTerrainLayer = function (options) {
             pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
         }
         // adjust points for underzoom
-        if (terrainLayer.options.underzoom && terrainLayer._map.getZoom() == 12) {
+        if (terrainLayer.options.underzoom && parseInt(terrainLayer._map.getZoom()) == 12) {
             var zoomDifference = 1;
             var zoomDivide = Math.pow(2, zoomDifference)
 

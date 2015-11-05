@@ -12,6 +12,9 @@ angular.module('avatech').service('Observations',
 	};
 
 	this.sync = function(callback) {
+        // if user not available, don't sync
+        if (!Global.user || !Global.user._id) return;
+        
         Restangular.all("users/" + Global.user._id + "/observations")
         .getList({
             verbose: false,

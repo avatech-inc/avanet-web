@@ -122,7 +122,7 @@ angular.module('avatech.system').controller('AdminUsersController', function ($s
                     emails[users[i].email] = 0;
 
                     //console.log(users[i].fullName + "," + users[i].created + "," + users[i].country + "," + users[i].org)
-                    console.log(users[i].created + "}" + users[i].city + "," + users[i].country + "}" + users[i].org);
+                    //console.log(users[i].created + "}" + users[i].city + "," + users[i].country + "}" + users[i].org);
 
                     if (users[i].country && europe.indexOf(users[i].country) > -1)
                         allOrgs.push({ 

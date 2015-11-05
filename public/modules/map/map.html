@@ -1,5 +1,5 @@
 <section ng-controller="MapController">
-	<section ng-hide="isFullScreen()" >
+	<section ng-class="{ 'hide-main': isFullScreen() }" >
 		<div id="map-header" ng-hide="isDemo">
 
 				<div class="btn-group filter" dropdown>

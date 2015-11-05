@@ -756,3 +756,7 @@ input-direction .dir.dir-SW, input-direction-range .dir.dir-SW { bottom: 8px; le
     bottom: 1px;
 }
 
+.hide-main {
+  opacity: 0;
+  pointer-events: none;
+}

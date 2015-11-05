@@ -11,7 +11,7 @@ angular.module('avatech').controller('AdminController', ['$scope', '$location', 
     ];
 
     // select first page
-    $scope.selectedPage = $scope.pages[2];
+    $scope.selectedPage = $scope.pages[0];
 
     $scope.selectPage = function(page) {
 		$scope.selectedPage = page;

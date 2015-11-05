@@ -212,9 +212,9 @@ angular.module('avatech.system').controller('AdminUsersController', function ($s
     }
 
     $scope.getStats = function(user) {
-        $http.get('/v1/users/' + user._id + '/stats').success(function(data){
-            console.log(data);
-        });
+        // $http.get('/v1/users/' + user._id + '/stats').success(function(data){
+        //     console.log(data);
+        // });
     }
 
 });

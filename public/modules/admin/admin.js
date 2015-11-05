@@ -1,4 +1,4 @@
-angular.module('avatech').controller('AdminController', ['$scope', '$location', '$http', 'Global', function ($scope, $location, $http, Global) {
+angular.module('avatech').controller('AdminController', function ($scope, $location, $http, Global) {
     
     $scope.pages = [{
     	title: 'Users',
@@ -17,4 +17,4 @@ angular.module('avatech').controller('AdminController', ['$scope', '$location', 
 		$scope.selectedPage = page;
     }
 
-}]);
+});

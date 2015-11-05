@@ -82,9 +82,8 @@ angular.module('avatech.system').controller('AdminOrgsController', function ($sc
 
     $scope.getOrgs = function() {
 
-        $http.get('/v1/orgs/all')
-        .success(function(orgs){
-            console.log(orgs);
+        Restangular.all('orgs').getList()
+        .then(function(orgs) {
             $scope.orgs = orgs;
 
           

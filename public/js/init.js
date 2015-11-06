@@ -3,6 +3,7 @@ window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
 
 angular.element(document).ready(function() {
     // fix facebook bug with redirect
+    // (not using fb login at the moment, but still should keep this for reference)
     if (window.location.hash == "#_=_") window.location.hash = "";
 
     // if user already exists

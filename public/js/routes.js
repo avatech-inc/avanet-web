@@ -7,28 +7,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
 
 
       $stateProvider
-        // .state('map', {
-        //     url: "/map",
-        //     templateUrl: '/views/map.html',
-        //     controller: 'MapController',
-        //     data: { requireLogin: true }
-        // })
-        // .state('map.profile', {
-        //     url: "/profile/:profileId",
-        //     templateUrl: '/views/tests/preview2.html',
-        //     data: { requireLogin: true }
-        // })
-    
-
-        // .state('index', {
-        //     url: '/',
-        //     templateUrl: '/views/index.html',
-        //     controller: 'IndexController',
-        //     data: { 
-        //         title: 'AvaTech',
-        //         requireLogin: true 
-        //     }
-        // })
 
         .state('index', {
             url: '/',

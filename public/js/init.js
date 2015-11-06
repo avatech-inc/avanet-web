@@ -21,13 +21,12 @@ angular.element(document).ready(function() {
     	},
         function(response) {
             // if API is not found, show API error
-            if (response.status == 0 || response.status == 500) {
-                document.body.style = 'display: block !important';
-                document.getElementById("api-error").style.display = '';
-            }
+            if (response.status == 0 || response.status == 500) 
+                document.body.className += ' api-error';
+            
             // if 404, start the app (go to login page)
             else angular.bootstrap(document, ['avatech']);
-        })
+        });
     }
     // if no auth token is found, start the app (go to login page)
     else angular.bootstrap(document, ['avatech']);

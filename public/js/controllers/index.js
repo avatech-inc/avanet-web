@@ -1,6 +1,5 @@
 angular.module('avatech.system').controller('IndexController', ['$scope', '$location', '$modal', 'Global', function ($scope, $location, $modal, Global) {
     $scope.global = Global;
-    //if (!Global.user.admin) $location.path("/profiles/new");
 
     // todo: THIS IS A DUPLICATE OF HEADER.JS - MUST CONSOLIDATE!
     $scope.sync = function() {

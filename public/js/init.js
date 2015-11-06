@@ -30,6 +30,8 @@ angular.element(document).ready(function() {
                 document.body.style = 'display: block !important';
                 document.getElementById("api-error").style.display = '';
             }
+            // if 404, start the app (go to login page)
+            else angular.bootstrap(document, ['avatech']);
         })
     }
     // if no auth token is found, start the app (go to login page)

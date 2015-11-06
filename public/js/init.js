@@ -23,5 +23,6 @@ angular.element(document).ready(function() {
 		    angular.bootstrap(document, ['avatech']);
 		})
     }
+    // if no auth token is found, start the app (go to login page)
     else angular.bootstrap(document, ['avatech']);
 });

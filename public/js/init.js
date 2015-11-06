@@ -17,11 +17,6 @@ angular.element(document).ready(function() {
     	$http.get(window.apiBaseUrl + 'users/' + auth.userId)
     	.then(function(response) {
     		window._user = response.data;
-    	})
-    	.finally(function() {
-		    // init the app
-		    angular.bootstrap(document, ['avatech']);
-		})
             angular.bootstrap(document, ['avatech']);
     	},
         function(response) {

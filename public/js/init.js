@@ -7,9 +7,9 @@ angular.element(document).ready(function() {
     if (window.location.hash == "#_=_") window.location.hash = "";
 
     // if user already exists
-    var initInjector = angular.injector(["ng","LocalStorageModule"]);
-    var localStorageService = initInjector.get("localStorageService");
-    var $http = initInjector.get("$http");
+    var injector = angular.injector(["ng","LocalStorageModule"]);
+    var localStorageService = injector.get("localStorageService");
+    var $http = injector.get("$http");
 
     var auth = localStorageService.get('auth');
     if (auth) {

@@ -242,10 +242,6 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	        else this.searchQuery.publisher.rec = false;
 	    }
 
-	    // this.publisher_emptyQuery = function() {
-	    //     this.searchQuery.publisher = { outsideOrgs: false, orgs: [], me: false, students: false };
-	    // }
-
 	    this.type_select = function(type) {
 	        this.searchQuery.type[type] = !this.searchQuery.type[type];
 	    }

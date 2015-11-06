@@ -6,7 +6,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 		this.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
 
-		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, students: false };
+		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, rec: false };
 	    this.searchQuery = {
 	        days: 365,
 
@@ -82,16 +82,16 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	            allowed = self.searchQuery.publisher.outsideOrgs;
 	        }
 
-	        // students
-	        if (val.user && val.user.student) {
-	            if (allowed === false && self.searchQuery.publisher.students) allowed = true;
-	            else if (allowed === true && !self.searchQuery.publisher.students) allowed = false;
+	        // rec users
+	        //console.log("userType: " + val.user.userType);
+	        if (val.user && ((val.user.userType && val.user.userType.indexOf("pro") == -1) || !val.user.userType)) {
+	        //if (val.user && val.user.student) {
+	            if (allowed === false && self.searchQuery.publisher.rec) allowed = true;
+	            else if (allowed === true && !self.searchQuery.publisher.rec) allowed = false;
 	        }
 
 	        // me
-	        if (self.searchQuery.publisher.me == null)
-	            self.searchQuery.publisher.me = true;
-
+	        if (self.searchQuery.publisher.me == null) self.searchQuery.publisher.me = true;
 	        if (self.searchQuery.publisher.me != null) {
 	            if (val.user._id == Global.user._id) {
 	                if (allowed === false && self.searchQuery.publisher.me) allowed = true;
@@ -237,9 +237,9 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	        else this.searchQuery.publisher.me = false;
 	    }
 
-	    this.publisher_selectStudents = function() {
-	        if (this.searchQuery.publisher.students != null) this.searchQuery.publisher.students = !this.searchQuery.publisher.students;
-	        else this.searchQuery.publisher.students = false;
+	    this.publisher_selectRec = function() {
+	        if (this.searchQuery.publisher.rec != null) this.searchQuery.publisher.rec = !this.searchQuery.publisher.rec;
+	        else this.searchQuery.publisher.rec = false;
 	    }
 
 	    // this.publisher_emptyQuery = function() {
@@ -276,7 +276,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	            (publisher.orgs == null || publisher.orgs.length == Global.orgs.length) &&
 	            (publisher.outsideOrgs == true) &&
 	            (publisher.me == true) &&
-	            (publisher.students == false)
+	            (publisher.rec == false)
 	            )
 	            return true;
 	        else return false;

@@ -318,7 +318,8 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             url: '/logout',
             onEnter: ['Global', function(Global) { Global.logout(); }]
         })
-        // catchall 404 (instead of $urlRouterProvider.otherwise("/404"), which only supports url redirect)
+
+        // catchall 404 (keeps URL)
         .state('404', {
             url: '/*path',
             templateUrl: '/views/404.html'

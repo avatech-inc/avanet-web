@@ -155,7 +155,8 @@ var newTerrainLayer = function (options) {
             terrainLayer.redrawQueue.push(redraw);
         }
         else {
-            var url = L.Util.template('https://s3.amazonaws.com/avatech-eas/{z}/{x}/{y}.png', L.extend({ z: zoom }, tilePoint));
+            tilePoint.z = zoom;
+            var url = L.Util.template('https://s3.amazonaws.com/avatech-eas/{z}/{x}/{y}.png', L.extend(tilePoint));
             var xhr = new XMLHttpRequest;
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";

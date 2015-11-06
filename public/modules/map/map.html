@@ -47,7 +47,7 @@
 				</div>
 
 				<div class="btn-group filter" dropdown 
-					ng-show="profile.user.student !== true && selectedList == 'published'">
+					ng-show="(global.user.userType == 'pro' || global.user.userType == 'pro+') && selectedList == 'published'">
 			      <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
 			        <span style="padding-right:3px;">{{ 'publisher' | translate }}</span> 
 
@@ -60,7 +60,6 @@
 			        </span>
 			      </button>
 			      	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
-
 				    	<li ng-click="obSearch.publisher_selectMe()"
 				    		ng-dblclick="obSearch.publisher_selectMe(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.me || obSearch.searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o'"></i>Me</a></li>
 
@@ -75,8 +74,8 @@
 			    		<li ng-click="obSearch.publisher_selectOutsideOrgs()"
 			    			ng-dblclick="obSearch.publisher_selectOutsideOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.outsideOrgs || obSearch.searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o'"></i>Outside Organizations</a></li>
 			    			
-				    	<li ng-click="obSearch.publisher_selectStudents()"
-				    		ng-dblclick="obSearch.publisher_selectStudents(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.students || obSearch.searchQuery.publisher.students == null ? 'fa-check-square' : 'fa-square-o'"></i>Students</a></li>
+				    	<li ng-click="obSearch.publisher_selectRec()"
+				    		ng-dblclick="obSearch.publisher_selectRec(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.rec || obSearch.searchQuery.publisher.rec == null ? 'fa-check-square' : 'fa-square-o'"></i>Rec Users</a></li>
 				    </ul>
 			    </div>
 

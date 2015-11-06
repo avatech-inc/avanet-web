@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('HeaderController', ['$scope', '$location', '$modal','$route', 'RegisterDeviceModal', 'DeviceUploadModal', 'Global', function ($scope, $location, $modal, $route, RegisterDeviceModal, DeviceUploadModal, Global) {
+angular.module('avatech.system').controller('HeaderController', function ($scope, $location, $modal, $route, RegisterDeviceModal, DeviceUploadModal, Global) {
     $scope.global = Global;
 
     $scope.registerSP1 = function() {
@@ -36,4 +36,4 @@ angular.module('avatech.system').controller('HeaderController', ['$scope', '$loc
     //     });
     // }
     
-}]);
+});

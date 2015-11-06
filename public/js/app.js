@@ -16,17 +16,6 @@ angular.module('avatech.system', []);
 
 angular.module('avatech.profiles', []);
 
-// angular.module('avatech').factory('httpRequestInterceptor', function ($q, $location) {
-//     return {
-//         responseError: function(rejection) {
-//             // do something on error
-//             console.log("ERROR!");
-//             console.log(rejection);
-//             $q.reject(rejection);
-//          }
-//      };
-// });
-
 // angular.module('avatech').factory('Lightbox', function() {    
 //     return {
 //         // restrict: 'A',
@@ -126,22 +115,9 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 //     }
 // ]);
 
-// angular.module('avatech').run(['$rootScope','$urlRouter', function($rootScope, $urlRouter) {
-//     $rootScope.$on('$locationChangeSuccess', function(evt) {
-//       // Halt state change from even starting
-//       evt.preventDefault();
-//       console.log("HALT!!!!");
-//       // Perform custom logic
-//       // var meetsRequirement = ...
-//       // // Continue with the update and state transition if logic allows
-//       // if (meetsRequirement) $urlRouter.sync();
-//     });
-// }]);
-
+// the first thing that gets run
 angular.module('avatech').run(
  function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Global) {
-
-    // the first thing that gets run:
 
     // init global service
     Global.init();
@@ -157,7 +133,8 @@ angular.module('avatech').run(
         if (!toState) return;
         if (toState.name == fromState.name) return;
 
-        // todo: kludgy way to get rid of tooltips. not ideal, but only solution for now
+        // todo: kludgy non-angular way to clear tooltips on state change. 
+        // not ideal, but best solution for now
         $(".tooltip").remove();
 
         // redirect from login page if already logged in

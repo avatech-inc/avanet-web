@@ -217,8 +217,7 @@ angular.module('avatech').factory("Global",
 
                     // with this next line commented out, there should never be a situation where the user can
                     // log in as another user (login page will redirect to dash after login in another window)
-                    //if ($state.current.name != "login")
-					$state.transitionTo($state.current, $stateParams, { reload: true, inherit: false, notify: true });
+                    $state.transitionTo($state.current, $stateParams, { reload: true, inherit: false, notify: true });
 				}
 	    	}
         };

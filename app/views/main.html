@@ -59,15 +59,9 @@
 
 		<!--<link  href='/js/lib/leaflet.css' rel='stylesheet' />-->
 
-
 		<!-- Leaflet Draw -->
 		<!--<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
 		<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>-->
-
-
-		<!-- Leaflet Zoom Slider -->
-		<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.js'></script>
-		<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.css' rel='stylesheet' />
 
 		<!-- d3 -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
@@ -78,8 +72,8 @@
     	<!-- Sentry / Raven -->
     	<script src="//cdn.ravenjs.com/1.1.18/jquery,native/raven.min.js"></script>
 
-    	<!-- AWS SDK -->
-    	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.8.min.js"></script>
+    	<!-- AWS SDK 
+    	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.8.min.js"></script>-->
 
     	<!-- Stripe Checkout -->
 		<script src="https://checkout.stripe.com/checkout.js"></script>
@@ -113,6 +107,7 @@
 	<body window-resize ng-cloak>
 		<div ng-include="'/views/header.html'"></div>
 		<section class="content" ui-view></section>
+		<div id="api-error" style="display:none;">API connection error!</div>
 
 		<!-- jQuery -->
 		<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.min.js"></script>
@@ -279,32 +274,30 @@
 		<script type="text/javascript" src='/js/routes.js'></script>
 
 		<!-- inject:js -->
-  		<script src="/modules/admin/admin-invite.js"></script>
-  		<script src="/modules/admin/admin-orders.js"></script>
-  		<script src="/modules/admin/admin-orgs.js"></script>
-  		<script src="/modules/admin/admin-users.js"></script>
-  		<script src="/modules/admin/admin.js"></script>
-  		<script src="/modules/comments/comments.js"></script>
   		<script src="/modules/avalanches/observation-preview-modal.js"></script>
   		<script src="/modules/avalanches/observation-preview.js"></script>
   		<script src="/modules/avalanches/observations.js"></script>
+  		<script src="/modules/comments/comments.js"></script>
   		<script src="/modules/confirm/confirm.js"></script>
-  		<script src="/modules/field-tests/field-tests.js"></script>
+  		<script src="/modules/admin/admin-orgs.js"></script>
+  		<script src="/modules/admin/admin-users.js"></script>
+  		<script src="/modules/admin/admin.js"></script>
+  		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/location-select-modal/location-select-modal.js"></script>
   		<script src="/modules/map/TerrainLayer.js"></script>
   		<script src="/modules/map/layers.js"></script>
   		<script src="/modules/map/map.js"></script>
   		<script src="/modules/map/ob-search.js"></script>
+  		<script src="/modules/map/rose-graph.js"></script>
   		<script src="/modules/map/route-planning.js"></script>
   		<script src="/modules/map/terrain-worker.js"></script>
   		<script src="/modules/map/~terrain-layer.js"></script>
-  		<script src="/modules/device-upload-modal/modal.js"></script>
   		<script src="/modules/map-search/map-search.js"></script>
   		<script src="/modules/observations/observations.js"></script>
+  		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/profiles/profile-preview-modal.js"></script>
   		<script src="/modules/profiles/profile-preview.js"></script>
   		<script src="/modules/profiles/profiles.js"></script>
-  		<script src="/modules/organizations/organizations.js"></script>
   		<script src="/modules/publish-modal/modal.js"></script>
   		<script src="/modules/register-device-modal/modal.js"></script>
   		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
@@ -323,15 +316,9 @@
   		<script src="/modules/user/reset-password.js"></script>
   		<script src="/modules/user/settings.js"></script>
   		<script src="/js/services/global.js"></script>
-  		<script src="/js/services/organizations.js"></script>
-  		<script src="/js/services/profiles-service.js"></script>
-  		<script src="/js/services/profiles.js"></script>
+  		<script src="/js/services/observations-service.js"></script>
   		<script src="/js/services/snowpit-constants.js"></script>
-  		<script src="/js/services/tests.js"></script>
-  		<script src="/js/services/users.js"></script>
   		<script src="/js/controllers/header.js"></script>
-  		<script src="/js/controllers/index.js"></script>
-  		<script src="/js/controllers/upload.js"></script>
   		<script src="/js/directives/datepicker.js"></script>
   		<script src="/js/directives/fileupload.js"></script>
   		<script src="/js/directives/grain-select.js"></script>
@@ -342,6 +329,10 @@
   		<script src="/js/directives/timeinput.js"></script>
   		<script src="/js/directives/validation.js"></script>
   		<!-- endinject -->
+
+		<!-- Leaflet Zoom Slider 
+		<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.js'></script>
+		<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-zoomslider/v0.7.0/L.Control.Zoomslider.css' rel='stylesheet' />-->
 
 		<!-- start app -->     
 		<script type="text/javascript" src='/js/init.js'></script>

@@ -6,7 +6,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 		this.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
 
-		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, rec: false };
+		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, rec: true };
 	    this.searchQuery = {
 	        days: 365,
 
@@ -272,7 +272,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	            (publisher.orgs == null || publisher.orgs.length == Global.orgs.length) &&
 	            (publisher.outsideOrgs == true) &&
 	            (publisher.me == true) &&
-	            (publisher.rec == false)
+	            (publisher.rec == true)
 	            )
 	            return true;
 	        else return false;

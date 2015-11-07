@@ -1,5 +1,5 @@
-window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
-//window.apiBaseUrl = 'https://avanet-api.herokuapp.com/v2/';
+//window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
+window.apiBaseUrl = 'https://avanet-api.herokuapp.com/v2/';
 
 angular.element(document).ready(function() {
     // fix facebook bug with redirect
@@ -24,7 +24,7 @@ angular.element(document).ready(function() {
         // error
         function(response) {
             // if API is not found, show API error
-            // why don't we do this through angular? 
+            // why don't we do this through Angular? 
             // 1) it would be a sizeable amount of hacky code just for this (as opposed to one line here)
             // 2) it would require the entire app to be boostrapped just to show an error (slow)
             // 3) there's nothing interactive that needs to happen on the error page - purely static

@@ -15,6 +15,8 @@ var AvatechTerrainLayer = function (options) {
         tile.width = size.x;
         tile.height = size.y;
 
+        tile._tileLoaded = tileLoaded;
+
         this.drawTile(tile, tilePoint);
 
         return tile;

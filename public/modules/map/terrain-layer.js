@@ -137,11 +137,13 @@ var AvatechTerrainLayer = function (options) {
                 data.azimuth = pos.azimuth * (180 / Math.PI);
             }
 
+            // if no existing worker thread, create
             if (!terrainLayer.workers[tile_id]) {
                 terrainLayer.workers[tile_id] = new Worker('/modules/map/terrain-worker.js');
                 terrainLayer.workers[tile_id].onmessage = terrainLayer.updateTile;
             }
 
+            // post data to worker thread
             terrainLayer.workers[tile_id].postMessage(data, transferable);
 
             firstLoad = true;

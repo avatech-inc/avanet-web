@@ -116,7 +116,7 @@ var AvatechTerrainLayer = function (options) {
             imgData.data.set(new Uint8ClampedArray(e.data.pixels));
             temp_context.putImageData(imgData, 0, 0);
 
-            ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+            //ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
             ctx.drawImage(temp_canvas,0,0, 256, 256, 0, 0, tileSize, tileSize);
 
         }

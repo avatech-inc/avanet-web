@@ -532,6 +532,18 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             // this prevents a bug where addPoint is called without a latLng object
             if (!latlng) return;
 
+            // prevent adding a point too far from last point
+            if (_line.editing._markers.length) {
+                // get last point
+                var lastPoint = _line.editing._markers[_line.editing._markers.length - 1]._latlng;
+                // get distance from last point
+                var distance = turf.distance(turf.point([lastPoint.lng,lastPoint.lat]), turf.point([latlng.lng,latlng.lat]), 'kilometers');
+                // if distance is greater than 8km/5mi, don't allow
+                if (distance > 8) {
+                    alert('This point is more than 8km/5mi far from the last point.\n\nPlease place your next point closer.');
+                    return;
+                }
+            }
 
             if (index == null) index = _line.editing._poly._latlngs.length;
             _line.editing._poly.addLatLng(latlng);

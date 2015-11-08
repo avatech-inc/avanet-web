@@ -5,7 +5,7 @@ var AvatechTerrainLayer = function (options) {
     options.underzoom = true;
     var terrainLayer = new L.GridLayer(options);
 
-    terrainLayer.createTile = function(coords) {
+    terrainLayer.createTile = function(tilePoint) {
         var error;
         // create tile canvas
         var tile = L.DomUtil.create('canvas', 'leaflet-tile');
@@ -15,7 +15,7 @@ var AvatechTerrainLayer = function (options) {
         tile.width = size.x;
         tile.height = size.y;
 
-        this.drawTile(tile, coords, coords.z);
+        this.drawTile(tile, tilePoint);
 
         return tile;
     }

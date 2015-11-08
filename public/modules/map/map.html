@@ -516,11 +516,22 @@
 					</div>
 				</div>
 				<div ng-if="route.points.length == 0" class="instruct">
-					Click anywhere<br/>on the map to<br/>start your route
+					<div ng-show="map.getZoom() >= 13">
+						Click anywhere<br/>on the map to<br/>start your route
+					</div>
+					<div ng-show="map.getZoom() < 13">
+						Zoom in to start<br/>editing your route
+					</div>
 				</div>
 				<div ng-if="route.points.length == 1" class="instruct">
-					Click on the map<br/>to place the next<br/>point on your route
+					<div ng-show="map.getZoom() >= 13">
+						Click on the map<br/>to place the next<br/>point on your route
+					</div>
+					<div ng-show="map.getZoom() < 13">
+						Zoom in to continue<br/>editing your route
+					</div>
 				</div>
+
 				<div ng-if="route && route.points.length > 1">
 					<div style="padding:9px 0px 8px 4px;border-bottom: 1px solid #ddd;">
 						<div style="padding-left:6px;">

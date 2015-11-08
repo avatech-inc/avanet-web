@@ -77,6 +77,17 @@ var AvatechTerrainLayer = function (options) {
             }
         }
     };
+
+    // clear old 'layers'
+    var layerClearTimer;
+    terrainLayer.on('load', function (e) {
+        if (layerClearTimer) clearTimeout(layerClearTimer);
+        layerClearTimer = setTimeout(function() {
+            terrainLayer._pruneTiles2();
+            terrainLayer._updateLevels();
+        }, 1000);
+    });
+
     terrainLayer.updateTile = function(e) {
         var ctx = terrainLayer.contexts[e.data.id];
         var tileSize = ctx.canvas.width;

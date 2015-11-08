@@ -174,9 +174,10 @@ var AvatechTerrainLayer = function (options) {
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";
             xhr.onload = function() {
-                if (xhr.status != 200) return;
-                var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+                // if anything other than a 200 status code is recieved, fire loaded callback
+                if (xhr.status != 200) return canvas._tileLoaded(null, canvas);
 
+                var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
                 var png = new PNG(data);
                 if (png) {
                     var pixels = png.decodePixels();

@@ -48,6 +48,34 @@ var AvatechTerrainLayer = function (options) {
 
     // clear existing _pruneTiles function
     terrainLayer._pruneTiles = function () { };
+
+    // duplicate of original _pruneTiles function from Leaflet's GridLayer.js
+    terrainLayer._pruneTiles2 = function () {
+        var key, tile;
+        // var zoom = this._map.getZoom();
+        // if (zoom > this.options.maxZoom ||
+        //     zoom < this.options.minZoom) { return this._removeAllTiles(); }
+
+        for (key in this._tiles) {
+            tile = this._tiles[key];
+            tile.retain = tile.current;
+        }
+        for (key in this._tiles) {
+            tile = this._tiles[key];
+            if (tile.current && !tile.active) {
+                var coords = tile.coords;
+                if (!this._retainParent(coords.x, coords.y, coords.z, coords.z - 5)) {
+                    this._retainChildren(coords.x, coords.y, coords.z, coords.z + 2);
+                }
+            }
+        }
+        var self = this;
+        for (key in this._tiles) {
+            if (!this._tiles[key].retain) {
+                self._removeTile(key);
+            }
+        }
+    };
     terrainLayer.updateTile = function(e) {
         var ctx = terrainLayer.contexts[e.data.id];
         var tileSize = ctx.canvas.width;

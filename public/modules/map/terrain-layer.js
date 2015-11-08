@@ -75,17 +75,19 @@ var AvatechTerrainLayer = function (options) {
             imgData.data.set(new Uint8ClampedArray(e.data.pixels));
             ctx.putImageData(imgData, 0, 0);
         }
-        // overzoom
+        // scale for overzoom and underzoom
         else {
             var temp_canvas = document.createElement('canvas');
             temp_canvas.width = temp_canvas.height = 256;
             var temp_context = temp_canvas.getContext('2d');
+
             var imgData = temp_context.createImageData(256, 256);
             imgData.data.set(new Uint8ClampedArray(e.data.pixels));
             temp_context.putImageData(imgData, 0, 0);
 
             ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
             ctx.drawImage(temp_canvas,0,0, 256, 256, 0, 0, tileSize, tileSize);
+
         }
     }
 

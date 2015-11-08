@@ -404,6 +404,8 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 scope.control.editing = true;
                 disabledForZoom = false;
             }
+            // make sure angular is updated
+            scope.$apply();
         });
 
         var _line;

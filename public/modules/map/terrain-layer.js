@@ -69,7 +69,7 @@ var AvatechTerrainLayer = function (options) {
         // otherwise, tile will be rendered blank
         if (!e.data.pixels) return;
 
-        // regular tile
+        // regular size tile
         if (tileSize == 256) {
             var imgData = ctx.createImageData(256, 256);
             imgData.data.set(new Uint8ClampedArray(e.data.pixels));

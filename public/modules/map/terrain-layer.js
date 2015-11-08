@@ -46,7 +46,8 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.overlayType;
     terrainLayer.sunDate;
 
-    // clear existing _pruneTiles function
+    // clear existing _pruneTiles function to control clearing of layers on our own
+    // otherwise, noticeable flash/lag when leaflet animates zoom
     terrainLayer._pruneTiles = function () { };
 
     // duplicate of original _pruneTiles function from Leaflet's GridLayer.js

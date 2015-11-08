@@ -146,17 +146,30 @@ var newTerrainLayer = function (options) {
 
             firstLoad = true;
         }
-          
-        var cachedTile = terrainLayer.PNG_cache[tile_id];
+      
+        // check if tile is in local cache
+        //   storing and serving from this local cache is faster than using traditional browser cache,
+        //   since the image data is cached after the PNG has been decoded (which is pretty slow).
+        //   this is mainly to support quick loading between recently accessed areas and zoom levels
+        var cachedTile = terrainLayer.PNG_cache[tile_id];   
         if (cachedTile) {
-            console.log("CACHED TILE FOUND!");
             PNG_data = new Uint8ClampedArray(cachedTile).buffer;;
             redraw();
             terrainLayer.redrawQueue.push(redraw);
         }
         else {
-            tilePoint.z = zoom;
-            var url = L.Util.template('https://s3.amazonaws.com/avatech-eas/{z}/{x}/{y}.png', L.extend(tilePoint));
+            // use multiple CloudFront distributions
+            var subdomains = [
+                "d3h4b9a1mm5h1z"
+            ];
+            var url = L.Util.template('https://{s}.cloudfront.net/{z}/{x}/{y}.png', L.extend(tilePoint, {
+                z: zoom,
+                // cycle through subdomains (same implementation as Leaflet TileLayer)
+                s: function (argument) {
+                    var index = Math.abs(tilePoint.x + tilePoint.y) % subdomains.length;
+                    return subdomains[index];
+                }
+            }));
             var xhr = new XMLHttpRequest;
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";

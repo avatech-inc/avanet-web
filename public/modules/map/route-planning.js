@@ -33,6 +33,13 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
         // hide icons when not in edit mode
         scope.$watch("control.editing", function() {
             if (!_line) return;
+
+            // prevent editing above below zoom level 13
+            if (scope.control.editing && scope.map.getZoom() < 13) {
+                scope.control.editing = false;
+                alert("Please zoom in to edit your route.")
+            }
+
             if (scope.control.editing) editingOn();
             else editingOff();
         }, true);

@@ -46,6 +46,8 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.overlayType;
     terrainLayer.sunDate;
 
+    // clear existing _pruneTiles function
+    terrainLayer._pruneTiles = function () { };
     terrainLayer.updateTile = function(e) {
         var ctx = terrainLayer.contexts[e.data.id];
         var tileSize = ctx.canvas.width;

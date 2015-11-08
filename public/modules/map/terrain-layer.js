@@ -49,6 +49,7 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.updateTile = function(e) {
         var ctx = terrainLayer.contexts[e.data.id];
         var tileSize = ctx.canvas.width;
+        if (ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
 
         if (e.data.pointInTile) {
             var terrainData = e.data;

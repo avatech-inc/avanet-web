@@ -399,6 +399,11 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 scope.control.editing = false;
                 disabledForZoom = true;
             }
+            // restart editing once zoomed back in
+            else if (!scope.control.editing && _map.getZoom() >= 13 && disabledForZoom) {
+                scope.control.editing = true;
+                disabledForZoom = false;
+            }
         });
 
         var _line;

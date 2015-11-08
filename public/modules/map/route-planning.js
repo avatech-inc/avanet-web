@@ -392,10 +392,12 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
         // });
         // var routePlanningToolbar = new L.Control.RoutePlanningToolbar({}).addTo(_map);
 
+        var disabledForZoom = false;
         _map.on('zoomend', function(e) {
             // if zoom level is less than 13, disable editing
             if (scope.control.editing && _map.getZoom() < 13) {
                 scope.control.editing = false;
+                disabledForZoom = true;
             }
         });
 

@@ -47,6 +47,9 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.sunDate;
 
     terrainLayer.updateTile = function(e) {
+        var ctx = terrainLayer.contexts[e.data.id];
+        var tileSize = ctx.canvas.width;
+
         if (e.data.pointInTile) {
             var terrainData = e.data;
             // if empty values, make null
@@ -65,9 +68,6 @@ var AvatechTerrainLayer = function (options) {
         // if we've gotten this far and no pixels have been returned, it's an error and we should leave
         // otherwise, tile will be rendered blank
         if (!e.data.pixels) return;
-
-        var ctx = terrainLayer.contexts[e.data.id];
-        var tileSize = ctx.canvas.width;
 
         // regular tile
         if (tileSize == 256) {

@@ -1,7 +1,7 @@
 // By Andrew Sohn
 // (C) 2015 Avatech, Inc.
 
-var newTerrainLayer = function (options) {
+var AvatechTerrainLayer = function (options) {
     options.underzoom = true;
     var terrainLayer = new L.GridLayer(options);
 

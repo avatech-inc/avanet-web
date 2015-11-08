@@ -187,6 +187,10 @@ var AvatechTerrainLayer = function (options) {
                     terrainLayer.redrawQueue.push(redraw);
                 }
             };
+            // if network error, fire loaded callback 
+            xhr.onerror = function() {
+                canvas._tileLoaded(null, canvas);
+            }
             return xhr.send(null);
         }
     }

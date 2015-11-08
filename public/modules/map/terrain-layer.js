@@ -26,13 +26,15 @@ var AvatechTerrainLayer = function (options) {
             zoom = map.getZoom(),
             zoomN = options.maxNativeZoom;
 
+        // decrease tile size when underzooming
+        if (options.underzoom) { if (parseInt(zoom) == 12) tileSize = 128; }
+
         // increase tile size when overzooming
-        if (options.underzoom) { if (parseInt(zoom) == 12) return new L.Point(128,128);; }
-        var tileSize = zoomN !== null && zoom > zoomN ?
+        else tileSize = zoomN !== null && zoom > zoomN ?
                 Math.round(options.tileSize / map.getZoomScale(zoomN, zoom)) : 
                 options.tileSize;
 
-        return new L.Point(tileSize,tileSize);
+        return new L.Point(tileSize, tileSize);
     }
 
     terrainLayer.redrawQueue = [];

@@ -93,16 +93,16 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.overlayType = "loadTerrainData";
 
-    terrainLayer.drawTile = function(canvas, tilePoint, zoom) {
+    terrainLayer.drawTile = function(canvas, tilePoint) {
         var PNG_data;
 
-        var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
+        var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, tilePoint.z);
 
-        if (zoom > terrainLayer.options.maxNativeZoom) zoom = terrainLayer.options.maxNativeZoom;
+        if (tilePoint.z > terrainLayer.options.maxNativeZoom) tilePoint.z = terrainLayer.options.maxNativeZoom;
         // make zoom level 12 underzoomed from 13
-        if (terrainLayer.options.underzoom) if (parseInt(zoom) == 12) zoom = 13;
+        if (terrainLayer.options.underzoom && parseInt(tilePoint.z) == 12) tilePoint.z = 13;
 
-        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(tilePoint.z);
 
         terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
@@ -163,7 +163,7 @@ var AvatechTerrainLayer = function (options) {
                 "d3h4b9a1mm5h1z"
             ];
             var url = L.Util.template('https://{s}.cloudfront.net/{z}/{x}/{y}.png', L.extend(tilePoint, {
-                z: zoom,
+                //z: zoom,
                 // cycle through subdomains (same implementation as Leaflet TileLayer)
                 s: function (argument) {
                     var index = Math.abs(tilePoint.x + tilePoint.y) % subdomains.length;

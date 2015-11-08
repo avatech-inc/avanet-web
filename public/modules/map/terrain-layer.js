@@ -27,7 +27,7 @@ var AvatechTerrainLayer = function (options) {
             zoomN = options.maxNativeZoom;
 
         // decrease tile size when underzooming
-        if (options.underzoom) { if (parseInt(zoom) == 12) tileSize = 128; }
+        if (options.underzoom && parseInt(zoom) == 12) tileSize = 128;
 
         // increase tile size when overzooming
         else tileSize = zoomN !== null && zoom > zoomN ?

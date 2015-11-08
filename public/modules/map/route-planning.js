@@ -67,7 +67,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
                 // convert end point into a waypoint
                 if (marker._index == _line.editing._markers.length - 1) {
                     makeWaypoint(marker);
-                    updateElevationProfile();
+                    //updateElevationProfile();
                     updateSegments();
                     saveLinePoints();
                 }

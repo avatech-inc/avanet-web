@@ -537,7 +537,7 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             console.log("LINE:");
             console.log(_line.editing._poly);
 
-            //_line.editing._poly.spliceLatLngs(index, 0, latlng);
+            if (index == null) index = _line.editing._poly._latlngs.length;
             _line.editing._poly.addLatLng(latlng);
             _line.editing._markers.splice(index, 0, _line.editing._createMarker(latlng));
             _line.editing._poly.redraw();

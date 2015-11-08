@@ -200,10 +200,9 @@ var AvatechTerrainLayer = function (options) {
         terrainLayer.needsRedraw = false;
         //window.requestAnimationFrame(terrainLayer.redraw);
         //if (lastSync) cancelTimeout(lastSync);
-        lastSync = setTimeout(function(){
-            L.Util.requestAnimFrame(terrainLayer.redraw);
-            
-        }, 1);
+        //lastSync = setTimeout(function(){
+        L.Util.requestAnimFrame(terrainLayer.redraw);
+        //}, 1);
     }
     terrainLayer.redraw();
 

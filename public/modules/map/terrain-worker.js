@@ -77,7 +77,7 @@ onmessage = function (e) {
         id: e.data.id,
         pixels: processed.buffer,
     }
-    // use Transferable for transfering pixels for performance
+    // use Transferable for transfering pixels for better performance
     , [processed.buffer]);
 
 };

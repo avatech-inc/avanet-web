@@ -134,8 +134,7 @@ var AvatechTerrainLayer = function (options) {
             imgData.data.set(pixels);
             temp_context.putImageData(imgData, 0, 0);
 
-            //ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-            ctx.drawImage(temp_canvas,0,0, 256, 256, 0, 0, tileSize, tileSize);
+            ctx.drawImage(temp_canvas, 0, 0, 256, 256, 0, 0, tileSize, tileSize);
 
         }
         // fire tileLoaded callback
@@ -161,7 +160,6 @@ var AvatechTerrainLayer = function (options) {
 
         var firstLoad = false;
         function redraw() {
-
             // if no terrain overlay specified, clear canvas
             if (!terrainLayer.overlayType) {
                 var context = canvas.getContext('2d');

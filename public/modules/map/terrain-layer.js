@@ -234,6 +234,8 @@ var AvatechTerrainLayer = function (options) {
                     redraw();
                     terrainLayer.redrawQueue.push(redraw);
                 }
+                // error decoding PNG
+                else canvas._tileLoaded(null, canvas);
             };
             // if network error, fire loaded callback 
             xhr.onerror = function() {

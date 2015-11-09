@@ -165,6 +165,8 @@ var AvatechTerrainLayer = function (options) {
 
             // message to send to worker thread
             var message = { id: tile_id };
+            // Transferable = big performance improvement when sending large objects like PNG data
+            // https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
             var transferable = [];
 
             if (!firstLoad) {

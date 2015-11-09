@@ -72,11 +72,13 @@ onmessage = function (e) {
         //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
     }
 
-    
+    // send back to client
     postMessage({
         id: e.data.id,
         pixels: processed.buffer,
-    }, [processed.buffer]);
+    }
+    // use Transferable for transfering pixels for performance
+    , [processed.buffer]);
 
 };
 

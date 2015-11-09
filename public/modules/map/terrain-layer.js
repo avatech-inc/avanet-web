@@ -138,6 +138,8 @@ var AvatechTerrainLayer = function (options) {
             ctx.drawImage(temp_canvas,0,0, 256, 256, 0, 0, tileSize, tileSize);
 
         }
+        // fire tileLoaded callback
+        if (ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
     }
 
     terrainLayer.PNG_cache = {};

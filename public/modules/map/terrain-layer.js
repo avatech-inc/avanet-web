@@ -161,16 +161,17 @@ var AvatechTerrainLayer = function (options) {
                 return;
             }
 
+            // message to send to worker thread
+            var message = { id: tile_id };
             var transferable = [];
-            var data = { id: tile_id };
 
             if (!firstLoad) {
-                data.raster = PNG_data;
-                data.url = url;
-                transferable.push(data.raster);
+                message.raster = PNG_data;
+                message.url = url;
+                transferable.push(message.raster);
             }
-            data.processType = terrainLayer.overlayType;
-            data.customParams = terrainLayer.customParams;
+            message.processType = terrainLayer.overlayType;
+            message.customParams = terrainLayer.customParams;
 
             // sun location
             if (terrainLayer.overlayType == "sun" && terrainLayer.sunDate) {
@@ -188,8 +189,8 @@ var AvatechTerrainLayer = function (options) {
                 terrainLayer.workers[tile_id].onmessage = terrainLayer.updateTile;
             }
 
-            // post data to worker thread
-            terrainLayer.workers[tile_id].postMessage(data, transferable);
+            // post message to worker thread
+            terrainLayer.workers[tile_id].postMessage(message, transferable);
 
             firstLoad = true;
         }

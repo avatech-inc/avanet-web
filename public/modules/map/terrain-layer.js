@@ -174,14 +174,14 @@ var AvatechTerrainLayer = function (options) {
             message.customParams = terrainLayer.customParams;
 
             // sun location
-            if (terrainLayer.overlayType == "sun" && terrainLayer.sunDate) {
-                var mapCenter = terrainLayer._map.getCenter();
-                var _date = new Date(terrainLayer.sunDate);
-                _date.setHours(_date.getHours() - 1 - 1); // adjust for 0-23, adjust to match CalTopo
-                var pos = SunCalc.getPosition(_date, mapCenter.lat, mapCenter.lng);
-                data.altitude = pos.altitude * (180 / Math.PI);
-                data.azimuth = pos.azimuth * (180 / Math.PI);
-            }
+            // if (terrainLayer.overlayType == "sun" && terrainLayer.sunDate) {
+            //     var mapCenter = terrainLayer._map.getCenter();
+            //     var _date = new Date(terrainLayer.sunDate);
+            //     _date.setHours(_date.getHours() - 1 - 1); // adjust for 0-23, adjust to match CalTopo
+            //     var pos = SunCalc.getPosition(_date, mapCenter.lat, mapCenter.lng);
+            //     message.altitude = pos.altitude * (180 / Math.PI);
+            //     message.azimuth = pos.azimuth * (180 / Math.PI);
+            // }
 
             // if no existing worker thread, create
             if (!terrainLayer.workers[tile_id]) {

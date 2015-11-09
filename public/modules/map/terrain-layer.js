@@ -214,14 +214,14 @@ var AvatechTerrainLayer = function (options) {
             terrainLayer.redrawQueue.push(redraw);
         }
         else {
-            // use multiple CloudFront distributions
-            var subdomains = [
-                "d3h4b9a1mm5h1z"
-            ];
-            var url = L.Util.template('https://{s}.cloudfront.net/{z}/{x}/{y}.png', L.extend(tilePoint, {
-                //z: zoom,
-                // cycle through subdomains (same implementation as Leaflet TileLayer)
+            // elevation tile URL
+            var url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
+                // use multiple subdomains to parallelize requests
+                //   cycle through using same implementation as Leaflet TileLayer.
+                //   makes sure to return same subdomain each time a URL is fetched
+                //   to prevent duplicate browser caching.
                 s: function (argument) {
+                    var subdomains = "abc";
                     var index = Math.abs(tilePoint.x + tilePoint.y) % subdomains.length;
                     return subdomains[index];
                 }

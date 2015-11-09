@@ -243,7 +243,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 accessToken: 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg',
                 layerId: layer.id,
                 retina: L.Browser.retina ? '@2x' : '',
-                attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+                attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>',
                 //crossOrigin: true
             });
         }

@@ -198,7 +198,7 @@ var AvatechTerrainLayer = function (options) {
         // check if tile is in local cache
         //   storing and serving from this local cache is faster than using traditional browser cache,
         //   since the image data is cached after the PNG has been decoded (which is pretty slow).
-        //   this is mainly to support quick loading between recently accessed areas and zoom levels
+        //   this is mainly to support quick loading between recently accessed areas and zoom levels.
         var cachedTile = terrainLayer.PNG_cache[tile_id];   
         if (cachedTile) {
             PNG_data = new Uint8ClampedArray(cachedTile).buffer;;

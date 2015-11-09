@@ -121,7 +121,7 @@ var AvatechTerrainLayer = function (options) {
         // regular size tile
         if (tileSize == 256) {
             var imgData = ctx.createImageData(256, 256);
-            imgData.data.set(new Uint8ClampedArray(e.data.pixels));
+            imgData.data.set(pixels);
             ctx.putImageData(imgData, 0, 0);
         }
         // scale for overzoom and underzoom
@@ -131,7 +131,7 @@ var AvatechTerrainLayer = function (options) {
             var temp_context = temp_canvas.getContext('2d');
 
             var imgData = temp_context.createImageData(256, 256);
-            imgData.data.set(new Uint8ClampedArray(e.data.pixels));
+            imgData.data.set(pixels);
             temp_context.putImageData(imgData, 0, 0);
 
             //ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);

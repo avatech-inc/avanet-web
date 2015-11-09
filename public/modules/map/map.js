@@ -427,13 +427,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
 
     // re-render observation icons when zoom level is changed
+    // keep track of previousZoom
     var previousZoom;
     $scope.map.on('zoomstart', function(e) {
         previousZoom = $scope.map.getZoom();
     });
     $scope.map.on('zoomend', function(e) {
-        // todo: only do this when zoom level change is significant ($scope.detailedZoomMin)
-        //if ($scope.map.getZoom() == ($scope.detailedZoomMin - 1)) {
         if (previousZoom < 11 && $scope.map.getZoom() == 11) {
             console.log("DETAIL MODE ON");
             // pruneCluster.RedrawIcons();

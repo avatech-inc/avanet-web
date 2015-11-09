@@ -91,10 +91,7 @@ var AvatechTerrainLayer = function (options) {
     });
 
     terrainLayer.updateTile = function(e) {
-        var ctx = terrainLayer.contexts[e.data.id];
-        var tileSize = ctx.canvas.width;
-        if (ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
-
+        // process terrain data callback
         if (e.data.pointInTile) {
             var terrainData = e.data;
             // if empty values, make null
@@ -113,6 +110,13 @@ var AvatechTerrainLayer = function (options) {
         // if we've gotten this far and no pixels have been returned, it's an error and we should leave
         // otherwise, tile will be rendered blank
         if (!e.data.pixels) return;
+
+        // get canvas context for this tile
+        var ctx = terrainLayer.contexts[e.data.id];
+        var tileSize = ctx.canvas.width;
+
+        // get new pixels from worker thread response
+        var pixels = new Uint8ClampedArray(e.data.pixels);
 
         // regular size tile
         if (tileSize == 256) {

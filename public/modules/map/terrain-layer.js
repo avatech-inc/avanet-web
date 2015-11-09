@@ -14,10 +14,13 @@ var AvatechTerrainLayer = function (options) {
         tile.width = size.x;
         tile.height = size.y;
 
+        // attach tileLoaded callback to element for easier access down the chain
         tile._tileLoaded = tileLoaded;
 
+        // draw tile
         this.drawTile(tile, tilePoint);
 
+        // return tile so Leaflet knows to expect tileLoaded callback later
         return tile;
     }
 

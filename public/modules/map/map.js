@@ -244,18 +244,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 layerId: layer.id,
                 retina: L.Browser.retina ? '@2x' : '',
                 attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+                //crossOrigin: true
             });
         }
-
-        // support cross origin on tiles (prevents 'tainted canvas' issue on export)
-        newBaseLayer.on("tileloadstart", function(e) {
-            if (e.tile) {
-                // e.tile.crossOrigin = "";
-                // // 'src' needs to be set after 'crossOrigin'
-                // // without this hack, the 'origin' header isn't properly sent
-                // e.tile.src = e.tile.src
-            }
-        });
 
         // add new layer to map
         if (newBaseLayer) {

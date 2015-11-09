@@ -224,7 +224,8 @@ var AvatechTerrainLayer = function (options) {
                     return subdomains[index];
                 }
             }));
-            // get tile
+            // get tile as raw Array Buffer so we can process PNG on our own 
+            //   to avoid bogus data from native browser alpha premultiplication
             var xhr = new XMLHttpRequest;
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";

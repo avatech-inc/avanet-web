@@ -217,20 +217,22 @@ var AvatechTerrainLayer = function (options) {
                     return subdomains[index];
                 }
             }));
+            // get tile
             var xhr = new XMLHttpRequest;
             xhr.open("GET", url, true);
             xhr.responseType = "arraybuffer";
             xhr.onload = function() {
                 // if anything other than a 200 status code is recieved, fire loaded callback
                 if (xhr.status != 200) return canvas._tileLoaded(null, canvas);
-
+                // get PNG data from response
                 var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+                // decode PNG
                 var png = new PNG(data);
+                // if PNG was succesfully decoded
                 if (png) {
                     var pixels = png.decodePixels();
                     terrainLayer.PNG_cache[tile_id] = pixels;
                     PNG_data = new Uint8ClampedArray(pixels).buffer;
-
                     redraw();
                     terrainLayer.redrawQueue.push(redraw);
                 }

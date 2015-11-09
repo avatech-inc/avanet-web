@@ -6,8 +6,8 @@ var AvatechTerrainLayer = function (options) {
     var terrainLayer = new L.GridLayer(options);
 
     terrainLayer.createTile = function(tilePoint, tileLoaded) {
-        // create tile canvas
-        var tile = L.DomUtil.create('canvas', 'leaflet-tile');
+        // create tile canvas element
+        var tile = L.DomUtil.create('canvas', 'leaflet-tile always-show');
 
         // setup tile width and height according to the options
         var size = this.getTileSize();

@@ -18,7 +18,7 @@ angular.module('avatech').service('Observations',
         Restangular.all("users/" + Global.user._id + "/observations")
         .getList({
             verbose: false,
-            last: lastSync
+            //since: lastSync.toISOString()
         })
         .then(function(obs) {
 

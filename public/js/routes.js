@@ -64,7 +64,7 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         })
 
         .state('index.profile', {
-            url: 'p/:profileId',
+            url: 'obs/:profileId',
             views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
             //sticky: true,
             data: {

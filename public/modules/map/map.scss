@@ -855,7 +855,7 @@ a:hover { text-decoration: none !important; }
 .sub-btn {
   border: none;
   font-weight: 100;
-  color: #ccc;
+  color: #666;
   float: left;
   margin-top: 6px;
   line-height: 24px;
@@ -867,7 +867,7 @@ a:hover { text-decoration: none !important; }
   font-size: 11px;
   text-transform: uppercase;
   outline:none;
-  border: 1px solid #444;
+  border: 1px solid #777;
   transition: background color 100ms;
 }
 .sub-btn:first-child {
@@ -883,11 +883,11 @@ a:hover { text-decoration: none !important; }
 }
 .sub-btn.selected {
 	color: #fff;
-	background: #444 !important;
+	background: #777 !important;
 	pointer-events:none;
 }
 .sub-btn:hover {
-	background: #777;
+	background: #ccc;
 }
 
 .check {    

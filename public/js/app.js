@@ -125,7 +125,6 @@ angular.module('avatech').run(
     Observations.init();
 
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-
         // close all modals (todo: what is this from?)
         $modalStack.dismissAll();
 

@@ -17,6 +17,20 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
 
+        .state('index.route', {
+            url: 'routes/:routeId',
+            views: { "route-pane": { templateUrl: '/modules/map/route-planning.html' } },
+            reload: true,
+            //sticky: true,
+            data: {
+                //showPreviewPane: true
+            }
+            // data: {
+            //     title: 'AvaTech',
+            //     requireLogin: true 
+            // }
+        })
+
         .state('index.newObservation', {
             url: 'observations/:obType/new',
             data: { modal: true },

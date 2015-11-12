@@ -4,6 +4,7 @@
   "student" : "Student",
   "no_location" : "No Location",
   "new_observation" : "New Observation",
+  "new_route" : "New Route",
   "snowpit" : "Snowpit",
   "sp1_profile" : "SP Profile",
 
@@ -39,6 +40,10 @@
   "aerial_imagery": "Aerial",
   "search_location" : "Search for a location",
   "click_to_place_on_map" : "Click to place on map",
+  "observations": "Observations",
+  "observation": "Observations",
+  "routes": "Routes",
+  "route": "Routes",
   "all_observations" : "All Observations",
   "my_observations" : "My Observations",
   "pan_and_zoom" : "pan & zoom the map to see more observations",

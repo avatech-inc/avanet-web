@@ -75,37 +75,29 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             //     requireLogin: true 
             // }
         })
-        .state('index.test', {
-            url: 't/:testId',
-            views: { "right-pane": { templateUrl: '/modules/tests/preview-side.html' } },
-            //sticky: true,
-            data: {
-                showPreviewPane: true
-            }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
-        })
-        .state('index.avalanche', {
-            url: 'a/:observationId',
-            views: { "right-pane": { templateUrl: '/modules/avalanches/preview-side.html' } },
-            //sticky: true,
-            data: {
-                showPreviewPane: true
-            }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
-        })
-        // .state('upload', {
-        //     url: '/upload',
-        //     templateUrl: '/views/upload.html',
-        //     data: { 
-        //         title: 'Upload / AvaTech',
-        //         requireLogin: true 
+        // .state('index.test', {
+        //     url: 't/:testId',
+        //     views: { "right-pane": { templateUrl: '/modules/tests/preview-side.html' } },
+        //     //sticky: true,
+        //     data: {
+        //         showPreviewPane: true
         //     }
+        //     // data: {
+        //     //     title: 'AvaTech',
+        //     //     requireLogin: true 
+        //     // }
+        // })
+        // .state('index.avalanche', {
+        //     url: 'a/:observationId',
+        //     views: { "right-pane": { templateUrl: '/modules/avalanches/preview-side.html' } },
+        //     //sticky: true,
+        //     data: {
+        //         showPreviewPane: true
+        //     }
+        //     // data: {
+        //     //     title: 'AvaTech',
+        //     //     requireLogin: true 
+        //     // }
         // })
 
         // Snowpit Editor
@@ -123,65 +115,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         .state('index.profileEditor.details', {
             url: 'profiles/:profileId'
         })
-
-        // .state('profiles', {
-        //     url: '/profiles',
-        //     templateUrl: '/views/profiles/list.html',
-        //     data: { 
-        //         title: 'Profiles / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-
-        // device profiles
-        // .state('tests', {
-        //     url: '/tests',
-        //     templateUrl: '/modules/tests/list.html',
-        //     data: { 
-        //         title: 'Tests / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('test', {
-        //     url: '/tests/:testId',
-        //     templateUrl: '/modules/tests/preview.html',
-        //     data: { 
-        //         title: 'Test Details / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-
-        // field tests
-        // .state('fieldTests', {
-        //     url: '/field-tests',
-        //     templateUrl: '/modules/field-tests/list.html',
-        //     data: { 
-        //         title: 'Field Tests / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('fieldTestNew', {
-        //     url: '/field-tests/new',
-        //     templateUrl: '/modules/field-tests/new.html',
-        //     data: { 
-        //         title: 'New Field Test / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('fieldTest', {
-        //     url: '/field-tests/:testId',
-        //     templateUrl: '/modules/field-tests/view.html',
-        //     data: { 
-        //         title: 'Field Test Details / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
 
         // organizations
         .state('index.orgNew', {

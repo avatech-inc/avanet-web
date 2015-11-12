@@ -1,0 +1,102 @@
+<section ng-controller="RoutePlanningController">
+	<div class="route-box">
+		<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;"><!--ROUTE-->
+		<input type="text" ng-model="route.name" placeholder="Route Name"/>
+
+			<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-if="route && route.points.length > 1">
+				{{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
+				{{ formatters.formatDuration(route.terrain.timeEstimateMinutes) }}
+			</div>
+		</div>
+		<div ng-if="route.points.length == 0" class="instruct">
+			<div ng-show="map.getZoom() >= 13">
+				Click anywhere<br/>on the map to<br/>start your route
+			</div>
+			<div ng-show="map.getZoom() < 13">
+				Zoom in to start<br/>editing your route
+			</div>
+		</div>
+		<div ng-if="route.points.length == 1" class="instruct">
+			<div ng-show="map.getZoom() >= 13">
+				Click on the map<br/>to place the next<br/>point on your route
+			</div>
+			<div ng-show="map.getZoom() < 13">
+				Zoom in to continue<br/>editing your route
+			</div>
+		</div>
+
+		<div ng-if="route && route.points.length > 1">
+			<div style="padding:9px 0px 8px 4px;border-bottom: 1px solid #ddd;">
+				<div style="padding-left:6px;">
+					<a href="#" ng-click="routeControl.editing = !routeControl.editing"><i class="fa fa{{ routeControl.editing ? '-check' : '' }}-square-o" style="width:13px;"></i> Editing</a>&nbsp;&nbsp;&nbsp;
+					<a href="#" ng-click="routeControl.autoWaypoint = !routeControl.autoWaypoint"><i class="fa fa{{ routeControl.autoWaypoint ? '-check' : '' }}-square-o" style="width:13px;"></i> Auto-waypoint</a>&nbsp;&nbsp;&nbsp;
+					<a href="#" ng-click="routeControl.downloadGPX()"><i class="fa fa-file-excel-o"></i> GPX</a>&nbsp;&nbsp;&nbsp;
+					<a href="#" ng-click="routeControl.downloadPDF()"><i class="fa fa-file-pdf-o"></i> PDF</a>
+				</div>
+			</div>
+
+			<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
+				<div style="font-size:13px;">
+					<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
+					<label>VERTICAL</label> 
+						<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
+						<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
+					<br/>
+					<label>SLOPE</label>
+					<!--MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /-->
+					AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
+					MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
+					<br/>
+					<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+					
+					<label>Munter rate: Up</label> <input type="number" ng-model="munterRate.up" style="width: 38px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
+					<label>Down</label>
+					<input type="number" ng-model="munterRate.down" style="width: 38px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
+				</div>
+			</div>
+
+			<div class="route-list">
+				<div ng-repeat="routePoint in route.points">
+
+					<div class="route-item" style="padding-left:34px;font-size:12px;" 
+					ng-if="$index != 0"
+					ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
+					ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
+						<div class="side-line"></div>
+						DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+						TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
+						BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
+						NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
+						VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
+						SLOPE: 
+						<!--MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /-->
+						AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
+						MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
+						<br/>
+						ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
+					</div>
+					<div class="route-item" style="font-weight:bold"
+						ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 
+						ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
+						<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+						<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
+						<span style="font-weight:bold;">{{ route.waypointPrefix() }}{{ $index + 1 }}<span>&nbsp;
+
+						<span style="font-weight:normal;">{{ routePoint.waypoint.name }}</span>
+						<!--<span ng-show="$index == route.points.length - 1">END</span>-->
+						<!--<span ng-show="$index == 0">START</span>-->
+
+						<!-- hide elevation for now
+						({{ formatters.formatElevation(routePoint.terrain.elevation) }})--> 
+
+						<div style="float: right; font-size: 12px; line-height: 13px; position: relative; bottom: 3px; text-align: right; font-weight: 500;" ng-hide="$index == 0">
+							{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>
+							{{ formatters.formatDuration(routePoint.terrain.totalTimeEstimateMinutes) }}
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

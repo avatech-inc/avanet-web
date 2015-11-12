@@ -165,6 +165,9 @@ angular.module('avatech').run(
     // 3. after route change
     //$rootScope.$on("$routeChangeSuccess", function(event, current, previous) {
     $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+        // resize map based on new layout
+        $rootScope.$broadcast('resizeMap');
+
         // add class to body for page-specific styling
         // todo: there's gotta be a more angular-y way to do this
         //        ^^ in fact there is, <body class='{{ bodyCssClass }}' $rootScope.bodyCssClass

@@ -1,34 +1,29 @@
-angular.module('avatech').directive('routePlanning', function($http, $timeout, $filter, Global, snowpitExport) {
-  return {
-    restrict: 'E',
-    scope: { 
-      map: '=',
-      terrainLayer: '=',
-      route: '=',
-      hoverOnLegMap: '=',
-      hoverOnLeg: '=',
+angular.module('avatech').controller('RoutePlanningController', function($http, $scope, $rootScope, $timeout, $filter, Global, snowpitExport) {
 
-      hoverOnPointMap: '=',
-      hoverOnPoint: '=',
+    $scope.terrainLayer = $rootScope.terrainLayer;
+    $scope.map = $rootScope.map;
 
-      munterRateUp: '=',
-      munterRateDown: '=',
+    var formatters = snowpitExport.formatters;
 
-      control: '='
-    },
-    link: function(scope, element) {
-        var formatters = snowpitExport.formatters;
+    $scope.$on('$destroy', function() {
+        // todo: this throws an error - perhaps leaflet 1.0 related?
+        //$scope.map.off(mapClick);
+        lineGroup.removeFrom($scope.map);
+        lineSegmentGroup.removeFrom($scope.map);
+        _line = null;
+        editHandler = null;
+    });
 
-        scope.route = {
-            name: "Route Name",
-            terrain: {},
-            points: []
-        };
+    $scope.route = {
+        name: "Route Name",
+        terrain: {},
+        points: []
+    };
 
-        scope.control = {
-            editing: true,
-            autoWaypoint: false
-        }
+    $scope.routeControl = {
+        editing: true,
+        autoWaypoint: false
+    }
 
         // hide icons when not in edit mode
         scope.$watch("control.editing", function() {
@@ -1217,5 +1212,4 @@ angular.module('avatech').directive('routePlanning', function($http, $timeout, $
             return deg;
         }
     }
-}
 });

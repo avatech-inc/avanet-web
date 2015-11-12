@@ -387,11 +387,13 @@
 	width: 50%;
 	line-height: 40px;
 	transition: all 100ms;
+	img { opacity: .78; transition: opacity 100ms; }
 }
 .list-header button.selected {
 	color: #fff;
 	background: #666;
 	pointer-events:none;
+	img { opacity: 1 }
 }
 .list-header button:hover {
   	color:#fff;

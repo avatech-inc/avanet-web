@@ -32,6 +32,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.mapLayers = mapLayers;
 
     // which list to show in side bar
+    $scope.selectedTab = 'obs';
+    $scope.selectTab = function(tabName, $event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.selectedTab = tabName;
+        return false;
+    }
+
     $scope.selectedList = 'published';
     $scope.selectList = function(listName, $event) {
         $event.preventDefault();

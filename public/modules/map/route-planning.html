@@ -4,8 +4,8 @@
 		<input type="text" ng-model="route.name" placeholder="Route Name"/>
 
 			<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-if="route && route.points.length > 1">
-				{{ formatters.formatKmOrMiles(route.terrain.distance) }}<br/>
-				{{ formatters.formatDuration(route.terrain.timeEstimateMinutes) }}
+				{{ formatters.formatKmOrMiles(route.stats.distance) }}<br/>
+				{{ formatters.formatDuration(route.stats.timeEstimateMinutes) }}
 			</div>
 		</div>
 		<div ng-if="route.points.length == 0" class="instruct">
@@ -37,17 +37,17 @@
 
 			<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
 				<div style="font-size:13px;">
-					<label>NET ELEV</label> {{ route.terrain.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.terrain.elevationChange) }}
+					<label>NET ELEV</label> {{ route.stats.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.stats.elevationChange) }}
 					<label>VERTICAL</label> 
-						<span style="color:green;">+{{ formatters.formatElevation(route.terrain.verticalUp) }}</span> / 
-						<span style="color:red;">-{{ formatters.formatElevation(route.terrain.verticalDown) }}</span>
+						<span style="color:green;">+{{ formatters.formatElevation(route.stats.verticalUp) }}</span> / 
+						<span style="color:red;">-{{ formatters.formatElevation(route.stats.verticalDown) }}</span>
 					<br/>
 					<label>SLOPE</label>
-					<!--MIN: {{ route.terrain.slopeMin.toFixed(0) }}&deg; /-->
-					AVG: {{ route.terrain.slopeAverage.toFixed(0) }}&deg; /
-					MAX: {{ route.terrain.slopeMax.toFixed(0) }}&deg;
+					<!--MIN: {{ route.stats.slopeMin.toFixed(0) }}&deg; /-->
+					AVG: {{ route.stats.slopeAverage.toFixed(0) }}&deg; /
+					MAX: {{ route.stats.slopeMax.toFixed(0) }}&deg;
 					<br/>
-					<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.terrain.aspectAverage) }}<br/>
+					<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.stats.aspectAverage) }}<br/>
 					
 					<label>Munter rate: Up</label> <input type="number" ng-model="munterRate.up" style="width: 38px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
 					<label>Down</label>

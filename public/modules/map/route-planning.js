@@ -17,7 +17,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     $scope.route = {
         name: "Route Name",
-        terrain: {},
+        stats: {},
         points: []
     };
 
@@ -451,7 +451,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     function saveLinePoints() {
         $timeout(function(){
-            $scope.route.terrain = {};
+            $scope.route.stats = {};
             $scope.route.points = [];
 
             var legIndex = 0;
@@ -493,10 +493,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
             // route terrain stats
             if (elevationProfilePoints)
-               $scope.route.terrain = calculateLineSegmentStats(elevationProfilePoints);
-
-           console.log("save!");
-           console.log($scope.route);
+               $scope.route.stats = calculateLineSegmentStats(elevationProfilePoints);
         });
     }
 

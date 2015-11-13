@@ -822,7 +822,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
 
         if (gridOverlayLayer) {
-            //console.log("yooooooo")
             gridOverlayLayer.addTo($scope.map);
             gridOverlayLayer.setZIndex(99999);
         }

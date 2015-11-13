@@ -825,6 +825,12 @@ window.ElevationWidget = function() {
             .y0(this._height())
             .y1(function(d) { return self._y(d.y); });
 
+        var newPoints = [];
+        for (var i = 0; i < this._data.length; i++) {
+            // add points to temp array
+            newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
+        }
+        var _newPoints = simplify(newPoints, .01, false);
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);

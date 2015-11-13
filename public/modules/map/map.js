@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($rootScope, $scope, $q, $state, $location, $modal, $http, $timeout, $compile, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
+angular.module('avatech.system').controller('MapController', function ($rootScope, $scope, $q, $state, $location, $modal, $http, $timeout, $compile, Observations, Routes, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
     $scope.formatters = snowpitExport.formatters;
@@ -600,6 +600,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.loadMyProfiles = function() {
         $scope.myProfiles = Observations.observations;
     }
+    $scope.myRoutes = Routes.observations;
 
     // on map search select
     $scope.mapSearchSelect = function(location) {
@@ -701,6 +702,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         setInterval(function(){
             $scope.loadProfiles(false);
             $scope.loadMyProfiles();
+            //$scope.loadMyProfiles();
         }, 60000);
     }, 60000);
 

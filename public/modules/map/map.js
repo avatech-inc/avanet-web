@@ -1,11 +1,6 @@
 angular.module('avatech.system').controller('MapController', function ($rootScope, $scope, $q, $state, $location, $modal, $http, $timeout, $compile, Observations, Global, mapLayers, PublishModal, snowpitExport, $templateRequest, Restangular, ObSearch) {
     $scope.global = Global;
 
-    $rootScope.isDemo = false;
-    $scope.routeEditMode = false;
-
-    if ($rootScope.isDemo) mixpanel.track("demo");
-
     $scope.formatters = snowpitExport.formatters;
 
     $scope._showPreviewPane;

@@ -1,3 +1,5 @@
+$routeColor: #6664bd;
+
 .elevation-widget .background {
     background-color: transparent;
     font-size: 12px;
@@ -169,7 +171,7 @@
 
 .route-waypoint-icon {
     background: yellow;
-    border: 3px solid #6664bd;
+    border: 3px solid $routeColor;
     border-radius: 999px;
     display:inline-block;
     width: 20px;
@@ -182,7 +184,7 @@
 .side-line {
     content: '';
     width: 4px;
-    background: #6664bd;
+    background: $routeColor;
     position: absolute;
     left: 16px;
     top: -1px;

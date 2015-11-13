@@ -5,7 +5,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
 
         //$httpProvider.interceptors.push('httpRequestInterceptor');
 
-
       $stateProvider
 
         .state('index', {

@@ -413,30 +413,6 @@ window.ElevationWidget = function() {
     this._appendYaxis = function(y) {
         var opts = this.options;
 
-        if(opts.imperial){
-            y.attr("class", "y axis")
-            .call(d3.svg.axis()
-                .scale(this._y)
-                .ticks(this.options.yTicks)
-                .orient("left"))
-            .append("text")
-            .attr("x", -35)
-            .attr("y", 3)
-            .style("text-anchor", "end")
-            .text("ft");
-        }
-        else{
-            y.attr("class", "y axis")
-            .call(d3.svg.axis()
-                .scale(this._y)
-                .ticks(this.options.yTicks)
-                .orient("left"))
-            .append("text")
-            .attr("x", -25)
-            .attr("y", 3)
-            .style("text-anchor", "end")
-            .text("m");
-        }
     }
 
     this._appendXaxis = function(x) {

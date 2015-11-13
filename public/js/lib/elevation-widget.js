@@ -26,6 +26,8 @@ window.ElevationWidget = function() {
     //     imperial: false
     // }
 
+    var _color = "#428bca"; //"#2080cc" // #6664bd;
+
     this.onRemove = function(map) {
         this._container = null;
     }
@@ -96,10 +98,10 @@ window.ElevationWidget = function() {
         var g = d3.select(this._container).select("svg").select("g");
 
         this._profileStroke = g.append("path")
-            .attr("style", "fill:#6664bd;opacity:.4;");
+            .attr("style", "fill:" + _color + ";opacity:.4;");
 
         this._profileFill = g.append("path")
-            .attr("style", "fill:none;stroke:#6664bd;stroke-width:2px;");
+            .attr("style", "fill:none;stroke:" + _color + ";stroke-width:2px;");
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())
@@ -496,7 +498,7 @@ window.ElevationWidget = function() {
                     .attr("r", 6) // 6
                     .attr("cx", 0)
                     .attr("cy", 0)
-                    .attr("style", "fill:#6664bd;z-index:10000;")
+                    .attr("style", "fill:" + _color + ";z-index:10000;")
                     .attr("class", "height-focus circle-lower");
 
                 this._mouseHeightFocusLabel = heightG.append("svg:text")
@@ -709,7 +711,7 @@ window.ElevationWidget = function() {
             .attr('y1', 0)
             .attr('x2', xCoordinate)
             .attr('y2', this._height())
-            .attr("style","stroke:#6664bd;")
+            .attr("style","stroke:" + _color + ";")
             .classed('hidden', false);
 
         var alt = item.elevation,
@@ -832,7 +834,7 @@ window.ElevationWidget = function() {
             // add points to temp array
             newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
         }
-        var _newPoints = simplify(newPoints, .01, false);
+        var _newPoints = simplify(newPoints, .015, false);
         this._profileFill.datum(_newPoints).attr("d", newLine);
         this._profileStroke.datum(_newPoints).attr("d", newArea);
 
@@ -915,7 +917,7 @@ window.ElevationWidget = function() {
                     .attr('cy', this._y(item.elevation))
                     .attr('r','6')
                     .attr("class", "elevation-profile-waypoint")
-                    .attr("style", "stroke: #6664bd; stroke-width: 2px; fill: yellow; pointer-events: none;")
+                    .attr("style", "stroke: " + _color + "; stroke-width: 2px; fill: yellow; pointer-events: none;")
                     .classed('hidden', false);
 
                         // pointG.append("svg:circle")

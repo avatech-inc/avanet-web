@@ -424,66 +424,69 @@
 				</div>
 			</script>
 
-			<!-- Map Observations -->
-			<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published' && map.getZoom() >= detailedZoomMin"
-				>
+			<!-- Observations -->
+			<div ng-show="selectedTab == 'obs'">
+				<!-- Map Observations -->
+				<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published' && map.getZoom() >= detailedZoomMin"
+					>
 
-				<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
-					<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+					<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+						<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+					</div>
+
+					<div ng-show="filteredProfiles.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+
+					<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+					<ng-include src="'observationListItemTemplate'" ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" />
 				</div>
 
-				<div ng-show="filteredProfiles.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+				<!-- My Observations: Published -->
+				<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
 
-				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
-				<ng-include src="'observationListItemTemplate'" ng-repeat="profile in $parent.filteredProfiles = ($parent.profiles | filter: { filtered: false } ) | orderBy: '-date' track by profile._id" />
-			</div>
+					<div ng-show="filteredProfiles2.length == 0" style="no-obs-found">{{ 'no_obs_found' | translate }}</div>
 
-			<!-- My Observations: Published -->
-			<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
+					<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
+					<ng-include src="'observationListItemTemplate'" ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id"  />
+				</div>
 
-				<div ng-show="filteredProfiles2.length == 0" style="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+				<!-- My Observations: Unpublished -->
+				<div class="list-holder marginTop" scrollable 
+				ng-class="{ 'marginBottom': selectedProfiles.length > 0 }"
+				ng-show="selectedList == 'my_unpublished'" always-visible="true">
 
-				<!-- using $parent here because 'scrollable' directive messes with scope. todo: look into this, not ideal -->
-				<ng-include src="'observationListItemTemplate'" ng-repeat="profile in $parent.filteredDrafts2 = (myProfiles | filter: my_published) | orderBy : '-date' track by profile._id"  />
-			</div>
+					<div ng-show="filteredDrafts.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
 
-			<!-- My Observations: Unpublished -->
-			<div class="list-holder marginTop" scrollable 
-			ng-class="{ 'marginBottom': selectedProfiles.length > 0 }"
-			ng-show="selectedList == 'my_unpublished'" always-visible="true">
+					<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
+						<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
 
-				<div ng-show="filteredDrafts.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div>
+							<div class="check" onclick="return false;">
+								<i class="fa" 
+								ng-class="{ 
+								'fa-square-o': !isProfileSelected(profile),
+								'fa-check-square-o checked': isProfileSelected(profile) }"
+								ng-click="selectProfile(profile);" ></i>
+							</div>
 
-				<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
-					<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
+							<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="136"></canvas>
+							<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="136"></canvas>
+							<div ng-if="profile.type=='avy'" class="thumb"></div>
 
-						<div class="check" onclick="return false;">
-							<i class="fa" 
-							ng-class="{ 
-							'fa-square-o': !isProfileSelected(profile),
-							'fa-check-square-o checked': isProfileSelected(profile) }"
-							ng-click="selectProfile(profile);" ></i>
-						</div>
+							<div>
+								<div ng-show="profile.type=='snowpit'" class="last-edit">Last edited <span am-time-ago="profile.updated"></span></div>
+								<div ng-show="profile.type=='sp-profile'" class="last-edit">Uploaded <span am-time-ago="profile.created"></span></div>
 
-						<canvas ng-if="profile.type=='snowpit'" profile="profile" width="120" height="136"></canvas>
-						<canvas ng-if="profile.type=='sp-profile'" graph="profile.rows_micro" width="120" height="136"></canvas>
-						<div ng-if="profile.type=='avy'" class="thumb"></div>
+								<div class="lineItem"><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
 
-						<div>
-							<div ng-show="profile.type=='snowpit'" class="last-edit">Last edited <span am-time-ago="profile.updated"></span></div>
-							<div ng-show="profile.type=='sp-profile'" class="last-edit">Uploaded <span am-time-ago="profile.created"></span></div>
+								<div class="lineItem" ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
 
-							<div class="lineItem"><i class="fa fa-clock-o"></i>{{profile.date | date:'M/d/yy h:mm a'}}</div>
+								<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
+								profile.location[1] + ', ' + profile.location[0] :
+								'NO LOCATION'
+								 }}</div>
+							</div>
 
-							<div class="lineItem" ng-hide="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.metaData.location }}</div>
-
-							<div class="lineItem" ng-show="profile.type=='sp-profile'"><i class="fa fa-map-marker"></i>{{ profile.location.length ? 
-							profile.location[1] + ', ' + profile.location[0] :
-							'NO LOCATION'
-							 }}</div>
-						</div>
-
-					</a>
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>

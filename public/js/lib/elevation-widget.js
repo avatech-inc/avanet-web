@@ -831,6 +831,9 @@ window.ElevationWidget = function() {
             newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
         }
         var _newPoints = simplify(newPoints, .01, false);
+        this._profileFill.datum(_newPoints).attr("d", newLine);
+        this._profileStroke.datum(_newPoints).attr("d", newArea);
+
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);

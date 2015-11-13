@@ -293,6 +293,10 @@
 .side-bar .list-subheader {
 	height: 38px;
 	background: #666;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.3);
+    z-index: 550;
+    position: relative;
+}
 }
 .side-bar .list-bottom {
 	position: absolute;

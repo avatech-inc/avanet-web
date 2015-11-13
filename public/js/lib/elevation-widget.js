@@ -79,7 +79,6 @@ window.ElevationWidget = function() {
             })
             .y0(this._height())
             .y1(function(d) {
-                //console.log(d.slope);
                 return y(d.elevation);
             });
 

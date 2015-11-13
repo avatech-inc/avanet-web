@@ -141,7 +141,7 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.PNG_cache = {};
 
-    terrainLayer.overlayType = "loadTerrainData";
+    //terrainLayer.overlayType;
 
     terrainLayer.drawTile = function(canvas, tilePoint) {
         var PNG_data;
@@ -162,7 +162,8 @@ var AvatechTerrainLayer = function (options) {
             if (!terrainLayer.overlayType) {
                 var context = canvas.getContext('2d');
                 context.clearRect ( 0 , 0 , canvas.width, canvas.height );
-                return;
+                // todo: only return if option loadWhenEmpty ??
+                //return;
             }
 
             // message to send to worker thread
@@ -176,7 +177,11 @@ var AvatechTerrainLayer = function (options) {
                 message.url = url;
                 transferable.push(message.raster);
             }
-            message.processType = terrainLayer.overlayType;
+
+            var overlayType = terrainLayer.overlayType;
+            if (!overlayType) overlayType = "loadTerrainData";
+
+            message.processType = overlayType;
             message.customParams = terrainLayer.customParams;
 
             // sun location

@@ -805,22 +805,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    // ---------------------------------------------------
-    // ----------------- ROUTE PLANNING ------------------
-    // ---------------------------------------------------
-
-    $scope._hoverOnLeg = function(index) {
-        $scope.hoverOnLeg = index;
-    }
-    $scope._hoverOnPoint = function(index) {
-        $scope.hoverOnPoint = index;
-    }
-
-    $scope.munterRate = {
-        up: 4,
-        down: 10
-    }
-
     // --------------------------------
 
     var gridOverlayLayer;

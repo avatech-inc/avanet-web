@@ -935,13 +935,13 @@ window.ElevationWidget = function() {
                 //var opts = this.options;
 
                 //waypoint.style("visibility", "visible");
-                this.waypoints.append('svg:line')
-                    .attr('x1', item.xDiagCoord)
-                    .attr('y1', 0)
-                    .attr('x2', item.xDiagCoord)
-                    .attr('y2', this._height())
+
+                this.waypoints.append('svg:circle')
+                    .attr('cx', item.xDiagCoord)
+                    .attr('cy', this._y(item.elevation))
+                    .attr('r','6')
                     .attr("class", "elevation-profile-waypoint")
-                    .attr("style", "stroke: black; pointer-events: none;")
+                    .attr("style", "stroke: #6664bd; stroke-width: 2px; fill: yellow; pointer-events: none;")
                     .classed('hidden', false);
 
                         // pointG.append("svg:circle")

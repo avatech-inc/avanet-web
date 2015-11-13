@@ -359,8 +359,6 @@ var AvatechTerrainLayer = function (options) {
         // clear callbacks cache
         terrainLayer.callbacks = {};
 
-        console.log("POINTS: " + points.length);
-
         callbackCalled = false;
         var d = new Date().getTime();
         if (callbackTimer) clearTimeout(callbackTimer);

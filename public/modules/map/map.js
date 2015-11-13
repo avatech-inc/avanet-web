@@ -728,7 +728,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // init terrain layer
     $scope.overlayOpacity = .5;
-    var terrainLayer = $scope.terrainLayer = AvatechTerrainLayer({
+    $rootScope.terrainLayer = $scope.terrainLayer = AvatechTerrainLayer({
         zIndex: 999,
         opacity: $scope.overlayOpacity,
         maxNativeZoom: 13

@@ -22,6 +22,55 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         points: []
     };
 
+    // save when route is edited
+    var routeSaveTimer;
+    $scope.$watch('route',function() {
+        if (!_line || (_line.editing.markers && _line.editing.markers.length < 2)) return;
+
+        if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
+        routeSaveTimer = $timeout(function() {
+
+            console.log("saving!!");
+
+            var _route = {
+                name: $scope.route.name,
+                points: [],
+                terrain: [],
+                stats: $scope.route.stats,
+                // GeoJSON
+                path: {
+                    type: "LineString",
+                    coordinates: []
+                }
+            };
+
+            angular.forEach(_line.editing._markers, function(marker) {
+                //marker.dragging.enable();
+                //console.log(marker);
+                _route.path.coordinates.push([ marker._latlng.lng, marker._latlng.lat ]);
+
+                _route.points.push({ 
+                    coords: [ marker._latlng.lng, marker._latlng.lat ],
+                    waypoint: marker.waypoint
+                });
+            });
+
+            if (!$scope.route._id) {
+                $http.post(window.apiBaseUrl + "routes", _route)
+                .then(function(res) {
+                    if (res.data._id) $scope.route._id = res.data._id;
+                });
+            }
+            else {
+                 $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
+                .then(function(data) {
+
+                });
+            }
+
+        }, 500);
+    }, true);
+
     $scope.routeControl = {
         editing: true,
         autoWaypoint: false

@@ -431,6 +431,33 @@
 }
 .list-header button:hover {
   	color:#fff;
+
+.sublist-header {
+    position: relative;
+    font-weight: 100;
+    text-align: center;
+    line-height: 38px;
+    color: #ccc;
+}
+.sublist-header button {
+	border: none;
+	background: transparent;
+	color: #ddd;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: 300;
+	height: 38px;
+	width: 50%;
+	line-height: 35px;
+	transition: all 100ms;
+}
+.sublist-header button.selected {
+	color: #fff;
+	pointer-events:none;
+	border-bottom: 3px solid #ffcc00;
+}
+.sublist-header button:hover {
+  	color:#fff;
 }
 
 

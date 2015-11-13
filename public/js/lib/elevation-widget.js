@@ -959,7 +959,3 @@ window.ElevationWidget = function() {
     }
 
 };
-
-// L.control.elevation = function(options) {
-//     return new L.Control.Elevation(options);
-// };

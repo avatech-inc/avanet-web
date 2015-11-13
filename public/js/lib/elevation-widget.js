@@ -851,6 +851,10 @@ window.ElevationWidget = function() {
         });
         var opts = this.options;
 
+        // add padding to bottom of the elevation profile
+        var padding = (ydomain[1] - ydomain[0]) / this._height();
+        ydomain[0] -= (padding * 7.5);
+
         if (opts.yAxisMin !== undefined && (opts.yAxisMin < ydomain[0] || opts.forceAxisBounds)) {
             ydomain[0] = opts.yAxisMin;
         }

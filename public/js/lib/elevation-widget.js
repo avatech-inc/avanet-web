@@ -440,6 +440,17 @@ window.ElevationWidget = function() {
     }
 
     this._appendXaxis = function(x) {
+        var opts = this.options;
+        x.attr("class", "x axis")
+        .attr("transform", "translate(0," + this._height() + ")")
+        .call(d3.svg.axis()
+            .tickFormat(function(num){
+                if (opts.imperial) return num + " mi";
+                else return num + " km";
+            })
+            .scale(this._x)
+            .ticks(this.options.xTicks)
+            .orient("bottom"))
     }
 
     this._updateAxis = function() {

@@ -331,14 +331,13 @@
 			        </a></li></ul>
 			    </div>
 
-			    <div class="mapCoords" ng-show="mapCursorLocation">
+		    <div class="mapCoords" ng-show="mapCursorLocation">
 			    {{ formatters.formatLatLng(mapCursorLocation) }}
 			    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
 			    <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>
 			    &nbsp;&nbsp;
 			    <b>WGS84</b>
-			    </div>
-			</div>
+		    </div>
 
 			<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 		</div>

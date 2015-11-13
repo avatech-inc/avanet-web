@@ -477,7 +477,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // set initial location and zoom level
     var defaultZoom = 13;
     var initialLocation = (!$scope.global.user.location) ? [40.633052,-111.7111795] : [$scope.global.user.location[1],$scope.global.user.location[0]];
-    if ($rootScope.isDemo) initialLocation = [40.6050907,-111.6114807];
     $scope.map.setView(initialLocation, defaultZoom);
 
     // set base layer after map has been initialized and layers have been loaded from server
@@ -674,9 +673,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             verbose: false
         })
         .then(function(obs) {
-
             var d = new Date().getTime();
-            // todo: make this like the "observations" service? (i.e. addorreplace)
             $scope.profiles = obs;
             plotObsOnMap();
             searchObs();
@@ -689,17 +686,15 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     // handle loading of observations
-    if ($rootScope.isDemo === false) {
-
-        $scope.loadingProfiles = true;
-        $scope.loadProfiles(false);
-        $scope.loadMyProfiles();
-        setTimeout(function(){
-            setInterval(function(){
-                $scope.loadProfiles(false);
-                $scope.loadMyProfiles();
-            }, 60000);
+    $scope.loadingProfiles = true;
+    $scope.loadProfiles(false);
+    $scope.loadMyProfiles();
+    setTimeout(function(){
+        setInterval(function(){
+            $scope.loadProfiles(false);
+            $scope.loadMyProfiles();
         }, 60000);
+    }, 60000);
 
         $scope.map.on('moveend', function() {
             $timeout.cancel($scope.loadProfilesTimer);

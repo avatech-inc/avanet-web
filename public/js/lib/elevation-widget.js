@@ -820,8 +820,7 @@ window.ElevationWidget = function() {
         }
         this._x.domain(xdomain);
         this._y.domain(ydomain);
-        this._areapath.datum(this._data)
-            .attr("d", this._area);
+        this._areapath.datum(this._data).attr("d", this._area);
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);

@@ -6,8 +6,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     var formatters = snowpitExport.formatters;
 
     $scope.$on('$destroy', function() {
-        // todo: this throws an error - perhaps leaflet 1.0 related?
-        //$scope.map.off(mapClick);
+        $scope.map.off('click', mapClick);
+        elevationWidget.clear();
+        elevationWidget = null;
         lineGroup.removeFrom($scope.map);
         lineSegmentGroup.removeFrom($scope.map);
         _line = null;

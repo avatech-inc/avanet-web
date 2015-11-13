@@ -597,10 +597,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     });
 
 
-    $scope.loadMyProfiles = function() {
-        $scope.myProfiles = Observations.observations;
-    }
+    //$scope.loadMyProfiles = function() {
+    $scope.myProfiles = Observations.observations;
     $scope.myRoutes = Routes.observations;
+    //}
 
     // on map search select
     $scope.mapSearchSelect = function(location) {
@@ -697,11 +697,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // handle loading of observations
     $scope.loadingProfiles = true;
     $scope.loadProfiles(false);
-    $scope.loadMyProfiles();
+    //$scope.loadMyProfiles();
     setTimeout(function(){
         setInterval(function(){
             $scope.loadProfiles(false);
-            $scope.loadMyProfiles();
             //$scope.loadMyProfiles();
         }, 60000);
     }, 60000);

@@ -95,7 +95,11 @@ window.ElevationWidget = function() {
 
         var g = d3.select(this._container).select("svg").select("g");
 
+        this._profileStroke = g.append("path")
+            .attr("style", "fill:#6664bd;opacity:.4;");
 
+        this._profileFill = g.append("path")
+            .attr("style", "fill:none;stroke:#6664bd;stroke-width:2px;");
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())

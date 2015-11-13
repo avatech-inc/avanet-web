@@ -735,30 +735,28 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }).addTo($scope.map);
 
     setTimeout(function(){
-        //terrainLayer.addTo($scope.map);
-        terrainLayer.setZIndex(99998);
+        //$scope.terrainLayer.addTo($scope.map);
+        $scope.terrainLayer.setZIndex(99998);
     }, 100);
 
     $scope.$watch('overlayOpacity', function() {
-        terrainLayer.setOpacity($scope.overlayOpacity);
+        $scope.terrainLayer.setOpacity($scope.overlayOpacity);
     });
 
     $scope.map.on('viewreset', function () {
-        terrainLayer.redrawQueue = [];
+        $scope.terrainLayer.redrawQueue = [];
         // workers.forEach(function (worker) {
         //     worker.postMessage('clear');
         // });
     });
     $scope.map.on('zoomstart', function(e) {
-        terrainLayer.redrawQueue = [];
+        $scope.terrainLayer.redrawQueue = [];
     });
 
     // set terrain overlay
-    $scope.terrainOverlay;
-    if ($rootScope.isDemo) $scope.terrainOverlay = "elevation";
-    $scope.$watch('terrainOverlay', function(){
-        terrainLayer.overlayType = $scope.terrainOverlay;
-        terrainLayer.needsRedraw = true;
+    $scope.$watch('terrainOverlay', function() {
+        $scope.terrainLayer.overlayType = $scope.terrainOverlay;
+        $scope.terrainLayer.needsRedraw = true;
     });
 
     // sun exposure stuff
@@ -772,8 +770,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     //         $scope.sunDate.setHours($scope.sunHours);
     //         if ($scope.sunHours % 1 == .5) $scope.sunDate.setMinutes(30);
 
-    //         terrainLayer.sunDate = angular.copy($scope.sunDate);
-    //         terrainLayer.needsRedraw = true
+    //         $scope.terrainLayer.sunDate = angular.copy($scope.sunDate);
+    //         $scope.terrainLayer.needsRedraw = true
     //     }, 50);
     // },true);
 
@@ -794,9 +792,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.$watch('customTerrain', function() {
         if ($scope.customTerrain.color.indexOf('#') == 0) $scope.customTerrain.color = $scope.customTerrain.color.substr(1);
 
-        terrainLayer.customParams = angular.copy($scope.customTerrain);
-        //terrainLayer.redrawQueue = [];
-        terrainLayer.needsRedraw = true;
+        $scope.terrainLayer.customParams = angular.copy($scope.customTerrain);
+        //$scope.terrainLayer.redrawQueue = [];
+        $scope.terrainLayer.needsRedraw = true;
 
     }, true);
 

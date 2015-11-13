@@ -718,7 +718,7 @@ window.ElevationWidget = function() {
             .attr('y1', 0)
             .attr('x2', xCoordinate)
             .attr('y2', this._height())
-            .attr("style","stroke:#00fffa;")
+            .attr("style","stroke:#6664bd;")
             .classed('hidden', false);
 
         var alt = item.elevation,

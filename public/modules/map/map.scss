@@ -297,7 +297,14 @@
     z-index: 550;
     position: relative;
 }
+.side-bar .list-sub-subheader {
+	height:38px;
+	background:#ddd;
+    //box-shadow: -7px 0px 6px rgba(0,0,0,.4);
+    z-index: 500;
+    position: relative;
 }
+
 .side-bar .list-bottom {
 	position: absolute;
 	bottom:0;left:0;right:0;

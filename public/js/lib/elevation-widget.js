@@ -115,7 +115,6 @@ window.ElevationWidget = function() {
             .attr("width", this._width())
             .attr("height", this._height())
             .style("fill", "none")
-            .style("stroke", "#000")
             .style("pointer-events", "all");
 
         // if (L.Browser.touch) {
@@ -131,7 +130,7 @@ window.ElevationWidget = function() {
             on("mousemove.drag", this._dragHandler.bind(this));
             L.DomEvent.on(this._container, 'mouseup', this._dragEndHandler, this);
 
-        }
+        //}
 
         this._xaxisgraphicnode = g.append("g");
         this._yaxisgraphicnode = g.append("g");
@@ -370,8 +369,6 @@ window.ElevationWidget = function() {
         return $(".bottom-pane").width();
     }
     this._width = function() {
-        //var opts = this.options;
-        //return opts.width - opts.margins.left - opts.margins.right;
         return ($(".bottom-pane").width() - opts.margins.left - opts.margins.right);
     }
 
@@ -444,9 +441,7 @@ window.ElevationWidget = function() {
     }
 
     this._mouseoutHandler = function() {
-
         this._hidePositionMarker();
-
     }
 
     /*
@@ -823,7 +818,6 @@ window.ElevationWidget = function() {
         if (opts.yAxisMax !== undefined && (opts.yAxisMax > ydomain[1] || opts.forceAxisBounds)) {
             ydomain[1] = opts.yAxisMax;
         }
-
         this._x.domain(xdomain);
         this._y.domain(ydomain);
         this._areapath.datum(this._data)

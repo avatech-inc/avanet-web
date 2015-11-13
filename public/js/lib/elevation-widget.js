@@ -72,9 +72,6 @@ window.ElevationWidget = function() {
         var y = this._y = d3.scale.linear().range([this._height(), 0]);
 
         var area = this._area = d3.svg.area()
-            //.interpolate(opts.interpolation)
-            //.interpolate("bundle").tension(.95)
-            .interpolate("basis")
             .x(function(d) {
                 var xDiagCoord = x(d.dist);
                 d.xDiagCoord = xDiagCoord;

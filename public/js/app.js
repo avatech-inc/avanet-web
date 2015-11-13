@@ -116,13 +116,15 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 
 // the first thing that gets run
 angular.module('avatech').run(
- function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Global) {
+ function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Routes, Global) {
 
     // init global service
     Global.init();
 
     // init observations service
     Observations.init();
+    // init routes service
+    Routes.init();
 
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
         // close all modals (todo: what is this from?)

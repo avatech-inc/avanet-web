@@ -347,15 +347,19 @@
 		<div class="side-bar" ng-hide="isDemo">
 
 			<div class="toggle-list">
-
 				<div class="list-header">
-					<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;{{ 'all_observations' | translate }}</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;{{ 'my_observations' | translate }}</button>
+					<button ng-mousedown="selectTab('obs',$event)" ng-class="{ selected: (selectedTab == 'obs') }"><img src="/img/icon_obs.png" style="height: 22px; margin-right: 3px; position: relative; bottom: 2px;"/>&nbsp;&nbsp;{{ 'observations' | translate }}</button><button ng-mousedown="selectTab('routes',$event)" ng-class="{ selected: (selectedTab == 'routes') }"><img src="/img/icon_routes.png" style="height: 24px; margin-right: 3px;position:relative;bottom:1px;"/>&nbsp;&nbsp;{{ 'routes' | translate }}</button><!--button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;Tracks</button>-->
 				</div>
-
 			</div>
 
 			<div class="list-subheader">
-				<div style="position:relative;font-weight:100;text-align:center;line-height:38px;color:#ccc;"
+				<div class="sublist-header" ng-show="selectedTab == 'obs'">
+					<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;{{ 'all_observations' | translate }}</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;{{ 'my_observations' | translate }}</button>
+				</div>
+			</div>
+			<div class="list-sub-subheader" ng-show="selectedTab == 'obs'">
+
+				<div style="position:relative;font-weight:100;text-align:center;line-height:38px;color:#777;"
 					ng-show="selectedList == 'published'">
 					<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 0:1) }">{{ 'pan_and_zoom' | translate }}</span>
 

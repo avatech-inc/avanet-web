@@ -411,7 +411,15 @@ window.ElevationWidget = function() {
     }
 
     this._appendYaxis = function(y) {
-        var opts = this.options;
+        y.attr("class", "y axis")
+        .call(d3.svg.axis()
+            .tickFormat(d3.format(",.0f"))
+            .scale(this._y)
+            .innerTickSize(-this._width())
+            .outerTickSize(0)
+            .ticks(4)
+            //.ticks(this.options.yTicks)
+            .orient("left"))
 
     }
 

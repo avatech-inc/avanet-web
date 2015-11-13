@@ -23,10 +23,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
 
     $scope.showBottomPane = function() {
-        return $scope.routeEditMode;
+        return $state.current.name == "index.route";
     }
     $scope.showRoutePane = function() {
-        return $scope.routeEditMode;
+        return $state.current.name == "index.route";
     }
 
     $scope.mapLayers = mapLayers;

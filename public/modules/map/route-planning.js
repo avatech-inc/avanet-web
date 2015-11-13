@@ -16,6 +16,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     });
 
     $scope.route = {
+        _id: null,
         name: "Route Name",
         stats: {},
         points: []

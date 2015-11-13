@@ -9,6 +9,7 @@ angular.module('avatech').service('Observations',
 
 	this.init = function() {
 		self.sync();
+    $interval(function() { self.sync() }, 30000);
 	};
 
 	this.sync = function(callback) {

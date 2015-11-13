@@ -107,8 +107,9 @@ window.ElevationWidget = function() {
         var g = d3.select(this._container).select("svg").select("g");
 
         this._areapath = g.append("path")
-            .attr("class", "area")
-            //.attr("style", "fill:green;");
+            //.attr("class", "area")
+            .attr("style", "fill:none;");
+
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())

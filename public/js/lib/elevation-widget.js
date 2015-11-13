@@ -421,6 +421,10 @@ window.ElevationWidget = function() {
             //.ticks(this.options.yTicks)
             .orient("left"))
 
+        d3.selectAll('.y.axis g.tick')
+          .select('line')
+          .style('stroke', 'rgba(0,0,0,.1)')
+          .style('shape-rendering', 'crispEdges')
     }
 
     this._appendXaxis = function(x) {

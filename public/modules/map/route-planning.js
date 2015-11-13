@@ -44,6 +44,20 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 }
             };
 
+            // save elevation profile
+            // angular.forEach(elevationProfilePoints, function(point) {
+            //    _route.terrain.push({
+            //         coords: [ point.lng, point.lat ],
+            //         original: point.original,
+            //         aspect: point.aspect,
+            //         slope: point.slope,
+            //         elevation: point.elevation,
+            //         totalTimeEstimateMinutes: point.totalTimeEstimateMinutes,
+            //         totalDistance: point.totalDistance,
+            //         originalIndex: point.originalIndex,
+            //         index: point.index,
+            //    });
+            // });
             angular.forEach(_line.editing._markers, function(marker) {
                 //marker.dragging.enable();
                 //console.log(marker);

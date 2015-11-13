@@ -450,7 +450,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     var editHandler = new L.EditToolbar.Edit($scope.map, {
         featureGroup: lineGroup,
         selectedPathOptions: {
-            color: 'blue'
+            color: '#2080cc',
+            opacity: 1
         }
     });
 

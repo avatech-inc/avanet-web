@@ -258,7 +258,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     // init leaflet map
-    $scope.map = L.map('map', {
+    $rootScope.map = $scope.map = L.map('map', {
         zoomControl: false,
         minZoom: 3,
         maxZoom: 18, // 19

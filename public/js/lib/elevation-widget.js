@@ -39,7 +39,7 @@ window.ElevationWidget = function() {
             position: "topright",
             theme: "lime-theme",
             width: 600,
-            height: 175,
+            height: 150,
             margins: {
                 top: 20,
                 right: 20,
@@ -64,17 +64,13 @@ window.ElevationWidget = function() {
         opts = this.options;
 
         var margin = opts.margins;
-        opts.xTicks = opts.xTicks || Math.round(this._width() / 75);
-        opts.yTicks = opts.yTicks || Math.round(this._height() / 30);
+        opts.xTicks = opts.xTicks || Math.round(this._width() / 70);
+        opts.yTicks = opts.yTicks || Math.round(this._height() / 22);
         opts.hoverNumber.formatter = opts.hoverNumber.formatter || this._formatter;
 
-        var x = this._x = d3.scale.linear()
-            .range([0, this._width()]);
+        var x = this._x = d3.scale.linear().range([0, this._width()]);
+        var y = this._y = d3.scale.linear().range([this._height(), 0]);
 
-        var y = this._y = d3.scale.linear()
-            .range([this._height(), 0]);
-
-        //console.log(this._x);
         var area = this._area = d3.svg.area()
             //.interpolate(opts.interpolation)
             //.interpolate("bundle").tension(.95)

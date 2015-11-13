@@ -1,4 +1,4 @@
-$routeColor: #6664bd;
+$routeColor: #428bca; //#2080cc; //#6664bd
 
 .elevation-widget .background {
     background-color: transparent;
@@ -53,23 +53,23 @@ $routeColor: #6664bd;
     height: 10px !important;
     margin-left: -5px !important;
     margin-top: -5px !important;
-    border-color: rgba(0,0,255,.6) !important;
+    //border-color: rgba(0,0,255,.6) !important;
+    border-color: $routeColor !important;
     opacity: 1;
-    background: #c9d6e1 !important;
-
-    transition: width opacity 120ms;
-
-    &:hover {
-        opacity: 1;
-        border-color: rgba(0,0,255,1) !important;
-        //background: #eee !important;
-    }
+    background: lighten($routeColor,30) !important;
+    //transition: all 100ms;
+    //transform: translate3d(0px, 0px, 0px);
+}
+.leaflet-editing-icon:not(.waypoint-icon):not(.start-icon):not(.end-icon):hover {
+    opacity: 1;
+    //border-color: rgba(0,0,255,1) !important;
+    background: lighten($routeColor,50) !important;
 }
 
 .leaflet-editing-icon[style*="opacity: 0.6"] {
     // display: none !important;
     // pointer-events: none !important;
-    opacity: .3 !important;
+    opacity: .4 !important;
     &:hover {
      opacity: .7 !important;
     }
@@ -93,7 +93,7 @@ $routeColor: #6664bd;
     // border-width: 2px !important;
     opacity: 1 !important;
 
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#6664bd" fill="yellow"/></g></svg>') !important;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="yellow"/></g></svg>') !important;
     border: none !important;
     background-size: 100% !important;
 }
@@ -108,7 +108,7 @@ $routeColor: #6664bd;
     //border-width: 2px !important;
     opacity: 1 !important;
 
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#6664bd" fill="#76FF7A"/></g></svg>') !important;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="#76FF7A"/></g></svg>') !important;
     border: none !important;
     background-size: 100% !important;
     // width: 16px !important;
@@ -129,7 +129,7 @@ $routeColor: #6664bd;
     //border-width: 2px !important;
     opacity: 1 !important;
 
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#6664bd" fill="#FF91A4"/></g></svg>') !important;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="#FF91A4"/></g></svg>') !important;
     border: none !important;
     background-size: 100% !important;
     // width: 16px !important;

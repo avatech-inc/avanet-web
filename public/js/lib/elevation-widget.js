@@ -440,34 +440,6 @@ window.ElevationWidget = function() {
     }
 
     this._appendXaxis = function(x) {
-        var opts = this.options;
-
-        if(opts.imperial){
-            x.attr("class", "x axis")
-            .attr("transform", "translate(0," + this._height() + ")")
-            .call(d3.svg.axis()
-                .scale(this._x)
-                .ticks(this.options.xTicks)
-                .orient("bottom"))
-            .append("text")
-            .attr("x", this._width() + 10)
-            .attr("y", 15)
-            .style("text-anchor", "end")
-            .text("mi");
-        }
-        else{
-            x.attr("class", "x axis")
-            .attr("transform", "translate(0," + this._height() + ")")
-            .call(d3.svg.axis()
-                .scale(this._x)
-                .ticks(this.options.xTicks)
-                .orient("bottom"))
-            .append("text")
-            .attr("x", this._width() + 20)
-            .attr("y", 15)
-            .style("text-anchor", "end")
-            .text("km");
-        }
     }
 
     this._updateAxis = function() {

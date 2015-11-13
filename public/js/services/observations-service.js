@@ -36,7 +36,7 @@ angular.module('avatech').service('Observations',
 	function replaceObservation(observation) {
         for (var i = 0; i < self.observations.length; i++) {
         	var _observation = self.observations[i];
-        	if (_observation.type == observation.type && _observation._id == observation._id) {
+        	if (_observation._id == observation._id) {
         		self.observations[i] = observation;
         		return true;
         	}

@@ -71,17 +71,6 @@ window.ElevationWidget = function() {
         var x = this._x = d3.scale.linear().range([0, this._width()]);
         var y = this._y = d3.scale.linear().range([this._height(), 0]);
 
-        var area = this._area = d3.svg.area()
-            .x(function(d) {
-                var xDiagCoord = x(d.dist);
-                d.xDiagCoord = xDiagCoord;
-                return xDiagCoord;
-            })
-            .y0(this._height())
-            .y1(function(d) {
-                return y(d.elevation);
-            });
-
         var container = this._container = L.DomUtil.create("div", "elevation");
 
         this._initToggle();
@@ -106,9 +95,6 @@ window.ElevationWidget = function() {
 
         var g = d3.select(this._container).select("svg").select("g");
 
-        this._areapath = g.append("path")
-            //.attr("class", "area")
-            .attr("style", "fill:none;");
 
 
         var background = this._background = g.append("rect")
@@ -821,7 +807,6 @@ window.ElevationWidget = function() {
         }
         this._x.domain(xdomain);
         this._y.domain(ydomain);
-        this._areapath.datum(this._data).attr("d", this._area);
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);

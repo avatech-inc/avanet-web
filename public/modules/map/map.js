@@ -704,22 +704,20 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }, 60000);
     }, 60000);
 
-        $scope.map.on('moveend', function() {
-            $timeout.cancel($scope.loadProfilesTimer);
-            $scope.loadProfilesTimer = $timeout(function(){
-                $scope.loadProfiles();
-            }, 300);
-        });
+    $scope.map.on('moveend', function() {
+        $timeout.cancel($scope.loadProfilesTimer);
+        $scope.loadProfilesTimer = $timeout(function(){
+            $scope.loadProfiles();
+        }, 300);
+    });
 
-        $scope.map.on('zoomend', function() {
-            $timeout.cancel($scope.loadProfilesTimer);
-            $scope.loadProfilesTimer = $timeout(function(){
-                $scope.loadProfiles();
-            }, 300);
-            mixpanel.track("zoom", $scope.map.getZoom());
-        });
-
-    }
+    $scope.map.on('zoomend', function() {
+        $timeout.cancel($scope.loadProfilesTimer);
+        $scope.loadProfilesTimer = $timeout(function(){
+            $scope.loadProfiles();
+        }, 300);
+        mixpanel.track("zoom", $scope.map.getZoom());
+    });
 
     // make sure map loads properly
     $timeout(function(){

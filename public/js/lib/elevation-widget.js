@@ -834,14 +834,14 @@ window.ElevationWidget = function() {
         this._clearData();
         this.clearWaypoints();
 
-        if (!this._areapath) {
+        if (!this._profileStroke) {
             return;
         }
 
         // workaround for 'Error: Problem parsing d=""' in Webkit when empty data
         // https://groups.google.com/d/msg/d3-js/7rFxpXKXFhI/HzIO_NPeDuMJ
-        //this._areapath.datum(this._data).attr("d", this._area);
-        this._areapath.attr("d", "M0 0");
+        this._profileStroke.attr("d", "M0 0");
+        this._profileFill.attr("d", "M0 0");
 
         this._x.domain([0, 1]);
         this._y.domain([0, 1]);

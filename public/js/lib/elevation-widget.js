@@ -818,6 +818,13 @@ window.ElevationWidget = function() {
             .interpolate("basis")
             .x(function(d) { return self._x(d.x); })
             .y(function(d) { return self._y(d.y); });
+
+        var newArea = d3.svg.area()
+            .interpolate("basis")
+            .x(function(d) { return self._x(d.x); })
+            .y0(this._height())
+            .y1(function(d) { return self._y(d.y); });
+
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);

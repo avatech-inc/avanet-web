@@ -827,6 +827,8 @@ window.ElevationWidget = function() {
 
         var newPoints = [];
         for (var i = 0; i < this._data.length; i++) {
+            // keep track of xDiagCoord for map path hover
+            this._data[i].xDiagCoord = this._x(this._data[i].dist);
             // add points to temp array
             newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
         }

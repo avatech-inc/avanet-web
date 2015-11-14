@@ -403,9 +403,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         if (previousZoom < detailedZoomMin && zoom == detailedZoomMin) {
             console.log("DETAIL MODE ON");
-            // pruneCluster.RedrawIcons();
-            // pruneCluster.ProcessView();
             $scope.detailMode = true;
+
+            // redraw icons
+            pruneCluster.RedrawIcons();
+            pruneCluster.ProcessView();
+
             // hide heatmap
             if (heatMap) heatMap.setOptions({
                 radius: 1, blur: 1, maxZoom: 20
@@ -413,9 +416,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }
         else if (previousZoom > (detailedZoomMin - 1) && zoom == (detailedZoomMin - 1)) {
             console.log("DETAIL MODE OFF");
-            // pruneCluster.RedrawIcons();
-            // pruneCluster.ProcessView();
             $scope.detailMode = false;
+
+            // redraw icons
+            pruneCluster.RedrawIcons();
+            pruneCluster.ProcessView();
+
             // show heatmap
             if (heatMap) heatMap.setOptions({
                 radius: 10, blur: 15, maxZoom: (zoom + (zoom / 2))

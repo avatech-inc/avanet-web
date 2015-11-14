@@ -352,7 +352,10 @@ var AvatechTerrainLayer = function (options) {
             lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
     }
 
-    // NOTE: only one bulk request can be handled at a time
+    // since 'getTerrainDataBulk' is using terrain tile worker threads, the data 
+    // callback will only return after all tiles have loaded, so we don't have
+    // to worry about checking if terrain tiles have been loaded before querying.
+    // NOTE: only one 'getTerrainDataBulk' request can be handled at a time
     terrainLayer.getTerrainDataBulk = function(points, callback) {
         // clear callbacks cache to prevent any old callbacks
         // from executing thereby tainting this new request

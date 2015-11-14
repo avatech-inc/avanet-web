@@ -24,9 +24,6 @@ onmessage = function (e) {
         var terrainData = dem[arrayIndex];
         if (!terrainData) return;
 
-        // removed: checking for empty valyes on the client instead...
-        //if (terrainData[0] == 127 && terrainData[1] == 127 && terrainData[2] == 511) return;
-
         // return to client
         postMessage({ 
             id: e.data.id,

@@ -601,11 +601,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
     });
 
-
-    //$scope.loadMyProfiles = function() {
     $scope.myProfiles = Observations.observations;
     $scope.myRoutes = Routes.observations;
-    //}
 
     // on map search select
     $scope.mapSearchSelect = function(location) {

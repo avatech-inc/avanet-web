@@ -16,3 +16,6 @@ tmp/**
 newrelic_agent.log
 public/tiles
 public/tiles2
+.csr
+.ssl
+.key

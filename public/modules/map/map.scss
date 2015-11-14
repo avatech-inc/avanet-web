@@ -305,7 +305,8 @@
 	overflow:hidden;
 	position:absolute;
 	left:0;right:0; bottom: 0;
-	top: 44px
+	top: 44px;
+	z-index: 600;
 }
 .side-bar .list-holder.marginTopDouble {
 	top: 120px;

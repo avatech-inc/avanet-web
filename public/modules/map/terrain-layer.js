@@ -86,7 +86,7 @@ var AvatechTerrainLayer = function (options) {
     var layerClearTimer;
     terrainLayer.on('load', function (e) {
         if (layerClearTimer) clearTimeout(layerClearTimer);
-        layerClearTimer = setTimeout(terrainLayer._pruneTiles2, 400);
+        layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
     });
 
     terrainLayer.updateTile = function(e) {

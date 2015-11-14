@@ -21,6 +21,15 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             $scope.route._id = route._id;
             $scope.route.name = route.name;
 
+            createLine();
+            for (var i = 0; i < route.points.length; i++) {
+                var point = route.points[i];
+                var marker = addPoint({ lat: point.coords[1], lng: point.coords[0] });
+                if (point.waypoint) makeWaypoint(marker);
+
+                updateElevationProfile();
+                updateSegments();
+            }
         });
         // todo: handle 404?
     }

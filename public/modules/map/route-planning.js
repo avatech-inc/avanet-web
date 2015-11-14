@@ -34,6 +34,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // load elevation profile, etc.
             processUpdate(function() {
                 // elevation profile has been loaded
+                // note: this will still get called even if no terrain is present
                 $scope.loading = false;
                 $scope.$apply();
             });
@@ -853,6 +854,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             if (callback) callback();
 
             if (!receivedPoints || receivedPoints.length == 0) return;
+
+            console.log("TERRAIN DATA LAODED!")
 
             // store elevation profile for later
             elevationProfilePoints = receivedPoints;

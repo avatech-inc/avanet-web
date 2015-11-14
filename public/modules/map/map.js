@@ -448,18 +448,16 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         var defaultMap = "mbworld";
         var country = $scope.global.user.country;
         if (country) {
-            if (country == "United States") defaultMap = "mbus";
-            else if (country == "Canada") defaultMap = "mbmetric";
-            else if (country == "France") defaultMap = "mbfr";
-            else if (country == "Germany") defaultMap = "mbde";
-            else if (country == "Austria") defaultMap = "mbde";
-            else defaultMap = "mbworld";
+            if (country == "US") defaultMap = "mbus";
+            else if (country == "CA") defaultMap = "mbmetric";
+            else if (country == "FR") defaultMap = "mbfr";
+            else if (country == "DE") defaultMap = "mbde";
+            else if (country == "AT") defaultMap = "mbde";
         }
         var defaultLayer = $scope.mapLayers.getLayerByAlias(defaultMap);
 
         // get saved default base layer
         var savedMap = $scope.global.user.settings.defaultMap;
-
         var baseMap = $scope.mapLayers.getLayerByAlias(savedMap);
         if (!baseMap) baseMap = defaultLayer;
 

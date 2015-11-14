@@ -301,7 +301,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.on('load', function(e) { mapLoaded.resolve(); });
 
     // setup heatmap
-    //var heatMap;
     var heatMap = L.heatLayer([], {
         radius: 10, blur: 15, 
         maxZoom: $scope.map.getZoom() 

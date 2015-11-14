@@ -18,10 +18,8 @@ var AvatechTerrainLayer = function (options) {
         tile._tileLoaded = tileLoaded;
         // if tileLoaded not specified, call dummy function
         if (!tile._tileLoaded) tile._tileLoaded = function() { };
-
         // draw tile
         this.drawTile(tile, tilePoint);
-
         // return tile so Leaflet knows to expect tileLoaded callback later
         return tile;
     }
@@ -108,12 +106,19 @@ var AvatechTerrainLayer = function (options) {
             return;
         }
 
-        // if we've gotten this far and no pixels have been returned, it's an 
-        // error and we should leave. otherwise, tile will be rendered blank
-        if (!e.data.pixels) return;
-
         // get canvas context for this tile
         var ctx = terrainLayer.contexts[e.data.id];
+
+        // if no pixels have been returned, it means only data was loaded 
+        // and no pixels processed (i.e. loadTerrainData as overlayType)
+        // mark tile as loaded and return
+        if (!e.data.pixels) {
+            ctx.canvas._tileLoaded(null, ctx.canvas);
+            ctx.canvas._tileLoaded = null;
+            return;
+        }
+
+        // get tile size
         var tileSize = ctx.canvas.width;
 
         // clear canvas

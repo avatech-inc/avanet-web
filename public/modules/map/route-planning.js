@@ -7,10 +7,12 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     $scope.$on('$destroy', function() {
         $scope.map.off('click', mapClick);
-        elevationWidget.clear();
-        elevationWidget = null;
-        lineGroup.removeFrom($scope.map);
-        lineSegmentGroup.removeFrom($scope.map);
+        if (elevationWidget) {
+            elevationWidget.clear();
+            elevationWidget = null;
+        }
+        if (lineGroup) lineGroup.removeFrom($scope.map);
+        if (lineSegmentGroup) lineSegmentGroup.removeFrom($scope.map);
         _line = null;
         editHandler = null;
     });

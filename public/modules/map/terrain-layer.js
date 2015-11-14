@@ -133,15 +133,13 @@ var AvatechTerrainLayer = function (options) {
             temp_context.putImageData(imgData, 0, 0);
 
             ctx.drawImage(temp_canvas, 0, 0, 256, 256, 0, 0, tileSize, tileSize);
-
         }
+
         // fire tileLoaded callback
         if (ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
     }
 
     terrainLayer.PNG_cache = {};
-
-    //terrainLayer.overlayType;
 
     terrainLayer.drawTile = function(canvas, tilePoint) {
         var PNG_data;
@@ -162,7 +160,8 @@ var AvatechTerrainLayer = function (options) {
             if (!terrainLayer.overlayType) {
                 var context = canvas.getContext('2d');
                 context.clearRect ( 0 , 0 , canvas.width, canvas.height );
-                // todo: only return if option loadWhenEmpty ??
+                // returning here prevents loading terrain in the background
+                // todo: maybe make this an option?
                 //return;
             }
 
@@ -183,16 +182,6 @@ var AvatechTerrainLayer = function (options) {
 
             message.processType = overlayType;
             message.customParams = terrainLayer.customParams;
-
-            // sun location
-            // if (terrainLayer.overlayType == "sun" && terrainLayer.sunDate) {
-            //     var mapCenter = terrainLayer._map.getCenter();
-            //     var _date = new Date(terrainLayer.sunDate);
-            //     _date.setHours(_date.getHours() - 1 - 1); // adjust for 0-23, adjust to match CalTopo
-            //     var pos = SunCalc.getPosition(_date, mapCenter.lat, mapCenter.lng);
-            //     message.altitude = pos.altitude * (180 / Math.PI);
-            //     message.azimuth = pos.azimuth * (180 / Math.PI);
-            // }
 
             // if no existing worker thread, create
             if (!terrainLayer.workers[tile_id]) {
@@ -267,11 +256,7 @@ var AvatechTerrainLayer = function (options) {
             terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
         }
         terrainLayer.needsRedraw = false;
-        //window.requestAnimationFrame(terrainLayer.redraw);
-        //if (lastSync) cancelTimeout(lastSync);
-        //lastSync = setTimeout(function(){
         L.Util.requestAnimFrame(terrainLayer.redraw);
-        //}, 1);
     }
     terrainLayer.redraw();
 

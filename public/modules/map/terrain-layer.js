@@ -16,6 +16,7 @@ var AvatechTerrainLayer = function (options) {
 
         // attach tileLoaded callback to element for easier access down the chain
         tile._tileLoaded = tileLoaded;
+        // if tileLoaded not specified, call dummy function
         if (!tile._tileLoaded) tile._tileLoaded = function() { };
 
         // draw tile

@@ -823,8 +823,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    // --------------------------------
-
+    // map grid overlay
     var gridOverlayLayer;
     $scope.$watch('gridOverlay', function(newOverlay, oldOverlay) {
         if (newOverlay != oldOverlay && gridOverlayLayer) {

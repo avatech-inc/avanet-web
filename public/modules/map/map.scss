@@ -1159,3 +1159,32 @@ a:hover { text-decoration: none !important; }
 		background: rgba(255,255,255,.8);
 	}
 }
+
+/* custom terrain viz */
+
+.accordion-item {
+	max-height: 36px;
+	overflow: hidden;
+	border-bottom: 1px solid #ccc;
+	transition: max-height .15s ease-out;
+}
+.accordion-item:first-child {
+	border-top: 1px solid #ccc;
+}
+
+.accordion-item .header {
+	line-height: 36px;
+	padding-left: 10px;
+	background: #f5f5f5;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.accordion-item.open {
+	max-height: 600px;
+	transition: max-height 0.15s ease-in;
+}
+.accordion-item .content {
+	padding: 8px;
+	margin: 0;
+}

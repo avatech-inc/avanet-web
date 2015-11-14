@@ -215,37 +215,6 @@
 
 				    	<div style="padding: 12px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative;bottom:3px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
 
-				    	<style>
-
-				    		.accordion-item {
-				    			max-height: 36px;
-				    			overflow: hidden;
-				    			border-bottom: 1px solid #ccc;
-    							transition: max-height .15s ease-out;
-				    		}
-				    		.accordion-item:first-child {
-				    			border-top: 1px solid #ccc;
-				    		}
-
-				    		.accordion-item .header {
-				    			line-height: 36px;
-				    			padding-left: 10px;
-				    			background: #f5f5f5;
-				    			font-size: 16px;
-				    			cursor: pointer;
-				    		}
-
-				    		.accordion-item.open {
-				    			max-height: 600px;
-    							transition: max-height 0.15s ease-in;
-				    		}
-				    		.accordion-item .content {
-				    			padding: 8px;
-				    			margin: 0;
-				    		}
-
-				    	</style>
-
 				    	<div ng-show="terrainOverlay == 'custom'">
 
 				    		<accordion-new>

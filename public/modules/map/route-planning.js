@@ -18,7 +18,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         .then(function(res) {
             console.log("loaded!")
             console.log(res);
-            //if (res.data._id) $scope.route._id = res.data._id;
         });
         // todo: handle 404?
     }
@@ -78,8 +77,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // });
 
             angular.forEach(_line.editing._markers, function(marker) {
-                //marker.dragging.enable();
-                //console.log(marker);
                 _route.path.coordinates.push([ marker._latlng.lng, marker._latlng.lat ]);
 
                 _route.points.push({ 
@@ -227,8 +224,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         for (var i = 0; i < columns.length; i++) { columnWidths.push(columns[i].width); }
 
         // add rows
-        // console.log("ROUTE POINTS:")
-        // console.log($scope.route.points);
         angular.forEach($scope.route.points,function(point, index) {
             var nextPoint = index != $scope.route.points.length - 1 ? $scope.route.points[index + 1] : null;
             pdfRows.push([ 
@@ -404,7 +399,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     }, true);
 
     $scope.$watch("hoverOnLeg", function(){
-        //console.log("HOVER ON LEG: " + $scope.hoverOnLeg);
         angular.forEach(lineSegmentGroup._layers, function(segment) {
             segment.setStyle({ color: 'transparent' });
             if (segment.segment.legIndex == $scope.hoverOnLeg) {
@@ -416,7 +410,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         });
     }, true);
     $scope.$watch("hoverOnPoint", function(){
-        //console.log("HOVER ON POINT: " + $scope.hoverOnPoint);
         if (!_line) return;
         angular.forEach(_line.editing._markers, function(marker) {
             $(marker._icon).removeClass("highlight");
@@ -582,7 +575,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     }
 
     function addPoint(latlng, index) {
-        // this prevents a bug where addPoint is called without a latLng object
+        // this prevents a bug where addPoint is called without a latlng object
         if (!latlng) return;
 
         // prevent adding a point too far from last point

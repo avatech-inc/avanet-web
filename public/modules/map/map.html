@@ -1,6 +1,6 @@
 <section ng-controller="MapController">
 	<section ng-class="{ 'hide-main': isFullScreen() }" >
-		<div id="map-header" ng-hide="isDemo" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
+		<div id="map-header" ng-hide="isDemo || !detailMode" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
 
 				<div class="btn-group filter" dropdown>
 				  <button type="button" class="btn btn-default dropdown-toggle">
@@ -174,7 +174,7 @@
 
 				<!-- Red Flags Count -->
 				<div style="float:right;font-size:24px;margin-top: 5px;margin-right: 10px;"
-					ng-hide="!filteredProfiles || filteredProfiles.length == 0 || redFlagCount == 0 || map.getZoom() < detailedZoomMin" >
+					ng-hide="!filteredProfiles || filteredProfiles.length == 0 || redFlagCount == 0" >
 					<span style="color:#000;font-weight:500;letter-spacing: -.04em;">{{ redFlagCount = ((filteredProfiles | filter: { redFlag: true }).length) }}</span><i class="fa fa-flag" style="color: #db1f26; margin-left: 4px; font-size: .9em; position: relative; bottom: 2px;"></i> 
 					<!-- Rose Graph 
 					<canvas height="80" width="80" style="width:34px;height:34px;" rose-graph="{{ (filteredProfiles | filter: redFlag) }}"></canvas>-->
@@ -429,7 +429,7 @@
 			<!-- Observations -->
 			<div ng-show="selectedTab == 'obs'">
 				<!-- Map Observations -->
-				<div class="list-holder marginTopDouble" scrollable always-visible="true" ng-show="selectedList == 'published' && map.getZoom() >= detailedZoomMin"
+				<div class="list-holder marginTopDouble" scrollable always-visible="true" ng-show="selectedList == 'published' && detailMode"
 					>
 
 					<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">

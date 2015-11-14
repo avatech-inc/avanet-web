@@ -23,6 +23,13 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             $scope.route._id = route._id;
             $scope.route.name = route.name;
 
+            // set map to fit route bounds
+            var bounds = turf.extent(route.path);
+            $scope.map.fitBounds([
+                [bounds[1], bounds[0]],
+                [bounds[3], bounds[2]]
+            ], { maxZoom: 14 });
+
             // create editable path
             createLine();
             // add markers

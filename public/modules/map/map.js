@@ -710,11 +710,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // handle loading of observations
     $scope.loadingProfiles = true;
     $scope.loadProfiles(false);
-    //$scope.loadMyProfiles();
     setTimeout(function(){
         setInterval(function(){
             $scope.loadProfiles(false);
-            //$scope.loadMyProfiles();
         }, 60000);
     }, 60000);
 

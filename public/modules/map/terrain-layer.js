@@ -288,10 +288,10 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.callbacks = {};
     terrainLayer.getTerrainData = function(lat, lng, callback, index, original) {
         // round down lat/lng for fewer lookups
-        // 5 decimal places = 1.1132 m percision
+        // 4 decimal places = 11.132 m percision
         // https://en.wikipedia.org/wiki/Decimal_degrees
-        // lat = Math.round(lat * 1e5) / 1e5;
-        // lng = Math.round(lng * 1e5) / 1e5;
+        // lat = Math.round(lat * 1e4) / 1e4;
+        // lng = Math.round(lng * 1e4) / 1e4;
 
         // adjust zoom level for overzoom
         var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());

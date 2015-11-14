@@ -767,9 +767,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     }
 
     function makeWaypoint(marker, waypointData) {
-        console.log("making waypoint!");
-        console.log(marker);
-
         makePoint(marker);
 
         marker.waypoint = {
@@ -822,8 +819,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         // get line distance
         var distance = turf.lineDistance(turf.linestring(points.map(function(point) { return [point.lng,point.lat] })), 'kilometers');
-        //console.log("DISTANCE: " + length);
-
+       
         // sample every 3m
         var sampleCount = Math.round((distance * 1000) / 3);
 
@@ -832,8 +828,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             points[i].original  = true;
         }
 
-        // interpolate
-        while ((points.length * 2) -1 <= sampleCount) { // 200
+        // interpolate between points
+        while ((points.length * 2) -1 <= sampleCount) {
             points = interpolate(points);
         }
 
@@ -869,6 +865,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         for (var i = 0; i < points.length; i++) {
             var point = points[i];
+            if (!point) continue;
 
             // assign index for tracking
             point.index = i;
@@ -909,7 +906,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
             var previousElevation = points[i-1].elevation;
             point.elevationDifference = point.elevation - previousElevation;
-            //console.log("ELEV: " + point.elevationDifference);
 
             if (point.elevationDifference > 0) {
                 point.direction = "up";
@@ -1110,8 +1106,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             var thisPoint = _line.editing._markers[i];
             bounds.extend(new google.maps.LatLng(thisPoint._latlng.lat, thisPoint._latlng.lng));
         }
-        // console.log("BOUNDS:");
-        // console.log(bounds);
 
         var gpx = 
             '<?xml version="1.0"?>\n' +
@@ -1153,8 +1147,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             //if (thisPoint.waypoint) legIndex++;
             gpx += '    <rtept lat="' + thisPoint._latlng.lat + '" lon="' + thisPoint._latlng.lng + '">\n';
             if (thisPoint.waypoint || i == 0 || i == _line.editing._markers.length - 1) {
-                // console.log("WAYPOINT:");
-                // console.log(thisPoint.waypoint.name);
                 wayPointIndex++;
                 gpx += '      <name><![CDATA[' + $scope.route.waypointPrefix() + wayPointIndex + ']]></name>\n';
                 if (thisPoint.waypoint && thisPoint.waypoint.name) 
@@ -1177,21 +1169,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             .attr('href', gpxData)
             .attr('download', 'avanet-route.gpx');
         link.click();
-    }
-
-    // todo: save as geoJSON?
-    function saveRoute() {
-        // var markers = _line.editing._markers;
-        // console.log(markers);
-
-        // console.log("MARKERS:");
-
-        // angular.forEach(markers, function(marker) {
-        //     var obj = {}
-        //     obj.latlng = marker._latlng;
-        //     obj.waypoint = marker.waypoint;
-        //     console.log(obj);
-        // })
     }
 
     // UTILS

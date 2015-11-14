@@ -5,6 +5,22 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     var formatters = snowpitExport.formatters;
 
+    // load
+    // if routeId specified
+    if ($stateParams.routeId && $stateParams.routeId != "new") {
+        $http.get(window.apiBaseUrl + "routes/" + $stateParams.routeId)
+        .then(function(res) {
+            console.log("loaded!")
+            console.log(res);
+            //if (res.data._id) $scope.route._id = res.data._id;
+        });
+        // todo: 404?
+    }
+    // if "new"
+    else if ($stateParams.routeId == "new") {
+
+    }
+
     $scope.$on('$destroy', function() {
         $scope.map.off('click', mapClick);
         if (elevationWidget) {

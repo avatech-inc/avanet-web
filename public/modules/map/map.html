@@ -361,7 +361,6 @@
 				</div>
 			</div>
 			<div class="list-sub-subheader" ng-show="selectedTab == 'obs'">
-
 				<div style="position:relative;font-weight:100;text-align:center;line-height:38px;color:#777;"
 					ng-show="selectedList == 'published'">
 					<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;" ng-style="{ opacity: (loadingNew ? 0:1) }">{{ 'pan_and_zoom' | translate }}</span>
@@ -430,7 +429,7 @@
 			<!-- Observations -->
 			<div ng-show="selectedTab == 'obs'">
 				<!-- Map Observations -->
-				<div class="list-holder marginTop" scrollable always-visible="true" ng-show="selectedList == 'published' && map.getZoom() >= detailedZoomMin"
+				<div class="list-holder marginTopDouble" scrollable always-visible="true" ng-show="selectedList == 'published' && map.getZoom() >= detailedZoomMin"
 					>
 
 					<div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
@@ -444,7 +443,7 @@
 				</div>
 
 				<!-- My Observations: Published -->
-				<div class="list-holder marginTop" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
+				<div class="list-holder marginTopDouble" scrollable ng-show="selectedList == 'my_published'" always-visible="true">
 
 					<div ng-show="filteredProfiles2.length == 0" style="no-obs-found">{{ 'no_obs_found' | translate }}</div>
 

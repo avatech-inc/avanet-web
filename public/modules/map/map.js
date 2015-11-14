@@ -376,19 +376,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
     }
 
-    // keep track of previousZoom
-    var previousZoom;
-    $scope.map.on('zoomstart', function(e) {
-        previousZoom = $scope.map.getZoom();
-    });
-
     // re-render observation icons when zoom level is changed
     var detailedZoomMin = 11;
     $scope.detailMode = true;
     $scope.map.on('zoomend', function(e) {
         var zoom = $scope.map.getZoom();
 
-        if (previousZoom < detailedZoomMin && zoom == detailedZoomMin) {
+        if (!$scope.detailMode && zoom >= detailedZoomMin) {
             console.log("DETAIL MODE ON");
             $scope.detailMode = true;
 
@@ -399,7 +393,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // hide heatmap
             if (heatMap) heatMap.setOptions({ radius: 1, blur: 1, maxZoom: 20 });
         }
-        else if (previousZoom > (detailedZoomMin - 1) && zoom == (detailedZoomMin - 1)) {
+        else if ($scope.detailMode && zoom < detailedZoomMin) {
             console.log("DETAIL MODE OFF");
             $scope.detailMode = false;
 
@@ -420,7 +414,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         }, 300);
 
         // track zoom on mixpanel (to see which zoom levels are most popular)
-        mixpanel.track("zoom", $scope.map.getZoom());
+        mixpanel.track("zoom", zoom);
     });
 
     // keep track of location at cursor

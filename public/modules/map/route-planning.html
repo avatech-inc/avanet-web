@@ -1,14 +1,17 @@
 <section ng-controller="RoutePlanningController">
 	<div class="route-box">
 		<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;"><!--ROUTE-->
-		<input type="text" ng-model="route.name" placeholder="Route Name"/>
+		<input type="text" ng-model="route.name" placeholder="Route Name" ng-hide="loading"/>
 
-			<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-if="route && route.points.length > 1">
+			<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-show="route && route.points.length > 1">
 				{{ formatters.formatKmOrMiles(route.stats.distance) }}<br/>
 				{{ formatters.formatDuration(route.stats.timeEstimateMinutes) }}
 			</div>
 		</div>
-		<div ng-if="route.points.length == 0" class="instruct">
+		<div ng-if="loading" class="instruct">
+			Loading
+		</div>
+		<div ng-if="!loading && !route._id && route.points.length == 0" class="instruct">
 			<div ng-show="map.getZoom() >= 13">
 				Click anywhere<br/>on the map to<br/>start your route
 			</div>
@@ -17,6 +20,7 @@
 			</div>
 		</div>
 		<div ng-if="route.points.length == 1" class="instruct">
+		<div ng-if="!loading && !route._id && route.points.length == 1" class="instruct">
 			<div ng-show="map.getZoom() >= 13">
 				Click on the map<br/>to place the next<br/>point on your route
 			</div>

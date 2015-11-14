@@ -1139,3 +1139,22 @@ a:hover { text-decoration: none !important; }
 .leaflet-grid-label .lng {
 	text-shadow: -2px 0 #FFFFFF, 0 2px #FFFFFF, 2px 0 #FFFFFF, 0 -2px #FFFFFF;
 }
+
+
+.side-list-item.route {
+	height: 110px;
+
+	>a {
+		padding: 10px;
+		padding-left: 4px;
+		color: #555;
+		font-weight: 100; 
+		text-shadow: 0px 0px 3px #fff, 0px 0px 8px #fff;
+		position: absolute; top:0; left:0; right:0; bottom:0;
+		transition: all 200ms;
+		background: rgba(255,255,255,.58);
+	}
+	&:hover >a {
+		background: rgba(255,255,255,.8);
+	}
+}

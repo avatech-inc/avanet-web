@@ -53,6 +53,7 @@ onmessage = function (e) {
     // if loadTerrainData only
     if (e.data.processType == "loadTerrainData") return postMessage({ id: e.data.id });
 
+    // process pixels
     var processed;
 
     if (e.data.processType == "sun") {
@@ -70,7 +71,7 @@ onmessage = function (e) {
         //processed = _hillshade(self.dems[e.data.id], 60, 0, .45, .45)
     }
 
-    // send back to client
+    // send process pixels to client
     postMessage({
         id: e.data.id,
         pixels: processed.buffer,

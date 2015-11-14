@@ -11,6 +11,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         stats: {},
         points: []
     };
+
+    // load if routeId specified
     if ($stateParams.routeId && $stateParams.routeId != "new") {
         $http.get(window.apiBaseUrl + "routes/" + $stateParams.routeId)
         .then(function(res) {
@@ -18,13 +20,14 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             console.log(res);
             //if (res.data._id) $scope.route._id = res.data._id;
         });
-        // todo: 404?
+        // todo: handle 404?
     }
-    // if "new"
+    // if new
     else if ($stateParams.routeId == "new") {
 
     }
 
+    // remove map path and elevation widget when current state is destroyed
     $scope.$on('$destroy', function() {
         $scope.map.off('click', mapClick);
         if (elevationWidget) {

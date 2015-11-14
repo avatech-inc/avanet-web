@@ -16,8 +16,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     if ($stateParams.routeId && $stateParams.routeId != "new") {
         $http.get(window.apiBaseUrl + "routes/" + $stateParams.routeId)
         .then(function(res) {
-            console.log("loaded!")
-            console.log(res);
         });
         // todo: handle 404?
     }

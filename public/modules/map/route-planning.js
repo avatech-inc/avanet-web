@@ -31,9 +31,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 var marker = addPoint({ lat: point.coords[1], lng: point.coords[0] });
                 if (point.waypoint) makeWaypoint(marker);
             }
-
-            $timeout(function() {
-                processUpdate();
+            // load elevation profile, etc.
+            processUpdate(function() {
+                // elevation profile has been loaded
                 $scope.loading = false;
                 $scope.$apply();
             });
@@ -828,7 +828,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     var elevationProfilePoints;
     var lastLine;
 
-    function processUpdate() {
+    function processUpdate(callback) {
         updateSegments();
 
         var points = _line._latlngs;
@@ -850,6 +850,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         }
 
         $scope.terrainLayer.getTerrainDataBulk(points, function(receivedPoints) {
+            if (callback) callback();
+
             if (!receivedPoints || receivedPoints.length == 0) return;
 
             // store elevation profile for later

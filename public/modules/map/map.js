@@ -37,6 +37,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $event.preventDefault();
         $event.stopPropagation();
         $scope.selectedTab = tabName;
+        
+        // reset scrollbars (todo: hacky! but only way for now)
+        $timeout(function(){ $(".nano").nanoScroller(); });
         return false;
     }
 
@@ -49,6 +52,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         // clear selected profiles
         $scope.selectedProfiles = [];
 
+        // reset scrollbars (todo: hacky! but only way for now)
+        $timeout(function(){ $(".nano").nanoScroller(); });
         return false;
     }
 

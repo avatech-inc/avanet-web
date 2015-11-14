@@ -113,6 +113,9 @@ var AvatechTerrainLayer = function (options) {
         var ctx = terrainLayer.contexts[e.data.id];
         var tileSize = ctx.canvas.width;
 
+        // clear canvas
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
         // get new pixels from worker thread response
         var pixels = new Uint8ClampedArray(e.data.pixels);
 

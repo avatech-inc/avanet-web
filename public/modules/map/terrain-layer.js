@@ -275,7 +275,7 @@ var AvatechTerrainLayer = function (options) {
     }
     terrainLayer.redraw();
 
-    // ----- terrain data querying ------
+    // ----- Terrain data querying ------
 
     function latLngToTilePoint(lat, lng, zoom) {
         lat *= (Math.PI/180);

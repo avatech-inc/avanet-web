@@ -427,6 +427,10 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
         }, 300);
+
+        // track zoom on mixpanel (to see which zoom levels are most popular)
+        mixpanel.track("zoom", $scope.map.getZoom());
+
         // pruneCluster.ProcessView();
         // pruneCluster.RedrawIcons();
         // $scope.$apply();

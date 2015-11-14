@@ -28,8 +28,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             $scope.map.fitBounds([
                 [bounds[1], bounds[0]],
                 [bounds[3], bounds[2]]
-            ], { maxZoom: 14 });
-
             // create editable path
             createLine();
             // add markers
@@ -45,6 +43,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 $scope.loading = false;
                 $scope.$apply();
             });
+            ], { maxZoom: 14, animate: false });
+
+
         });
         // todo: handle 404?
     }

@@ -356,6 +356,9 @@
 				<div class="sublist-header" ng-show="selectedTab == 'obs'">
 					<button ng-mousedown="selectList('published',$event)" ng-class="{ selected: (selectedList == 'published') }"><i class="ion-map"></i>&nbsp;&nbsp;{{ 'all_observations' | translate }}</button><button ng-mousedown="selectList('my_published',$event)" ng-class="{ selected: (selectedList == 'my_published' || selectedList == 'my_unpublished') }"><i class="ion-person"></i>&nbsp;&nbsp;{{ 'my_observations' | translate }}</button>
 				</div>
+				<div class="sublist-header" ng-show="selectedTab == 'routes'">
+					<span style="font-style:italic;position:absolute;top:0;left:0;right:0;bottom:0;transition: opacity 100ms;">showing my routes</span>
+				</div>
 			</div>
 			<div class="list-sub-subheader" ng-show="selectedTab == 'obs'">
 
@@ -487,6 +490,39 @@
 
 						</a>
 					</div>
+				</div>
+			</div>
+
+			<!-- Routes -->
+			<div ng-show="selectedTab == 'routes'">
+				<!-- My Routes -->
+				<div class="list-holder marginTopSingle" scrollable always-visible="true">
+
+					<!-- <div ng-show="loadingProfiles" style="text-align:center;padding-top:20px;font-size:18px;color:#aaa;">
+						<i class="fa fa-circle-o-notch fa-spin" style="margin-top:20px;font-size:40px;"></i>
+					</div> -->
+
+					<!-- <div ng-show="filteredProfiles.length == 0" class="no-obs-found">{{ 'no_obs_found' | translate }}</div> -->
+
+					<div bindonce ng-repeat="route in $parent.myRoutes | orderBy: '-date' track by route._id"
+					class="side-list-item route"
+					style="background-size:cover;background-image:url('{{ ::route.imageURL }}') !important; border-bottom: 1px solid #bbb;"
+					>
+					<a
+					href="/routes/{{ route._id }}" 
+					-test-ng-mouseover="hoverProfile(profile)"
+					-test-ng-mouseout="hoverProfile()"
+					>
+
+						<!--<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>-->
+						<!--<img bo-src="route.imageURL" style="width:100%;"/>-->
+
+						<div class='lineItem' style="font-size: 18px; padding-bottom: 4px; margin-left: 7px;font-weight:500;">{{ ::route.name }}</div>
+
+						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::route.created | date:'M/d/yy h:mm a'}}</div>
+
+					</a>
+				</div>
 				</div>
 			</div>
 		</div>

@@ -50,7 +50,8 @@ onmessage = function (e) {
         //self.dems[e.data.id] = raster2dem(e.data.raster, .051, converted, 40);
     }
 
-    if (e.data.processType == "loadTerrainData") return;
+    // if loadTerrainData only
+    if (e.data.processType == "loadTerrainData") return postMessage({ id: e.data.id });
 
     var processed;
 

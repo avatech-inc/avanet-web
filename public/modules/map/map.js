@@ -306,7 +306,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         maxZoom: $scope.map.getZoom() 
     }).addTo($scope.map);
 
-    $scope.detailedZoomMin = 11;
     $scope.map.on('zoomend', function(e) {
         var zoom = $scope.map.getZoom();
         if (zoom < $scope.detailedZoomMin) {
@@ -333,7 +332,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     // render observation icons
     pruneCluster.PrepareLeafletMarker = function(leafletMarker, data) {
         // detailed mode
-        if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
+        if ($scope.detailMode) {
             var markerClass = 'count-icon';
             // append observation type to class
             markerClass += ' ' + data.observation.type
@@ -439,17 +438,24 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.on('zoomstart', function(e) {
         previousZoom = $scope.map.getZoom();
     });
+    var detailedZoomMin = 11;
+    $scope.detailMode = true;
     $scope.map.on('zoomend', function(e) {
-        if (previousZoom < 11 && $scope.map.getZoom() == 11) {
+        var zoom = $scope.map.getZoom();
+
+        if (previousZoom < detailedZoomMin && zoom == detailedZoomMin) {
             console.log("DETAIL MODE ON");
             // pruneCluster.RedrawIcons();
             // pruneCluster.ProcessView();
+            $scope.detailMode = true;
+            });
         }
-        //else if ($scope.map.getZoom() == $scope.detailedZoomMin) {
-        else if (previousZoom > 10 && $scope.map.getZoom() == 10) {
+        else if (previousZoom > (detailedZoomMin - 1) && zoom == (detailedZoomMin - 1)) {
             console.log("DETAIL MODE OFF");
             // pruneCluster.RedrawIcons();
             // pruneCluster.ProcessView();
+            $scope.detailMode = false;
+            });
         }
         // pruneCluster.ProcessView();
         // pruneCluster.RedrawIcons();

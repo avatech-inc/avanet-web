@@ -302,13 +302,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     // setup heatmap
     var heatMap = L.heatLayer([], {
-        radius: 10, blur: 15, 
+        radius: 1, blur: 1, 
         maxZoom: $scope.map.getZoom() 
     }).addTo($scope.map);
 
-
-    // setup clustering  
-    var pruneCluster = new PruneClusterForLeaflet(); //30, 20);
+    // setup clustering
+    var pruneCluster = new PruneClusterForLeaflet();
     pruneCluster.Cluster.Size = 10; 
     $scope.map.addLayer(pruneCluster);
 
@@ -421,6 +420,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.on('zoomstart', function(e) {
         previousZoom = $scope.map.getZoom();
     });
+
     var detailedZoomMin = 11;
     $scope.detailMode = true;
     $scope.map.on('zoomend', function(e) {
@@ -446,6 +446,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 radius: 10, blur: 15, maxZoom: (zoom + (zoom / 2))
             });
         }
+
         // load new profiles
         if ($scope.loadProfilesTimer) $timeout.cancel($scope.loadProfilesTimer);
         $scope.loadProfilesTimer = $timeout(function(){

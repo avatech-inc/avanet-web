@@ -98,10 +98,10 @@ window.ElevationWidget = function() {
         var g = d3.select(this._container).select("svg").select("g");
 
         this._profileStroke = g.append("path")
-            .attr("style", "fill:" + _color + ";opacity:.4;");
+            .attr("style", "fill:" + _color + ";opacity:.4; pointer-events:none;");
 
         this._profileFill = g.append("path")
-            .attr("style", "fill:none;stroke:" + _color + ";stroke-width:2px;");
+            .attr("style", "fill:none;stroke:" + _color + ";stroke-width:2px; pointer-events:none;");
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())
@@ -405,6 +405,7 @@ window.ElevationWidget = function() {
           .select('line')
           .style('stroke', 'rgba(0,0,0,.1)')
           .style('shape-rendering', 'crispEdges')
+          .style('pointer-events', 'none')
     }
 
     this._appendXaxis = function(x) {
@@ -498,7 +499,7 @@ window.ElevationWidget = function() {
                     .attr("r", 6) // 6
                     .attr("cx", 0)
                     .attr("cy", 0)
-                    .attr("style", "fill:" + _color + ";z-index:10000;")
+                    .attr("style", "fill:" + _color + ";z-index:10000; pointer-events:none;")
                     .attr("class", "height-focus circle-lower");
 
                 this._mouseHeightFocusLabel = heightG.append("svg:text")
@@ -711,7 +712,7 @@ window.ElevationWidget = function() {
             .attr('y1', 0)
             .attr('x2', xCoordinate)
             .attr('y2', this._height())
-            .attr("style","stroke:" + _color + ";")
+            .attr("style","stroke:" + _color + "; pointer-events:none;")
             .classed('hidden', false);
 
         var alt = item.elevation,

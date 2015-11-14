@@ -635,6 +635,10 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         updateElevationProfile();
         updateSegments();
+
+        // return marker
+        return _line.editing._markers[index];
+    }
     }
 
     var preventEdit = false;

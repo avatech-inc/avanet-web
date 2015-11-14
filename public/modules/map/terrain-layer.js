@@ -106,8 +106,8 @@ var AvatechTerrainLayer = function (options) {
             return;
         }
 
-        // if we've gotten this far and no pixels have been returned, it's an error and we should leave
-        // otherwise, tile will be rendered blank
+        // if we've gotten this far and no pixels have been returned, it's an 
+        // error and we should leave. otherwise, tile will be rendered blank
         if (!e.data.pixels) return;
 
         // get canvas context for this tile

@@ -371,48 +371,23 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
 
     // render observation cluster icons
-    pruneCluster.BuildLeafletCluster = function(cluster, position) {
-        console.log("BUILDING CLUSTER FOR ZOOM LEVEL " + $scope.map.getZoom());
-        // create icon
-        var icon = pruneCluster.BuildLeafletClusterIcon(cluster);
+    pruneCluster.BuildLeafletClusterIcon = function(cluster) {
+        var className = 'prunecluster'
 
-        // if in detailed mode, style icon accordingly
-        if ($scope.map.getZoom() >= $scope.detailedZoomMin) {
-            icon.options.className += " detailed";
-        }
+        // if in detailed mode
+        if ($scope.detailMode) className += ' detailed'
 
         // hacky yet highly performant way to determine if there is a red flag in the cluster
         var redFlagInCluster = cluster.stats[1] > 0;
+        if (redFlagInCluster) className += ' redFlag';
 
-        // add redFlag class if red flag is in the cluster
-        if (redFlagInCluster) icon.options.className += " redFlag";
-         
-        // create marker
-        var m = new L.Marker(position, { icon: icon });
-        m.on('click', function() {
-            // compute the  cluster bounds (it's slow : O(n))
-            var markersArea = pruneCluster.Cluster.FindMarkersInArea(cluster.bounds);
-            var b = pruneCluster.Cluster.ComputeBounds(markersArea);
-            if (b) {
-              var bounds = new L.LatLngBounds(new L.LatLng(b.minLat, b.maxLng), new L.LatLng(b.maxLat, b.minLng));
-              var zoomLevelBefore = pruneCluster._map.getZoom();
-              var zoomLevelAfter = pruneCluster._map.getBoundsZoom(bounds, false, new L.Point(20, 20, null));
-              // if the zoom level doesn't change
-              if (zoomLevelAfter === zoomLevelBefore) {
-                // send an event for the LeafletSpiderfier
-                pruneCluster._map.fire('overlappingmarkers', {
-                  cluster: pruneCluster,
-                  markers: markersArea,
-                  center: m.getLatLng(),
-                  marker: m
-                });
-                pruneCluster._map.setView(position, zoomLevelAfter);
-              }
-              else pruneCluster._map.fitBounds(bounds);
-            }
+        // create icon
+        return new L.DivIcon({
+            html: "<div><span>" + cluster.population + "</span></div>",
+            className: className,
+            iconSize: L.point(30, 30)
         });
-        return m;
-    };
+    }
 
     // re-render observation icons when zoom level is changed
     // keep track of previousZoom

@@ -76,6 +76,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             //         index: point.index,
             //    });
             // });
+
             angular.forEach(_line.editing._markers, function(marker) {
                 //marker.dragging.enable();
                 //console.log(marker);

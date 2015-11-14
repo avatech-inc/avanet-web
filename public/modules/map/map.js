@@ -306,23 +306,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         maxZoom: $scope.map.getZoom() 
     }).addTo($scope.map);
 
-    $scope.map.on('zoomend', function(e) {
-        var zoom = $scope.map.getZoom();
-        if (zoom < $scope.detailedZoomMin) {
-            // show heatmap
-            if (heatMap) heatMap.setOptions({
-                radius: 10, blur: 15,
-                maxZoom: (zoom + (zoom / 2))
-            });
-        }
-        else {
-            // hide heatmap
-            if (heatMap) heatMap.setOptions({
-                radius: 1, blur: 1, maxZoom: 20
-            });
-            // show markers
-        }
-    });
 
     // setup clustering  
     var pruneCluster = new PruneClusterForLeaflet(); //30, 20);
@@ -448,6 +431,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // pruneCluster.RedrawIcons();
             // pruneCluster.ProcessView();
             $scope.detailMode = true;
+            // hide heatmap
+            if (heatMap) heatMap.setOptions({
+                radius: 1, blur: 1, maxZoom: 20
             });
         }
         else if (previousZoom > (detailedZoomMin - 1) && zoom == (detailedZoomMin - 1)) {
@@ -455,6 +441,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             // pruneCluster.RedrawIcons();
             // pruneCluster.ProcessView();
             $scope.detailMode = false;
+            // show heatmap
+            if (heatMap) heatMap.setOptions({
+                radius: 10, blur: 15, maxZoom: (zoom + (zoom / 2))
             });
         }
         // load new profiles

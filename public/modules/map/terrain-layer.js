@@ -351,36 +351,23 @@ var AvatechTerrainLayer = function (options) {
             lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
     }
 
-    var callbackTimer;
-    var callbackCalled;
+    // NOTE: only one bulk request can be handled at a time
     terrainLayer.getTerrainDataBulk = function(points, callback) {
-        // clear callbacks cache
+        // clear callbacks cache to prevent any old callbacks
+        // from executing thereby tainting this new request
         terrainLayer.callbacks = {};
 
-        callbackCalled = false;
-        var d = new Date().getTime();
-        if (callbackTimer) clearTimeout(callbackTimer);
+        // keep track of recieved data in original order
         var receivedPoints = [];
+        // keep track of recieved count separately (since we can't use receivedPoints.length)
+        var receivedPointsTotal = 0;
+
         for (var i = 0; i < points.length; i++) {
             terrainLayer.getTerrainData(points[i].lat, points[i].lng, function(terrainData) {
-                // place in array based on original index to ensure same order
                 receivedPoints[terrainData.index] = terrainData;
-
-                // when all points have been received
-                if (receivedPoints.length >= points.length) {
-                    // if callback called once, prevent calling again
-                    if (callbackCalled) return;
-                    callbackCalled = true;
-
-                    console.log("TIME: " + (new Date().getTime() - d));
-
-                    callbackTimer = setTimeout(function(){ 
-                        callback(receivedPoints);
-                    }, 10);
-                }
-
-                // todo: put in timeout timer?
-
+                receivedPointsTotal++;
+                // when all points have been received, callback
+                if (receivedPointsTotal == points.length) callback(receivedPoints);
             }, 
             i, // index
             points[i].original // original

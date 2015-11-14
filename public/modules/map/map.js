@@ -457,6 +457,11 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.detailMode = false;
             });
         }
+        // load new profiles
+        if ($scope.loadProfilesTimer) $timeout.cancel($scope.loadProfilesTimer);
+        $scope.loadProfilesTimer = $timeout(function(){
+            $scope.loadProfiles();
+        }, 300);
         // pruneCluster.ProcessView();
         // pruneCluster.RedrawIcons();
         // $scope.$apply();
@@ -726,14 +731,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.loadProfilesTimer = $timeout(function(){
             $scope.loadProfiles();
         }, 300);
-    });
-
-    $scope.map.on('zoomend', function() {
-        $timeout.cancel($scope.loadProfilesTimer);
-        $scope.loadProfilesTimer = $timeout(function(){
-            $scope.loadProfiles();
-        }, 300);
-        mixpanel.track("zoom", $scope.map.getZoom());
     });
 
     // make sure map loads properly

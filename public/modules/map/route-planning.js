@@ -410,7 +410,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         calculateRouteStats(elevationProfilePoints);
     }, true);
 
-    $scope.$watch("hoverOnLeg", function(){
+    $scope.$watch("hoverOnLeg", function() {
         angular.forEach(lineSegmentGroup._layers, function(segment) {
             segment.setStyle({ color: 'transparent' });
             if (segment.segment.legIndex == $scope.hoverOnLeg) {
@@ -421,7 +421,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             }
         });
     }, true);
-    $scope.$watch("hoverOnPoint", function(){
+    $scope.$watch("hoverOnPoint", function() {
         if (!_line) return;
         angular.forEach(_line.editing._markers, function(marker) {
             $(marker._icon).removeClass("highlight");

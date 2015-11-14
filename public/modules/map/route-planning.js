@@ -1,4 +1,4 @@
-angular.module('avatech').controller('RoutePlanningController', function($http, $scope, $rootScope, $timeout, $filter, Global, snowpitExport) {
+angular.module('avatech').controller('RoutePlanningController', function($http, $scope, $stateParams, $rootScope, $timeout, $filter, Global, snowpitExport) {
 
     $scope.terrainLayer = $rootScope.terrainLayer;
     $scope.map = $rootScope.map;

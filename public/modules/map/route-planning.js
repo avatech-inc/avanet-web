@@ -30,7 +30,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 [bounds[3], bounds[2]]
             ], { maxZoom: 14, animate: false });
 
-
             // wait a bit for map to move. using a timeout here instead of:
             // $scope.map.on('moveend', function() { ... })
             // since it's just a percaution and 'moveend' can be unpredictabile

@@ -604,6 +604,17 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.myProfiles = Observations.observations;
     $scope.myRoutes = Routes.observations;
 
+    // var paths = [];
+    // $scope.$watch('myRoutes',function() {
+    //     angular.forEach(paths,function(path) {
+    //         path.removeFrom($scope.map);
+    //     });
+
+    //     angular.forEach($scope.myRoutes,function(route) {
+    //         paths.push(L.geoJson(route.path).addTo($scope.map));
+    //     });
+    // }, true);
+
     // on map search select
     $scope.mapSearchSelect = function(location) {
         if (location.lat && location.lng)

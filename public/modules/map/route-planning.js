@@ -5,6 +5,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     var formatters = snowpitExport.formatters;
 
+    $scope.loading = true;
+
     $scope.route = {
         _id: null,
         name: "Route Name",
@@ -38,7 +40,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
     }
     // if new
     else if ($stateParams.routeId == "new") {
-
+        $scope.loading = false;
     }
 
     // remove map path and elevation widget when current state is destroyed

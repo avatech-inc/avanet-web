@@ -3,25 +3,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     $scope.formatters = snowpitExport.formatters;
 
-    $scope._showPreviewPane;
-    $scope.showPreviewPane = function(){ 
-        // if ($state.current.data.modal) return $scope._showPreviewPane;
-        // else {
-        //     $scope._showPreviewPane = $state.current.data.showPreviewPane;
-        //     return $scope._showPreviewPane;
-        // } 
+    $scope.showPreviewPane = function() {
         return $state.current.data.showPreviewPane;
     };
-    $scope._isFullScreen;
     $scope.isFullScreen = function() { 
-        // if ($state.current.data.modal) return $scope._isFullScreen;
-        // else {
-        //     $scope._isFullScreen = $state.current.data.fullScreen; 
-        //     return $scope._isFullScreen;
-        // }
         return $state.current.data.fullScreen;
     };
-
     $scope.showBottomPane = function() {
         return $state.current.name == "index.route";
     }
@@ -30,6 +17,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }
 
     $scope.mapLayers = mapLayers;
+
+    $scope.myProfiles = Observations.observations;
+    $scope.myRoutes = Routes.observations;
 
     // which list to show in side bar
     $scope.selectedTab = 'obs';
@@ -301,10 +291,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     $scope.map.on('load', function(e) { mapLoaded.resolve(); });
 
     // setup heatmap
-    var heatMap = L.heatLayer([], {
-        radius: 1, blur: 1, 
-        maxZoom: $scope.map.getZoom() 
-    }).addTo($scope.map);
+    var heatMap = L.heatLayer([], { radius: 1, blur: 1, maxZoom: 20 }).addTo($scope.map);
 
     // setup clustering
     var pruneCluster = new PruneClusterForLeaflet();
@@ -389,13 +376,13 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
     }
 
-    // re-render observation icons when zoom level is changed
     // keep track of previousZoom
     var previousZoom;
     $scope.map.on('zoomstart', function(e) {
         previousZoom = $scope.map.getZoom();
     });
 
+    // re-render observation icons when zoom level is changed
     var detailedZoomMin = 11;
     $scope.detailMode = true;
     $scope.map.on('zoomend', function(e) {
@@ -410,9 +397,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             pruneCluster.ProcessView();
 
             // hide heatmap
-            if (heatMap) heatMap.setOptions({
-                radius: 1, blur: 1, maxZoom: 20
-            });
+            if (heatMap) heatMap.setOptions({ radius: 1, blur: 1, maxZoom: 20 });
         }
         else if (previousZoom > (detailedZoomMin - 1) && zoom == (detailedZoomMin - 1)) {
             console.log("DETAIL MODE OFF");
@@ -424,7 +409,7 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
             // show heatmap
             if (heatMap) heatMap.setOptions({
-                radius: 10, blur: 15, maxZoom: (zoom + (zoom / 2))
+                radius: 10, blur: 15, maxZoom: zoom //(zoom + (zoom / 4))
             });
         }
 
@@ -436,30 +421,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
         // track zoom on mixpanel (to see which zoom levels are most popular)
         mixpanel.track("zoom", $scope.map.getZoom());
-
-        // pruneCluster.ProcessView();
-        // pruneCluster.RedrawIcons();
-        // $scope.$apply();
-
-        // remove everything from map
-        // pruneCluster.ProcessView();
-
-        // var markerArray = [];
-        // for(var i in obsOnMap) {
-        //     markerArray.push(obsOnMap[i]);
-        // } 
-        //console.log("ZOOM END! " + $scope.map.getZoom());
-        // pruneCluster.ProcessView();
-        // plotObsOnMap();
-        // for (var i = 0; i < pruneCluster.Cluster._markers.length; i++) {
-        //     pruneCluster.Cluster._markers[i].data.forceIconRedraw = true;
-        // }
-
-        // not working...
-        // obsOnMap = {};
-        // pruneCluster.RemoveMarkers();
-        // pruneCluster.ProcessView();
-        // plotObsOnMap();
     });
 
     // keep track of location at cursor
@@ -508,7 +469,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         });
 
     });
-
+    
+    // hovering on a profile in the sidebar (sets 'hideMapButtons')
     var hoverDelay;
     $scope.hoverProfile = function(profile) {
         // debounce
@@ -533,13 +495,16 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             pruneCluster.ProcessView();
         }, 100);
     };
+
     // hide zoom control on hideMapButtons
     $scope.$watch("hideMapButtons", function() {
         $(".leaflet-control-zoomslider").css("opacity", $scope.hideMapButtons ? 0 : 1);
     });
 
+    // resize map when window is resized
     $scope.$on('resizeMap', function() { 
         $timeout(function() { $scope.map.invalidateSize(); });
+        // weird hack to ensure correct new window size
         $timeout(function() { $scope.map.invalidateSize(); }, 200);
     });
 
@@ -549,45 +514,14 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
 
     $scope.$on('profileLoaded', function(e, profile) {
         if (!profile || !profile.location) return;
-
         $timeout(function() {
-
             // close open popup
             var closebtn = $(".leaflet-popup-close-button");
             if (closebtn.length) closebtn[0].click();
-
             // pan to location
             $scope.map.panTo({ lat: profile.location[1], lng: profile.location[0] });
-
-            // $scope.mapLayer.eachLayer(function(marker) {
-                
-            //     marker.setIcon(L.divIcon({
-            //         className: "count-icon-" + marker.profile.type,
-            //         html: "",
-            //         iconSize: [14, 14]
-            //     }));
-            //     marker.setZIndexOffset(-1000);
-
-            //     console.log(marker.profile.type + "," + profile.type);
-
-            //     if(profile && marker.profile.type == profile.type && marker.profile._id == profile._id &&
-            //         marker.options && marker.options.icon && marker.options.icon.options &&
-            //         marker.options.icon.options.className) {
-
-            //         marker.setIcon(L.divIcon({
-            //             className: "count-icon-" + marker.profile.type + ' selected',
-            //             html: "",
-            //             iconSize: [14, 14]
-            //         }));
-            //         marker.setZIndexOffset(1000);
-            //     }
-            // });
-
         });
     });
-
-    $scope.myProfiles = Observations.observations;
-    $scope.myRoutes = Routes.observations;
 
     // var paths = [];
     // $scope.$watch('myRoutes',function() {
@@ -629,8 +563,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
                 // associate profile with marker
                 marker.data.observation = profile;
 
-                // this looks hacky but it's by far the most performant way to do this
-                // (uses the PruneCluster lib's 'category' feature)
+                // this looks hacky but it's by far the most performant way to keep
+                // track of red flags (uses the PruneCluster lib's 'category' feature)
                 marker.category = + profile.redFlag;
 
                 // add to map
@@ -656,9 +590,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         if ($scope.canceler) $scope.canceler.resolve();
         $scope.canceler = $q.defer();
 
-        // zoom level
-        //var verbose = ($scope.map.getZoom() > 7); 
-
         // padding in pixels (so we don't get cut-off map points)
         var padding = 5;
 
@@ -671,7 +602,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         point_sw = $scope.map.containerPointToLatLng(point_sw);
 
         // get obs from server
-        // todo: use 'since' ? use 'startDate'?
         Restangular.all("observations")
         .withHttpConfig({ timeout: $scope.canceler.promise })
         .getList({
@@ -680,13 +610,9 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             verbose: false
         })
         .then(function(obs) {
-            var d = new Date().getTime();
             $scope.profiles = obs;
             plotObsOnMap();
             searchObs();
-
-            console.log("LOADED! " + (new Date().getTime() - d) + " ms");
-
             $scope.loadingProfiles = false;
             $scope.loadingNew = false;
         });
@@ -730,7 +656,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     }).addTo($scope.map);
 
     setTimeout(function(){
-        //$scope.terrainLayer.addTo($scope.map);
         $scope.terrainLayer.setZIndex(99998);
     }, 100);
 
@@ -754,22 +679,6 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
         $scope.terrainLayer.needsRedraw = true;
     });
 
-    // sun exposure stuff
-    // $scope.sunHours = 17;
-    // var _debounce;
-    // $scope.$watch('sunHours', function() {
-    //     if (_debounce) $timeout.cancel(_debounce);
-    //     _debounce = $timeout(function(){
-    //         $scope.sunDate = new Date(); 
-    //         $scope.sunDate.setTime(Date.parse("2015 01 01"));
-    //         $scope.sunDate.setHours($scope.sunHours);
-    //         if ($scope.sunHours % 1 == .5) $scope.sunDate.setMinutes(30);
-
-    //         $scope.terrainLayer.sunDate = angular.copy($scope.sunDate);
-    //         $scope.terrainLayer.needsRedraw = true
-    //     }, 50);
-    // },true);
-
     // custom terrain visualization
     $scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
     $scope.customTerrain = {
@@ -786,11 +695,8 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
     };
     $scope.$watch('customTerrain', function() {
         if ($scope.customTerrain.color.indexOf('#') == 0) $scope.customTerrain.color = $scope.customTerrain.color.substr(1);
-
         $scope.terrainLayer.customParams = angular.copy($scope.customTerrain);
-        //$scope.terrainLayer.redrawQueue = [];
         $scope.terrainLayer.needsRedraw = true;
-
     }, true);
 
     $scope.capitalizeFirstLetter = function(str) {
@@ -805,14 +711,12 @@ angular.module('avatech.system').controller('MapController', function ($rootScop
             $scope.map.removeLayer(gridOverlayLayer);
             gridOverlayLayer = null;
         }
-
         if (newOverlay == 'utm') {
             gridOverlayLayer = new UTMGridLayer();
         }
         else if (newOverlay == 'dd') {
             //gridOverlayLayer = new LatLngGridLayer();
         }
-
         if (gridOverlayLayer) {
             gridOverlayLayer.addTo($scope.map);
             gridOverlayLayer.setZIndex(99999);

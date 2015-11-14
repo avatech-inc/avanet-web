@@ -1,6 +1,6 @@
 <section ng-controller="MapController">
 	<section ng-class="{ 'hide-main': isFullScreen() }" >
-		<div id="map-header" ng-hide="isDemo || !detailMode" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
+		<div id="map-header" ng-hide="isDemo" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
 
 				<div class="btn-group filter" dropdown>
 				  <button type="button" class="btn btn-default dropdown-toggle">

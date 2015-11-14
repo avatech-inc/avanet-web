@@ -26,10 +26,13 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 var point = route.points[i];
                 var marker = addPoint({ lat: point.coords[1], lng: point.coords[0] });
                 if (point.waypoint) makeWaypoint(marker);
-
-                updateElevationProfile();
-                updateSegments();
             }
+
+            $timeout(function() {
+                processUpdate();
+                $scope.loading = false;
+                $scope.$apply();
+            });
         });
         // todo: handle 404?
     }
@@ -110,7 +113,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 });
             }
 
-        }, 500);
+        }, 1000);
     }, true);
 
     $scope.routeControl = {
@@ -522,6 +525,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             //     // );
             //     // newPoint = { lat: newPoint.geometry.coordinates[0], lng: newPoint.geometry.coordinates[1] };
             //     addPoint(e.latlng, e.target.segment.index + 1);
+            //        processUpdate();
             // });
 
             // elevation widget highlight
@@ -632,10 +636,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // regular point
             else makeRegularPoint(marker);
         });
-
-        updateElevationProfile();
-        updateSegments();
-
         // return marker
         return _line.editing._markers[index];
     }
@@ -657,8 +657,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 if (!marker.isPoint) makeRegularPoint(marker);
             });
 
-            updateElevationProfile();
-            updateSegments();
+            processUpdate();
         });
     }
 
@@ -672,6 +671,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         // add point
         addPoint(e.latlng);
+
+        // update
+        processUpdate();
     };
     $scope.map.on('click', mapClick);
 
@@ -755,8 +757,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     makeWaypoint(marker);
                     marker.fire('click');
 
-                    updateElevationProfile();
-                    updateSegments();
+                    processUpdate();
                     saveLinePoints();
                 });
 
@@ -816,16 +817,16 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     function deleteWaypoint(marker) {
         makeRegularPoint(marker);
-        updateElevationProfile();
-        updateSegments();
+        processUpdate();
         saveLinePoints();
     }
 
     var elevationProfilePoints;
     var lastLine;
 
-    // todo: change name to "get terrain data" or something more descriptive like that
-    function updateElevationProfile() {
+    function processUpdate() {
+        updateSegments();
+
         var points = _line._latlngs;
 
         // get line distance
@@ -864,6 +865,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
             saveLinePoints();
         });
+
+        updateSegments();
     }
 
     function calculateRouteStats() {

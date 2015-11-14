@@ -5,8 +5,12 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     var formatters = snowpitExport.formatters;
 
-    // load
-    // if routeId specified
+    $scope.route = {
+        _id: null,
+        name: "Route Name",
+        stats: {},
+        points: []
+    };
     if ($stateParams.routeId && $stateParams.routeId != "new") {
         $http.get(window.apiBaseUrl + "routes/" + $stateParams.routeId)
         .then(function(res) {
@@ -32,13 +36,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         _line = null;
         editHandler = null;
     });
-
-    $scope.route = {
-        _id: null,
-        name: "Route Name",
-        stats: {},
-        points: []
-    };
 
     // save when route is edited
     var routeSaveTimer;

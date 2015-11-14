@@ -28,24 +28,30 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             $scope.map.fitBounds([
                 [bounds[1], bounds[0]],
                 [bounds[3], bounds[2]]
-            // create editable path
-            createLine();
-            // add markers
-            for (var i = 0; i < route.points.length; i++) {
-                var point = route.points[i];
-                var marker = addPoint({ lat: point.coords[1], lng: point.coords[0] });
-                if (point.waypoint) makeWaypoint(marker);
-            }
-            // load elevation profile, etc.
-            processUpdate(function() {
-                // elevation profile has been loaded
-                // note: this will still get called even if no terrain is present
-                $scope.loading = false;
-                $scope.$apply();
-            });
             ], { maxZoom: 14, animate: false });
 
 
+            // wait a bit for map to move. using a timeout here instead of:
+            // $scope.map.on('moveend', function() { ... })
+            // since it's just a percaution and 'moveend' can be unpredictabile
+            $timeout(function(){
+                // create editable path
+                createLine();
+                // add markers
+                for (var i = 0; i < route.points.length; i++) {
+                    var point = route.points[i];
+                    var marker = addPoint({ lat: point.coords[1], lng: point.coords[0] });
+                    // if waypoint
+                    if (point.waypoint) makeWaypoint(marker, point.waypoint);
+                }
+                // load elevation profile, etc.
+                processUpdate(function() {
+                    // elevation profile has been loaded
+                    // note: this will still get called even if no terrain is present
+                    $scope.loading = false;
+                    $scope.$apply();
+                });
+            }, 200);
         });
         // todo: handle 404?
     }

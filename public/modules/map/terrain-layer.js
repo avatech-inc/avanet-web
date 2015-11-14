@@ -85,6 +85,7 @@ var AvatechTerrainLayer = function (options) {
     // clear old 'layers'
     var layerClearTimer;
     terrainLayer.on('load', function (e) {
+        console.log("terrain loaded!");
         if (layerClearTimer) clearTimeout(layerClearTimer);
         layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
     });
@@ -356,12 +357,11 @@ var AvatechTerrainLayer = function (options) {
         // clear callbacks cache to prevent any old callbacks
         // from executing thereby tainting this new request
         terrainLayer.callbacks = {};
-
         // keep track of recieved data in original order
         var receivedPoints = [];
         // keep track of recieved count separately (since we can't use receivedPoints.length)
         var receivedPointsTotal = 0;
-
+        // call 'getTerrainData' for each point
         for (var i = 0; i < points.length; i++) {
             terrainLayer.getTerrainData(points[i].lat, points[i].lng, function(terrainData) {
                 receivedPoints[terrainData.index] = terrainData;

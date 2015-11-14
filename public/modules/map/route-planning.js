@@ -639,34 +639,36 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         // return marker
         return _line.editing._markers[index];
     }
+
+    function createLine() {
+        _line = L.polyline([], { opacity: .5 });
+        lineGroup.addLayer(_line);
+        editHandler.enable();
+
+        // event when line is edited (after point is dragged or midpoint added)
+        _line.on('edit', function(e) {
+            // prevent addition of new points for 1 second after moving point
+            // to prevent accidental addition of new point
+            preventEdit = true;
+            setTimeout(function() { preventEdit = false }, 1000);
+
+            // handle new midpoints
+            angular.forEach(_line.editing._markers,function(marker) {
+                if (!marker.isPoint) makeRegularPoint(marker);
+            });
+
+            updateElevationProfile();
+            updateSegments();
+        });
     }
 
     var preventEdit = false;
     function mapClick(e) {
         if (!$scope.routeControl.editing) return;
         if (preventEdit) return;
+
         // add route polyline if it doesn't exist (only gets hit on first point)
-        if (!_line) {
-            _line = L.polyline([], { opacity: .5 });
-            lineGroup.addLayer(_line);
-            editHandler.enable();
-
-            // event when line is edited (after point is dragged or midpoint added)
-            _line.on('edit', function(e) {
-                // prevent addition of new points for 1 second after moving point
-                // to prevent accidental addition of new point
-                preventEdit = true;
-                setTimeout(function() { preventEdit = false }, 1000);
-
-                // handle new midpoints
-                angular.forEach(_line.editing._markers,function(marker) {
-                    if (!marker.isPoint) makeRegularPoint(marker);
-                });
-
-                updateElevationProfile();
-                updateSegments();
-            });
-        }
+        if (!_line) createLine();
 
         // add point
         addPoint(e.latlng);

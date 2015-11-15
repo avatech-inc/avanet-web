@@ -48,89 +48,34 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
         return false;
     }
 
+    // filters for my observations (published / unpublished)
 
-    // ======= SEARCH =======
+    $scope.my_unpublished = function(profile) {
+        if (!$scope.obSearch) return false;
 
-    //$scope.obSearch = new ObSearch();
+        var ok = (profile.published === false && profile.user._id == $scope.global.user._id);
 
-    // var searchObs = function() {
-    //     // hide all markers
-    //     angular.forEach(obsOnMap, function(marker) {
-    //         marker.filtered = true;
-    //         marker.data.filtered = true;
-    //     });
-    //     // iterate through obs and filter
-    //     angular.forEach($scope.profiles,function(ob) {
-    //         ob.filtered = true;
-    //         if ($scope.obSearch.doSearch(ob)) {
-    //             ob.filtered = false;
-    //             obsOnMap[ob._id].filtered = false;
-    //             obsOnMap[ob._id].data.filtered = false;
-    //         }
-    //     });
-    //     //pruneCluster.ProcessView();
-    // }
-    // // debounce search
-    // var _searchTimeout;
-    // $scope.$watch('obSearch',function() {
-    //     if (_searchTimeout) $timeout.cancel(_searchTimeout);
-    //     _searchTimeout = $timeout(function() {
-    //         searchObs();
-    //     }, 120);
-    // }, true);
-    
-    // // filters for my observations (published / unpublished)
+        if ($scope.obSearch.search_type(profile) === false) ok = false;
+        if ($scope.obSearch.search_text(profile) === false) ok = false;
+        if ($scope.obSearch.search_elevation(profile) === false) ok = false;
+        if ($scope.obSearch.search_aspect(profile) === false) ok = false;
+        if ($scope.obSearch.search_slope(profile) === false) ok = false;
 
-    // $scope.my_unpublished = function(profile) {
-    //     var ok = (profile.published === false && profile.user._id == $scope.global.user._id);
+        return ok;
+    }
+    $scope.my_published = function(profile) {
+        if (!$scope.obSearch) return false;
 
-    //     if ($scope.obSearch.search_type(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_text(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_elevation(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_aspect(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_slope(profile) === false) ok = false;
+        var ok = (profile.published === true && profile.user._id == $scope.global.user._id);
 
-    //     return ok;
-    // }
-    // $scope.my_published = function(profile) {
-    //     var ok = (profile.published === true && profile.user._id == $scope.global.user._id);
+        if ($scope.obSearch.search_type(profile) === false) ok = false;
+        if ($scope.obSearch.search_text(profile) === false) ok = false;
+        if ($scope.obSearch.search_elevation(profile) === false) ok = false;
+        if ($scope.obSearch.search_aspect(profile) === false) ok = false;
+        if ($scope.obSearch.search_slope(profile) === false) ok = false;
 
-    //     if ($scope.obSearch.search_type(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_text(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_elevation(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_aspect(profile) === false) ok = false;
-    //     if ($scope.obSearch.search_slope(profile) === false) ok = false;
-
-    //     return ok;
-    // }
-
-    // // formatters
-
-    // $scope.formatElev = function(val) {
-    //     if (!Global.user.settings) return;
-    //     // meters
-    //     if (Global.user.settings.elevation == 0)
-    //         return val + " m";
-    //     // feet
-    //     else {
-    //         return Math.round(val * 3.28084).toFixed(0) + " ft";
-    //     }
-    // }
-    // $scope.formatTempRange = function(val1,val2) {
-    //     if (!Global.user.settings) return;
-    //     // meters
-    //     if (Global.user.settings.elevation == 0)
-    //         return val1 + "-" + val2 + " m";
-    //     // feet
-    //     else {
-    //         return Math.round(val1 * 3.28084).toFixed(0) + "-" + Math.round(val2 * 3.28084).toFixed(0) + " ft";
-    //     }
-    // }
-    // $scope.formatDegSlider = function(val) {
-    //     return val + "°"
-    // }
-
-    // ======= END SEARCH =======
+        return ok;
+    }
 
     // DRAFTS
 
@@ -154,7 +99,6 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
         return ($scope.getProfileSelectedIndex(profile) != -1);
     }
     $scope.publishProfiles = function() {
-
         PublishModal.open({ initialSharing: null })
         .then(function (sharing) {
 

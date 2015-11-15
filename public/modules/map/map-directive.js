@@ -25,10 +25,12 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         $templateRequest("/modules/map/observation-map-popup.html").then(function(templateHtml) {
             scope.compiledPopup = $compile(angular.element(templateHtml));
         });
-        // todo: automatically set 'id' attribute
+
+        // get map holder DOM element
+        var mapElement = element[0].querySelector('.map-holder');
 
          // init leaflet map
-        scope.map = L.map('map', {
+        scope.map = L.map(mapElement, {
             zoomControl: false,
             minZoom: 3,
             maxZoom: 18, // 19

@@ -9,11 +9,11 @@
 	border-bottom: none;
 	height: 25px;
 }
+.map-holder { position:absolute; top:0; bottom:0; left: 0; right: 0; }
 
 #map-container {
 	z-index:999; position:absolute; top:90px; bottom:0; left: 280px; right: 0; 
 }
-#map { position:absolute; top:0; bottom:0; left: 0; right: 0; }
 #map-header { 
 	position: absolute;
 	left:280px; right: 0;

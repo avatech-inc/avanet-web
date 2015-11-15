@@ -496,10 +496,10 @@ window.ElevationWidget = function() {
 
                 var pointG = this._pointG = heightG.append("g");
                 pointG.append("svg:circle")
-                    .attr("r", 6) // 6
+                    .attr("r", 8) // 6
                     .attr("cx", 0)
                     .attr("cy", 0)
-                    .attr("style", "fill:" + _color + ";z-index:10000; pointer-events:none;")
+                    .attr("style", "fill:" + _color + ";z-index:10000;pointer-events:none;")
                     .attr("class", "height-focus circle-lower");
 
                 this._mouseHeightFocusLabel = heightG.append("svg:text")

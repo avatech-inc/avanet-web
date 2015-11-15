@@ -1,3 +1,51 @@
+angular.module('avatech').directive('obSearch', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, Restangular, ObSearch) {
+  return {
+    restrict: 'A',
+    templateUrl: "/modules/map/ob-search.html",
+    scope: { 
+        obSearch: '=obSearch',
+        showPublisher: '=showPublisher',
+        orgs: '=orgs'
+        // terrainLayer: '=terrainLayer',
+        // profiles: '=obs',
+        // detailMode: '=detailMode',
+        // loadingNew: '=loadingNew',
+        // loadingProfiles: '=loading',
+        // hoverOb: '=hoverOb'
+    },
+    link: function(scope, element) {
+		scope.obSearch = new ObSearch();
+
+	    // formatters
+
+	    scope.formatElev = function(val) {
+	        if (!Global.user.settings) return;
+	        // meters
+	        if (Global.user.settings.elevation == 0)
+	            return val + " m";
+	        // feet
+	        else {
+	            return Math.round(val * 3.28084).toFixed(0) + " ft";
+	        }
+	    }
+	    scope.formatTempRange = function(val1,val2) {
+	        if (!Global.user.settings) return;
+	        // meters
+	        if (Global.user.settings.elevation == 0)
+	            return val1 + "-" + val2 + " m";
+	        // feet
+	        else {
+	            return Math.round(val1 * 3.28084).toFixed(0) + "-" + Math.round(val2 * 3.28084).toFixed(0) + " ft";
+	        }
+	    }
+	    scope.formatDegSlider = function(val) {
+	        return val + "°"
+	    }
+
+    }
+}
+});
+
 angular.module('avatech').factory('ObSearch', function (Global) { 
 
 	return function() {
@@ -173,7 +221,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	        var ok = true;
 
 	        // only search through published profiles 
-	        if (profile.type == 'profile' && !profile.published) return false;
+	        if (!profile.published) return false;
 
 	        if (self.search_type(profile) === false) ok = false;
 	        if (self.search_date(profile) === false) ok = false;

@@ -1,0 +1,168 @@
+<div class="btn-group filter" dropdown>
+  <button type="button" class="btn btn-default dropdown-toggle">
+  	<span style="padding-right:3px;">{{ 'type' | translate }}</span> 
+
+    <span class="caret" ng-show="obSearch.isDefaultType()"></span>
+    <span style="color:#999;" ng-hide="obSearch.isDefaultType()">...</span>
+
+    <span class="removeFilter" ng-hide="obSearch.isDefaultType()"
+    	ng-mousedown="obSearch.setDefaultType()">
+    	<i class="ion-close-round"></i>
+    </span>
+  </button>
+  	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+    	<li ng-repeat="obType in obSearch.observationTypes"
+    		ng-click="obSearch.type_select(obType)"
+    	><a><i class="fa" ng-class="obSearch.searchQuery.type[obType] ? 'fa-check-square' : 'fa-square-o'"></i>
+			{{ 'observation_types.' + obType | translate }}</a>
+    	</li>
+ 	</ul>
+</div>
+
+<div class="btn-group filter" dropdown style="">
+  <button type="button" class="btn btn-default dropdown-toggle">
+    <span style="padding-right:3px;">{{ 'time' | translate }}</span>
+  	<span style="padding-right:3px;color:#999;">
+	    <span ng-show="obSearch.searchQuery.days == 1">Today</span>
+	    <span ng-show="obSearch.searchQuery.days == 7">Past Week</span>
+	    <span ng-show="obSearch.searchQuery.days == 31">Past Month</span>
+	    <span ng-show="obSearch.searchQuery.days == 91">Past 3 Months</span>
+	    <span ng-show="obSearch.searchQuery.days == 183">Past 6 Months</span>
+	    <span ng-show="obSearch.searchQuery.days == 365">Past Year</span>
+    </span>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu list" role="menu">
+     <li ng-click="obSearch.searchQuery.days = 1">Today</li>
+     <li ng-click="obSearch.searchQuery.days = 7">Past Week</li>
+     <li ng-click="obSearch.searchQuery.days = 31">Past Month</li>
+     <li ng-click="obSearch.searchQuery.days = 91">Past 3 Months</li>
+     <li ng-click="obSearch.searchQuery.days = 183">Past 6 Months</li>
+     <li ng-click="obSearch.searchQuery.days = 365">Past Year</li>
+  </ul>
+</div>
+
+<div class="btn-group filter" dropdown ng-show="showPublisher">
+  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+    <span style="padding-right:3px;">{{ 'publisher' | translate }}</span> 
+
+    <span class="caret" ng-show="obSearch.isDefaultPublisher()"></span>
+    <span style="color:#999;" ng-hide="obSearch.isDefaultPublisher()">...</span>
+
+    <span class="removeFilter" ng-hide="obSearch.isDefaultPublisher()"
+    	ng-mousedown="obSearch.setDefaultPublisher()">
+    	<i class="ion-close-round"></i>
+    </span>
+  </button>
+  	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+    	<li ng-click="obSearch.publisher_selectMe()"
+    		ng-dblclick="obSearch.publisher_selectMe(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.me || obSearch.searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o'"></i>Me</a></li>
+
+    	<li ng-show="orgs && orgs.length > 1"
+    		ng-click="obSearch.publisher_selectMyOrgs()"
+			ng-dblclick="obSearch.publisher_selectMyOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.orgs == null || (obSearch.searchQuery.publisher.orgs && obSearch.searchQuery.publisher.orgs.length == orgs.length) ? 'fa-check-square' : 'fa-square-o'"></i>My Organizations</a></li>
+
+    	<li ng-repeat="org in orgs" 
+    		ng-click="obSearch.publisher_selectOrg(org._id)"
+    		ng-dblclick="obSearch.publisher_selectOrg(org._id, true)"><a><i ng-style="{ 'padding-left': (orgs && orgs.length > 1 ? '26px' :''), 'margin-right': (orgs && orgs.length > 1 ? '20px' :'') }" class="fa" ng-class="obSearch.publisher_isOrgSelected(org._id) ? 'fa-check-square' : 'fa-square-o'"></i>{{ org.name }}</a></li>
+
+		<li ng-click="obSearch.publisher_selectOutsideOrgs()"
+			ng-dblclick="obSearch.publisher_selectOutsideOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.outsideOrgs || obSearch.searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o'"></i>Outside Organizations</a></li>
+			
+    	<li ng-click="obSearch.publisher_selectRec()"
+    		ng-dblclick="obSearch.publisher_selectRec(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.rec || obSearch.searchQuery.publisher.rec == null ? 'fa-check-square' : 'fa-square-o'"></i>Rec Users</a></li>
+    </ul>
+</div>
+
+<div class="btn-group filter" dropdown style="">
+  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+    <span style="padding-right:3px;">{{ 'elevation' | translate }}</span>
+    <span class="caret" ng-show="obSearch.searchQuery.elev_low == 0 && obSearch.searchQuery.elev_high == obSearch.elevationMax"></span>
+    <span style="color:#999;" ng-show="(obSearch.searchQuery.elev_low != 0 || obSearch.searchQuery.elev_high != obSearch.elevationMax) && obSearch.searchQuery.elev_low != obSearch.searchQuery.elev_high">
+    	{{ formatTempRange(obSearch.searchQuery.elev_low, obSearch.searchQuery.elev_high) }}
+    </span>
+    <span style="color:#999;" ng-show="obSearch.searchQuery.elev_low == obSearch.searchQuery.elev_high">
+    	{{ formatElev(obSearch.searchQuery.elev_high) }}
+    </span>
+    <span class="removeFilter" ng-hide="obSearch.searchQuery.elev_low == 0 && obSearch.searchQuery.elev_high == obSearch.elevationMax"
+    	ng-mousedown="obSearch.clearSearchElevation($event)">
+    	<i class="ion-close-round"></i>
+    </span>
+  </button>
+  <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+  	<slider-new style="width:340px"
+	    ng-model="obSearch.searchQuery.elev_low"
+	    ng-model-range="obSearch.searchQuery.elev_high"
+	    translate-fn="formatElev"
+	    floor="0"
+	    ceiling="{{ obSearch.elevationMax }}"
+	    buffer="10"
+	    step="10">
+	</slider-new>
+    </a></li></ul>
+</div>
+
+<div class="btn-group filter" dropdown style="">
+  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+    <span style="padding-right:3px;">{{ 'slope_aspect' | translate }}</span> 
+    <span class="caret" ng-show="obSearch.searchQuery.aspect_low == 0 && obSearch.searchQuery.aspect_high == 359"></span>
+    <span style="color:#999;" ng-show="(obSearch.searchQuery.aspect_low != 0 || obSearch.searchQuery.aspect_high != 359) && obSearch.searchQuery.aspect_low != obSearch.searchQuery.aspect_high">
+    	{{ obSearch.searchQuery.aspect_low }}-{{ obSearch.searchQuery.aspect_high }}&deg;
+    </span>
+    <span style="color:#999;" ng-show="obSearch.searchQuery.aspect_low == obSearch.searchQuery.aspect_high">
+    	{{ obSearch.searchQuery.aspect_high }}&deg;
+    </span>
+    <span class="removeFilter" ng-hide="obSearch.searchQuery.aspect_low == 0 && obSearch.searchQuery.aspect_high == 359"
+    	ng-mousedown="obSearch.clearSearchAspect($event)">
+    	<i class="ion-close-round"></i>
+    </span>
+  </button>
+  <ul class="dropdown-menu" role="menu" style="height:114px;width:auto;"><li><a>
+
+		<input-direction-range input-class="form-control" ng-model="obSearch.searchQuery.aspect_low" angle-low="obSearch.searchQuery.aspect_low" angle-high="obSearch.searchQuery.aspect_high"></input-direction-range>
+
+		<input-direction-range input-class="form-control" ng-model="obSearch.searchQuery.aspect_high" angle-low="obSearch.searchQuery.aspect_low" angle-high="obSearch.searchQuery.aspect_high"></input-direction-range>
+  	
+    </a></li></ul>
+</div>
+
+<div class="btn-group filter" dropdown style="">
+  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+    <span style="padding-right:3px;">{{ 'slope_angle' | translate }}</span> 
+    <span class="caret" ng-show="obSearch.searchQuery.slope_low == 0 && obSearch.searchQuery.slope_high == 70"></span>
+    <span style="color:#999;" ng-show="(obSearch.searchQuery.slope_low != 0 || obSearch.searchQuery.slope_high != 70) && obSearch.searchQuery.slope_low != obSearch.searchQuery.slope_high">
+    	{{ obSearch.searchQuery.slope_low }}-{{ obSearch.searchQuery.slope_high }}&deg;
+    </span>
+    <span style="color:#999;" ng-show="obSearch.searchQuery.slope_low == obSearch.searchQuery.slope_high">
+    	{{ obSearch.searchQuery.slope_high }}&deg;
+    </span>
+    <span class="removeFilter" ng-hide="obSearch.searchQuery.slope_low == 0 && obSearch.searchQuery.slope_high == 70"
+    	ng-mousedown="obSearch.clearSearchSlope($event)">
+    	<i class="ion-close-round"></i>
+    </span>
+  </button>
+  <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+  	<slider-new style="width:240px"
+	    ng-model="obSearch.searchQuery.slope_low"
+	    ng-model-range="obSearch.searchQuery.slope_high"
+	    translate-fn="formatDegSlider"
+	    floor="0"
+	    ceiling="70"
+	    buffer="0"
+	    step="1">
+	</slider-new>
+    </a></li></ul>
+</div>
+
+<!--<div class="btn-group filter search">
+  <button type="button">
+		<i class="fa fa-search search"></i>
+		<input class="searchbox" type="text" style="width:200px;" ng-model="obSearch.searchQuery.text" ng-model-options="{ debounce: 300 }"/>
+
+        <span class="removeFilter" ng-show="obSearch.searchQuery.text != ''"
+        	ng-mousedown="obSearch.searchQuery.text = ''">
+        	<i class="ion-close-round"></i>
+        </span>
+
+  </button>
+</div>-->

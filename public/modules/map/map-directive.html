@@ -1,0 +1,127 @@
+<div id='map'></div>
+<div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
+    <div class="btn-group dropup" dropdown>
+      <button type="button" class="dropdown-toggle">
+        <i class="ion-map"></i> <span><b>Map</b>&nbsp;&nbsp;{{ selectedBaseLayer.name }}</span>
+      </button>
+      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="padding:2px 12px;background:#fff !important;">
+
+      		<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
+
+      		<div class="layers-header">{{ 'select_map' | translate }}</div>
+      		
+      		<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
+			
+			<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+
+			<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
+			
+			<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+
+        </a></li></ul>
+    </div>
+
+    <div class="btn-group dropup" dropdown>
+      <button type="button" class="dropdown-toggle">
+        <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;<span ng-show="terrainOverlay">&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
+
+	    	<div style="padding: 12px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative;bottom:3px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
+
+	    	<div ng-show="terrainOverlay == 'custom'">
+
+	    		<accordion-new>
+				    <div class="accordion-item">
+				    	<div class="header" ng-click="$broadcast('refreshSlider')">
+				            Elevation
+				        </div>
+				        <div class="content">
+					      	<slider-new style="width:240px"
+							    ng-model="customTerrain.elev_low"
+							    ng-model-range="customTerrain.elev_high"
+							    translate-fn="formatElev"
+							    floor="0"
+							    ceiling="{{ obSearch.elevationMax }}"
+							    buffer="10"
+							    step="10">
+							</slider-new>
+						</div>
+				    </div>
+
+				  	<div class="accordion-item">
+				    	<div class="header" ng-click="$broadcast('refreshSlider')">
+				            Slope
+				        </div>
+				        <div class="content">
+					      	<slider-new style="width:240px"
+							    ng-model="customTerrain.slope_low"
+							    ng-model-range="customTerrain.slope_high"
+							    translate-fn="formatDegSlider"
+							    floor="0"
+							    ceiling="70"
+							    buffer="0"
+							    step="1">
+					        </slider-new>
+				        </div>
+				    </div>
+
+				  	<div class="accordion-item">
+				    	<div class="header">
+				            Aspect
+				        </div>
+				        <div class="content">
+				    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+
+			  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+		  				</div>
+				    </div>
+
+				  	<div class="accordion-item">
+				    	<div class="header">
+				            Color
+				        </div>
+				        <div class="content">
+			    			<input class="form-control" colorpicker="hex" type="text" ng-model="customTerrain.color" />
+		    			</div>
+				    </div>
+			    </accordion-new>
+
+  				<br/>
+	    	</div>
+
+	    	<div class="btn-group" style="margin: 2px 6px;">
+		        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">
+		        Slope</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">
+		        Aspect</label><!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">
+		        Hillshade</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'custom'">
+		        Custom</label>
+		    </div>
+        </a></li></ul>
+    </div>
+
+    <div class="btn-group dropup" dropdown>
+      <button type="button" class="dropdown-toggle">
+        <i class="ion-ios-grid-view-outline"></i> <span><b>Grid</b>&nbsp;<span ng-show="gridOverlay">&nbsp;{{ gridOverlay == 'dd' ? 'Decimal Degrees' : 'UTM' }}</span></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
+
+      		<div class="btn-group" style="margin: 2px 6px;">
+		        <!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'dd'">Decimal Degrees</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" btn-radio="'utm'">
+		        UTM</label>
+		    </div>
+
+        </a></li></ul>
+    </div>
+</div>
+
+
+<div class="mapCoords" ng-show="mapCursorLocation">
+    {{ formatters.formatLatLng(mapCursorLocation) }}
+    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+    <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>
+    <!--&nbsp;&nbsp;
+    <b>WGS84</b>-->
+</div>
+
+<map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>

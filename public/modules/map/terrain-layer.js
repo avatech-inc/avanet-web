@@ -113,7 +113,7 @@ var AvatechTerrainLayer = function (options) {
         // and no pixels processed (i.e. loadTerrainData as overlayType)
         // mark tile as loaded and return
         if (!e.data.pixels) {
-            if (!ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
+            if (ctx.canvas._tileLoaded) ctx.canvas._tileLoaded(null, ctx.canvas);
             ctx.canvas._tileLoaded = null;
             return;
         }

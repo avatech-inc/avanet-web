@@ -241,7 +241,7 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         // catchall 404 (keeps URL)
         .state('404', {
             url: '/*path',
-            templateUrl: '/404/404.html'
+            templateUrl: '/modules/404/404.html'
         });
     }
 ]);

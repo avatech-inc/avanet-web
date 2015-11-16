@@ -563,24 +563,22 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
     // terrain viz legends
 
-  var elevationColorMap = getColorMap([
-        { color: "fd4bfb", val: 0 },
-        { color: "b04bfd", val: 500 },
-        { color: "1739fb", val: 1000 },
-        { color: "00aeff", val: 1500 },
-        { color: "2bf8fb", val: 2000 },
-        { color: "28f937", val: 2500 },
-        { color: "fefa37", val: 3000 },
-        { color: "e6000b", val: 3500 },
-        { color: "fd912f", val: 4000 },
-        { color: "910209", val: 4500 },
-        { color: "6a450c", val: 5000 },
-        { color: "8b8b8b", val: 5800 },
-        { color: "ffffff", val: 7000 }
-        // if we ever build tiles for elevations higher than 7000m, this needs to be changed
-    ]);
+  scope.elevationColorMap = [
+    { color: "fd4bfb", val: 0 },
+    { color: "b04bfd", val: 470 },
+    { color: "1739fb", val: 470 * 2 },
+    { color: "00aeff", val: 470 * 3 },
+    { color: "2bf8fb", val: 470 * 4 },
+    { color: "28f937", val: 470 * 6 },
+    { color: "fefa37", val: 470 * 8 },
+    { color: "e6000b", val: 470 * 13 },
+    { color: "910209", val: 470 * 14 },
+    { color: "6a450c", val: 470 * 15 },
+    { color: "8b8b8b", val: 470 * 16 },
+    { color: "ffffff", val: 8400 }
+    ];
 
-    var slopeColorMap = getColorMap([
+    scope.slopeColorMap = [
         { color: "ffffff", val: 0 },
         { color: "00f61c", val: 6 },
         { color: "02fbd2", val: 11 },
@@ -593,7 +591,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         { color: "f9c304", val: 42 },
         { color: "fefe2b", val: 45 },
         { color: "000000", val: 80 },
-    ]);
+    ];
 
     console.log("getColorMap")
     console.log(getColorMap);

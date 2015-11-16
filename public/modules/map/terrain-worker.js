@@ -420,19 +420,17 @@ function getColorMap(steps){
 
 var elevationColorMap = getColorMap([
     { color: "fd4bfb", val: 0 },
-    { color: "b04bfd", val: 500 },
-    { color: "1739fb", val: 1000 },
-    { color: "00aeff", val: 1500 },
-    { color: "2bf8fb", val: 2000 },
-    { color: "28f937", val: 2500 },
-    { color: "fefa37", val: 3000 },
-    { color: "e6000b", val: 3500 },
-    { color: "fd912f", val: 4000 },
-    { color: "910209", val: 4500 },
-    { color: "6a450c", val: 5000 },
-    { color: "8b8b8b", val: 5800 },
-    { color: "ffffff", val: 7000 }
-    // if we ever build tiles for elevations higher than 7000m, this needs to be changed
+    { color: "b04bfd", val: 470 },
+    { color: "1739fb", val: 470 * 2 },
+    { color: "00aeff", val: 470 * 3 },
+    { color: "2bf8fb", val: 470 * 4 },
+    { color: "28f937", val: 470 * 6 },
+    { color: "fefa37", val: 470 * 8 },
+    { color: "e6000b", val: 470 * 13 },
+    { color: "910209", val: 470 * 14 },
+    { color: "6a450c", val: 470 * 15 },
+    { color: "8b8b8b", val: 470 * 16 },
+    { color: "ffffff", val: 8400 }
 ]);
 
 var slopeColorMap = getColorMap([

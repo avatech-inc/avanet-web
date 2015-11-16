@@ -50,11 +50,7 @@ var AvatechTerrainLayer = function (options) {
 
     // clear existing _pruneTiles function to control clearing of layers on our own
     // otherwise, noticeable flash/lag when leaflet animates zoom
-    terrainLayer._pruneTiles = function () { 
-        // var zoom = this._map.getZoom();
-        // if (zoom > this.options.maxZoom ||
-        //     zoom < this.options.minZoom) { return this._removeAllTiles(); }
-    };
+    terrainLayer._pruneTiles = function () { };
 
     // duplicate of original _pruneTiles function from Leaflet's GridLayer.js
     terrainLayer._pruneTiles2 = function () {

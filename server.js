@@ -9,6 +9,4 @@ require('./server/express')(app);
 // start it up
 var port = process.env.PORT || 3000;
 app.listen(port);
-console.log('Avanet is now running on port ' + port);
-
-exports = module.exports = app;
+console.log('Avanet Web is now running on port ' + port);

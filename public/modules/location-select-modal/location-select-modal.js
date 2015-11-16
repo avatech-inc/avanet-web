@@ -41,6 +41,20 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
             }
         });
 
+        function mapChange() {
+            if ($scope.marker) {
+                $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
+                $scope.marker.bringToFront();
+            }
+            var m = $scope.mapHolder.map.getCenter().wrap();
+            $scope.setLocation(m.lat, m.lng);
+            $scope.invalidLat = false;
+            $scope.invalidLng = false;
+            $scope.invalidE = false;
+            $scope.invalidN = false;
+            $scope.$apply();
+        }
+
         function loadMap() {
             // leaflet uses lat/lng, DB uses lng/lat
             if (initialLocation) initialLocation = [ parseFloat(initialLocation[1]), parseFloat(initialLocation[0])];
@@ -50,19 +64,8 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 else initialLocation = [$scope.global.user.location[1],$scope.global.user.location[0]];
             }
 
-            $scope.mapHolder.map.on('drag',function() {
-                if ($scope.marker) {
-                    $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
-                    $scope.marker.bringToFront();
-                }
-                var m = $scope.mapHolder.map.getCenter().wrap();
-                $scope.setLocation(m.lat, m.lng);
-                $scope.invalidLat = false;
-                $scope.invalidLng = false;
-                $scope.invalidE = false;
-                $scope.invalidN = false;
-                $scope.$apply();
-            });
+            $scope.mapHolder.map.on('drag', mapChange);
+            $scope.mapHolder.map.on('moveend', mapChange);
 
             // set starting location and zoom
             $scope.mapHolder.map.setView(initialLocation, 10, { animate: false });
@@ -89,8 +92,6 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
         }
 
         $scope.setLocation = function(lat, lng) {
-            console.log("setLocation");
-            console.log(lat + "," + lng)
             $scope.form.location = [ lng, lat ];
 
             if ($scope.form.coordSystem == "dd") {

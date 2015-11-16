@@ -61,14 +61,7 @@ onmessage = function (e) {
     // process pixels
     var processed;
 
-    if (e.data.processType == "sun") {
-        processed = sunlight(
-            self.dems[e.data.id],
-            e.data.altitude,
-            e.data.azimuth
-        );
-    }
-    else if (e.data.processType == "hillshade") {
+    if (e.data.processType == "hillshade") {
         processed = hillshade(self.dems[e.data.id])
     }
     else {
@@ -476,63 +469,50 @@ var steepnessColorMap = getColorMap([
     { color: "ff0000", val: 42 },
     { color: "ffff00", val: 70 },
 ]);
-// if (new_slope > 20 && new_slope <= 30) {
-//     newColor = [0,255,0,255]; // green
-// }
-// else if (new_slope > 30 && new_slope <= 34) {
-//     newColor = [255,255,0,255]; // yellow
-// }
-// else if (new_slope > 34 && new_slope <= 45) {
-//     newColor = [255,0,0,255]; // red
-// }
-// else if (new_slope > 45) {
-//     newColor = [255,255,0,255]; // yellow
-// }
-
 
 function render(data, processType, customParams) {
 
     var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
 
-    // AVY FORECAST ROSE
-    if (processType == "avy-rose") {
+    // // AVY FORECAST ROSE
+    // if (processType == "avy-rose") {
 
-        // avy colors
-        var avyColors = {
-            G: "50b848",
-            Y: "fff200",
-            O: "f7941e",
-            R: "ff0000"
-        }
+    //     // avy colors
+    //     var avyColors = {
+    //         G: "50b848",
+    //         Y: "fff200",
+    //         O: "f7941e",
+    //         R: "ff0000"
+    //     }
 
-        var forecast = [
-            { elevMin: 0, elevMax: 8000,
-              N: 'G', NE: 'G', E: 'Y', SE: 'Y', S: 'Y',  SW: 'Y', W: 'Y', NW: 'G'
-            },
-            { elevMin: 8001, elevMax: 9500,
-              N: 'G', NE: 'G', E: 'O', SE: 'O', S: 'O',  SW: 'O', W: 'O', NW: 'G'
-            },
-            { elevMin: 9501, elevMax: 14000,
-              N: 'G', NE: 'G', E: 'O', SE: 'O', S: 'R',  SW: 'R', W: 'O', NW: 'G'
-            }
-        ];
+    //     var forecast = [
+    //         { elevMin: 0, elevMax: 8000,
+    //           N: 'G', NE: 'G', E: 'Y', SE: 'Y', S: 'Y',  SW: 'Y', W: 'Y', NW: 'G'
+    //         },
+    //         { elevMin: 8001, elevMax: 9500,
+    //           N: 'G', NE: 'G', E: 'O', SE: 'O', S: 'O',  SW: 'O', W: 'O', NW: 'G'
+    //         },
+    //         { elevMin: 9501, elevMax: 14000,
+    //           N: 'G', NE: 'G', E: 'O', SE: 'O', S: 'R',  SW: 'R', W: 'O', NW: 'G'
+    //         }
+    //     ];
 
-        for (var l = 0; l < forecast.length; l++) {
-            var f = forecast[l];
-            f.colorMap = getColorMap([
-                { color: avyColors[f.N], val: 0 },
-                { color: avyColors[f.NE], val: 22 },
-                { color: avyColors[f.E], val: 67 },
-                { color: avyColors[f.SE], val: 112 },
-                { color: avyColors[f.S], val: 157 },
-                { color: avyColors[f.SW], val: 202 },
-                { color: avyColors[f.W], val: 247 },
-                { color: avyColors[f.NW], val: 292 },
-                { color: avyColors[f.N], val: 338 },
-                { color: avyColors[f.N], val: 360 },
-            ]);
-        }
-    }
+    //     for (var l = 0; l < forecast.length; l++) {
+    //         var f = forecast[l];
+    //         f.colorMap = getColorMap([
+    //             { color: avyColors[f.N], val: 0 },
+    //             { color: avyColors[f.NE], val: 22 },
+    //             { color: avyColors[f.E], val: 67 },
+    //             { color: avyColors[f.SE], val: 112 },
+    //             { color: avyColors[f.S], val: 157 },
+    //             { color: avyColors[f.SW], val: 202 },
+    //             { color: avyColors[f.W], val: 247 },
+    //             { color: avyColors[f.NW], val: 292 },
+    //             { color: avyColors[f.N], val: 338 },
+    //             { color: avyColors[f.N], val: 360 },
+    //         ]);
+    //     }
+    // }
 
     for (var i=0; i < data.length; i++) {
 
@@ -544,7 +524,6 @@ function render(data, processType, customParams) {
 
         // if no data, return transparent
         if (new_elevation==127 && new_slope==127 && new_aspect ==511) { newColor = [0,0,0,0]; continue; }
-
 
         // CUSTOM
         if (processType == "custom") {
@@ -570,112 +549,25 @@ function render(data, processType, customParams) {
 
         // ELEVATION
         if (processType == "elevation") {
-
-            // contour lines
-            // if (new_elevation % 100 < 22) newColor = [255,0,0];
-            // newColor[3] = Math.round((22 - (new_elevation % 100)) * 12.75);
-            // if (newColor.length > 0 && new_slope < 9) newColor[3] = 0;
-
-            if (new_elevation > 0 && new_elevation > 0) {
+            if (new_elevation > 0 && new_elevation > 0)
                 newColor = elevationColorMap[new_elevation];
-            }
         }
 
-        // SLOPE MAP
+        // SLOPE
         if (processType == "slope") {
-
-            // if (new_slope > 20 && new_slope <= 80) {
-            //     newColor = steepnessColorMap[new_slope];
-            // }
-
-            
-            if (new_slope > 0 && new_slope <= 80) {
-                //if (new_aspect > 0 && new_aspect < 90)
+            if (new_slope > 0 && new_slope <= 80)
                 newColor = slopeColorMap[new_slope];
-            }
-
-
-
-
-            // if (new_slope > 20 && new_slope <= 30) {
-            //     newColor = [0,255,0,255]; // green
-            // }
-            // else if (new_slope > 30 && new_slope <= 34) {
-            //     newColor = [255,255,0,255]; // yellow
-            // }
-            // else if (new_slope > 34 && new_slope <= 45) {
-            //     newColor = [255,0,0,255]; // red
-            // }
-            // else if (new_slope > 45) {
-            //     newColor = [255,255,0,255]; // yellow
-            // }
-
         }
 
-        // AVY ROSE MAP
-        if (processType == "avy-rose") {
-
-            if (new_aspect >= 0 && new_aspect <= 360 && new_elevation > 0) {
-            //if (false) {
-
-                var a = new_aspect;
-                if (a == 0) a = 360;
-                var elevFeet = new_elevation * 3.28084;
-
-                for (var l = 0; l < forecast.length; l++) {
-                    var f = forecast[l];
-                    if (elevFeet > f.elevMin && elevFeet < f.elevMax) 
-                        newColor = f.colorMap[a];
-                    else continue;
-                }
-
-                //var min = 1300; var max = 4000;
-                //var min = 0; var max = 90;
-                // var min = 0; var max = 360;
-                //var p = Math.round(((new_slope - min) * 100) / (max - min));
-
-                //var newColor = blendRGBColors([0,0,255],[255,0,0], p);
-
-                // if (new_aspect >= 0 && new_aspect < 90) {
-                //     newColor = [255,0,0];
-                // }
-                // else if (new_aspect > 90 && new_aspect < 180) {
-                //     newColor = [0,255,0];
-                // }
-                // else if (new_aspect > 180 && new_aspect < 270) {
-                //     newColor = [0,0,255];
-                // }
-                // else if (new_aspect > 270 && new_aspect < 360) {
-                //     newColor = [255,255,0];
-                // }
-            }    
-        }
-
-
-        // ASPECT MAP
+        // ASPECT
         if (processType == "aspect") {
-
-            if (new_aspect > 0 && new_aspect <= 360) {
+            if (new_aspect > 0 && new_aspect <= 360)
                 newColor = aspectColorMap[new_aspect];
-            }
-
-            // lower opacity for flatest slopes
-            // var opacity = 255;
-            // if (new_slope < 5) {
-            //     opacity = (new_slope * 20) * 255;
-            // }
-            // newColor[3] = opacity;
-
         }
-
 
         // MKS (aspect-slope)
         // http://blogs.esri.com/esri/arcgis/2008/05/23/aspect-slope-map/
         if (processType == "mks") {
-
-            // if (new_slope > 0 && new_slope <= 80) {
-            //     newColor = slopeColorMap[new_slope];
-            // }
             var num = 0;
 
             if (new_slope >= 40) num = 40;
@@ -692,33 +584,6 @@ function render(data, processType, customParams) {
             else if (new_aspect > 247.5 && new_aspect <= 292.5) num+= 7;
             else if (new_aspect > 292.5 && new_aspect <= 337.5) num+= 8;
             else if (new_aspect > 337.5 && new_aspect <= 360) num+= 1;
-
-            // var classNum = 0;
-            // if (num <= 20) classNum = 1;
-            // else if (num == 21) classNum = 2;
-            // else if (num == 22) classNum = 3;
-            // else if (num == 23) classNum = 4;
-            // else if (num == 24) classNum = 5;
-            // else if (num == 25) classNum = 6;
-            // else if (num == 26) classNum = 7;
-            // else if (num == 27) classNum = 8;
-            // else if (num == 28) classNum = 9;
-            // else if (num == 31) classNum = 10;
-            // else if (num == 32) classNum = 11;
-            // else if (num == 33) classNum = 12;
-            // else if (num == 34) classNum = 13;
-            // else if (num == 35) classNum = 14;
-            // else if (num == 36) classNum = 15;
-            // else if (num == 37) classNum = 16;
-            // else if (num == 38) classNum = 17;
-            // else if (num == 41) classNum = 18;
-            // else if (num == 42) classNum = 19;
-            // else if (num == 43) classNum = 20;
-            // else if (num == 44) classNum = 21;
-            // else if (num == 45) classNum = 22;
-            // else if (num == 46) classNum = 23;
-            // else if (num == 47) classNum = 24;
-            // else if (num == 48) classNum = 25;
 
             if (num == 19) newColor = [153, 153, 153];
             if (num == 21) newColor = [147, 166, 89];
@@ -745,13 +610,30 @@ function render(data, processType, customParams) {
             if (num == 46) newColor = [255, 0, 0];
             if (num == 47) newColor = [255, 149, 0];
             if (num == 48) newColor = [255, 255, 0];
-
         }
 
-        // -------------
+        // // AVY ROSE
+        // if (processType == "avy-rose") {
+        //     if (new_aspect >= 0 && new_aspect <= 360 && new_elevation > 0) {
+        //         var a = new_aspect;
+        //         if (a == 0) a = 360;
+        //         var elevFeet = new_elevation * 3.28084;
 
+        //         for (var l = 0; l < forecast.length; l++) {
+        //             var f = forecast[l];
+        //             if (elevFeet > f.elevMin && elevFeet < f.elevMax) 
+        //                 newColor = f.colorMap[a];
+        //             else continue;
+        //         }
+        //     }    
+        // }
+
+        // ------------------------------------------------------
+
+        // if no alpha specified, default to fully opaque
         if (newColor && newColor.length == 3) newColor[3] = 255;
 
+        // set pixels
         if (newColor && newColor.length == 4) {
             var _i = i * 4;
             new_pixels[_i]   = newColor[0];
@@ -760,62 +642,6 @@ function render(data, processType, customParams) {
             new_pixels[_i+3] = newColor[3];
         }
     }
-    return new_pixels;
-}
-
-
-// doesn't account for mountains blocking the sun!!!
-function sunlight(data, altitude, azimuth) {
-
-    var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
-
-    if (azimuth >= 360) azimuth = azimuth - 360.0;
-    azimuth = azimuth * Math.PI/180.0;
-
-    var z = (90 - altitude) * Math.PI/180.0;
-
-    //var neutral = Math.cos(z);
-
-    var sunColorMap = getColorMap([
-        { color: "0000ff", val: 0 },
-        { color: "ffff00", val: 30 },
-        { color: "ff0000", val: 100 },
-    ]);
-
-    for(var i=0; i< data.length; i++) {
-
-        var elevation = data[i][0];
-        var slope = data[i][1];
-        var aspect = data[i][2];
-
-        var newColor;
-
-        // if no data, return transparent
-        if (elevation == 127 && slope == 127 && aspect == 511) { newColor = [0,0,0,0]; continue; }
-
-        // convert degrees to radians
-        slope = slope * (Math.PI/180);
-        aspect = aspect * (Math.PI/180);
-
-        var hillshade = Math.cos(z) * Math.cos(slope) + Math.sin(z) * Math.sin(slope) * Math.cos(azimuth - aspect);
-        if (hillshade < 0) hillshade = 0;
-
-        var min = 0; var max = 1;
-        var p = Math.round(((hillshade - min) * 100) / (max - min));
-        newColor = sunColorMap[p];
-
-        // if (hillshade < neutral) newColor = [255,255,0]
-        // else newColor = [0,0,255]
-
-        var _i = i * 4;
-        if (newColor) {
-            new_pixels[_i]     = newColor[0];
-            new_pixels[_i + 1] = newColor[1];
-            new_pixels[_i + 2] = newColor[2];
-            new_pixels[_i + 3] = 255;
-        }
-    }
-
     return new_pixels;
 }
 

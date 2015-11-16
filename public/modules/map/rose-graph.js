@@ -1,17 +1,8 @@
 angular.module('avatech').directive('roseGraph', function($timeout) {
   return {
     restrict: 'A',
-    // scope: { 
-    //     //points: '@roseGraph' // must use @ instead of = because of angular filter
-    //     legend: '@legend'
-    // },
+    scope: false,
     link: function(scope, element, attrs) {
-        // var timer;
-        // scope.$watch('points', function() {
-        //     if (timer) $timeout.cancel(timer);
-        //     timer = $timeout(render, 300);
-        // });
-
         attrs.$observe('legend', function(value) {
             scope.colorMap = getColorMap(JSON.parse(value));
             render();
@@ -42,8 +33,6 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
 
         function getColorMap(steps){
             var colorMap = [];
-            //var maxValue = steps[steps-1].val;
-            //var increment = parseInt(maxValue / steps.length);
 
             for (var s = 0; s < steps.length; s++) {
                 if (s == steps.length - 1) break;
@@ -89,6 +78,8 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             var radius = graphWidth / 2;
+            var padding = 3 * window.devicePixelRatio;
+            var length = radius - padding;
 
             // draw colors
 
@@ -100,35 +91,67 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
                 var angle = (i - 90) * (Math.PI/180);
                 context.beginPath();
                 context.moveTo(radius, radius);
-                context.lineTo(radius + radius * Math.cos(angle), radius + radius * Math.sin(angle));
+                context.lineTo(radius + length * Math.cos(angle), radius + length * Math.sin(angle));
                 context.stroke();
             }
 
             // draw pie
 
-            context.lineWidth = 4;
+            context.lineWidth = 2 * window.devicePixelRatio;
             context.strokeStyle = "#000";
             context.beginPath();
-            context.arc(graphWidth / 2, graphWidth / 2, (graphWidth / 2) - 1, 0, 2 * Math.PI);
+            context.arc(radius, radius, length, 0, 2 * Math.PI);
             context.stroke();
 
-            // draw aspect slices
+            // draw aspect direction lines
+
             for (var i = 1; i <= 8; i++) {
                 var angle = (67.5 + (45 * i)) * (Math.PI/180);
                 context.moveTo(radius, radius);
-                context.lineTo(radius + radius * Math.cos(angle), radius + radius * Math.sin(angle));
+                context.lineTo(radius + length * Math.cos(angle), radius + length * Math.sin(angle));
             }
             context.stroke();
 
-            // if no points, return
-            //if (points.length == 0) return
+            // draw direction labels
 
-            // otherwise, continue...
+            var labelLength = radius - (28 * window.devicePixelRatio);
 
-            // todo: calculate
+            // context.shadowColor = "#fff";
+            // context.shadowOffsetX = 0; 
+            // context.shadowOffsetY = 0; 
+            // context.shadowBlur = .1;
+            context.fillStyle = "black";
 
-            // todo: draw points
-            
+            var fontSize = 16 * window.devicePixelRatio;
+            context.font = fontSize + "px sans-serif";
+            var angles = [ 'N', 'E', 'S', 'W']
+            for (var i = 0; i < 4; i++) {
+                var angle = ((90 * i) - 90) * (Math.PI/180);
+                var label = angles[i];
+
+                var x = radius + labelLength * Math.cos(angle);
+                var y = radius + labelLength * Math.sin(angle);
+
+                var measured = context.measureText(label);
+
+                if (label == "N") {
+                    x -= measured.width / 2;
+                    y -= fontSize / 4;
+                }
+                else if (label == "S") {
+                    x -= measured.width / 2;
+                    y += fontSize;
+                }
+                else if (label == "W") {
+                    x -= measured.width;
+                    y += fontSize / 2.5;
+                }
+                else if (label == "E") {
+                    x += measured.width / 6;
+                    y += fontSize / 2.5;
+                }
+                context.fillText(label, x, y);
+            }
         }
     }
   };

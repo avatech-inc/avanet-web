@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('MapController', function ($scope, $state, $location, $timeout, Observations, Routes, Global, PublishModa,) {
+angular.module('avatech.system').controller('MapController', function ($scope, $state, $location, $timeout, Observations, Routes, Global, PublishModal) {
     $scope.global = Global;
 
     mixpanel.track("home");

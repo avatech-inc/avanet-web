@@ -593,9 +593,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         { color: "000000", val: 80 },
     ];
 
-    console.log("getColorMap")
-    console.log(getColorMap);
-
     scope.aspectColorMap = [
         { color: "c0fc33", val: 0 },
         { color: "3bc93d", val: 22 },

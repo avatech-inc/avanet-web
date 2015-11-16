@@ -338,8 +338,21 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     });
 
     // keep track of location at cursor
+    var terrainQueryTimer;
     scope.map.on('mousemove', function(e) {
         scope.mapCursorLocation = e.latlng;
+        // query terrain layer
+        if (e.latlng) {
+            if (terrainQueryTimer) $timeout.cancel(terrainQueryTimer);
+            terrainQueryTimer = $timeout(function(){
+                scope.terrainLayer.getTerrainData(e.latlng.lat, e.latlng.lng, function(data) {
+                    scope.mapCursorElevation = data.elevation;
+                    scope.$apply();
+                });
+            }, 50);
+        }
+        //else $scope.
+
         scope.$apply();
     });
     scope.map.on('mouseout', function(e) {

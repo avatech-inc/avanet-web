@@ -120,6 +120,8 @@
     {{ formatters.formatLatLng(mapCursorLocation) }}
     <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
     <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>
+    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+    {{ formatters.formatElevation(mapCursorElevation) }}
     <!--&nbsp;&nbsp;
     <b>WGS84</b>-->
 </div>

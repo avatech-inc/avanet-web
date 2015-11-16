@@ -1,5 +1,3 @@
-
-// define routes
 angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouterProvider', '$httpProvider',
     function($routeProvider,$stateProvider, $urlRouterProvider, $httpProvider) {
 
@@ -19,7 +17,7 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         .state('index.route', {
             url: 'routes/:routeId',
             views: { "route-pane": { templateUrl: '/modules/map/route-planning.html' } },
-            reload: true,
+            //reload: true,
             //sticky: true,
             data: {
                 //showPreviewPane: true
@@ -30,65 +28,41 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             // }
         })
 
-        .state('index.newObservation', {
-            url: 'observations/:obType/new',
-            data: { modal: true },
-            onEnter: ['$stateParams', '$state', '$modal', '$resource', function($stateParams, $state, $modal, $resource, $window) {
-                $modal.open({
-                    templateUrl: "/modules/observations/new.html",
-                    controller: "NewObservationModalController",
-                    backdrop: 'static',
-                    windowClass: 'width-480',
-                    resolve: {
-                      initialLocation: function() { return {}; }
-                      //item: "hey!"
-                    },
-                    // controller: ['$scope', 'item', function($scope, item) {
-                    //   $scope.dismiss = function() {
-                    //     $scope.$dismiss();
-                    //   };
+        // .state('index.newObservation', {
+        //     url: 'observations/:obType/new',
+        //     data: { modal: true },
+        //     onEnter: ['$stateParams', '$state', '$modal', '$resource', function($stateParams, $state, $modal, $resource, $window) {
+        //         $modal.open({
+        //             templateUrl: "/modules/observations/new.html",
+        //             controller: "NewObservationModalController",
+        //             backdrop: 'static',
+        //             windowClass: 'width-480',
+        //             resolve: {
+        //               initialLocation: function() { return {}; }
+        //               //item: "hey!"
+        //             },
+        //             // controller: ['$scope', 'item', function($scope, item) {
+        //             //   $scope.dismiss = function() {
+        //             //     $scope.$dismiss();
+        //             //   };
 
-                    //   $scope.save = function() {
-                    //     item.update().then(function() {
-                    //       $scope.$close(true);
-                    //     });
-                    //   };
-                    // }]
-                }).result.finally(function() {
-                    //alert("!");
-                    $state.go('^');
-                    //$window.history.back();
-                });
-            }]
-        })
-
-        .state('index.profile', {
-            url: 'obs/:profileId',
-            views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
-            //sticky: true,
-            data: {
-                showPreviewPane: true
-            }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
-        })
-        // .state('index.test', {
-        //     url: 't/:testId',
-        //     views: { "right-pane": { templateUrl: '/modules/tests/preview-side.html' } },
-        //     //sticky: true,
-        //     data: {
-        //         showPreviewPane: true
-        //     }
-        //     // data: {
-        //     //     title: 'AvaTech',
-        //     //     requireLogin: true 
-        //     // }
+        //             //   $scope.save = function() {
+        //             //     item.update().then(function() {
+        //             //       $scope.$close(true);
+        //             //     });
+        //             //   };
+        //             // }]
+        //         }).result.finally(function() {
+        //             //alert("!");
+        //             $state.go('^');
+        //             //$window.history.back();
+        //         });
+        //     }]
         // })
-        // .state('index.avalanche', {
-        //     url: 'a/:observationId',
-        //     views: { "right-pane": { templateUrl: '/modules/avalanches/preview-side.html' } },
+
+        // .state('index.profile', {
+        //     url: 'obs/:profileId',
+        //     views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
         //     //sticky: true,
         //     data: {
         //         showPreviewPane: true
@@ -99,21 +73,21 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         //     // }
         // })
 
-        // Snowpit Editor
-        .state('index.profileEditor', {
-            abstract: true,
-            //url: '/profiles/:profileId',
-            views: { "content": { templateUrl: '/modules/snowpit-editor/snowpit.html' } },
-            data: { 
-                title: 'Snow Profile | Avanet',
-                requireLogin: true,
-                bodyCssClass: 'snowpit',
-                fullScreen: true
-            }
-        })
-        .state('index.profileEditor.details', {
-            url: 'profiles/:profileId'
-        })
+        // // Snowpit Editor
+        // .state('index.profileEditor', {
+        //     abstract: true,
+        //     //url: '/profiles/:profileId',
+        //     views: { "content": { templateUrl: '/modules/snowpit-editor/snowpit.html' } },
+        //     data: { 
+        //         title: 'Snow Profile | Avanet',
+        //         requireLogin: true,
+        //         bodyCssClass: 'snowpit',
+        //         fullScreen: true
+        //     }
+        // })
+        // .state('index.profileEditor.details', {
+        //     url: 'profiles/:profileId'
+        // })
 
         // organizations
         .state('index.orgNew', {

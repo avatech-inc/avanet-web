@@ -835,7 +835,7 @@ window.ElevationWidget = function() {
             // add points to temp array
             newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
         }
-        var _newPoints = simplify(newPoints, .015, false);
+        var _newPoints = simplify(newPoints, .01, false);
         this._profileFill.datum(_newPoints).attr("d", newLine);
         this._profileStroke.datum(_newPoints).attr("d", newArea);
 

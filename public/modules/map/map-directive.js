@@ -562,20 +562,20 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     });
 
     // terrain viz legends
+    // todo: duplicate of worker thread. where can we store these centrally?
 
-  scope.elevationColorMap = [
-    { color: "fd4bfb", val: 0 },
-    { color: "b04bfd", val: 470 },
-    { color: "1739fb", val: 470 * 2 },
-    { color: "00aeff", val: 470 * 3 },
-    { color: "2bf8fb", val: 470 * 4 },
-    { color: "28f937", val: 470 * 6 },
-    { color: "fefa37", val: 470 * 8 },
-    { color: "e6000b", val: 470 * 13 },
-    { color: "910209", val: 470 * 14 },
-    { color: "6a450c", val: 470 * 15 },
-    { color: "8b8b8b", val: 470 * 16 },
-    { color: "ffffff", val: 8400 }
+    scope.elevationColorMap = [
+        { color: "fd4bfb", val: 0 },
+        { color: "b04bfd", val: 460 },
+        { color: "1739fb", val: 460 * 2 },
+        { color: "00aeff", val: 460 * 3 },
+        { color: "28f937", val: 460 * 4 },
+        { color: "fefa37", val: 460 * 7 },
+        { color: "e6000b", val: 460 * 13 },
+        { color: "910209", val: 460 * 14 },
+        { color: "6a450c", val: 460 * 15 },
+        { color: "8b8b8b", val: 460 * 16 },
+        { color: "ffffff", val: 8400 }
     ];
 
     scope.slopeColorMap = [

@@ -1,4 +1,4 @@
-angular.module('avatech').controller('RoutePlanningController', function($http, $q, $scope, $stateParams, $rootScope, $timeout, $filter, Global, snowpitExport) {
+angular.module('avatech').controller('RoutePlanningController', function($http, $q, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport) {
 
     $scope.formatters = formatters = snowpitExport.formatters;
     $scope.loading = true;
@@ -161,7 +161,14 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 if (!$scope.route._id) {
                     $http.post(window.apiBaseUrl + "routes", _route)
                     .then(function(res) {
-                        if (res.data._id) $scope.route._id = res.data._id;
+                        if (res.data._id) {
+                            $scope.route._id = res.data._id;
+                            $scope.imageURL = res.data.imageURL;
+
+                            // replace URL with recieved _id
+                            $state.params.routeId = $scope.route._id;
+                            $state.transitionTo($state.current, $state.params, { inherit: true, notify: true });
+                        }
                     });
                 }
                 else {
@@ -173,9 +180,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
             }, 1000);
         }, true);
-
-        function replaceURL() {
-        }
 
         // hide icons when not in edit mode
         $scope.$watch("routeControl.editing", function() {

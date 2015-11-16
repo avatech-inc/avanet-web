@@ -186,6 +186,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
     // search
     var searchObs = function() {
+        if (!scope.obSearch) return;
         // hide all markers
         angular.forEach(obsOnMap, function(marker) {
             marker.filtered = true;

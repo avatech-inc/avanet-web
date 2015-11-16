@@ -132,4 +132,6 @@ labels="{{ global.user.settings.elevation == 0 ? [1000,2000,3000,4000,5000,6000]
 label-values='{{ global.user.settings.elevation == 0 ? ["1,000 m", "2k", "3k", "4k", "5k", "6k"] : ["2,000 ft", "6k", "10k", "14k", "18k", "22k"] }}' 
 max="7000"></canvas></div>
 
+<div ng-show="terrainOverlay == 'slope'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ slopeColorMap }}" labels="[10, 20, 30, 40, 50, 60, 70]" max="80" label-values='["10°", "20°", "30°", "40°", "50°", "60°", "70°"]'></canvas></div>
+
 <div ng-show="terrainOverlay == 'aspect'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="140" width="140" style="width:70px;height:70px;float:left;" rose-graph legend="{{ aspectColorMap }}"></canvas></div>

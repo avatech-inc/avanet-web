@@ -15,6 +15,23 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         points: []
     };
 
+    $scope.routeControl = {
+        editing: true,
+        autoWaypoint: false
+    }
+
+    $scope._hoverOnLeg = function(index) {
+        $scope.hoverOnLeg = index;
+    }
+    $scope._hoverOnPoint = function(index) {
+        $scope.hoverOnPoint = index;
+    }
+
+    $scope.munterRate = {
+        up: 4,
+        down: 10
+    }
+
     var _line;
     // $scope.$watchCollection('_line.editing._markers',function(){
     //     console.log("markers editing!!!!!!!!")
@@ -157,21 +174,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             }, 1000);
         }, true);
 
-        $scope.routeControl = {
-            editing: true,
-            autoWaypoint: false
-        }
-
-        $scope._hoverOnLeg = function(index) {
-            $scope.hoverOnLeg = index;
-        }
-        $scope._hoverOnPoint = function(index) {
-            $scope.hoverOnPoint = index;
-        }
-
-        $scope.munterRate = {
-            up: 4,
-            down: 10
+        function replaceURL() {
         }
 
         // hide icons when not in edit mode

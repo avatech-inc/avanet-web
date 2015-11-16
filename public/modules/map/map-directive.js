@@ -360,7 +360,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         scope.$apply();
     });
 
- // set initial location and zoom level
+    // set initial location and zoom level
     var defaultZoom = 13;
     var initialLocation = (!scope.global.user.location) ? [40.633052,-111.7111795] : [scope.global.user.location[1],scope.global.user.location[0]];
     scope.map.setView(initialLocation, defaultZoom);
@@ -618,7 +618,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         { color: "c0fc33", val: 338 },
         { color: "c0fc33", val: 360 },
     ];
-// ------ end
+
     }
   };
 });

@@ -102,6 +102,8 @@ var AvatechTerrainLayer = function (options) {
             // retreive and call stored callback
             var callback = terrainLayer.callbacks[e.data.requestId];
             if (callback) callback(terrainData);
+            // delete reference to callback, no longer needed
+            delete terrainLayer.callbacks[e.data.requestId];
 
             return;
         }

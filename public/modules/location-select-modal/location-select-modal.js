@@ -50,9 +50,6 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 else initialLocation = [$scope.global.user.location[1],$scope.global.user.location[0]];
             }
 
-            console.log("start drag?")
-            console.log($scope.mapHolder.map);
-
             $scope.mapHolder.map.on('drag',function() {
                 if ($scope.marker) {
                     $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
@@ -66,9 +63,6 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 $scope.invalidN = false;
                 $scope.$apply();
             });
-
-            // add zoom control
-            new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.mapHolder.map);
 
             // set starting location and zoom
             $scope.mapHolder.map.setView(initialLocation, 10, { animate: false });

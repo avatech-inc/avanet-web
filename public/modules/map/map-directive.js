@@ -561,6 +561,55 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         }
     });
 
+    // terrain viz legends
+
+  var elevationColorMap = getColorMap([
+        { color: "fd4bfb", val: 0 },
+        { color: "b04bfd", val: 500 },
+        { color: "1739fb", val: 1000 },
+        { color: "00aeff", val: 1500 },
+        { color: "2bf8fb", val: 2000 },
+        { color: "28f937", val: 2500 },
+        { color: "fefa37", val: 3000 },
+        { color: "e6000b", val: 3500 },
+        { color: "fd912f", val: 4000 },
+        { color: "910209", val: 4500 },
+        { color: "6a450c", val: 5000 },
+        { color: "8b8b8b", val: 5800 },
+        { color: "ffffff", val: 7000 }
+        // if we ever build tiles for elevations higher than 7000m, this needs to be changed
+    ]);
+
+    var slopeColorMap = getColorMap([
+        { color: "ffffff", val: 0 },
+        { color: "00f61c", val: 6 },
+        { color: "02fbd2", val: 11 },
+        { color: "01c6f6", val: 17 },
+        { color: "3765f9", val: 22 },
+        { color: "9615f8", val: 27 },
+        { color: "eb02d0", val: 31 },
+        { color: "fb1978", val: 35 },
+        { color: "ff5c17", val: 39 },
+        { color: "f9c304", val: 42 },
+        { color: "fefe2b", val: 45 },
+        { color: "000000", val: 80 },
+    ]);
+
+    console.log("getColorMap")
+    console.log(getColorMap);
+
+    scope.aspectColorMap = [
+        { color: "c0fc33", val: 0 },
+        { color: "3bc93d", val: 22 },
+        { color: "3cca99", val: 67 },
+        { color: "1b29e1", val: 112 },
+        { color: "7e3ac8", val: 157 },
+        { color: "fb0b1a", val: 202 },
+        { color: "fc9325", val: 247 },
+        { color: "fefc37", val: 292 },
+        { color: "c0fc33", val: 338 },
+        { color: "c0fc33", val: 360 },
+    ];
 // ------ end
     }
   };

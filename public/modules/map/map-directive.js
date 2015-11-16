@@ -354,7 +354,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
     // set base layer after map has been initialized and layers have been loaded from server
     $q.all([
-        mapLoaded,
+        mapLoaded.promise,
         scope.mapLayers.loaded
     ]).then(function() {
 

@@ -114,14 +114,14 @@ angular.module('avatech').directive('linearGraph', function($timeout, $q, $parse
                 context.strokeStyle = "rgb(" + color.join() + ")";
                 context.beginPath();
                 context.moveTo(i, 0);
-                context.lineTo(i, 56);
+                context.lineTo(i, 28 * window.devicePixelRatio);
                 context.stroke();
             }
 
             // draw labels
 
             context.fillStyle = 'black';
-            context.font = '38px sans-serif';
+            context.font = (19 * window.devicePixelRatio) + 'px sans-serif';
 
             angular.forEach(labels, function(label, i) {
                 var x = ((label - min) / (max - min)) * width;
@@ -130,7 +130,7 @@ angular.module('avatech').directive('linearGraph', function($timeout, $q, $parse
                 if (labelValues) label = labelValues[i];
 
                 var measured = context.measureText(label);
-                context.fillText(label, x - (measured.width / 2), 100);
+                context.fillText(label, x - (measured.width / 2), 50 * window.devicePixelRatio);
             });
         }
     }

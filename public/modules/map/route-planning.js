@@ -872,8 +872,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // get line distance
             var distance = turf.lineDistance(turf.linestring(points.map(function(point) { return [point.lng,point.lat] })), 'kilometers');
            
-            // sample every 10m
-            var sampleCount = Math.round((distance * 1000) / 10);
+            // sample every 5m
+            var sampleCount = Math.round((distance * 1000) / 5);
 
             // keep track of original points
             for (var i = 0; i < points.length;i++) {

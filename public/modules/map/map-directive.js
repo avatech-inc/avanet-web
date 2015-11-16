@@ -22,6 +22,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
         scope.mapLayers = mapLayers;
 
+        // defaults
         if (scope.showTerrain == undefined) scope.showTerrain = true;
         if (scope.showCoords == undefined) scope.showCoords = true;
 

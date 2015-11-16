@@ -73,7 +73,7 @@ module.exports = function(app) {
         res.status(500).send({ error: '500 Error' });
       } else {
         //next(err);
-        res.status(500).sendFile(path.join(__dirname, '../app/views', '500.html'));
+        res.status(500).sendFile(path.join(__dirname, './views', '500.html'));
       }
     });
 };

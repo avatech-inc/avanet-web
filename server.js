@@ -4,7 +4,7 @@ var fs = require('fs');
 var app = express();
 
 // configure Express
-require('./config/express')(app);
+require('./server/express')(app);
 
 // start it up
 var port = process.env.PORT || 3000;

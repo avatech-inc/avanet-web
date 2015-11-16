@@ -13,11 +13,6 @@ module.exports = function(app) {
 
     // ---------------------------------------------------------
 
-    // todo: these return ALL observation types - maybe replace this with "observations"
-    // and rename "observations" to "avalanches"?
-    // app.get('/v1/all-observations', auth.requireLogin, profiles.all);
-    // app.get('/v1/all-observations/mine', auth.requireLogin, profiles.allMine);
-
     // Device Profiles
     // this handles both create and update
     // app.post('/v1/tests', auth.requireLogin, tests.create);
@@ -26,7 +21,6 @@ module.exports = function(app) {
     // app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
     // app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
     // app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
-
 
     // ---------------------------------------------------------
 
@@ -65,41 +59,15 @@ module.exports = function(app) {
         });
 
     });
-
-    //--------------------------------------------------------------------------------
-
-    // SMS
-    // var twilio = require('twilio')('AC90cc3e804675a5a3decaee1caac5f953', '92573d2ace3cea138517f2f76fc28689');
-    // app.get('/send-app-sms', function(req,res) {
-    //     console.log(req.query.num);
-    //     twilio.sendMessage({
-    //         to: req.query.num, // Any number Twilio can deliver to
-    //         from: '+14355039000', // A number you bought from Twilio and can use for outbound communication
-    //         body: 'Download the AvaNet app: https://avanet.avatech.com/app' // body of the SMS message
-    //     }, function(err, responseData) { //this function is executed when a response is received from Twilio
-    //         console.log(responseData);
-    //         if (!err) { // "err" is an error received during the request, if any
-    //             // "responseData" is a JavaScript object containing data received from Twilio.
-    //             // A sample response from sending an SMS message is here (click "JSON" to see how the data appears in JavaScript):
-    //             // http://www.twilio.com/docs/api/rest/sending-sms#example-1
-    //             // console.log(responseData.from); // outputs "+14506667788"
-    //             // console.log(responseData.body); // outputs "word"
-    //         }
-    //     });
-    //     res.json({});
-    // });
     
     //app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 
-    // app.get('/manifest.plist', function(req,res) { 
-    //     res.sendFile(path.join(__dirname, '../app/views', 'manifest.plist'));
-    // });
     // app.get('/download-app', function(req,res) { 
-    //     res.sendFile(path.join(__dirname, '../app/views', 'download-app.hyml'));
+    //    res.sendFile(path.join(__dirname, './views', 'download-app.html'));
     // });
-    // app.get('/app', function(req,res) { 
-    //     res.sendFile(path.join(__dirname, '../app/views', 'download-app.html'));
-    // });
+    app.get('/app', function(req,res) { 
+        res.sendFile(path.join(__dirname, './views', 'download-app.html'));
+    });
 
     var s3_2 = knox.createClient({
         key: 'AKIAIQFLR4EQC63ZZTNQ'
@@ -131,6 +99,6 @@ module.exports = function(app) {
     app.get('/manual', getManual);
 
     app.get('*', function(req,res) { 
-        res.sendFile(path.join(__dirname, '../app/views', 'main.html'));
+        res.sendFile(path.join(__dirname, './views', 'main.html'));
     });
 };

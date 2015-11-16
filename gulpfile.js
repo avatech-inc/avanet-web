@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-
 var path = require('path');
 var fs = require("fs");
 var nodemon = require('gulp-nodemon');
@@ -41,7 +40,6 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
     var maint_url = "//s3.amazonaws.com/avanet/503-maint.html";
 
   exec("heroku config:set ERROR_PAGE_URL=" + error_url + " MAINTENANCE_PAGE_URL=" + maint_url + " --app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
-
       gutil.log(stderr);
       gutil.error(stdout);
       done();
@@ -62,7 +60,7 @@ gulp.task('compass', ['clean-css'], function() {
 gulp.task('combine-minify', function() {
     var assets = useref.assets({ searchPath: 'public' });
 
-    return gulp.src('_dist2/server/views/main.html')
+    return gulp.src('_dist/server/views/main.html')
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
     }))
@@ -98,16 +96,16 @@ gulp.task('combine-minify', function() {
     //.pipe(gulpif('*.js', sourcemaps.write('./')))
 
     // add all assets to dist folder
-    .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
-    .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
-    //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))
-    .pipe(gulpif('*.html', gulp.dest('_dist2/server/views')))
+    .pipe(gulpif('*.css', gulp.dest('_dist/public')))
+    .pipe(gulpif('*.js', gulp.dest('_dist/public')))
+    //.pipe(gulpif('*.map', gulp.dest('_dist/public')))
+    .pipe(gulpif('*.html', gulp.dest('_dist/server/views')))
 
     //.on('end', done);
     //.pipe(gulp.dest('_dist4/server/views'));
 });
 gulp.task('clean-dist', function() {
-  return gulp.src('_dist2/public/js', {read: false})
+  return gulp.src('_dist/public/js', {read: false})
         .pipe(clean({ force: true }));
 })
 
@@ -134,7 +132,7 @@ gulp.task('buildMain', function () {
 });
 
 gulp.task('clean', function() {
-	return gulp.src('_dist2', {read: false})
+	return gulp.src('_dist', {read: false})
         .pipe(clean({ force: true }));
 })
 
@@ -154,7 +152,7 @@ gulp.task('copy', function() {
    	'public/views/**'
    	]
    	, { base: './' })
-   .pipe(gulp.dest('_dist2'));
+   .pipe(gulp.dest('_dist'));
 });
 
 gulp.task('lint',function(){
@@ -175,7 +173,7 @@ gulp.task('lint',function(){
 // git stuff
 
 gulp.task('remove-git', function() {
-	return gulp.src('_dist2./git', {read: false})
+	return gulp.src('_dist./git', {read: false})
         .pipe(clean({ force: true }));
 })
 
@@ -184,7 +182,7 @@ var spawn = require('child_process').spawn;
 
 gulp.task('git', ['remove-git'], function(done){
 		
-    process.chdir('_dist2');
+    process.chdir('_dist');
 
 	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr){
    		gutil.log("Git: repository initialized");
@@ -207,7 +205,7 @@ gulp.task('git', ['remove-git'], function(done){
 
 
 gulp.task('deploy', function(done){
-	fs.exists("_dist2",function(exists){
+	fs.exists("_dist",function(exists){
 
 		if (!exists) {
 			gutil.error(gutil.colors.red("dist folder does not exist. run 'gulp build' first."));
@@ -215,7 +213,7 @@ gulp.task('deploy', function(done){
     		return;
 		}
 		
-	    process.chdir('_dist2');
+	    process.chdir('_dist');
 
 	    var remotes = {
         "production": "git@heroku.com:avanet.git",
@@ -266,7 +264,7 @@ gulp.task('deploy', function(done){
 // });
 
 // gulp.task('heroku-login', function () {
-//   //process.chdir('_dist2');
+//   //process.chdir('_dist');
 //   return gulp.src('', {read: false})
 //     .pipe(shell(["ls -l"]
 //     // , {
@@ -299,14 +297,14 @@ gulp.task('start2', function(done) {
   , ext: 'js html'
   //, watch: ['public','app','config', '!public/tiles']
   //, verbose: true
-  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist2','/.sass-cache','/.tmp']
+  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
   , env: { 'NODE_ENV': 'development' }
   });
 
 });
 
 gulp.task('start-dist', function(done) {
-    process.chdir('_dist2');
+    process.chdir('_dist');
 
     // todo: no need for nodemon here since we aren't editing
    nodemon({

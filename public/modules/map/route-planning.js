@@ -165,6 +165,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                             $scope.route._id = res.data._id;
                             $scope.imageURL = res.data.imageURL;
 
+                            // add to routes datastore
+                            Routes.add($scope.route);
+
                             // replace URL with recieved _id
                             $state.params.routeId = $scope.route._id;
                             $state.transitionTo($state.current, $state.params, { inherit: true, notify: true });

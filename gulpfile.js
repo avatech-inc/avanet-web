@@ -83,6 +83,7 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.js', uglify()))
 
     .pipe(rev())             // rename the concatenated files for cache-busting
+
     .pipe(assets.restore())
     .pipe(useref())
     .pipe(revReplace())      // substitute in new filenames
@@ -223,20 +224,20 @@ gulp.task('deploy', function(done){
       //var remote = "production"; var app = "avanet";
       var app = "avanet-demo2";
       
-      if (argv.to) remote = argv.to;
+      if (argv.to) app = argv.to;
 
-	    exec("git remote rm " + remote, {cwd: process.cwd }, function(err, stdout, stderr){
-			exec("git remote add " + remote + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr){
+	    exec("git remote rm " + app, {cwd: process.cwd }, function(err, stdout, stderr){
+			exec("git remote add " + app + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr){
 	       		//console.log(stdout);
 	   			gutil.log("git remote added");
 
 					exec("heroku config:set NODE_ENV=production -app " + app, {cwd: process.cwd }, function(err, stdout, stderr){
 
 		       		console.log(stdout);
-		       		gutil.log("Pushing to '" + remote + "'")
+		       		gutil.log("Pushing to '" + app + "'")
               console.log();
 
-					var heroku = spawn("git",["push" ,remote, "master", "-f"], { cwd: process.cwd })
+					var heroku = spawn("git",["push" , app, "master", "-f"], { cwd: process.cwd })
 
 					heroku.stdout.on('data', function (data) { 
             console.log("" + data);
@@ -245,7 +246,7 @@ gulp.task('deploy', function(done){
             console.log("" + data); 
             if ((data + "").indexOf("forced ") != -1) {
               console.log(); console.log();
-              gutil.log(gutil.colors.green("DEPLOY SUCCESS TO '" + remote + "'"));
+              gutil.log(gutil.colors.green("DEPLOY SUCCESS TO '" + app + "'"));
               console.log(); console.log();
             }
           });

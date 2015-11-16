@@ -579,15 +579,14 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
     scope.elevationColorMap = [
         { color: "fd4bfb", val: 0 },
-        { color: "b04bfd", val: 460 },
-        { color: "1739fb", val: 460 * 2 },
-        { color: "00aeff", val: 460 * 3 },
-        { color: "28f937", val: 460 * 4 },
-        { color: "fefa37", val: 460 * 7 },
-        { color: "e6000b", val: 460 * 13 },
-        { color: "910209", val: 460 * 14 },
-        { color: "6a450c", val: 460 * 15 },
-        { color: "8b8b8b", val: 460 * 16 },
+        { color: "1739fb", val: 380 * 2 },
+        { color: "00aeff", val: 380 * 3 },
+        { color: "28f937", val: 380 * 4 },
+        { color: "fefa37", val: 380 * 7 },
+        { color: "e6000b", val: 380 * 13 },
+        { color: "910209", val: 380 * 14 },
+        { color: "6a450c", val: 380 * 15 },
+        { color: "8b8b8b", val: 380 * 16 },
         { color: "ffffff", val: 8400 }
     ];
 

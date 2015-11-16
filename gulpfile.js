@@ -148,7 +148,7 @@ gulp.task('copy', function() {
     'public/js/**',
     'public/translate/**',
    	'public/modules/**/*.html',
-    'public/modules/**/terrain-worker.js',
+    //'public/modules/**/terrain-worker.js',
    	'public/views/**'
    	]
    	, { base: './' })

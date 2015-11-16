@@ -80,7 +80,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         // if new
         else if ($stateParams.routeId == "new") {
             $scope.loading = false;
-            editingOn();
         }
 
         // remove map path and elevation widget when current state is destroyed

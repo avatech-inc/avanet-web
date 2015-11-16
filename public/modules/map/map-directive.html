@@ -124,4 +124,6 @@
     <b>WGS84</b>-->
 </div>
 
+<div ng-show="terrainOverlay == 'aspect'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="140" width="140" style="width:70px;height:70px;float:left;" rose-graph legend="{{ aspectColorMap }}"></canvas></div>
+
 <map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>

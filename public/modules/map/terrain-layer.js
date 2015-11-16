@@ -262,7 +262,7 @@ var AvatechTerrainLayer = function (options) {
             xhr.onerror = function() {
                 canvas._tileLoaded(null, canvas);
             }
-            return xhr.send(null);
+            xhr.send(null);
         }
     }
 

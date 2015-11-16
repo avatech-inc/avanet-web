@@ -294,6 +294,7 @@ var AvatechTerrainLayer = function (options) {
         }
     }
 
+    var callbackCount = 0;
     terrainLayer.callbacks = {};
     terrainLayer.getTerrainData = function(lat, lng, callback, index, original) {
         // round down lat/lng for fewer lookups
@@ -341,8 +342,8 @@ var AvatechTerrainLayer = function (options) {
         if (pointInTile.x < 0) pointInTile.x = 0;
         if (pointInTile.y < 0) pointInTile.y = 0;
 
-        // create unique request id
-        var requestId = lat + "_" + lng + "_" + new Date().getTime();
+        // create unique request id to keep track of callbacks
+        var requestId = lat + "_" + lng + "_" + callbackCount + new Date().getTime();
         if (index != null) requestId += "_" + index;
 
         // store callback so we can reference when message is received from worker thread
@@ -358,6 +359,8 @@ var AvatechTerrainLayer = function (options) {
         // if no worker exists, return empty terrain data
         else if (callback) callback({ elevation: null, slope: null, aspect: null, 
             lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
+
+        callbackCount++;
     }
 
     // since 'getTerrainDataBulk' is using terrain tile worker threads, the data 

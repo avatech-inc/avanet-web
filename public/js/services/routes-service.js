@@ -50,7 +50,7 @@ angular.module('avatech').service('Routes',
     	if (replaceObservation(observation)) return;
 
     	// doesn't exist, add
-		self.observations.push(observation);
+		  self.observations.push(observation);
 
     	// todo: removed
 	}
@@ -64,6 +64,10 @@ angular.module('avatech').service('Routes',
         // 	$http.post("/v1/tests", observation);
         // }
 	};
+
+  this.add = function(observation) {
+    addOrReplace(observation);
+  }
 
 	this.remove = function(observation) {
          // todo: update!

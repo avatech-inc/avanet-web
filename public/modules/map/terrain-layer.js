@@ -26,19 +26,18 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.getTileSize = function () {
         var map = this._map,
-            options = this.options,
-            zoom = map.getZoom(),
-            zoomN = options.maxNativeZoom;
+            tileSize = L.GridLayer.prototype.getTileSize.call(this),
+            zoom = this._tileZoom,
+            zoomN = this.options.maxNativeZoom;
 
-        // decrease tile size when underzooming
-        if (options.underzoom && parseInt(zoom) == 12) tileSize = 128;
+        // increase tile size for zoom level 12 (scale up from 11)
+        if (options.underzoom && parseInt(zoom) == 12) tileSize = new L.Point(512, 512); // 128
 
-        // increase tile size when overzooming
+        // increase tile size when overzooming (scalw down from 13)
         else tileSize = zoomN !== null && zoom > zoomN ?
-                Math.round(options.tileSize / map.getZoomScale(zoomN, zoom)) : 
-                options.tileSize;
+            tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize;
 
-        return new L.Point(tileSize, tileSize);
+        return tileSize;
     }
 
     terrainLayer.redrawQueue = [];
@@ -156,13 +155,13 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.drawTile = function(canvas, tilePoint) {
         var PNG_data;
-
-        var latlng = tilePointToLatLng(tilePoint.x, tilePoint.y, tilePoint.z);
-
-        if (tilePoint.z > terrainLayer.options.maxNativeZoom) tilePoint.z = terrainLayer.options.maxNativeZoom;
+        
+        // overzoom
+        if (tilePoint.z > this.options.maxNativeZoom) tilePoint.z = this.options.maxNativeZoom;
         // make zoom level 12 underzoomed from 13
-        if (terrainLayer.options.underzoom && parseInt(tilePoint.z) == 12) tilePoint.z = 13;
+        if (this.options.underzoom && parseInt(tilePoint.z) == 12) tilePoint.z = 11; // 13
 
+        // create tile id for caching
         var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(tilePoint.z);
 
         terrainLayer.contexts[tile_id] = canvas.getContext('2d');
@@ -214,11 +213,21 @@ var AvatechTerrainLayer = function (options) {
         //   this is mainly to support quick loading between recently accessed areas and zoom levels.
         var cachedTile = terrainLayer.PNG_cache[tile_id];   
         if (cachedTile) {
+            console.log("from cache!");
             PNG_data = new Uint8ClampedArray(cachedTile).buffer;;
             redraw();
             terrainLayer.redrawQueue.push(redraw);
         }
         else {
+            // // overzoom
+            // if (tilePoint.z > this.options.maxNativeZoom) {
+            //     tilePoint.z = this.options.maxNativeZoom;
+            // }
+            // // make zoom level 12 underzoomed from 13
+            // if (this.options.underzoom && parseInt(tilePoint.z) == 12) {
+            //     tilePoint.z = 11;
+            // }
+
             // elevation tile URL
             var url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
                 // use multiple subdomains to parallelize requests
@@ -231,6 +240,7 @@ var AvatechTerrainLayer = function (options) {
                     return subdomains[index];
                 }
             }));
+
             // get tile as raw Array Buffer so we can process PNG on our own 
             //   to avoid bogus data from native browser alpha premultiplication
             var xhr = new XMLHttpRequest;
@@ -265,7 +275,7 @@ var AvatechTerrainLayer = function (options) {
     var lastSync;
     terrainLayer.redraw = function() {
         if (terrainLayer.needsRedraw) {
-            console.log("Queue: " + terrainLayer.redrawQueue.length);
+            //console.log("Queue: " + terrainLayer.redrawQueue.length);
             terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
         }
         terrainLayer.needsRedraw = false;
@@ -279,7 +289,8 @@ var AvatechTerrainLayer = function (options) {
         lat *= (Math.PI/180);
         return {
             x: parseInt(Math.floor( (lng + 180) / 360 * (1<<zoom) )),
-            y: parseInt(Math.floor( (1 - Math.log(Math.tan(lat) + 1 / Math.cos(lat)) / Math.PI) / 2 * (1<<zoom) ))
+            y: parseInt(Math.floor( (1 - Math.log(Math.tan(lat) + 1 / Math.cos(lat)) / Math.PI) / 2 * (1<<zoom) )),
+            z: zoom
         }
     }
     function tilePointToLatLng(x, y, zoom) {
@@ -301,7 +312,7 @@ var AvatechTerrainLayer = function (options) {
 
         // adjust zoom level for overzoom
         var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
-        if (terrainLayer.options.underzoom) { if (parseInt(zoom) == 12) zoom = 13; }
+        if (terrainLayer.options.underzoom) { if (parseInt(zoom) == 12) zoom = 11; } // 13
         // get xyz of clicked tile based on clicked lat/lng
         var tilePoint = latLngToTilePoint(lat, lng, zoom);
         // get nw lat/lng of tile
@@ -325,13 +336,20 @@ var AvatechTerrainLayer = function (options) {
             pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
         }
         // adjust points for underzoom
-        if (terrainLayer.options.underzoom && parseInt(terrainLayer._map.getZoom()) == 12) {
-            var zoomDifference = 1;
+        else if (terrainLayer.options.underzoom && parseInt(terrainLayer._map.getZoom()) == 12) {
+            var zoomDifference = terrainLayer._map.getZoom() - 11;
             var zoomDivide = Math.pow(2, zoomDifference)
 
-            pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
-            pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide);
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
+            // previous underzoom code
+            // var zoomDifference = 1;
+            // var zoomDivide = Math.pow(2, zoomDifference)
+
+            // pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
+            // pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
         }
+
         // make sure point is within 256x256 bounds
         if (pointInTile.x > 255) pointInTile.x = 255;
         if (pointInTile.y > 255) pointInTile.y = 255;

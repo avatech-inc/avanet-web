@@ -10,7 +10,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         loadingNew: '=loadingNew',
         loadingProfiles: '=loading',
         hoverOb: '=hoverOb',
-        obSearch: '=search'
+        obSearch: '=search',
+        showTerrain: '=showTerrain',
     },
     link: function(scope, element) {
 
@@ -20,6 +21,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
         scope.mapLayers = mapLayers;
 
+        if (scope.showTerrain == undefined) scope.showTerrain = true;
         // pre-compile observation map popup
         scope.compiledPopup;
         $templateRequest("/modules/map/observation-map-popup.html").then(function(templateHtml) {

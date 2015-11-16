@@ -5,10 +5,8 @@ var methodOverride = require('method-override');
 var favicon = require('serve-favicon');
 var compression = require('compression')
 var raven = require('raven');
-
 var path = require('path');
 var root = path.normalize(__dirname + '/..');
-
 
 module.exports = function(app) {
     app.set('showStackError', true);

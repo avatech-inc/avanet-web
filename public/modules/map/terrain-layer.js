@@ -200,7 +200,8 @@ var AvatechTerrainLayer = function (options) {
 
             // if no existing worker thread, create
             if (!terrainLayer.workers[tile_id]) {
-                terrainLayer.workers[tile_id] = new Worker('/modules/map/terrain-worker.js');
+                //terrainLayer.workers[tile_id] = new Worker('/modules/map/terrain-worker.js');
+                terrainLayer.workers[tile_id] = new Worker(window.workerBlobURL);
                 terrainLayer.workers[tile_id].onmessage = terrainLayer.updateTile;
             }
 

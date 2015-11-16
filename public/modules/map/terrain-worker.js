@@ -1,3 +1,8 @@
+// put worker code in blob URL
+window.workerBlobURL = URL.createObjectURL( new Blob([ '(', function() {
+
+// code goes here
+
 self.dems = {};
 
 onmessage = function (e) {
@@ -813,3 +818,6 @@ function sunlight(data, altitude, azimuth) {
 
     return new_pixels;
 }
+
+// complete blob URL
+}.toString(), ')()' ], { type: 'application/javascript' } ) );

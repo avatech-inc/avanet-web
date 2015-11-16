@@ -574,6 +574,32 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         }
     });
 
+    // todo: duplicate
+    scope.formatElev = function(val) {
+        if (!Global.user.settings) return;
+        // meters
+        if (Global.user.settings.elevation == 0)
+            return val + " m";
+        // feet
+        else {
+            return Math.round(val * 3.28084).toFixed(0) + " ft";
+        }
+    }
+    scope.formatTempRange = function(val1,val2) {
+        if (!Global.user.settings) return;
+        // meters
+        if (Global.user.settings.elevation == 0)
+            return val1 + "-" + val2 + " m";
+        // feet
+        else {
+            return Math.round(val1 * 3.28084).toFixed(0) + "-" + Math.round(val2 * 3.28084).toFixed(0) + " ft";
+        }
+    }
+    scope.formatDegSlider = function(val) {
+        return val + "°"
+    }
+
+
     // terrain viz legends
     // todo: duplicate of worker thread. where can we store these centrally?
 

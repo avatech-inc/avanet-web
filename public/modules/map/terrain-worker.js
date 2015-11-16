@@ -1,4 +1,4 @@
-// put worker code in blob URL
+// put worker code in object URL
 window.terrainWorkerURL = URL.createObjectURL( new Blob([ '(', function() {
 
 // code goes here
@@ -643,5 +643,5 @@ function render(data, processType, customParams) {
     return new_pixels;
 }
 
-// complete blob URL
+// complete object URL
 }.toString(), ')()' ], { type: 'application/javascript' } ) );

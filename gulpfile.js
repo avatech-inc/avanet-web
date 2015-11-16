@@ -216,16 +216,17 @@ gulp.task('deploy', function(done){
 	    process.chdir('_dist');
 
 	    var remotes = {
-        "production": "git@heroku.com:avanet.git",
-        "demo": "git@heroku.com:avanet-demo.git"
+        "avanet": "git@heroku.com:avanet.git",
+        "avanet-demo": "git@heroku.com:avanet-demo.git",
+        "avanet-demo2": "git@heroku.com:avanet-demo2.git"
       } 
       //var remote = "production"; var app = "avanet";
-      var remote = "demo"; var app = "avanet-demo";
+      var app = "avanet-demo2";
       
       if (argv.to) remote = argv.to;
 
 	    exec("git remote rm " + remote, {cwd: process.cwd }, function(err, stdout, stderr){
-			exec("git remote add " + remote + " " + remotes[remote], {cwd: process.cwd }, function(err, stdout, stderr){
+			exec("git remote add " + remote + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr){
 	       		//console.log(stdout);
 	   			gutil.log("git remote added");
 

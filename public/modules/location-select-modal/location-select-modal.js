@@ -36,8 +36,10 @@ angular.module('avatech').controller('LocationSelectModalController',
             }
         });
 
+        var mapChangeTimer;
         function mapChange() {
-            $timeout(function(){
+            if (mapChangeTimer) $timeout.cancel(mapChangeTimer);
+            mapChangeTimer = $timeout(function(){
                 if ($scope.marker) {
                     $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
                     $scope.marker.bringToFront();
@@ -48,7 +50,8 @@ angular.module('avatech').controller('LocationSelectModalController',
                 $scope.invalidLng = false;
                 $scope.invalidE = false;
                 $scope.invalidN = false;
-            });
+                $scope.$apply();
+            }, 50);
         }
 
         function loadMap() {
@@ -128,8 +131,6 @@ angular.module('avatech').controller('LocationSelectModalController',
                 
                 var lat = RadToDeg(latlng.lat);
                 var lng = RadToDeg(latlng.lng);
-
-                console.log([ lat, lng ]);
 
                 $scope.invalidLat = false;
                 $scope.invalidLng = false;

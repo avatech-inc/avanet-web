@@ -1229,7 +1229,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // end GPX
             gpx += '</gpx>';
 
-            console.log(gpx);
+            //console.log(gpx);
 
             var gpxData = 'data:application/gpx+xml;charset=utf-8,' + encodeURIComponent(gpx);
             var link = document.createElement('a');

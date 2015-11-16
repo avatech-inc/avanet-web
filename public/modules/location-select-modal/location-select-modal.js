@@ -1,28 +1,23 @@
-angular.module('avatech').factory('LocationSelectModal', [ '$modal',
-    function ($modal) {
-
-        return { open: function(options) {
-
-            var modalInstance = $modal.open({
-                templateUrl: '/modules/location-select-modal/location-select-modal.html',
-                controller: 'LocationSelectModalController',
-                backdrop: 'static',
-                windowClass: 'width-680',
-                resolve: {
-                    initialLocation: function () {
-                      return options.initialLocation
-                    }
+angular.module('avatech').factory('LocationSelectModal', function ($modal) {
+    return { open: function(options) {
+        var modalInstance = $modal.open({
+            templateUrl: '/modules/location-select-modal/location-select-modal.html',
+            controller: 'LocationSelectModalController',
+            backdrop: 'static',
+            windowClass: 'width-680',
+            resolve: {
+                initialLocation: function () {
+                  return options.initialLocation
                 }
-            });
+            }
+        });
+        return modalInstance.result;
+    }
+}
+});
 
-            return modalInstance.result;
-
-        }
-    } }
-]);
-
-angular.module('avatech').controller('LocationSelectModalController', [ '$scope','$modalInstance', 'initialLocation', 'Global',
-    function ($scope, $modalInstance, initialLocation, Global) {
+angular.module('avatech').controller('LocationSelectModalController',
+    function ($scope, $timeout, $modalInstance, initialLocation, Global) {
 
         $scope.global = Global;
 
@@ -42,17 +37,18 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
         });
 
         function mapChange() {
-            if ($scope.marker) {
-                $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
-                $scope.marker.bringToFront();
-            }
-            var m = $scope.mapHolder.map.getCenter().wrap();
-            $scope.setLocation(m.lat, m.lng);
-            $scope.invalidLat = false;
-            $scope.invalidLng = false;
-            $scope.invalidE = false;
-            $scope.invalidN = false;
-            $scope.$apply();
+            $timeout(function(){
+                if ($scope.marker) {
+                    $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
+                    $scope.marker.bringToFront();
+                }
+                var m = $scope.mapHolder.map.getCenter().wrap();
+                $scope.setLocation(m.lat, m.lng);
+                $scope.invalidLat = false;
+                $scope.invalidLng = false;
+                $scope.invalidE = false;
+                $scope.invalidN = false;
+            });
         }
 
         function loadMap() {
@@ -169,4 +165,4 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
         }, true);
 
     }
-])
+);

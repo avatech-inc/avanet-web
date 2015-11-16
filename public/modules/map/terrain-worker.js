@@ -1,5 +1,5 @@
 // put worker code in blob URL
-window.workerBlobURL = URL.createObjectURL( new Blob([ '(', function() {
+window.terrainWorkerURL = URL.createObjectURL( new Blob([ '(', function() {
 
 // code goes here
 

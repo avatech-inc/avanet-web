@@ -64,7 +64,7 @@ angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', 
             $timeout(function() { $scope.$apply(); });
         }
         $scope.invalidDevice = function() {
-            alert("The device you selected is not an AvaTech SP1. Please try again.")
+            alert("The device you selected is not an Avatech SP. Please try again.")
             $scope.screen = "selectDevice";
             $timeout(function() { $scope.$apply(); });
         }

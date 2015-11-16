@@ -5,21 +5,28 @@
 
     .leaflet-control-attribution { display: none; }
 </style>  
-<!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
     <div class="modalClose" ng-click="close()"><i class="ion-close-round"></i></div>
     <div class="modal-content">
         <div class="modal-header">
             <h3>{{ 'location_select_instructions' | translate }}</h3>
         </div>
-        <div ng-init="loadMap()" class="modal-body" style="padding:0;" ng-style="{ height: windowHeight - 200 }">
+        <div class="modal-body" style="padding:0;" ng-style="{ height: windowHeight - 200 }">
     		
            <input ng-model="form.location" type="text" style="display:none"/>
 
            <img src="http://a.tiles.mapbox.com/v3/marker/pin-m+ffcc00@2x.png" class="leaflet-marker-icon leaflet-zoom-animated" tabindex="0" style="margin-left: -19px; left:50%; top:50%;margin-top: -45px; width:38px; z-index: 9999999;cursor:default;outline:none;">
 
-            <div id="map_location"></div>
+            <div map="mapHolder.map" 
 
-            <map-search location-select="mapSearchSelect(location)"></map-search>
+                test-obs="profiles"
+                test-hover-ob="hoverOb"
+                test-search="obSearch"
+
+                test-detail-mode="detailMode"
+                test-loading-new="loadingNew"
+                test-loading="loadingProfiles"
+                test-terrain-layer="terrainLayer"
+            ></div>
 
         </div>
         <div class="modal-footer" style="">
@@ -38,33 +45,29 @@
                 <span ng-if="form.coordSystem == 'dd'">
                     <label class="coords-label">LAT</label>
                     <span ng-class="{ 'has-error': invalidLat }">
-                    <input class="form-control input-sm" ng-model="decimalDegrees.lat" style="width:81px;display: inline-block; vertical-align:top;"/></span>
+                    <input class="form-control input-sm" ng-model="coords.decimalDegrees.lat" style="width:81px;display: inline-block; vertical-align:top;"/></span>
                     <label class="coords-label">LNG</label>
                     <span ng-class="{ 'has-error': invalidLng }">
-                    <input class="form-control input-sm" ng-model="decimalDegrees.lng" style="width:81px;display: inline-block; vertical-align:top;"/></span>
+                    <input class="form-control input-sm" ng-model="coords.decimalDegrees.lng" style="width:81px;display: inline-block; vertical-align:top;"/></span>
                 </span>
                 <span ng-if="form.coordSystem == 'utm'">
                     <label class="coords-label">HEMI</label>
-                    <select ng-model="utm.hemisphere" class="form-control input-sm" style="display: inline-block;width:auto;">
+                    <select ng-model="coords.utm.hemisphere" class="form-control input-sm" style="display: inline-block;width:auto;">
                         <option>N</option>
                         <option>S</option>
                     </select>
-                    <!--<input ng-model="utm.zone" class="form-control" style="width:45px;display: inline-block;"/>-->
                     <label class="coords-label">ZONE</label>
-                    <select ng-model="utm.zone" class="form-control input-sm" style="display: inline-block;width:auto; vertical-align:top;" ng-options="zone for zone in zones"></select>
+                    <select ng-model="coords.utm.zone" class="form-control input-sm" style="display: inline-block;width:auto; vertical-align:top;" ng-options="zone for zone in zones"></select>
                     <label class="coords-label">E</label>
                     <span ng-class="{ 'has-error': invalidE }">
-                    <input ng-model="utm.e" class="form-control input-sm" style="width:66px;display: inline-block; vertical-align:top;"/></span>
+                    <input ng-model="coords.utm.e" class="form-control input-sm" style="width:66px;display: inline-block; vertical-align:top;"/></span>
                     <label class="coords-label">N</label>
                     <span ng-class="{ 'has-error': invalidN }">
-                    <input ng-model="utm.n" class="form-control input-sm" style="width:66px;display: inline-block; vertical-align:top;"/></span>
+                    <input ng-model="coords.utm.n" class="form-control input-sm" style="width:66px;display: inline-block; vertical-align:top;"/></span>
                 </span>
             </div>
 
 
            <button class="btn btn-primary" ng-click="select()">{{ 'location_select_button' | translate }}</button>
-            <!--<span class="btn btn-default" ng-click="closeModal()">Close</span>-->
         </div>
     </div>
-
-<!--</div>-->

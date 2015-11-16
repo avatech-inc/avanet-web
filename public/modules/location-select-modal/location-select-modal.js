@@ -26,14 +26,23 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
 
         $scope.global = Global;
 
-        $scope.map = null;
-
         $scope.form = {};
+        $scope.mapHolder = {};
+        $scope.coords = {};
 
         // $modalInstance.opened.then(function(){ });
 
-        $scope.loadMap = function(){
-            // mapbox uses lat/lng, DB uses lng/lat
+        var mapWatcher = $scope.$watch('mapHolder.map', function() {
+            if ($scope.mapHolder.map) {
+                // unregister watch
+                mapWatcher();
+                // go
+                loadMap();
+            }
+        });
+
+        function loadMap() {
+            // leaflet uses lat/lng, DB uses lng/lat
             if (initialLocation) initialLocation = [ parseFloat(initialLocation[1]), parseFloat(initialLocation[0])];
             else if (!initialLocation) {
                 // set to either park city or user's location
@@ -41,36 +50,30 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 else initialLocation = [$scope.global.user.location[1],$scope.global.user.location[0]];
             }
 
-            setTimeout(function(){
-                $scope.map = L.mapbox.map('map_location','andrewsohn.ihk2g12l', {
-                    zoomControl: false,
-                    tileLayer: {
-                        //continuousWorld: false,
-                        //noWrap: true
-                    }
-                });
+            console.log("start drag?")
+            console.log($scope.mapHolder.map);
 
-                $scope.map.on('drag',function() {
-                    if ($scope.marker) $scope.marker.setLatLng($scope.map.getCenter());
-                    var m = $scope.map.getCenter().wrap();
-                    $scope.setLocation(m.lat, m.lng);
-                    $scope.invalidLat = false;
-                    $scope.invalidLng = false;
-                    $scope.invalidE = false;
-                    $scope.invalidN = false;
-                    $scope.$apply();
-                });
-
-                // add zoom control
-                new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
-
-                // set starting location and zoom
-                $scope.map.setView(initialLocation, 10, { animate: false });
-                $scope.map.invalidateSize();
-                $scope.setLocation(initialLocation[0], initialLocation[1]);
-
+            $scope.mapHolder.map.on('drag',function() {
+                if ($scope.marker) {
+                    $scope.marker.setLatLng($scope.mapHolder.map.getCenter());
+                    $scope.marker.bringToFront();
+                }
+                var m = $scope.mapHolder.map.getCenter().wrap();
+                $scope.setLocation(m.lat, m.lng);
+                $scope.invalidLat = false;
+                $scope.invalidLng = false;
+                $scope.invalidE = false;
+                $scope.invalidN = false;
                 $scope.$apply();
-            },100);
+            });
+
+            // add zoom control
+            new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.mapHolder.map);
+
+            // set starting location and zoom
+            $scope.mapHolder.map.setView(initialLocation, 10, { animate: false });
+            $scope.mapHolder.map.invalidateSize();
+            $scope.setLocation(initialLocation[0], initialLocation[1]);
         }
 
         $scope.close = function () {
@@ -79,14 +82,6 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
         $scope.select = function () {
             $modalInstance.close($scope.form.location);
         };
-
-        // on map search select
-        $scope.mapSearchSelect = function(location) {
-            if (location.lat && location.lng) {
-                $scope.map.setView([location.lat,location.lng], 12,{ animate: false });
-                $scope.setLocation(location.lat, location.lng);
-            }
-        }
 
         $scope.form.coordSystem = Global.user.settings.coordSystem;
         $scope.$watch("form.coordSystem", function() {
@@ -100,13 +95,15 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
         }
 
         $scope.setLocation = function(lat, lng) {
+            console.log("setLocation");
+            console.log(lat + "," + lng)
             $scope.form.location = [ lng, lat ];
 
             if ($scope.form.coordSystem == "dd") {
 
-                if (!$scope.decimalDegrees) $scope.decimalDegrees = {};
-                $scope.decimalDegrees.lat = parseFloat(lat.toFixed(5));
-                $scope.decimalDegrees.lng = parseFloat(lng.toFixed(5));
+                if (!$scope.coords.decimalDegrees) $scope.coords.decimalDegrees = {};
+                $scope.coords.decimalDegrees.lat = parseFloat(lat.toFixed(5));
+                $scope.coords.decimalDegrees.lng = parseFloat(lng.toFixed(5));
 
             }
             else if ($scope.form.coordSystem == "utm") {
@@ -114,29 +111,29 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
                 var utm = LatLonToUTMXY(DegToRad(lat), DegToRad(lng));
 
                 // set UTM
-                if (!$scope.utm) $scope.utm = {};
-                $scope.utm.zone = utm.zone;
-                $scope.utm.hemisphere = (lat > 0) ? "N" : "S";
-                $scope.utm.e = parseInt(utm.x.toFixed(0));
-                $scope.utm.n = parseInt(utm.y.toFixed(0));
+                if (!$scope.coords.utm) $scope.coords.utm = {};
+                $scope.coords.utm.zone = utm.zone;
+                $scope.coords.utm.hemisphere = (lat > 0) ? "N" : "S";
+                $scope.coords.utm.e = parseInt(utm.x.toFixed(0));
+                $scope.coords.utm.n = parseInt(utm.y.toFixed(0));
             }
         }
 
         var utm_timer;
-        $scope.$watch("utm", function(){
+        $scope.$watch("coords.utm", function(){
             if (utm_timer) clearTimeout(utm_timer);
             utm_timer = setTimeout(function(){
-                if (!$scope.utm || $scope.utm.zone === null) return;
+                if (!$scope.coords.utm || $scope.coords.utm.zone === null) return;
 
                 // validate
-                if ($scope.utm.e.length > 8 || isNaN(parseFloat($scope.utm.e))) $scope.invalidE = true;
+                if ($scope.coords.utm.e.length > 8 || isNaN(parseFloat($scope.coords.utm.e))) $scope.invalidE = true;
                 else $scope.invalidE = false;
-                if ($scope.utm.n.length > 8 || isNaN(parseFloat($scope.utm.n))) $scope.invalidN = true;
+                if ($scope.coords.utm.n.length > 8 || isNaN(parseFloat($scope.coords.utm.n))) $scope.invalidN = true;
                 else $scope.invalidN = false;
                 if ($scope.invalidE || $scope.invalidN) return;
 
                 // conver to lat/lng
-                var latlng = UTMXYToLatLon($scope.utm.e, $scope.utm.n, $scope.utm.zone, $scope.utm.hemisphere === "S");
+                var latlng = UTMXYToLatLon($scope.coords.utm.e, $scope.coords.utm.n, $scope.coords.utm.zone, $scope.coords.utm.hemisphere === "S");
                 
                 var lat = RadToDeg(latlng.lat);
                 var lng = RadToDeg(latlng.lng);
@@ -148,19 +145,19 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
 
                 $scope.form.location = [ lng, lat ];
                 // center map
-                $scope.map.setView({ lat: lat, lng: lng }, $scope.map.getZoom(), { animate: true });
+                $scope.mapHolder.map.setView({ lat: lat, lng: lng }, $scope.mapHolder.map.getZoom(), { animate: true });
                 $scope.$apply();
             }, 100);
         }, true);
 
         var dd_timer;
-        $scope.$watch("decimalDegrees", function() {
+        $scope.$watch("coords.decimalDegrees", function() {
             if (dd_timer) clearTimeout(dd_timer);
             dd_timer = setTimeout(function(){
-                if (!$scope.decimalDegrees) return;
+                if (!$scope.coords.decimalDegrees) return;
 
-                var lat = parseFloat($scope.decimalDegrees.lat);
-                var lng = parseFloat($scope.decimalDegrees.lng);
+                var lat = parseFloat($scope.coords.decimalDegrees.lat);
+                var lng = parseFloat($scope.coords.decimalDegrees.lng);
 
                 // validate
                 if (isNaN(lat) || lat < -90 || lat > 90) $scope.invalidLat = true;
@@ -171,7 +168,7 @@ angular.module('avatech').controller('LocationSelectModalController', [ '$scope'
 
                 $scope.form.location = [ lng, lat ];
                 // center map
-                $scope.map.setView({ lat: lat, lng: lng }, $scope.map.getZoom(), { animate: true });
+                $scope.mapHolder.map.setView({ lat: lat, lng: lng }, $scope.mapHolder.map.getZoom(), { animate: true });
                 $scope.$apply();
             }, 100);
         }, true);

@@ -32,7 +32,7 @@ var aws = {
 };
 
 gulp.task('upload-s3', function() {
-  return gulp.src('app/views/503-maint.html', { read: true})
+  return gulp.src('server/views/503-maint.html', { read: true})
     .pipe(s3(aws, { headers: { 'x-amz-acl': 'public-read' } }));
 });
 // https://devcenter.heroku.com/articles/error-pages#customize-pages
@@ -62,7 +62,7 @@ gulp.task('compass', ['clean-css'], function() {
 gulp.task('combine-minify', function() {
     var assets = useref.assets({ searchPath: 'public' });
 
-    return gulp.src('_dist2/app/views/main.html')
+    return gulp.src('_dist2/server/views/main.html')
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
     }))
@@ -101,10 +101,10 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
     //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))
-    .pipe(gulpif('*.html', gulp.dest('_dist2/app/views')))
+    .pipe(gulpif('*.html', gulp.dest('_dist2/server/views')))
 
     //.on('end', done);
-    //.pipe(gulp.dest('_dist4/app/views'));
+    //.pipe(gulp.dest('_dist4/server/views'));
 });
 gulp.task('clean-dist', function() {
   return gulp.src('_dist2/public/js', {read: false})
@@ -112,7 +112,7 @@ gulp.task('clean-dist', function() {
 })
 
 gulp.task('buildMain', function () {
-  var target = gulp.src('app/views/main.html');
+  var target = gulp.src('server/views/main.html');
 
   var sources = gulp.src([
 	  'public/modules/**/*.js',
@@ -130,7 +130,7 @@ gulp.task('buildMain', function () {
         ignorePath: 'public/',
         addRootSlash: true,
     }))
-    .pipe(gulp.dest('app/views'));
+    .pipe(gulp.dest('server/views'));
 });
 
 gulp.task('clean', function() {
@@ -141,7 +141,7 @@ gulp.task('clean', function() {
 // copy files to dist folder
 gulp.task('copy', function() {
    return gulp.src(
-   	['app/**/*','config/**/*',
+   	['server/**/*',
     'package.json','server.js','Procfile','newrelic.js',
      
     'public/*.txt',

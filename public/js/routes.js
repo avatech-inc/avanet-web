@@ -73,6 +73,17 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         //     // }
         // })
 
+        // .state('index.obs', {
+        //     url: 'avalanches/:observationId',
+        //     views: { "content": { templateUrl: '/modules/avalanches/new.html' } },
+        //     data: { 
+        //         title: 'Avalanche Observation / Avanet',
+        //         requireLogin: true,
+        //         bodyCssClass: 'profiles',
+        //         fullScreen: true
+        //     }
+        // })
+
         // // Snowpit Editor
         // .state('index.profileEditor', {
         //     abstract: true,
@@ -111,7 +122,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
 
-        // admin
         .state('index.admin', {
             url: 'admin',
             views: { "content": { templateUrl: '/modules/admin/admin.html' } },
@@ -129,17 +139,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             views: { "content": { templateUrl: '/modules/user/settings.html' } },
             data: { 
                 title: 'Settings / Avanet',
-                requireLogin: true,
-                bodyCssClass: 'profiles',
-                fullScreen: true
-            }
-        })
-
-        .state('index.obs', {
-            url: 'avalanches/:observationId',
-            views: { "content": { templateUrl: '/modules/avalanches/new.html' } },
-            data: { 
-                title: 'Avalanche Observation / Avanet',
                 requireLogin: true,
                 bodyCssClass: 'profiles',
                 fullScreen: true

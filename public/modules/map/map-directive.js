@@ -342,13 +342,13 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         if (e.latlng && scope.terrainLayer) {
             if (terrainQueryTimer) $timeout.cancel(terrainQueryTimer);
             terrainQueryTimer = $timeout(function(){
-                scope.terrainLayer.getTerrainData(e.latlng.lat, e.latlng.lng, function(data) {
+                scope.terrainLayer.getTerrainData(e.latlng.lat, e.latlng.lng)
+                .then(function(data) {
                     scope.mapCursorElevation = data.elevation;
                     scope.$apply();
                 });
             }, 50);
         }
-
         scope.$apply();
     });
     scope.map.on('mouseout', function(e) {

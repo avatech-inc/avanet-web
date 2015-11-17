@@ -79,6 +79,7 @@ onmessage = function (e) {
     // use Transferable for transfering pixels for better performance
     , [processed.buffer]);
 
+    processed = null;
 };
 
 function convert(data) {

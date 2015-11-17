@@ -241,6 +241,9 @@ var AvatechTerrainLayer = function (options) {
             terrainLayer.workers[tile_id].postMessage(message, transferable);
 
             firstLoad = true;
+
+            transferable = null;
+            PNG_data = null;
         }
       
         // check if tile is in local cache
@@ -296,6 +299,9 @@ var AvatechTerrainLayer = function (options) {
                     PNG_data = new Uint8ClampedArray(pixels).buffer;
                     redraw();
                     terrainLayer.redrawQueue.push(redraw);
+
+                    pixels = null;
+                    png = null;
                 }
                 // error decoding PNG
                 else canvas._tileLoaded(null, canvas);

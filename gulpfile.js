@@ -364,15 +364,20 @@ gulp.task('build', function(done) {
     'clean', 
     // copy files into _Dist
     'copy',
-    //'strip-debug',
-    // angular annotations
-    //'ng-annotate',
-    // combine
+    // strip out 'console.log' etc.
+    'strip-debug',
+    // add angular [] annotations
+    'ng-annotate',
+    // concat files
     'combine', 
+    // clean main.html
     'clean-html',
-    //'uglify',
+    // uglify javascript
+    'uglify',
+    // cleanup files
     'clean-dist', 
-    //'git',
+    // prepare git for heroku
+    'git',
   done);
 });
 

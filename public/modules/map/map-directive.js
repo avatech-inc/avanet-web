@@ -171,7 +171,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 var marker = new PruneCluster.Marker(profile.location[1], profile.location[0]);
 
                 // associate profile with marker
-                marker.data.observation = profile;
+                marker.data.observation = angular.copy(profile);
 
                 // this looks hacky but it's by far the most performant way to keep
                 // track of red flags (uses the PruneCluster lib's 'category' feature)

@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, Profiles, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox) {
+    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, Profiles, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal) {
 
         $scope.global = Global;
 
@@ -689,31 +689,21 @@ angular.module('avatech')
                 return;
             }
 
-            var modalInstance = $modal.open({
-                templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
-                controller: 'SnowpitPublishModalController',
-                windowClass: 'width-480',
-                //backdrop: 'static',
-                resolve: {
-                    objectName: function() { return 'profile' },
-                    initialSharing: function () {
-                      return {
-                        level: $scope.profile.sharingLevel,
-                        orgs: $scope.profile.sharedOrganizations,
-                        avyCenter: $scope.profile.shareWithAvyCenter,
-                        students: $scope.profile.shareWithStudents,
-                      };
-                    }
-                }
-            });
+            PublishModal.open({ 
+                initialSharing: {
+                    sharingLevel: $scope.profile.sharingLevel,
+                    sharedOrganizations: $scope.profile.sharedOrganizations,
+                    shareWithAvyCenter: $scope.profile.shareWithAvyCenter,
+                    shareWithStudents: $scope.profile.shareWithStudents,
+                } 
+            })
+            .then(function (sharing) {
 
-            modalInstance.result.then(function (sharing) {
-                
                 $scope.profile.published = true;
-                $scope.profile.sharingLevel = sharing.level;
-                $scope.profile.shareWithAvyCenter = sharing.avyCenter;
-                $scope.profile.sharedOrganizations = sharing.selectedOrgs;
-                $scope.profile.shareWithStudents = sharing.students;
+                $scope.profile.sharingLevel = sharing.sharingLevel;
+                $scope.profile.shareWithAvyCenter = sharing.shareWithAvyCenter;
+                $scope.profile.sharedOrganizations = sharing.sharedOrganizations;
+                $scope.profile.shareWithStudents = sharing.shareWithStudents;
 
                 $scope.update();
 
@@ -722,6 +712,40 @@ angular.module('avatech')
             }, function () {
                 // on dismiss
             });
+
+            // var modalInstance = $modal.open({
+            //     templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
+            //     controller: 'SnowpitPublishModalController',
+            //     windowClass: 'width-480',
+            //     //backdrop: 'static',
+            //     resolve: {
+            //         objectName: function() { return 'profile' },
+            //         initialSharing: function () {
+            //           return {
+            //             level: $scope.profile.sharingLevel,
+            //             orgs: $scope.profile.sharedOrganizations,
+            //             avyCenter: $scope.profile.shareWithAvyCenter,
+            //             students: $scope.profile.shareWithStudents,
+            //           };
+            //         }
+            //     }
+            // });
+
+            // modalInstance.result.then(function (sharing) {
+                
+            //     $scope.profile.published = true;
+            //     $scope.profile.sharingLevel = sharing.level;
+            //     $scope.profile.shareWithAvyCenter = sharing.avyCenter;
+            //     $scope.profile.sharedOrganizations = sharing.selectedOrgs;
+            //     $scope.profile.shareWithStudents = sharing.students;
+
+            //     $scope.update();
+
+            //     $location.path('/p/' + $scope.profile._id);
+
+            // }, function () {
+            //     // on dismiss
+            // });
         }
 
         // PHOTO UPLOAD

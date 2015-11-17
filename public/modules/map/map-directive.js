@@ -224,7 +224,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     scope.mapSearchSelect = function(location) {
         if (location.lat && location.lng)
             scope.map.setView([location.lat,location.lng], 
-                11, // zoom
+                12, // zoom
                 { animate: false });
     }
 

@@ -172,14 +172,18 @@ gulp.task('clean-html', function() {
 
 gulp.task('clean-dist', function() {
   return gulp.src([
-    '*',
-    '!_dist/public/assets',
-    '!_dist/public/fonts',
-    '!_dist/public/modules/**/*.html',
-    '!_dist/public/translate',
-    '!_dist/public/*.txt',
-    '!_dist/server'
-    ], {read: false})
+    '_dist/public/modules/**/*.js',
+    '_dist/public/lib',
+    '_dist/public/js',
+    '_dist/public/css',
+    '_dist/public/sass',
+    // '!_dist/public/assets/**',
+    // '!_dist/public/fonts',
+    // '!_dist/public/modules/**/*.html',
+    // '!_dist/public/translate',
+    // '!_dist/public/*.txt',
+    // '!_dist/server'
+    ], { read: false })
       .pipe(clean({ force: true }));
 })
 

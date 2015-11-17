@@ -1,4 +1,4 @@
-angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, Restangular) {
+angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http) {
   return {
     restrict: 'A',
     templateUrl: "/modules/map/map-directive.html",
@@ -405,8 +405,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         if (showLoader !== false) scope.loadingNew = true;
 
         // abort previous requests
-        if (scope.canceler) scope.canceler.resolve();
-        scope.canceler = $q.defer();
+        //if (scope.canceler) scope.canceler.resolve();
+        //scope.canceler = $q.defer();
 
         // padding in pixels (so we don't get cut-off map points)
         var padding = 5;
@@ -420,15 +420,25 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         point_sw = scope.map.containerPointToLatLng(point_sw);
 
         // get obs from server
-        Restangular.all("observations")
-        .withHttpConfig({ timeout: scope.canceler.promise })
-        .getList({
-            nelat: point_ne.lat, nelng: point_ne.lng, 
-            swlat: point_sw.lat, swlng: point_sw.lng, 
-            verbose: false
+        // Restangular.all("observations")
+        // .withHttpConfig({ timeout: scope.canceler.promise })
+        // .getList({
+        //     nelat: point_ne.lat, nelng: point_ne.lng, 
+        //     swlat: point_sw.lat, swlng: point_sw.lng, 
+        //     verbose: false
+        // })
+        $http({
+            method: 'GET',
+            url: window.apiBaseUrl + "observations",
+            responseType: "application/json",
+            params: {
+                nelat: point_ne.lat, nelng: point_ne.lng, 
+                swlat: point_sw.lat, swlng: point_sw.lng, 
+                verbose: false
+            }
         })
-        .then(function(obs) {
-            scope.profiles = obs;
+        .then(function(res) {
+            scope.profiles = res.data;
             plotObsOnMap();
             searchObs();
             scope.loadingProfiles = false;

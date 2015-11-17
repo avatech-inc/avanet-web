@@ -1,5 +1,5 @@
 angular.module('avatech').service('Routes', 
-    function($q, $rootScope, $timeout, $interval, Global, $http, Restangular) {
+    function($q, $rootScope, $timeout, $interval, Global, $http) {
 
 	var self=this;
 
@@ -16,14 +16,24 @@ angular.module('avatech').service('Routes',
         // if user not available, don't sync
         if (!Global.user || !Global.user._id) return;
         
-        Restangular.all("users/" + Global.user._id + "/routes")
-        .getList({
-            verbose: false,
-            //since: lastSync.toISOString()
+        // Restangular.all("users/" + Global.user._id + "/routes")
+        // .getList({
+        //     verbose: false,
+        //     //since: lastSync.toISOString()
+        // })
+        // .then(function(obs) {
+        $http({
+            method: 'GET',
+            url: window.apiBaseUrl + "users/" + Global.user._id + "/routes",
+            responseType: "application/json",
+            params: {
+                verbose: false
+            }
         })
-        .then(function(obs) {
+        .then(function(res) {
+          var obs = res.data;
 
-          for (var i = 0; i < obs.length; i++) {
+            for (var i = 0; i < obs.length; i++) {
                 addOrReplace(obs[i]);
             }
             // keep track of last sync

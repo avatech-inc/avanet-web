@@ -23,7 +23,6 @@ var rollbar = require('gulp-rollbar');
 var stripDebug = require('gulp-strip-debug');
 var rename = require("gulp-rename");
 var htmlmin = require('gulp-htmlmin');
-//var flatten = require('gulp-flatten');
 
 var s3 = require("gulp-s3");
 var aws = {

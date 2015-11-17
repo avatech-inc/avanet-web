@@ -32,7 +32,6 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-clean": "^0.3.1",
-    "gulp-flatten": "0.0.4",
     "gulp-htmlmin": "^1.2.0",
     "gulp-if": "^1.2.5",
     "gulp-inject": "^1.2.0",

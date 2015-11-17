@@ -241,7 +241,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 opacity: 1,
                 detectRetina: true,
                 errorTileUrl: "https://s3.amazonaws.com/avatech-static/empty.png",
-                tms: layer.tms == null ? false : layer.tms
+                tms: layer.tms == null ? false : layer.tms,
+                reuseTiles: true, updateInterval: 400
             }
             if (layer.retina != null) options.detectRetina = layer.retina;
             if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution;
@@ -262,7 +263,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 //detectRetina: true,
                 maxNativeZoom: 16,
                 format: 'image/png',
-                errorTileUrl: "https://s3.amazonaws.com/avatech-static/empty.png"
+                errorTileUrl: "https://s3.amazonaws.com/avatech-static/empty.png",
+                reuseTiles: true, updateInterval: 400
             };
             if (layer.layers) options.layers = layer.layers;
             else options.layers = 0;
@@ -281,6 +283,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 layerId: layer.id,
                 retina: L.Browser.retina ? '@2x' : '',
                 attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>',
+                reuseTiles: true, updateInterval: 400
                 //crossOrigin: true
             });
         }

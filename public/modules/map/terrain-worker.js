@@ -1,3 +1,4 @@
+(function() {
 // put worker code in object URL
 window.terrainWorkerURL = URL.createObjectURL( new Blob([ '(', function() {
 
@@ -645,3 +646,4 @@ function render(data, processType, customParams) {
 
 // complete object URL
 }.toString(), ')()' ], { type: 'application/javascript' } ) );
+})();

@@ -1,3 +1,4 @@
+
 <div class='map-holder'></div>
 <div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
     <div class="btn-group dropup" dropdown>
@@ -120,8 +121,10 @@
     {{ formatters.formatLatLng(mapCursorLocation) }}
     <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
     <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>
-    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-    {{ formatters.formatElevation(mapCursorElevation) }}
+    <span ng-show="mapCursorElevation">
+	    <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+	    {{ formatters.formatElevation(mapCursorElevation) }}
+    </span>
     <!--&nbsp;&nbsp;
     <b>WGS84</b>-->
 </div>

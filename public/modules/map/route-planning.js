@@ -85,6 +85,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     // load terrain
                     processUpdate(function() {
                         // elevation profile has been loaded
+                        console.log("elevation profile has been loaded!");
                         // note: this will still get called even if no terrain is present
                         editingOn();
                         $scope.loading = false;
@@ -114,7 +115,78 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         // save when route is edited
         var routeSaveTimer;
-        $scope.$watch('route', function() {
+        $scope.$watch('route.name', function() {
+            console.log('saving route!')
+            // if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
+
+            // if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
+            // routeSaveTimer = $timeout(function() {
+
+            //     console.log("saving!!");
+
+            //     var _route = {
+            //         name: $scope.route.name,
+            //         points: [],
+            //         terrain: [],
+            //         stats: $scope.route.stats,
+            //         // GeoJSON
+            //         path: {
+            //             type: "LineString",
+            //             coordinates: []
+            //         }
+            //     };
+
+            //     // save elevation profile
+            //     // angular.forEach(elevationProfilePoints, function(point) {
+            //     //    _route.terrain.push({
+            //     //         coords: [ point.lng, point.lat ],
+            //     //         original: point.original,
+            //     //         aspect: point.aspect,
+            //     //         slope: point.slope,
+            //     //         elevation: point.elevation,
+            //     //         totalTimeEstimateMinutes: point.totalTimeEstimateMinutes,
+            //     //         totalDistance: point.totalDistance,
+            //     //         originalIndex: point.originalIndex,
+            //     //         index: point.index,
+            //     //    });
+            //     // });
+
+            //     angular.forEach(_line.editing._markers, function(marker) {
+            //         _route.path.coordinates.push([ marker._latlng.lng, marker._latlng.lat ]);
+
+            //         _route.points.push({ 
+            //             coords: [ marker._latlng.lng, marker._latlng.lat ],
+            //             waypoint: marker.waypoint
+            //         });
+            //     });
+
+            //     if (!$scope.route._id) {
+            //         $http.post(window.apiBaseUrl + "routes", _route)
+            //         .then(function(res) {
+            //             if (res.data._id) {
+            //                 $scope.route._id = res.data._id;
+            //                 $scope.imageURL = res.data.imageURL;
+
+            //                 // add to routes datastore
+            //                 Routes.add($scope.route);
+
+            //                 // replace URL with recieved _id
+            //                 $state.params.routeId = $scope.route._id;
+            //                 $state.transitionTo($state.current, $state.params, { inherit: true, notify: true });
+            //             }
+            //         });
+            //     }
+            //     else {
+            //          $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
+            //         .then(function(data) {
+
+            //         });
+            //     }
+
+            // }, 1000);
+        });
+
+        $scope.saveRoute = function() {
             if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
 
             if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
@@ -180,9 +252,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                     });
                 }
-
             }, 1000);
-        }, true);
+        }
 
         // hide icons when not in edit mode
         $scope.$watch("routeControl.editing", function() {
@@ -591,8 +662,10 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             }
         }
 
+        var saveLineTimeout;
         function saveLinePoints() {
-            $timeout(function(){
+            $timeout.cancel(saveLineTimeout);
+            saveLineTimeout = $timeout(function(){
                 $scope.route.stats = {};
                 $scope.route.points = [];
 
@@ -616,9 +689,6 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                         // get leg
                         if (elevationProfilePoints) {
                             var legPoints = getLegPoints(lastWaypointIndex, thisPoint._index);
-                            // if (legPoints.length > 1) {
-                            //     $scope.route.points[legIndex - 1].leg = calculateLineSegmentStats(legPoints);
-                            // }
                             pointDetails.leg = calculateLineSegmentStats(legPoints);
                             pointDetails.terrain = getElevationProfilePoint(thisPoint._index);
                         }   
@@ -635,11 +705,11 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                 // route terrain stats
                 if (elevationProfilePoints) {
-                    console.log("here!!!!!!!!!!!!!!!!!");
+                    //console.log("here!!!!!!!!!!!!!!!!!");
                    $scope.route.stats = calculateLineSegmentStats(elevationProfilePoints);
-                   console.log($scope.route.stats);
+                   //console.log($scope.route.stats);
                 }
-            });
+            }, 10);
         }
 
         function addPoint(latlng, index) {
@@ -879,6 +949,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         function processUpdate(callback) {
             updateSegments();
 
+            console.log("processUpdate!")
+
             var points = _line._latlngs;
 
             // get line distance
@@ -905,7 +977,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 console.log("TERRAIN DATA LAODED!")
 
                 // store elevation profile for later
-                elevationProfilePoints = receivedPoints;
+                elevationProfilePoints = angular.copy(receivedPoints);
+                //console.log(receivedPoints);
 
                 // calculate route stats/time, etc.
                 calculateRouteStats();
@@ -919,9 +992,12 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     if (marker.waypoint && i != 0 && i != _line.editing._markers.length - 1) elevationWidget.addWaypoint(marker._latlng);
                 });
 
+                $scope.loading = false;
+
                 saveLinePoints();
             });
-
+            //console.log("promises!");
+            //console.log(promises);
             updateSegments();
         }
 
@@ -933,7 +1009,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             var totalTimeEstimateMinutes = 0;
             var originalIndex = 0;
 
+
             for (var i = 0; i < points.length; i++) {
+                //console.log(i);
                 var point = points[i];
                 if (!point) continue;
 
@@ -1001,6 +1079,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                 totalTimeEstimateMinutes += point.timeEstimateMinutes;
                 point.totalTimeEstimateMinutes = totalTimeEstimateMinutes;
+
             }
             saveLinePoints();
         }

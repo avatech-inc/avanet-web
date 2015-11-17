@@ -1,8 +1,9 @@
-
 angular.module('avatech').controller('OrganizationsController', function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular) { 
     $scope.global = Global;
 
     $scope.newOrg = {};
+
+    $scope.selectedTab = null;
 
     $scope.userIsAdmin = function() {
         var isAdmin = false;

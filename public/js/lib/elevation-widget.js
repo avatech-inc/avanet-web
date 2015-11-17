@@ -172,7 +172,7 @@ window.ElevationWidget = function() {
         // disable drag-select
         return;
 
-        //we don´t want map events to occur here
+        //we don't want map events to occur here
         d3.event.preventDefault();
         d3.event.stopPropagation();
 
@@ -913,12 +913,20 @@ window.ElevationWidget = function() {
 
                 //waypoint.style("visibility", "visible");
 
+                this.waypoints.append('svg:line')
+                    .attr('x2', item.xDiagCoord)
+                    .attr('y2', this._y(item.elevation))
+                    .attr('x1', item.xDiagCoord)
+                    .attr('y1', this._height())
+                    .attr("style", "stroke: " + _color + ";stroke-width:1;pointer-events: none;")
+                    .classed('hidden', false);
+
                 this.waypoints.append('svg:circle')
                     .attr('cx', item.xDiagCoord)
                     .attr('cy', this._y(item.elevation))
-                    .attr('r','6')
+                    .attr('r','3')
                     .attr("class", "elevation-profile-waypoint")
-                    .attr("style", "stroke: " + _color + "; stroke-width: 2px; fill: yellow; pointer-events: none;")
+                    .attr("style", "fill: " + "yellow" + ";stroke:" + _color + ";stroke-width:1;pointer-events: none;")
                     .classed('hidden', false);
 
                         // pointG.append("svg:circle")

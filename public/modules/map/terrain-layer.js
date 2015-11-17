@@ -5,6 +5,12 @@ var AvatechTerrainLayer = function (options) {
     options.underzoom = true;
     var terrainLayer = new L.GridLayer(options);
 
+    terrainLayer.worker = new TerrainProcessor();
+
+    var injector = angular.injector(["ng"]);
+    //var localStorageService = injector.get("localStorageService");
+    var $q = injector.get("$q");
+
     terrainLayer.createTile = function(tilePoint, tileLoaded) {
         // create tile canvas element
         var tile = L.DomUtil.create('canvas', 'leaflet-tile always-show');
@@ -18,6 +24,10 @@ var AvatechTerrainLayer = function (options) {
         tile._tileLoaded = tileLoaded;
         // if tileLoaded not specified, call dummy function
         if (!tile._tileLoaded) tile._tileLoaded = function() { };
+        // tile._tileLoaded = function() { 
+        //     if (tileLoaded) tileLoaded();
+
+        // };
         // draw tile
         this.drawTile(tile, tilePoint);
         // return tile so Leaflet knows to expect tileLoaded callback later
@@ -42,7 +52,6 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.redrawQueue = [];
     terrainLayer.contexts = {};
-    terrainLayer.workers = {};
     terrainLayer.needsRedraw = false;
     terrainLayer.overlayType;
     terrainLayer.sunDate;
@@ -77,38 +86,37 @@ var AvatechTerrainLayer = function (options) {
     };
 
     terrainLayer.clearOldWorkers = function() {
-        var zoom = parseInt(terrainLayer._map.getZoom());
-        var workerKeys = Object.keys(terrainLayer.workers);
+        // var workerKeys = Object.keys(terrainLayer.workers);
 
-        // console.log("-----------------------------------")
-        // console.log("ZOOM: " + zoom)
+        // // console.log("-----------------------------------")
+        // // console.log("ZOOM: " + zoom)
 
 
-        // overzoom
-        if (zoom > this.options.maxNativeZoom) zoom = this.options.maxNativeZoom;
-        // make zoom level 12 underzoomed from 13
-        if (this.options.underzoom && zoom == 12) zoom = 11; // 13
+        // // overzoom
+        // if (zoom > this.options.maxNativeZoom) zoom = this.options.maxNativeZoom;
+        // // make zoom level 12 underzoomed from 13
+        // if (this.options.underzoom && zoom == 12) zoom = 11; // 13
 
-        angular.forEach(workerKeys,function(key) {
-            // todo: also check if tile point is out of map bounds by certain amount
-            var allowed = false;
-            //if (key.indexOf("_" + (zoom - 1)) > key.length - 4) allowed = true;
-            if (key.indexOf("_" + zoom) > key.length - 4) allowed = true;
-            //else if (key.indexOf("_" + (zoom + 1)) > key.length - 4) allowed = true;
+        // angular.forEach(workerKeys,function(key) {
+        //     // todo: also check if tile point is out of map bounds by certain amount
+        //     var allowed = false;
+        //     //if (key.indexOf("_" + (zoom - 1)) > key.length - 4) allowed = true;
+        //     if (key.indexOf("_" + zoom) > key.length - 4) allowed = true;
+        //     //else if (key.indexOf("_" + (zoom + 1)) > key.length - 4) allowed = true;
 
-            // remove worker entirely
-            if (!allowed) {
-                var worker = terrainLayer.workers[key];
-                if (worker) {
-                    //console.log("terminating worker!")
-                    if (worker.terminate) worker.terminate();
-                    if (worker.dems) worker.converted = null;
-                    terrainLayer.workers[key] = null;
-                    delete terrainLayer.workers[key];
-                }
-            }
-            //console.log(key + "; " + allowed);
-        });
+        //     // remove worker entirely
+        //     // if (!allowed) {
+        //     //     var worker = terrainLayer.workers[key];
+        //     //     if (worker) {
+        //     //         //console.log("terminating worker!")
+        //     //         if (worker.terminate) worker.terminate();
+        //     //         if (worker.dems) worker.converted = null;
+        //     //         terrainLayer.workers[key] = null;
+        //     //         delete terrainLayer.workers[key];
+        //     //     }
+        //     // }
+        //     //console.log(key + "; " + allowed);
+        // });
     }
 
     // clear old 'layers'
@@ -117,27 +125,19 @@ var AvatechTerrainLayer = function (options) {
         console.log("terrain loaded!");
         if (layerClearTimer) clearTimeout(layerClearTimer);
         layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
-        terrainLayer.clearOldWorkers();
+
+        // sanitize
+        // todo: also remove tiles that are no longer in view!
+        var zoom = parseInt(terrainLayer._map.getZoom());
+        // overzoom
+        if (zoom > this.options.maxNativeZoom) zoom = this.options.maxNativeZoom;
+        // make zoom level 12 underzoomed from 13
+        if (this.options.underzoom && zoom == 12) zoom = 11; // 13
+        terrainLayer.worker.sanitize(zoom);
     });
 
     terrainLayer.updateTile = function(e) {
-        // process terrain data callback
-        if (e.data.pointInTile) {
-            var terrainData = e.data;
-            // if empty values, make null
-            if (terrainData.elevation == 127 && terrainData.slope == 127 && terrainData.aspect == 511) {
-                terrainData.elevation = null;
-                terrainData.slope = null;
-                terrainData.aspect = null;
-            }
-            // retreive and call stored callback
-            var callback = terrainLayer.callbacks[e.data.requestId];
-            if (callback) callback(terrainData);
-            // delete reference to callback, no longer needed
-            delete terrainLayer.callbacks[e.data.requestId];
-
-            return;
-        }
+        e.data = e;
 
         // get canvas context for this tile
         var ctx = terrainLayer.contexts[e.data.id];
@@ -186,12 +186,10 @@ var AvatechTerrainLayer = function (options) {
             ctx.canvas._tileLoaded = null;
         }
     }
-
-    terrainLayer.PNG_cache = {};
+    terrainLayer.worker.onmessage = terrainLayer.updateTile;
 
     terrainLayer.drawTile = function(canvas, tilePoint) {
-        var PNG_data;
-        
+
         // overzoom
         if (tilePoint.z > this.options.maxNativeZoom) tilePoint.z = this.options.maxNativeZoom;
         // make zoom level 12 underzoomed from 13
@@ -202,7 +200,6 @@ var AvatechTerrainLayer = function (options) {
 
         terrainLayer.contexts[tile_id] = canvas.getContext('2d');
 
-        var firstLoad = false;
         function redraw() {
             // if no terrain overlay specified, clear canvas
             if (!terrainLayer.overlayType) {
@@ -213,111 +210,69 @@ var AvatechTerrainLayer = function (options) {
                 //return;
             }
 
-            // message to send to worker thread
-            var message = { id: tile_id };
-            // Transferable = big performance improvement when sending large objects like PNG data
-            // https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
-            var transferable = [];
-
-            if (!firstLoad) {
-                message.raster = PNG_data;
-                message.url = url;
-                transferable.push(message.raster);
-            }
-
             var overlayType = terrainLayer.overlayType;
             if (!overlayType) overlayType = "loadTerrainData";
 
-            message.processType = overlayType;
-            message.customParams = terrainLayer.customParams;
-
-            // if no existing worker thread, create
-            if (!terrainLayer.workers[tile_id]) {
-                terrainLayer.workers[tile_id] = new Worker(window.terrainWorkerURL);
-                terrainLayer.workers[tile_id].onmessage = terrainLayer.updateTile;
-            }
-
             // post message to worker thread
-            terrainLayer.workers[tile_id].postMessage(message, transferable);
-
-            firstLoad = true;
-
-            transferable = null;
-            PNG_data = null;
+            terrainLayer.worker.postMessage({
+                id: tile_id,
+                processType: overlayType,
+                customParams: terrainLayer.customParams
+            });
         }
       
-        // check if tile is in local cache
-        //   storing and serving from this local cache is faster than using traditional browser cache,
-        //   since the image data is cached after the PNG has been decoded (which is pretty slow).
-        //   this is mainly to support quick loading between recently accessed areas and zoom levels.
-        var cachedTile = terrainLayer.PNG_cache[tile_id];   
-        if (cachedTile) {
-            console.log("from cache!");
-            PNG_data = new Uint8ClampedArray(cachedTile).buffer;;
-            redraw();
-            terrainLayer.redrawQueue.push(redraw);
-        }
-        else {
-            // // overzoom
-            // if (tilePoint.z > this.options.maxNativeZoom) {
-            //     tilePoint.z = this.options.maxNativeZoom;
-            // }
-            // // make zoom level 12 underzoomed from 13
-            // if (this.options.underzoom && parseInt(tilePoint.z) == 12) {
-            //     tilePoint.z = 11;
-            // }
-
-            // elevation tile URL
-            var url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
-                // use multiple subdomains to parallelize requests
-                //   cycle through using same implementation as Leaflet TileLayer.
-                //   makes sure to return same subdomain each time a URL is fetched
-                //   to prevent duplicate browser caching.
-                s: function (argument) {
-                    var subdomains = "abc";
-                    var index = Math.abs(tilePoint.x + tilePoint.y) % subdomains.length;
-                    return subdomains[index];
-                }
-            }));
-
-            // get tile as raw Array Buffer so we can process PNG on our own 
-            //   to avoid bogus data from native browser alpha premultiplication
-            var xhr = new XMLHttpRequest;
-            xhr.open("GET", url, true);
-            xhr.responseType = "arraybuffer";
-            xhr.onload = function() {
-                // if anything other than a 200 status code is recieved, fire loaded callback
-                if (xhr.status != 200) return canvas._tileLoaded(null, canvas);
-                // get PNG data from response
-                var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
-                // decode PNG
-                var png = new PNG(data);
-                // if PNG was succesfully decoded
-                if (png) {
-                    var pixels = png.decodePixels();
-                    //terrainLayer.PNG_cache[tile_id] = pixels;
-                    PNG_data = new Uint8ClampedArray(pixels).buffer;
-                    redraw();
-                    terrainLayer.redrawQueue.push(redraw);
-
-                    pixels = null;
-                    png = null;
-                }
-                // error decoding PNG
-                else canvas._tileLoaded(null, canvas);
-            };
-            // if network error, fire loaded callback 
-            xhr.onerror = function() {
-                canvas._tileLoaded(null, canvas);
+        // elevation tile URL
+        var url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
+            // use multiple subdomains to parallelize requests
+            //   cycle through using same implementation as Leaflet TileLayer.
+            //   makes sure to return same subdomain each time a URL is fetched
+            //   to prevent duplicate browser caching.
+            s: function (argument) {
+                var subdomains = "abc";
+                var index = Math.abs(tilePoint.x + tilePoint.y) % subdomains.length;
+                return subdomains[index];
             }
-            xhr.send(null);
+        }));
+
+        // get tile as raw Array Buffer so we can process PNG on our own 
+        //   to avoid bogus data from native browser alpha premultiplication
+        var xhr = new XMLHttpRequest;
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function() {
+            // if anything other than a 200 status code is recieved, fire loaded callback
+            if (xhr.status != 200) return canvas._tileLoaded(null, canvas);
+            // get PNG data from response
+            var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+            // decode PNG
+            var png = new PNG(data);
+            // if PNG was succesfully decoded
+            if (png) {
+                var pixels = png.decodePixels();
+
+                terrainLayer.worker.setTerrainData(tile_id, 
+                    new Uint8ClampedArray(pixels).buffer);
+
+                redraw();
+                terrainLayer.redrawQueue.push(redraw);
+
+                pixels = null;
+                png = null;
+            }
+            // error decoding PNG
+            else if (canvas._tileLoaded) canvas._tileLoaded(null, canvas);
+        };
+        // if network error, fire loaded callback 
+        xhr.onerror = function() {
+            if (canvas._tileLoaded) canvas._tileLoaded(null, canvas);
         }
+        xhr.send(null);
     }
 
     var lastSync;
     terrainLayer.redraw = function() {
         if (terrainLayer.needsRedraw) {
-            //console.log("Queue: " + terrainLayer.redrawQueue.length);
+            console.log("Queue: " + terrainLayer.redrawQueue.length);
             terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
         }
         terrainLayer.needsRedraw = false;
@@ -343,9 +298,7 @@ var AvatechTerrainLayer = function (options) {
         }
     }
 
-    var callbackCount = 0;
-    terrainLayer.callbacks = {};
-    terrainLayer.getTerrainData = function(lat, lng, callback, index, original) {
+    terrainLayer.getTerrainData = function(lat, lng, index, original) {
         // round down lat/lng for fewer lookups
         // 4 decimal places = 11.132 m percision
         // https://en.wikipedia.org/wiki/Decimal_degrees
@@ -397,51 +350,63 @@ var AvatechTerrainLayer = function (options) {
         if (pointInTile.y > 255) pointInTile.y = 255;
         if (pointInTile.x < 0) pointInTile.x = 0;
         if (pointInTile.y < 0) pointInTile.y = 0;
-
-        // create unique request id to keep track of callbacks
-        var requestId = lat + "_" + lng + "_" + callbackCount + new Date().getTime();
-        if (index != null) requestId += "_" + index;
-
-        // store callback so we can reference when message is received from worker thread
-        if (callback) terrainLayer.callbacks[requestId] = callback;
+        
+        // promise
+        var promise = $q.defer();
 
         // send point to tile worker
-        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);
+        var tile_id = tilePoint.x + "_" + tilePoint.y + "_" + parseInt(zoom);        
 
-        var worker = terrainLayer.workers[tile_id];
-        if (worker != null) worker.postMessage({ id: tile_id, requestId: requestId, 
-            lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
+        // wait for tile to load
+        terrainLayer.worker.tileLoaded(tile_id).then(function() {
+            console.log("ready!");
 
-        // if no worker exists, return empty terrain data
-        else if (callback) callback({ elevation: null, slope: null, aspect: null, 
-            lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
+            var terrainData = terrainLayer.worker.queryPoint(tile_id,
+            { lat: lat, lng: lng, pointInTile: pointInTile, index: index, original: original });
 
-        callbackCount++;
+            // what if terrainData is null?
+
+            // process terrain data callback
+            // if empty values, make null
+            if (terrainData && terrainData.elevation == 127 && terrainData.slope == 127 && terrainData.aspect == 511) {
+                terrainData.elevation = null;
+                terrainData.slope = null;
+                terrainData.aspect = null;
+            }
+            promise.resolve(terrainData);
+        });
+        return promise.promise;
     }
 
     // since 'getTerrainDataBulk' is using terrain tile worker threads, the data 
     // callback will only return after all tiles have loaded, so we don't have
     // to worry about checking if terrain tiles have been loaded before querying.
     terrainLayer.getTerrainDataBulk = function(points, callback) {
+        console.log("getTerrainDataBulk!");
         // clear callbacks cache to prevent any old callbacks
         // from executing thereby tainting this new request
-        terrainLayer.callbacks = {};
+        //terrainLayer.callbacks = {};
         // keep track of recieved data in original order
-        var receivedPoints = [];
-        // keep track of recieved count separately (since we can't use receivedPoints.length)
-        var receivedPointsTotal = 0;
+        var promises = [];
         // call 'getTerrainData' for each point
         for (var i = 0; i < points.length; i++) {
-            terrainLayer.getTerrainData(points[i].lat, points[i].lng, function(terrainData) {
-                receivedPoints[terrainData.index] = terrainData;
-                receivedPointsTotal++;
-                // when all points have been received, callback
-                if (receivedPointsTotal == points.length) callback(receivedPoints);
-            }, 
+            var promise = terrainLayer.getTerrainData(points[i].lat, points[i].lng, 
             i, // index
             points[i].original // original
             );
+            promises.push(promise);
         }
+
+        var receivedPoints = [];
+        $q.all(promises).then(function(results) {
+            console.log("everything resolved!");
+
+            for (var i = 0; i < results.length; i++) {
+                var terrainData = results[i];
+                receivedPoints[terrainData.index] = terrainData;
+            }
+            callback(receivedPoints);
+        });
     }
 
     return terrainLayer;

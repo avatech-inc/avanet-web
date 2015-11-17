@@ -76,30 +76,38 @@ var AvatechTerrainLayer = function (options) {
         }
     };
 
-    function clearOldWorkers() {
+    terrainLayer.clearOldWorkers = function() {
         var zoom = parseInt(terrainLayer._map.getZoom());
         var workerKeys = Object.keys(terrainLayer.workers);
 
-        console.log("-----------------------------------")
-        console.log("ZOOM: " + zoom)
+        // console.log("-----------------------------------")
+        // console.log("ZOOM: " + zoom)
+
+
+        // overzoom
+        if (zoom > this.options.maxNativeZoom) zoom = this.options.maxNativeZoom;
+        // make zoom level 12 underzoomed from 13
+        if (this.options.underzoom && zoom == 12) zoom = 11; // 13
 
         angular.forEach(workerKeys,function(key) {
             // todo: also check if tile point is out of map bounds by certain amount
             var allowed = false;
-            if (key.indexOf("_" + (zoom - 1)) > key.length - 4) allowed = true;
-            else if (key.indexOf("_" + zoom) > key.length - 4) allowed = true;
-            else if (key.indexOf("_" + (zoom + 1)) > key.length - 4) allowed = true;
+            //if (key.indexOf("_" + (zoom - 1)) > key.length - 4) allowed = true;
+            if (key.indexOf("_" + zoom) > key.length - 4) allowed = true;
+            //else if (key.indexOf("_" + (zoom + 1)) > key.length - 4) allowed = true;
 
             // remove worker entirely
             if (!allowed) {
                 var worker = terrainLayer.workers[key];
                 if (worker) {
-                    worker.terminate();
-                    terrainLayer.workers[key] = undefined;
+                    //console.log("terminating worker!")
+                    if (worker.terminate) worker.terminate();
+                    if (worker.dems) worker.converted = null;
+                    terrainLayer.workers[key] = null;
                     delete terrainLayer.workers[key];
                 }
             }
-            console.log(key + "; " + allowed);
+            //console.log(key + "; " + allowed);
         });
     }
 
@@ -109,7 +117,7 @@ var AvatechTerrainLayer = function (options) {
         console.log("terrain loaded!");
         if (layerClearTimer) clearTimeout(layerClearTimer);
         layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
-        clearOldWorkers();
+        terrainLayer.clearOldWorkers();
     });
 
     terrainLayer.updateTile = function(e) {

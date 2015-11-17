@@ -342,7 +342,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     scope.map.on('mousemove', function(e) {
         scope.mapCursorLocation = e.latlng;
         // query terrain layer
-        if (e.latlng) {
+        if (e.latlng && scope.terrainLayer) {
             if (terrainQueryTimer) $timeout.cancel(terrainQueryTimer);
             terrainQueryTimer = $timeout(function(){
                 scope.terrainLayer.getTerrainData(e.latlng.lat, e.latlng.lng, function(data) {

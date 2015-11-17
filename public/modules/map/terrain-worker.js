@@ -26,19 +26,40 @@ function TerrainProcessor() {
             promise = null;
             delete self.waitingForData[tile_id];
         }
+
+        // clear old data
+        var zoom = tile_id.substr(tile_id.length - 4);
+        zoom = parseInt(zoom.substr(zoom.indexOf('_') + 1));
+        self.sanitize(zoom);
+
         pixels = null;
     }
 
+    self.sanitizeTimer;
     self.sanitize = function(zoom) {
-        var keys = Object.keys(self.dems);
-        angular.forEach(keys,function(key) {
-            // todo: also check if tile point is out of map bounds by certain amount
-            if (key.indexOf("_" + zoom) < key.length - 4) {
-                console.log("REMOVING: " + key);
-                self.dems[key] = null;
-                delete self.dems[key];
-            }
-        });
+        // if (self.sanitizeTimer) clearTimeout(self.sanitizeTimer);
+        // self.sanitizeTimer = setTimeout(function(){
+        //     console.log("sanitizing! " + zoom)
+        //     var keys = Object.keys(self.dems);
+        //     angular.forEach(keys,function(key) {
+        //         // todo: also check if tile point is out of map bounds by certain amount
+        //         if (key.indexOf("_" + zoom) < key.length - 4) {
+        //             console.log("REMOVING dem: " + key);
+        //             self.dems[key] = null;
+        //             delete self.dems[key];
+        //         }
+        //     });
+
+        //     keys = Object.keys(self.waitingForData);
+        //     angular.forEach(keys,function(key) {
+        //         // todo: also check if tile point is out of map bounds by certain amount
+        //         if (key.indexOf("_" + zoom) < key.length - 4) {
+        //             console.log("REMOVING waiting: " + key);
+        //             self.waitingForData[key] = null;
+        //             delete self.waitingForData[key];
+        //         }
+        //     });
+        // }, 5000);
     }
 
     // terrain querying

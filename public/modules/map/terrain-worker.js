@@ -54,6 +54,7 @@ onmessage = function (e) {
         var converted = convert(new Uint32Array(e.data.raster));
         self.dems[e.data.id] = converted;
         //self.dems[e.data.id] = raster2dem(e.data.raster, .051, converted, 40);
+        e.data.raster = undefined;
     }
 
     // if loadTerrainData only

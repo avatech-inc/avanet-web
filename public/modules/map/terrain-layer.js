@@ -76,12 +76,40 @@ var AvatechTerrainLayer = function (options) {
         }
     };
 
+    function clearOldWorkers() {
+        var zoom = parseInt(terrainLayer._map.getZoom());
+        var workerKeys = Object.keys(terrainLayer.workers);
+
+        console.log("-----------------------------------")
+        console.log("ZOOM: " + zoom)
+
+        angular.forEach(workerKeys,function(key) {
+            // todo: also check if tile point is out of map bounds by certain amount
+            var allowed = false;
+            if (key.indexOf("_" + (zoom - 1)) > key.length - 4) allowed = true;
+            else if (key.indexOf("_" + zoom) > key.length - 4) allowed = true;
+            else if (key.indexOf("_" + (zoom + 1)) > key.length - 4) allowed = true;
+
+            // remove worker entirely
+            if (!allowed) {
+                var worker = terrainLayer.workers[key];
+                if (worker) {
+                    worker.terminate();
+                    terrainLayer.workers[key] = undefined;
+                    delete terrainLayer.workers[key];
+                }
+            }
+            console.log(key + "; " + allowed);
+        });
+    }
+
     // clear old 'layers'
     var layerClearTimer;
     terrainLayer.on('load', function (e) {
         console.log("terrain loaded!");
         if (layerClearTimer) clearTimeout(layerClearTimer);
         layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
+        clearOldWorkers();
     });
 
     terrainLayer.updateTile = function(e) {

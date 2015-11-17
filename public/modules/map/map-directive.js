@@ -217,7 +217,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         if (_searchTimeout) $timeout.cancel(_searchTimeout);
         _searchTimeout = $timeout(function() {
             searchObs();
-        }, 150);
+        }, 200);
     }, true);
 
     // go to location selected in location search
@@ -550,11 +550,9 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
         scope.terrainLayer.on('loading', function() {
             scope.isTerrainLoaded = false;
-            //console.log("1. TILE LAYER LOADING!");
         });
         scope.terrainLayer.on('load', function() {
             scope.isTerrainLoaded = true;
-            //console.log("2. TILE LAYER LOADED!");
         });
         scope.terrainLayer.once('load', initLoad);
 

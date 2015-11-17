@@ -21,6 +21,10 @@ var gutil = require('gulp-util');
 var argv = require('yargs').argv;
 var rollbar = require('gulp-rollbar');
 var stripDebug = require('gulp-strip-debug');
+var debug = require('gulp-debug');
+var concat = require('gulp-concat');
+var rename = require("gulp-rename");
+var htmlmin = require('gulp-htmlmin');
 //var flatten = require('gulp-flatten');
 
 var s3 = require("gulp-s3");
@@ -57,36 +61,85 @@ gulp.task('compass', ['clean-css'], function() {
         .pipe(gulp.dest('public/css'));
 });
 
-gulp.task('combine-minify', function() {
-    var assets = useref.assets({ searchPath: 'public' });
+
+gulp.task('ng-annotate', function() {
+
+  return gulp.src([
+    '_dist/public/js/**/*.js',
+    '_dist/public/modules/**/*.js',
+    '!_dist/public/js/lib'
+  ])
+  .pipe(ngAnnotate())
+  .pipe(gulp.dest(function(file) {
+    return file.base;
+  }));
+
+});
+
+gulp.task('strip-debug', function() {
+
+  return gulp.src([
+    '_dist/public/js/**/*.js',
+    '_dist/public/modules/**/*.js',
+    '!_dist/public/js/lib',
+  ])
+  .pipe(stripDebug())
+  .pipe(gulp.dest(function(file) {
+    return file.base;
+  }));
+
+});
+
+var condition = function (file) {
+  if (file.extname == ".js") {
+    if (file.path.indexOf(".min.js") == file.path.length - 7) {
+      return false;
+    }
+    else return true;
+  }
+  else return false;
+}
+
+
+gulp.task('combine', function() {
 
     return gulp.src('_dist/server/views/main.html')
+
+    //.pipe(debug({title: 'unicorn:'}))
+
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
     }))
 
-    .pipe(assets)
+    .pipe(useref({ searchPath: '_dist/public' }))
+
+    // --------------------
 
     // minify CSS
-    .pipe(gulpif('*.css', minifyCSS()))
+    .pipe(gulpif('*.css', minifyCSS({ keepSpecialComments: 0 })))
 
     // strip 'console.log' statements
-    .pipe(gulpif('*.js', stripDebug()))
+    //.pipe(gulpif(['*.js','!lib/**'], stripDebug()))
 
     // sourcemaps
     //.pipe(gulpif('*.js', sourcemaps.init()))
 
     // ng-anneotate (add [] style annotations to controllers for proper minifcation)
-    .pipe(gulpif('*.js', ngAnnotate()))
+    //.pipe(gulpif(['*.js','!lib/**'], ngAnnotate()))
 
     // uglify
-    .pipe(gulpif('*.js', uglify()))
+    //.pipe(gulpif(condition, uglify()))
+
+    // .pipe(gulpif('*.css', concat('_app.css')))
+    // .pipe(gulpif('*.js', concat('_app.js')))
+
+    // --------------------
 
     .pipe(rev())             // rename the concatenated files for cache-busting
-
-    .pipe(assets.restore())
-    .pipe(useref())
     .pipe(revReplace())      // substitute in new filenames
+
+    // minify CSS
+    //.pipe(gulpif('*.css', minifyCSS()))
 
     // sourcemaps
     // .pipe(rollbar({
@@ -100,14 +153,43 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.css', gulp.dest('_dist/public')))
     .pipe(gulpif('*.js', gulp.dest('_dist/public')))
     //.pipe(gulpif('*.map', gulp.dest('_dist/public')))
+
+    .pipe(gulpif('*.html', rename("main.html")))
     .pipe(gulpif('*.html', gulp.dest('_dist/server/views')))
 
     //.on('end', done);
     //.pipe(gulp.dest('_dist4/server/views'));
 });
+
+gulp.task('uglify', function() {
+  return gulp.src(['_dist/public/assets/*.js'])
+  .pipe(uglify())
+  .pipe(gulp.dest('_dist/public/assets'));
+});
+
+gulp.task('clean-html', function() {
+  return gulp.src('_dist/server/views/main.html')
+    .pipe(htmlmin({ 
+      removeComments: true,
+      collapseWhitespace: true,
+      preserveLineBreaks: true
+    }))
+    .pipe(gulp.dest(function(file) {
+      return file.base;
+    }));
+});
+
 gulp.task('clean-dist', function() {
-  return gulp.src('_dist/public/js', {read: false})
-        .pipe(clean({ force: true }));
+  return gulp.src([
+    '*',
+    '!_dist/public/assets',
+    '!_dist/public/fonts',
+    '!_dist/public/modules/**/*.html',
+    '!_dist/public/translate',
+    '!_dist/public/*.txt',
+    '!_dist/server'
+    ], {read: false})
+      .pipe(clean({ force: true }));
 })
 
 gulp.task('buildMain', function () {
@@ -143,14 +225,14 @@ gulp.task('copy', function() {
    	['server/**/*',
     'package.json','server.js','Procfile','newrelic.js',
      
-    'public/*.txt',
-   	'public/fonts/**',
-   	'public/img/**',
-    'public/js/**',
-    'public/translate/**',
-   	'public/modules/**/*.html',
-    //'public/modules/**/terrain-worker.js',
-   	'public/views/**'
+    // 'public/*.txt',
+   	// 'public/fonts/**',
+   	// 'public/img/**',
+    // 'public/js/**',
+    // 'public/translate/**',
+   	// 'public/modules/**/*.html',
+   	// 'public/views/**'
+    'public/**',
    	]
    	, { base: './' })
    .pipe(gulp.dest('_dist'));
@@ -244,7 +326,7 @@ gulp.task('deploy', function(done){
           });
 					heroku.stderr.on('data', function (data) { 
             console.log("" + data); 
-            if ((data + "").indexOf("forced ") != -1) {
+            if ((data + "").indexOf("master -> master ") != -1) {
               console.log(); console.log();
               gutil.log(gutil.colors.green("DEPLOY SUCCESS TO '" + app + "'"));
               console.log(); console.log();
@@ -280,8 +362,23 @@ gulp.task('deploy', function(done){
 // })
 
 gulp.task('build', function(done) {
-  runSequence('compass','buildMain','clean', 'copy','combine-minify', 'clean-dist', 'git',
-              done);
+  runSequence('compass',
+    // inject files into main
+    'buildMain',
+    // remove existing _dist folder
+    'clean', 
+    // copy files into _Dist
+    'copy',
+    //'strip-debug',
+    // angular annotations
+    //'ng-annotate',
+    // combine
+    'combine', 
+    'clean-html',
+    //'uglify',
+    'clean-dist', 
+    //'git',
+  done);
 });
 
 gulp.task('start', function(done) {

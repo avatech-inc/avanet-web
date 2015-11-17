@@ -44,7 +44,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         });
 
         // disable scroll wheel zoom
-        scope.map.scrollWheelZoom.disable();
+        //scope.map.scrollWheelZoom.disable();
 
         // add markers layer
         //scope.mapLayer = L.mapbox.featureLayer().addTo(scope.map);

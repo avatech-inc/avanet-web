@@ -21,8 +21,6 @@ var gutil = require('gulp-util');
 var argv = require('yargs').argv;
 var rollbar = require('gulp-rollbar');
 var stripDebug = require('gulp-strip-debug');
-var debug = require('gulp-debug');
-var concat = require('gulp-concat');
 var rename = require("gulp-rename");
 var htmlmin = require('gulp-htmlmin');
 //var flatten = require('gulp-flatten');
@@ -104,9 +102,6 @@ var condition = function (file) {
 gulp.task('combine', function() {
 
     return gulp.src('_dist/server/views/main.html')
-
-    //.pipe(debug({title: 'unicorn:'}))
-
     .pipe(replace({
         patterns: [{ match: 'env', replacement: 'production' }]
     }))
@@ -129,9 +124,6 @@ gulp.task('combine', function() {
 
     // uglify
     //.pipe(gulpif(condition, uglify()))
-
-    // .pipe(gulpif('*.css', concat('_app.css')))
-    // .pipe(gulpif('*.js', concat('_app.js')))
 
     // --------------------
 

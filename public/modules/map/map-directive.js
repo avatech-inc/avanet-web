@@ -327,12 +327,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             });
         }
 
-        // load new profiles
-        if (scope.loadProfilesTimer) $timeout.cancel(scope.loadProfilesTimer);
-        scope.loadProfilesTimer = $timeout(function(){
-            scope.loadProfiles();
-        }, 300);
-
         // track zoom on mixpanel (to see which zoom levels are most popular)
         mixpanel.track("zoom", zoom);
     });
@@ -351,7 +345,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 });
             }, 50);
         }
-        //else $scope.
 
         scope.$apply();
     });
@@ -392,6 +385,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         setTimeout(function() {
             scope.setBaseLayer(baseMap);
         });
+
+        // load obs
 
     });
 
@@ -452,11 +447,55 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         }, 60000);
     }
 
+    function terrainLoad() {
+        scope.terrainLayer.off('load', terrainLoad);
+        scope.loadProfiles();
+    }
+    var moveTimer;
     scope.map.on('moveend', function() {
-        $timeout.cancel(scope.loadProfilesTimer);
-        scope.loadProfilesTimer = $timeout(function(){
-            scope.loadProfiles();
-        }, 300);
+        if (scope.terrainLayer) {
+            scope.terrainLayer.off('load', terrainLoad);
+            // todo: hacky way to wait for terrain loading, need to find a better solution
+            if (moveTimer) $timeout.cancel(moveTimer);
+            moveTimer = $timeout(function() {
+                if(!scope.isTerrainLoaded) {
+                    scope.terrainLayer.off('load', terrainLoad);
+                    scope.terrainLayer.on('load', terrainLoad);
+                } 
+                else terrainLoad();
+
+            }, 200);
+        }
+        else scope.loadProfiles();
+        // var terrainLoaded = $q.defer();
+
+        // //console.log("is terrain layer already loaded? " + scope.terrainLayer._isLoaded);
+        // if (scope.terrainLayer) {
+        //     //scope.terrainLayer.once('load', function() { terrainLoaded.resolve(); });
+        //     scope.terrainLayer.once('loading', function() { console.log('1. loading') });
+        //     scope.terrainLayer.once('load', function() { console.log('2. loaded!') });
+        // } 
+        // else terrainLoaded.resolve();
+
+        // $timeout.cancel(scope.loadProfilesTimer);
+        // scope.loadProfilesTimer = $timeout(function() {
+
+        //     var getObs = scope.loadProfiles();
+
+        //     $q.all([ terrainLoaded.promise, getObs ])
+        //     .then(function(data) {
+        //         console.log("--- !!! both terrain and obs are loaded !!! ---");
+        //         var obs = data[1];
+
+        //         scope.profiles = obs;
+        //         plotObsOnMap();
+        //         searchObs();
+        //         scope.loadingProfiles = false;
+        //         scope.loadingNew = false;
+
+        //     });
+
+        // }, 300);
     });
 
     // make sure map loads properly
@@ -501,56 +540,69 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     // ---------------------------------------------------
 
     // init terrain layer
-    scope.overlayOpacity = .5;
-    scope.terrainLayer = AvatechTerrainLayer({
-        zIndex: 999,
-        opacity: scope.overlayOpacity,
-        maxNativeZoom: 13
-    }).addTo(scope.map);
+    if (scope.showTerrain) {
+        scope.overlayOpacity = .5;
+        scope.terrainLayer = AvatechTerrainLayer({
+            zIndex: 999,
+            opacity: scope.overlayOpacity,
+            maxNativeZoom: 13
+        }).addTo(scope.map);
 
-    setTimeout(function(){
-        scope.terrainLayer.setZIndex(99998);
-    }, 100);
+        scope.terrainLayer.on('loading', function() {
+            scope.isTerrainLoaded = false;
+            //console.log("1. TILE LAYER LOADING!");
+        });
+        scope.terrainLayer.on('load', function() {
+            scope.isTerrainLoaded = true;
+            //console.log("2. TILE LAYER LOADED!");
+        });
+        scope.terrainLayer.once('load', initLoad);
 
-    scope.$watch('overlayOpacity', function() {
-        scope.terrainLayer.setOpacity(scope.overlayOpacity);
-    });
+        setTimeout(function(){
+            scope.terrainLayer.setZIndex(99998);
+        }, 100);
 
-    scope.map.on('viewreset', function () {
-        scope.terrainLayer.redrawQueue = [];
-        // workers.forEach(function (worker) {
-        //     worker.postMessage('clear');
-        // });
-    });
-    scope.map.on('zoomstart', function(e) {
-        scope.terrainLayer.redrawQueue = [];
-    });
+        scope.$watch('overlayOpacity', function() {
+            scope.terrainLayer.setOpacity(scope.overlayOpacity);
+        });
 
-    // set terrain overlay
-    scope.$watch('terrainOverlay', function() {
-        scope.terrainLayer.overlayType = scope.terrainOverlay;
-        scope.terrainLayer.needsRedraw = true;
-    });
+        scope.map.on('viewreset', function () {
+            scope.terrainLayer.redrawQueue = [];
+            // workers.forEach(function (worker) {
+            //     worker.postMessage('clear');
+            // });
+        });
+        scope.map.on('zoomstart', function(e) {
+            scope.terrainLayer.redrawQueue = [];
+        });
 
-    // custom terrain visualization
-    scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
-    scope.customTerrain = {
-        color: '#ffcc00',
+        // set terrain overlay
+        scope.$watch('terrainOverlay', function() {
+            scope.terrainLayer.overlayType = scope.terrainOverlay;
+            scope.terrainLayer.needsRedraw = true;
+        });
 
-        elev_low: 0,
-        elev_high: scope.elevationMax,
+        // custom terrain visualization
+        scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
+        scope.customTerrain = {
+            color: '#ffcc00',
 
-        slope_low: 0,
-        slope_high: 70,
+            elev_low: 0,
+            elev_high: scope.elevationMax,
 
-        aspect_low: 0,
-        aspect_high: 359,
-    };
-    scope.$watch('customTerrain', function() {
-        if (scope.customTerrain.color.indexOf('#') == 0) scope.customTerrain.color = scope.customTerrain.color.substr(1);
-        scope.terrainLayer.customParams = angular.copy(scope.customTerrain);
-        scope.terrainLayer.needsRedraw = true;
-    }, true);
+            slope_low: 0,
+            slope_high: 70,
+
+            aspect_low: 0,
+            aspect_high: 359,
+        };
+        scope.$watch('customTerrain', function() {
+            if (scope.customTerrain.color.indexOf('#') == 0) scope.customTerrain.color = scope.customTerrain.color.substr(1);
+            scope.terrainLayer.customParams = angular.copy(scope.customTerrain);
+            scope.terrainLayer.needsRedraw = true;
+        }, true);
+    }
+    else initLoad();
 
     scope.capitalizeFirstLetter = function(str) {
         if (!str) return '';

@@ -47,7 +47,6 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
      });
 });
  
-
 gulp.task('clean-css', function() {
   return gulp.src('public/css', {read: false})
         .pipe(clean({ force: true }));
@@ -58,33 +57,24 @@ gulp.task('compass', ['clean-css'], function() {
         .pipe(gulp.dest('public/css'));
 });
 
-
 gulp.task('ng-annotate', function() {
-
   return gulp.src([
     '_dist/public/js/**/*.js',
     '_dist/public/modules/**/*.js',
     '!_dist/public/js/lib'
   ])
   .pipe(ngAnnotate())
-  .pipe(gulp.dest(function(file) {
-    return file.base;
-  }));
-
+  .pipe(gulp.dest(function(file) { return file.base; }));
 });
 
 gulp.task('strip-debug', function() {
-
   return gulp.src([
     '_dist/public/js/**/*.js',
     '_dist/public/modules/**/*.js',
     '!_dist/public/js/lib',
   ])
   .pipe(stripDebug())
-  .pipe(gulp.dest(function(file) {
-    return file.base;
-  }));
-
+  .pipe(gulp.dest(function(file) { return file.base; }));
 });
 
 gulp.task('combine', function() {
@@ -165,7 +155,7 @@ gulp.task('buildMain', function () {
   // don't read the file contents - we only need filenames
   {read: false});
  
-  return target.pipe(inject(sources,{
+  return target.pipe(inject(sources, {
         ignorePath: 'public/',
         addRootSlash: true,
     }))
@@ -173,18 +163,16 @@ gulp.task('buildMain', function () {
 });
 
 gulp.task('clean', function() {
-	return gulp.src('_dist', {read: false})
-        .pipe(clean({ force: true }));
+	return gulp.src('_dist', {read: false}).pipe(clean({ force: true }));
 })
 
 // copy files to dist folder
 gulp.task('copy', function() {
-   return gulp.src(
-   	['server/**/*',
+   return gulp.src([
+    'server/**/*',
     'package.json','server.js','newrelic.js',
     'public/**',
-   	]
-   	, { base: './' })
+   	], { base: './' })
    .pipe(gulp.dest('_dist'));
 });
 
@@ -200,40 +188,30 @@ gulp.task('lint',function(){
   //   //disallowTrailingWhitespace: false,
   //   validateQuoteMarks: "'"
   // }));
-
-})
+});
 
 // git stuff
 
 gulp.task('remove-git', function() {
-	return gulp.src('_dist./git', {read: false})
-        .pipe(clean({ force: true }));
-})
+  // remove existing git
+	return gulp.src('_dist./git', {read: false}).pipe(clean({ force: true })); });
 
-var exec = require("child_process").exec;
-var spawn = require('child_process').spawn;
+  var exec = require("child_process").exec;
+  var spawn = require('child_process').spawn;
 
-gulp.task('git', ['remove-git'], function(done){
-		
-    process.chdir('_dist');
-
-	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr){
-   		gutil.log("Git: repository initialized");
-
-		exec("git add .", {cwd: process.cwd }, function(err, stdout, stderr){
-       		//console.log(stdout);
-       		gutil.log("Git: files added");
-
+  gulp.task('git', ['remove-git'], function(done) {
+  process.chdir('_dist');
+	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr) {
+ 		gutil.log("Git: repository initialized");
+		exec("git add .", {cwd: process.cwd }, function(err, stdout, stderr) {
+   		gutil.log("Git: files added");
 			exec("git commit -m '-'", {cwd: process.cwd }, function(err, stdout, stderr) {
-	       		//console.log(stdout);
-	       		gutil.log("Git: files committed");
-
+       		gutil.log("Git: files committed");
     			process.chdir('../');
-
-	       		done();
+       		done();
 			});
 		});
-     });
+  });
 });
 
 gulp.task('deploy', function(done){
@@ -335,7 +313,6 @@ gulp.task('start', function(done) {
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist');
-
     // todo: no need for nodemon here since we aren't editing
    nodemon({
     script: 'server.js'

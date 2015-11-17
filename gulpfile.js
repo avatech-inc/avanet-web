@@ -19,7 +19,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
 var gutil = require('gulp-util');
 var argv = require('yargs').argv;
-var rollbar = require('gulp-rollbar');
+//var rollbar = require('gulp-rollbar');
 var stripDebug = require('gulp-strip-debug');
 var rename = require("gulp-rename");
 var htmlmin = require('gulp-htmlmin');
@@ -87,17 +87,6 @@ gulp.task('strip-debug', function() {
 
 });
 
-var condition = function (file) {
-  if (file.extname == ".js") {
-    if (file.path.indexOf(".min.js") == file.path.length - 7) {
-      return false;
-    }
-    else return true;
-  }
-  else return false;
-}
-
-
 gulp.task('combine', function() {
 
     return gulp.src('_dist/server/views/main.html')
@@ -107,30 +96,13 @@ gulp.task('combine', function() {
 
     .pipe(useref({ searchPath: '_dist/public' }))
 
-    // --------------------
-
     // minify CSS
     .pipe(gulpif('*.css', minifyCSS({ keepSpecialComments: 0 })))
 
-    // strip 'console.log' statements
-    //.pipe(gulpif(['*.js','!lib/**'], stripDebug()))
-
-    // sourcemaps
-    //.pipe(gulpif('*.js', sourcemaps.init()))
-
-    // ng-anneotate (add [] style annotations to controllers for proper minifcation)
-    //.pipe(gulpif(['*.js','!lib/**'], ngAnnotate()))
-
-    // uglify
-    //.pipe(gulpif(condition, uglify()))
-
-    // --------------------
-
-    .pipe(rev())             // rename the concatenated files for cache-busting
-    .pipe(revReplace())      // substitute in new filenames
-
-    // minify CSS
-    //.pipe(gulpif('*.css', minifyCSS()))
+    // rename the concatenated files for cache-busting
+    .pipe(rev())             
+    // substitute in new filenames in main.html
+    .pipe(revReplace())      
 
     // sourcemaps
     // .pipe(rollbar({
@@ -147,9 +119,6 @@ gulp.task('combine', function() {
 
     .pipe(gulpif('*.html', rename("main.html")))
     .pipe(gulpif('*.html', gulp.dest('_dist/server/views')))
-
-    //.on('end', done);
-    //.pipe(gulp.dest('_dist4/server/views'));
 });
 
 gulp.task('uglify', function() {
@@ -177,12 +146,6 @@ gulp.task('clean-dist', function() {
     '_dist/public/js',
     '_dist/public/css',
     '_dist/public/sass',
-    // '!_dist/public/assets/**',
-    // '!_dist/public/fonts',
-    // '!_dist/public/modules/**/*.html',
-    // '!_dist/public/translate',
-    // '!_dist/public/*.txt',
-    // '!_dist/server'
     ], { read: false })
       .pipe(clean({ force: true }));
 })
@@ -197,7 +160,7 @@ gulp.task('buildMain', function () {
     'public/js/controllers/*/*.js',
     'public/js/directives/*.js',
     'public/js/directives/*/*.js',
-    'public/css/**/*.css'
+    'public/css/**/*.css',
   ],
   // don't read the file contents - we only need filenames
   {read: false});
@@ -218,15 +181,7 @@ gulp.task('clean', function() {
 gulp.task('copy', function() {
    return gulp.src(
    	['server/**/*',
-    'package.json','server.js','Procfile','newrelic.js',
-     
-    // 'public/*.txt',
-   	// 'public/fonts/**',
-   	// 'public/img/**',
-    // 'public/js/**',
-    // 'public/translate/**',
-   	// 'public/modules/**/*.html',
-   	// 'public/views/**'
+    'package.json','server.js','newrelic.js',
     'public/**',
    	]
    	, { base: './' })
@@ -281,7 +236,6 @@ gulp.task('git', ['remove-git'], function(done){
      });
 });
 
-
 gulp.task('deploy', function(done){
 	fs.exists("_dist",function(exists){
 
@@ -335,27 +289,6 @@ gulp.task('deploy', function(done){
 	});
 });
 
-// gulp.task('files', function(done){
-// 	exec("ls -l", {cwd: process.cwd }, function(err, stdout, stderr){
-//    		console.log(stdout);
-//    		done();
-// 	});
-// });
-
-// gulp.task('heroku-login', function () {
-//   //process.chdir('_dist');
-//   return gulp.src('', {read: false})
-//     .pipe(shell(["ls -l"]
-//     // , {
-//     //   templateData: {
-//     //     f: function (s) {
-//     //       return s.replace(/$/, '.bak')
-//     //     }
-//     //   }
-//     //}
-//     ))
-// })
-
 gulp.task('build', function(done) {
   runSequence('compass',
     // inject files into main
@@ -384,23 +317,21 @@ gulp.task('build', function(done) {
 gulp.task('start', function(done) {
   runSequence('compass','buildMain','start2', done);
 });
-gulp.task('start2', function(done) {
- //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
 
-  // todo:
-  // - livereload when public changes 'public/**/*'
-  // - buildMain when js folder changes?
-
-   nodemon({
-    script: 'server.js'
-  , ext: 'js html'
-  //, watch: ['public','app','config', '!public/tiles']
-  //, verbose: true
-  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
-  , env: { 'NODE_ENV': 'development' }
-  });
-
-});
+// gulp.task('start2', function(done) {
+//  //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
+//   // todo:
+//   // - livereload when public changes 'public/**/*'
+//   // - buildMain when js folder changes?
+//    nodemon({
+//     script: 'server.js'
+//   , ext: 'js html'
+//   //, watch: ['public','app','config', '!public/tiles']
+//   //, verbose: true
+//   //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
+//   , env: { 'NODE_ENV': 'development' }
+//   });
+// });
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist');

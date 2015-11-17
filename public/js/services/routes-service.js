@@ -9,7 +9,7 @@ angular.module('avatech').service('Routes',
 
 	this.init = function() {
 		self.sync();
-    $interval(function() { self.sync() }, 30000);
+    $interval(function() { self.sync() }, 60000);
 	};
 
 	this.sync = function(callback) {

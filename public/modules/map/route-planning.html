@@ -28,7 +28,7 @@
 			</div>
 		</div>
 
-		<div ng-if="route && route.points.length > 1">
+		<div ng-show="!loading && route && route.points.length > 1">
 			<div style="padding:9px 0px 8px 4px;border-bottom: 1px solid #ddd;">
 				<div style="padding-left:6px;">
 					<a href="#" ng-click="routeControl.editing = !routeControl.editing"><i class="fa fa{{ routeControl.editing ? '-check' : '' }}-square-o" style="width:13px;"></i> Editing</a>&nbsp;&nbsp;&nbsp;

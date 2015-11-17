@@ -507,12 +507,14 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         $scope.map.on('zoomend', function(e) {
             // if zoom level is less than 13, disable editing
             if ($scope.routeControl.editing && $scope.map.getZoom() < 13) {
-                $scope.$apply({ 'routeControl.editing' : false });
+                //$scope.$apply({ 'routeControl.editing' : false });
+                $scope.routeControl.editing = false;
                 disabledForZoom = true;
             }
             // restart editing once zoomed back in
             else if (!$scope.routeControl.editing && $scope.map.getZoom() >= 13 && disabledForZoom) {
-                $scope.$apply({ 'routeControl.editing' : true });
+                //$scope.$apply({ 'routeControl.editing' : true });
+                $scope.routeControl.editing = true;
                 disabledForZoom = false;
             }
         });

@@ -256,7 +256,7 @@ var AvatechTerrainLayer = function (options) {
                 // if PNG was succesfully decoded
                 if (png) {
                     var pixels = png.decodePixels();
-                    terrainLayer.PNG_cache[tile_id] = pixels;
+                    //terrainLayer.PNG_cache[tile_id] = pixels;
                     PNG_data = new Uint8ClampedArray(pixels).buffer;
                     redraw();
                     terrainLayer.redrawQueue.push(redraw);

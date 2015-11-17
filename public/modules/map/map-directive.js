@@ -442,13 +442,15 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
     }
 
     // handle loading of observations
-    scope.loadingProfiles = true;
-    scope.loadProfiles(false);
-    setTimeout(function(){
-        setInterval(function(){
-            scope.loadProfiles(false);
+    function initLoad() {
+        scope.loadingProfiles = true;
+        scope.loadProfiles(false);
+        setTimeout(function(){
+            setInterval(function(){
+                scope.loadProfiles(false);
+            }, 60000);
         }, 60000);
-    }, 60000);
+    }
 
     scope.map.on('moveend', function() {
         $timeout.cancel(scope.loadProfilesTimer);

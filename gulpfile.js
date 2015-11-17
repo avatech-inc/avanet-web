@@ -296,20 +296,20 @@ gulp.task('start', function(done) {
   runSequence('compass','buildMain','start2', done);
 });
 
-// gulp.task('start2', function(done) {
-//  //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
-//   // todo:
-//   // - livereload when public changes 'public/**/*'
-//   // - buildMain when js folder changes?
-//    nodemon({
-//     script: 'server.js'
-//   , ext: 'js html'
-//   //, watch: ['public','app','config', '!public/tiles']
-//   //, verbose: true
-//   //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
-//   , env: { 'NODE_ENV': 'development' }
-//   });
-// });
+gulp.task('start2', function(done) {
+ //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
+  // todo:
+  // - livereload when public changes 'public/**/*'
+  // - buildMain when js folder changes?
+   nodemon({
+    script: 'server.js'
+  , ext: 'js html'
+  //, watch: ['public','app','config', '!public/tiles']
+  //, verbose: true
+  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
+  , env: { 'NODE_ENV': 'development' }
+  });
+});
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist');

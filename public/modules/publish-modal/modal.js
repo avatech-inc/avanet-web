@@ -1,6 +1,5 @@
 angular.module('avatech').factory('PublishModal', [ '$modal',
     function ($modal) {
-
         // modalInstance.result.then(function (sharing) {
 
         //     angular.forEach($scope.selectedProfiles,function(profile) {
@@ -66,8 +65,6 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
 
         $scope.global = Global;
 
-        //$scope.objectName = objectName;
-
         $scope.sharing = {
             published: true,
             organization: null,
@@ -76,13 +73,6 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
             shareWithStudents: true,
             sharedOrganizations: []
         }
-
-        // published: { type: Boolean, default: false },
-        // sharingLevel: { type: String },
-        // shareWithAvyCenter: { type: Boolean, default: true },
-        // shareWithStudents: { type: Boolean, default: true },
-        // sharedOrganizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }]
-
 
         if (initialSharing) {
             if (initialSharing.published  != null) $scope.sharing.published = initialSharing.published;

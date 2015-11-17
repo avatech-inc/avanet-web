@@ -1,12 +1,22 @@
-(function() {
+//(function() {
 // put worker code in object URL
-window.terrainWorkerURL = URL.createObjectURL( new Blob([ '(', function() {
+//window.terrainWorkerURL = URL.createObjectURL( new Blob([ '(', function() {
 
 // code goes here
 
+function FauxWorker() {
+
+var self = this;
+
 self.dems = {};
 
-onmessage = function (e) {
+self.postMessage = function (e) {
+    e = {
+        data: e
+    }
+    // console.log("post message!");
+    // console.log(e = {});
+
     // clear data
     if (e.data === 'clear') {
         self.dems = {};
@@ -31,7 +41,7 @@ onmessage = function (e) {
         if (!terrainData) return;
 
         // return to client
-        postMessage({ 
+        self.onmessage({ 
             id: e.data.id,
             lat: e.data.lat,
             lng: e.data.lng,
@@ -58,7 +68,7 @@ onmessage = function (e) {
     }
 
     // if loadTerrainData only
-    if (e.data.processType == "loadTerrainData") return postMessage({ id: e.data.id });
+    if (e.data.processType == "loadTerrainData") return self.onmessage({ id: e.data.id });
 
     // process pixels
     var processed;
@@ -72,7 +82,7 @@ onmessage = function (e) {
     }
 
     // send process pixels to client
-    postMessage({
+    self.onmessage({
         id: e.data.id,
         pixels: processed.buffer,
     }
@@ -646,6 +656,8 @@ function render(data, processType, customParams) {
     return new_pixels;
 }
 
-// complete object URL
-}.toString(), ')()' ], { type: 'application/javascript' } ) );
-})();
+}
+
+// // complete object URL
+// }.toString(), ')()' ], { type: 'application/javascript' } ) );
+// })();

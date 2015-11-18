@@ -53,8 +53,8 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         // })
 
         .state('index.ob-side', {
-            url: 'obs/:profileId',
-            views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
+            url: 'obs/:observationId',
+            views: { "right-pane": { templateUrl: '/modules/observations/preview.html' } },
             //sticky: true,
             data: {
                 showPreviewPane: true

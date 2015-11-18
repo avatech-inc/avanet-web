@@ -314,7 +314,7 @@
 
 					<div class="param">
 					   <span class="lbl">Date</span>
-					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="profile.date" id="datepicker" mo-date-input maxlength="10" />
+					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="profile.date" type="text" pikaday="pickerObject" max-date="{{ today }}" date-input maxlength="10" />
 
 					   <span class="lbl right" style="padding-left:14px;">Time</span>
 					  <input style="width:70px;padding-right:1px;" class="form-control" time="profile.time" maxlength="11" />

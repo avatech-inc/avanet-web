@@ -10,6 +10,7 @@ angular.module('avatech')
         $scope.grainSizes = snowpitConstants.grainSizes;
         $scope.hardness = snowpitConstants.hardness;
         $scope.hardnessCount = Object.keys($scope.hardness).length;
+        $scope.today = new Date().toISOString();
 
         // config
         $scope.graphWidth = 320;

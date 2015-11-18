@@ -12,54 +12,54 @@ angular.module('avatech').controller('TestPreviewController', [ '$scope', '$root
             $location.path(url);
         }
 
-        // delete profile
-        $scope.delete = function() {
+        // // delete profile
+        // $scope.delete = function() {
 
-            Confirm.open("Are you sure you want to delete this profile?").then(function () {
+        //     Confirm.open("Are you sure you want to delete this profile?").then(function () {
 
-                Observations.remove($scope.profile);
+        //         Observations.remove($scope.profile);
 
-                $scope.close();
+        //         $scope.close();
 
-            }, function () {
-                // user pressed no
-            });
-        }
+        //     }, function () {
+        //         // user pressed no
+        //     });
+        // }
 
-        // publish
-        $scope.publish = function() {
-             var modalInstance = $modal.open({
-                templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
-                controller: 'SnowpitPublishModalController',
-                windowClass: 'width-480',
-                //backdrop: 'static',
-                resolve: {
-                    objectName: function() { return 'profile' },
-                    initialSharing: function () {
-                      return {
-                        level: $scope.profile.sharingLevel,
-                        orgs: $scope.profile.sharedOrganizations,
-                        avyCenter: $scope.profile.shareWithAvyCenter,
-                        students: $scope.profile.shareWithStudents
-                      };
-                    }
-                }
-            });
+        // // publish
+        // $scope.publish = function() {
+        //      var modalInstance = $modal.open({
+        //         templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
+        //         controller: 'SnowpitPublishModalController',
+        //         windowClass: 'width-480',
+        //         //backdrop: 'static',
+        //         resolve: {
+        //             objectName: function() { return 'profile' },
+        //             initialSharing: function () {
+        //               return {
+        //                 level: $scope.profile.sharingLevel,
+        //                 orgs: $scope.profile.sharedOrganizations,
+        //                 avyCenter: $scope.profile.shareWithAvyCenter,
+        //                 students: $scope.profile.shareWithStudents
+        //               };
+        //             }
+        //         }
+        //     });
 
-            modalInstance.result.then(function (sharing) {
+        //     modalInstance.result.then(function (sharing) {
 
-                $scope.profile.published = true;
-                $scope.profile.sharingLevel = sharing.level;
-                $scope.profile.shareWithAvyCenter = sharing.avyCenter;
-                $scope.profile.sharedOrganizations = sharing.selectedOrgs;
-                $scope.profile.shareWithStudents = sharing.students;
+        //         $scope.profile.published = true;
+        //         $scope.profile.sharingLevel = sharing.level;
+        //         $scope.profile.shareWithAvyCenter = sharing.avyCenter;
+        //         $scope.profile.sharedOrganizations = sharing.selectedOrgs;
+        //         $scope.profile.shareWithStudents = sharing.students;
 
-                Observations.save($scope.profile);
+        //         Observations.save($scope.profile);
 
-            }, function () {
-                // on dismiss
-            });
-        }
+        //     }, function () {
+        //         // on dismiss
+        //     });
+        // }
 
         // detail level
         $scope.detailLevel = $scope.global.user.settings.graphDetailLevel;
@@ -71,10 +71,6 @@ angular.module('avatech').controller('TestPreviewController', [ '$scope', '$root
             // save to user settings
             $scope.global.setUserSetting("graphDetailLevel", $scope.detailLevel);
         }
-
-        // formatters
-        $scope.formatters = snowpitExport.formatters;
-        
 
         if ($stateParams.testId) {
             $scope.testId = $stateParams.testId;
@@ -109,14 +105,5 @@ angular.module('avatech').controller('TestPreviewController', [ '$scope', '$root
 
             });
         }
-
-        $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.profile.photos, index);
-        }
-      
-        $scope.close = function () {
-            $rootScope.$broadcast('resizeMap');
-            $state.go('^');
-        };
     }
 ])

@@ -256,18 +256,6 @@ scrollable always-visible="true">
 	<div style="clear:both;border-bottom:1px solid #eee;"></div>
 	<div class="sectionHeader">Weather</div>
 	<table class="metaData">
-		<!--<tr>
-			<td style="width:64px">Elevation:</td>
-			<td>{{ formatters.formatElevation(profile.metaData.elevation) }}</td>
-		</tr>
-		<tr>
-			<td>Slope:</td>
-			<td>{{ formatters.formatSlope(profile.metaData.slope) }}</td>
-		</tr>
-		<tr>
-			<td>Aspect:</td>
-			<td>{{ formatters.formatDirection(profile.metaData.aspect) }}</td>
-		</tr>-->
 		<tr>
 			<td>Air temp.</td>
 			<td>{{ formatters.formatTemp(profile.metaData.airTemp) }}</td>
@@ -300,14 +288,6 @@ scrollable always-visible="true">
 			<td>Blowing snow</td>
 			<td>{{ formatters.formatBlowingSnow(profile.metaData.blowingSnow,profile.metaData.blowingSnowDirection) }}</td>
 		</tr>
-		<!--<tr>
-			<td>Foot Pen. (PF):</td>
-			<td>{{ formatters.formatCm(profile.metaData.PF) }}</td>
-		</tr>
-		<tr>
-			<td>Ski Pen. (PS):</td>
-			<td>{{ formatters.formatCm(profile.metaData.PS) }}</td>
-		</tr>-->
 		<tr style="width:200px;">
 			<td>Surface Pen.</td>
 			<td>

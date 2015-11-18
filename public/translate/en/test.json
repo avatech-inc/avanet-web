@@ -146,5 +146,56 @@
     "snowpack-test": "Snowpack Test",
     "sp-profile": "SP Profile",
     "snowpit": "Snowpit"
+  },
+  "observation_wind": {
+    "windLoading": "Wind loading",
+    "windVariability": "Wind windVariability",
+    "spatialExtent": "Spatial extent",
+    "windSpeedEstimated": "Wind speed estimated",
+    "windSpeedMeasured": "Wind speed measured",
+    "windDirectionEstimated": "Wind direction estimated",
+    "blowingSnowDirection": "Blowing snow direction",
+    "blowingSnowExtent": "Blowing snow extent"
+  },
+  "observation_weather": {
+    "precipitationRate": "Precip. rate",
+    "precipitationType": "Precip. type",
+    "skyCondition": "Sky condition",
+    "barometricPressure": "Barometric pressure",
+    "pressureTrend": "Pressure trend",
+    "maxTemperature": "Max temp.",
+    "minTemperature": "Min temp.",
+    "presentTemperature": "Present temp.",
+    "relativeHumidity": "Relative humidity",
+    "thermographTemperature": "Thermograph temp.",
+    "thermographTrend": "Thermograph trend"
+  },
+  "observation_snowpack-test": {
+    "score": "Score",
+    "shear": "Shear quality",
+    "fractureCharacter": "Fracture character",
+    "name": "Test Type",
+    "nbTaps": "Number of taps",
+    "isolatedColumnLength": "Isolated column length",
+    "sawCutLength": "Saw cut length",
+    "weakLayerDepth": "Weak layer depth",
+    "criticalGrainForm": "Critical grain type",
+    "criticalGrainSizeMax": "Critical grain size (max)",
+    "criticalGrainSizeMin": "Critical grain size (min)"
+  },
+  "observation_snowpack": {
+    "snowQuality": "Snow quality",
+    "surfaceGrainForm": "Surface grain type",
+    "cracking": "Cracking",
+    "whumpfing": "Whumpfing",
+    "footPenetration": "Foot pen.",
+    "skiPenetration": "Ski pen.",
+    "snowPackDepthEstimate": "Snowpack depth estimate",
+    "newSnowDepthEstimate": "New snow depth estimate",
+    "surfaceGrainSizeMax": "Surface grain size (max)",
+    "surfaceGrainSizeMin": "Surface grain size (min)",
+    "surfaceTemperature": "Surface temp.",
+    "twentyCMTemperature": "20 cm. temp."
   }
+
 }

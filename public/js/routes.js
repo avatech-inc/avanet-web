@@ -85,20 +85,20 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         // })
 
         // // Snowpit Editor
-        // .state('index.profileEditor', {
-        //     abstract: true,
-        //     //url: '/profiles/:profileId',
-        //     views: { "content": { templateUrl: '/modules/snowpit-editor/snowpit.html' } },
-        //     data: { 
-        //         title: 'Snow Profile | Avanet',
-        //         requireLogin: true,
-        //         bodyCssClass: 'snowpit',
-        //         fullScreen: true
-        //     }
-        // })
-        // .state('index.profileEditor.details', {
-        //     url: 'profiles/:profileId'
-        // })
+        .state('index.profileEditor', {
+            abstract: true,
+            //url: '/profiles/:profileId',
+            views: { "content": { templateUrl: '/modules/snowpit-editor/snowpit.html' } },
+            data: { 
+                title: 'Snow Profile | Avanet',
+                requireLogin: true,
+                bodyCssClass: 'snowpit',
+                fullScreen: true
+            }
+        })
+        .state('index.profileEditor.details', {
+            url: 'profiles/:profileId'
+        })
 
         // organizations
         .state('index.orgNew', {

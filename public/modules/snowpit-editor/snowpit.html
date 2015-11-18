@@ -108,7 +108,7 @@
 
 				<!-- stability tests + comments -->
 				<div style="margin-top:0px;float:left;position:relative;z-index:1003;float:left"  ng-style="{ height: snowpitHeight - 55, width: columns[0].width }" ng-class="{ 'no-click':settings.tempMode }">
-					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.notes" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;" 
+					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.tests" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;" 
 					ng-mouseover="hoverComment(note)"
 					ng-mouseout="hoverComment(null)"
 					dropdown>
@@ -301,16 +301,16 @@
 					<div class="param" style="padding-top:1px;">-->
 				   		<span class="lbl"  style="width:65px;">Snowpack</span>
 					    <div class="paramHolder" style="width:65px;">
-							<input class="form-control" ng-model="profile.metaData.snowpackHeight" number-only allow-decimal="false" allow-negative="false" />
+							<input class="form-control" ng-model="profile.snowpackHeight" number-only allow-decimal="false" allow-negative="false" />
 							<span class="info">cm</span>
 						</div>
 				   </div>
 
-					<div class="param" ng-show="global.orgs && global.orgs.length > 0">
+					<!--<div class="param" ng-show="global.orgs && global.orgs.length > 0">
 					   <span class="lbl">Organization</span>
 						<select class="form-control" ng-model="profile.organization" style="width:200px;" ng-options="org._id as org.name for org in global.orgs">
 						</select>
-					</div>
+					</div>-->
 
 					<div class="param">
 					   <span class="lbl">Date</span>
@@ -320,14 +320,9 @@
 					  <input style="width:70px;padding-right:1px;" class="form-control" time="profile.time" maxlength="11" />
 					</div>
 
-					<!--<div class="param">
-					  <span class="lbl">Observer</span>
-					  <input class="form-control" ng-model="profile.metaData.observer" style="width:170px;" />
-					</div>-->
-
 					<div class="param">
 					   <span class="lbl">Location</span>
-					  <input class="form-control" ng-model="profile.metaData.location" style="width:200px;" />
+					  <input class="form-control" ng-model="profile.locationName" style="width:200px;" />
 					  <br/>
 					   <span class="lbl">Lat/Lng</span>
 					   <div class="paramHolder" style="width:98px;">
@@ -343,24 +338,18 @@
 					  <span class="lbl"></span>
 					  <button class="btn btn-primary btn-sm" ng-click="selectLocation()" type="button" style="width:200px;margin-top:1px;margin-bottom:2px;padding-left:0px;padding-right:0px;font-size:13px;"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Click to place on map</button>
 					</div>
-					<!--<div class="param">
-					   <span class="lbl">Lat. / Long.</span>
-					  <input class="form-control" ng-model="profile.metaData.lat" style="width:70px;" />
-					  <input class="form-control" ng-model="profile.metaData.long" style="width:70px;" />
-					</div>-->
-
 
 					<div class="param">
 					   <span class="lbl">Elevation</span>
 					    <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
+					  		<input class="form-control" ng-model="profile.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
 					  		<span class="info" ng-show="global.user.settings.elevation == 0">m</span>
 					  		<span class="info" ng-show="global.user.settings.elevation == 1">ft</span>
 				  		</div>
 
 					   <span class="lbl" style="width:64px;">Air Temp.</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
+					  		<input class="form-control" ng-model="profile.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 0">°C</span>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 1">°F</span>
 				  		</div>
@@ -369,37 +358,36 @@
 					<div class="param">
 					   <span class="lbl">Slope</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.slope" number-only allow-decimal="true" allow-negative="false" max-num="70" />
+					  		<input class="form-control" ng-model="profile.slope" number-only allow-decimal="true" allow-negative="false" max-num="70" />
 					  		<span class="info">°</span>
 				  		</div>
 
 					   <span class="lbl"  style="width:64px;">Aspect</span>
-				  		<input-direction input-class="form-control" ng-model="profile.metaData.aspect"></input-direction>
+				  		<input-direction input-class="form-control" ng-model="profile.aspect"></input-direction>
 					</div>
 
 					<div class="param"  style="border-bottom:none;">
 
 					    <span class="lbl" style="vertical-align:top;">Surface Grains</span>
 					    <div style="width:200px;display:inline-block;padding-top: 1px;">
-							<grain-select grain-type="profile.metaData.surfaceGrainType" placeholder="select primary type" class="small"></grain-select>
+							<grain-select ng-model="profile.surfaceGrainType" placeholder="select primary type" class="small"></grain-select>
 
-							<grain-select grain-type="profile.metaData.surfaceGrainType2" placeholder="select secondary type" ng-show="profile.metaData.surfaceGrainType" class="small" style="margin-top: 2px;margin-bottom: 3px;"></grain-select>
+							<grain-select ng-model="profile.surfaceGrainType2" placeholder="select secondary type" ng-show="profile.surfaceGrainType" class="small" style="margin-top: 2px;margin-bottom: 3px;"></grain-select>
 						</div>
 					</div>
 					<div class="param" style="padding-top:0px;">
 
 					    <span class="lbl">Grain Size</span>
 
-						<select class="form-control" style="width:56px;" ng-model="profile.metaData.surfaceGrainSize" ng-options="grainSize for grainSize in grainSizes"></select>
+						<select class="form-control" style="width:56px;" ng-model="profile.surfaceGrainSize" ng-options="grainSize for grainSize in grainSizes"></select>
 						-
-						<select class="form-control" style="width:56px;" ng-model="profile.metaData.surfaceGrainSize2" ng-options="grainSize for grainSize in grainSizes"></select>
+						<select class="form-control" style="width:56px;" ng-model="profile.surfaceGrainSize2" ng-options="grainSize for grainSize in grainSizes"></select>
 					</div>
 
 					<div class="param">
 					   <span class="lbl">Sky Condition</span>
-					   <!--<input class="form-control" ng-model="profile.metaData.sky" />-->
 
-						<select class="form-control" ng-model="profile.metaData.sky" style="width:101px;">
+						<select class="form-control" ng-model="profile.sky" style="width:101px;">
 							<option value=""></option>
 							<option value="CLR">Clear</option>
 							<option value="FEW">Few</option>
@@ -413,7 +401,7 @@
 					<div class="param">
 					   <span class="lbl">Wind Speed</span>
 						<!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 18) -->
-						<select class="form-control" ng-model="profile.metaData.windSpeed" style="width:101px;">
+						<select class="form-control" ng-model="profile.windSpeed" style="width:101px;">
 							<option value=""></option>
 							<option value="C">Calm</option>
 							<option value="L">Light</option>
@@ -423,12 +411,12 @@
 						</select>
 
 					   <span class="lbl right">Dir.</span>
-						<input-direction input-class="form-control" ng-model="profile.metaData.windDirection"></input-direction>
+						<input-direction input-class="form-control" ng-model="profile.windDirection"></input-direction>
 					</div>
 					<div class="param">
 					  <span class="lbl">Blowing Snow</span>
 					  <!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 19) -->
-						<select class="form-control" ng-model="profile.metaData.blowingSnow" style="width:101px;">
+						<select class="form-control" ng-model="profile.blowingSnow" style="width:101px;">
 							<option value=""></option>
 							<option value="None">None</option>
 							<option value="Prev">Previous</option>
@@ -438,12 +426,12 @@
 							<option value="U">Unkown</option>
 						</select>
 						<span class="lbl right">Dir.</span>
-						<input-direction input-class="form-control" ng-model="profile.metaData.blowingSnowDirection"></input-direction>
+						<input-direction input-class="form-control" ng-model="profile.blowingSnowDirection"></input-direction>
 					</div>
 					<div class="param">
 					  <span class="lbl">Precipitation</span>					  
 						<!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 7) -->
-						<select class="form-control" ng-model="profile.metaData.precipType" style="width:200px;">
+						<select class="form-control" ng-model="profile.precipType" style="width:200px;">
 							<option value=""></option>
 							<option value="NO">No Precipitation</option>
 
@@ -467,30 +455,24 @@
 							<option value="ZR">Freezing Rain</option>
 						</select>
 
-					  <!--<span class="lbl right">Rate</span>
-					  <input class="form-control" ng-model="profile.metaData.precipRate" />-->
 					</div>
 					<div class="param">
 					   <span class="lbl">Foot Pen.</span>
 					   <div class="paramHolder" style="width:65px;">
-						  <input class="form-control" ng-model="profile.metaData.PF" number-only allow-decimal="true" allow-negative="false" />
+						  <input class="form-control" ng-model="profile.PF" number-only allow-decimal="true" allow-negative="false" />
 						  <span class="info">cm</span>
 						</div>
 					    <span class="lbl" style="width:64px;">Ski Pen.</span>
 					    <div class="paramHolder" style="width:65px;">
-						  <input class="form-control" ng-model="profile.metaData.PS" number-only allow-decimal="true" allow-negative="false" />
+						  <input class="form-control" ng-model="profile.PS" number-only allow-decimal="true" allow-negative="false" />
 						  <span class="info">cm</span>
 					    </div>
 					</div>
 				</div>
-
-				<!--<textarea placeholder="Notes..." class="form-control" style="margin-left:2%;height:82px;width: 96%;resize: none;font-size:12px;" ng-model="profile.metaData.notes" />-->
-
-				<!--<button ng-hide="_isNew" ng-click="delete()" class="btn" style="position:absolute;bottom:8px;right:8px;"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;Delete Snowpit</button>-->
 		</div>
 
 		<div ng-show="rightPaneMode == 'notes'">
-			<textarea placeholder="Notes..." class="form-control" style="margin-top:8px;margin-left:2%;height:204px;width: 96%;resize: none;font-size:12px;" ng-model="profile.metaData.notes" />
+			<textarea placeholder="Notes..." class="form-control" style="margin-top:8px;margin-left:2%;height:204px;width: 96%;resize: none;font-size:12px;" ng-model="profile.notes" />
 		</div>
 
 		<div ng-show="rightPaneMode == 'layer'">
@@ -533,9 +515,9 @@
 						<span class="key">Grain type</span>
 						<span class="value">
 
-							<grain-select grain-type="settings.selectedLayer.grainType" placeholder="select primary type" style="margin-top:4px;"></grain-select>
+							<grain-select ng-model="settings.selectedLayer.grainType" placeholder="select primary type" style="margin-top:4px;"></grain-select>
 
-							<grain-select grain-type="settings.selectedLayer.grainType2" placeholder="select secondary type" ng-show="settings.selectedLayer.grainType" style="position:relative;bottom:5px;"></grain-select>
+							<grain-select ng-model="settings.selectedLayer.grainType2" placeholder="select secondary type" ng-show="settings.selectedLayer.grainType" style="position:relative;bottom:5px;"></grain-select>
 
 						</span>
 					</li>

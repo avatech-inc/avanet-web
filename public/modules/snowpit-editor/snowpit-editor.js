@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, Profiles, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal) {
+    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal) {
 
         $scope.global = Global;
 
@@ -105,16 +105,17 @@ angular.module('avatech')
 
         $scope.init = function(){
             if ($stateParams.profileId == "new") {
-                var profile = new Profiles({ 
+                var profile = { 
                     depth: 150,
                     layers: [],
                     temps: [],
-                    notes: [],
+                    tests: [],
                     photos: [],
                     density: [],
                     metaData: { },
-                    user: { fullName: Global.user.fullName, _id: Global.user._id }
-                });
+                    user: { fullName: Global.user.fullName, _id: Global.user._id },
+                    type: "snowpit"
+                };
 
                 if ($scope.global.orgs.length) profile.organization = $scope.global.orgs[0]._id;
 
@@ -129,12 +130,13 @@ angular.module('avatech')
         // PROFILE CRUD
 
         $scope.findOne = function() {
-            Profiles.get({ profileId: $stateParams.profileId }, function(profile) {
-                if (profile.error) {
-                    return;
-                }
+            $http.get(window.apiBaseUrl + "observations/" + $stateParams.profileId)
+            //Profiles.get({ profileId: $stateParams.profileId }, 
+            .then(function(res) {
 
-                console.log(profile);
+                if (res.status != 200) return;
+
+                var profile = res.data;
 
                 // normalize temps
                 angular.forEach(profile.temps, function(temp) { 
@@ -147,7 +149,6 @@ angular.module('avatech')
 
                 //angular.copy(profile, $scope.profile);
                 $scope.profile = angular.copy(profile);
-                console.log("loaded!");
                 $timeout(function(){
                     $scope.loading = false;
                 },400);
@@ -177,27 +178,43 @@ angular.module('avatech')
             // if no changes have been made, don't create 
             if ((profile.layers && profile.layers.length == 0) &&
                 (profile.temps && profile.temps.length == 0) &&
-                (profile.notes && profile.notes.length == 0) &&
+                (profile.tests && profile.tests.length == 0) &&
                 (profile.photos && profile.photos.length == 0) &&
                 (profile.density && profile.density.length == 0) &&
                 (profile.metaData && Object.keys(profile.metaData).length == 0)) return;
 
-            // nointernet
-            profile.$save(function(profile) {
-                console.log("Created!");
-                $scope._isNew = false;
-                $scope.profile._id = profile._id;
-                //$scope.loading = false;
-                $location.path('profiles/' + profile._id).replace();
-            });
-        };
+            $http.post(window.apiBaseUrl + "observations/", profile)
+            .then(function(res) {
 
+                console.log("Created!");
+                console.log(res);
+                var _profile = res.data;
+
+                $scope._isNew = false;
+                $scope.profile._id = _profile._id;
+                $scope.loading = false;
+                $location.path('profiles/' + _profile._id).replace();
+            });
+            // <nointernet>
+            // profile.$save(function(profile) {
+            //     console.log("Created!");
+            //     $scope._isNew = false;
+            //     $scope.profile._id = profile._id;
+            //     //$scope.loading = false;
+            //     $location.path('profiles/' + profile._id).replace();
+            // });
+        };
         // update current profile
         $scope.update = function() {
             var profile = $scope.getSanitizedProfileCopy();
 
             // <nointernet>
-            profile.$update(function() {
+            // profile.$update(function() {
+            //     console.log("Saved!");
+            // });
+
+            $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
+            .then(function(res) {
                 console.log("Saved!");
             });
         };
@@ -212,6 +229,9 @@ angular.module('avatech')
                 var num = parseFloat(temp.temp);
                 if (!isNaN(num)) temp.temp = num / 2;
             });
+
+            // make sure observation type is set
+            profile.type = 'snowpit';
 
             return profile;
         }
@@ -510,12 +530,11 @@ angular.module('avatech')
                 }
             }
         });
-        $scope.$watch('profile.metaData.surfaceGrainType', function(){
-            if ($scope.profile && $scope.profile.metaData &&
-                $scope.profile.metaData.surfaceGrainType == null) {
-                if ($scope.profile.metaData.surfaceGrainType2) {
-                    $scope.profile.metaData.surfaceGrainType = $scope.profile.metaData.surfaceGrainType2;
-                    $scope.profile.metaData.surfaceGrainType2 = null;
+        $scope.$watch('profile.surfaceGrainType', function(){
+            if ($scope.profile && $scope.profile.surfaceGrainType == null) {
+                if ($scope.profile.surfaceGrainType2) {
+                    $scope.profile.surfaceGrainType = $scope.profile.surfaceGrainType2;
+                    $scope.profile.surfaceGrainType2 = null;
                 }
             }
         });
@@ -596,9 +615,8 @@ angular.module('avatech')
                             // if metadata is null, initialize
                             if (!$scope.profile.metaData) $scope.profile.metaData = {};
 
-                            //if ($scope.profile.metaData.location && $scope.profile.metaData.location != "")
-                            $scope.profile.metaData.location = name;
-                            if (place.countryCode) $scope.profile.metaData.country = place.countryCode;
+                            $scope.profile.locationName = name;
+                            //if (place.countryCode) $scope.profile.metaData.country = place.countryCode;
 
                             $scope.$apply();
                         }
@@ -610,7 +628,7 @@ angular.module('avatech')
                             var elevation = data.srtm3.toFixed(0);
                             // check for 'empty' value of -32768 (http://glcfapp.glcf.umd.edu/data/srtm/questions.shtml#negative)
                             if (elevation != -32768) {
-                                $scope.profile.metaData.elevation = elevation; // meters
+                                $scope.profile.elevation = elevation; // meters
                                 $scope.$apply();
                             }
                             // if no data found, check astergdem
@@ -621,14 +639,12 @@ angular.module('avatech')
                                         var elevation = data.astergdem.toFixed(0);
                                         // check for 'empty' value of -9999 
                                         if (elevation != -9999){
-                                            $scope.profile.metaData.elevation = elevation;
+                                            $scope.profile.elevation = elevation;
                                             $scope.$apply();
                                         }
                                     }
                                 });
                             }
-                            //$scope.profile.metaData.elevation = (data.srtm3 * 3.2808399).toFixed(0); // convert to feet
-                            
                         }
                     });
                 }

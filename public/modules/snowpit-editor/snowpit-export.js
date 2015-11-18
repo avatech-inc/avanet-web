@@ -3,20 +3,15 @@
 angular.module('avatech').factory('snowpitExport', ['$q','snowpitConstants','$compile','$rootScope','Global', function ($q, snowpitConstants,$compile,$rootScope, Global) { 
 
 
-var getGrainType = function(layer, isSecondary) {
-    var icssg = "";
-    if (!layer || !layer["grainType" + isSecondary]) return "";
+scope.getGrainType = function(grainType) {
+    if (!grainType) return;
     for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
-        if (snowpitConstants.grainTypes[i].legacyCode == layer["grainType" + isSecondary].category) {
-            for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
-                if (snowpitConstants.grainTypes[i].types[j].code == layer["grainType" + isSecondary].code) {
-                    icssg = snowpitConstants.grainTypes[i].types[j].icssg;
-                }
+        for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+            if (snowpitConstants.grainTypes[i].types[j].icssg == grainType) {
+                return snowpitConstants.grainTypes[i].types[j];
             }
-            break;
         }
     }
-    return icssg;
 }
 
 function numberWithCommas(x) {
@@ -310,8 +305,8 @@ return {
             text += layer.height + ",";
             text += layer.hardness + ",";
             text += layer.hardness2 + ",";
-            text += getGrainType(layer, "") + ",";
-            text += getGrainType(layer, "2") + "";
+            text += getGrainType(layer.grainType).icssg + ",";
+            text += getGrainType(layer.grainType).icssg + "";
 
             text += "\n";
         });
@@ -454,10 +449,7 @@ return {
 
         // timeout is used to allow the canvas time to render
         // todo: a cleaner event-based way?
-        setTimeout(function(){
-
-            // make sure metaData is declared
-            if (!profile.metaData) profile.metaData = {};
+        setTimeout(function() {
 
             // canvas for JPEG output
             var _canvas = document.createElement('canvas');
@@ -722,7 +714,7 @@ return {
 
             drawParam("Organization:", formatters.formatOrg(profile.organization), margin, topLine + 2, 24);
 
-            drawParam("Location:", formatters.format(profile.metaData.location), margin, topLine + 9.1, 18);
+            drawParam("Location:", formatters.format(profile.locationName), margin, topLine + 9.1, 18);
             drawParam("Lat/Lng:", formatters.formatLatLng(profile.location), margin, topLine + 16.1, 18);
 
             console.log("7!");
@@ -733,37 +725,37 @@ return {
             console.log("8!");
 
             drawParam("Snowpit depth:", formatters.formatCm(profile.depth), margin + 144, topLine + 9.1, 30);
-            drawParam("Snowpack depth:", formatters.formatCm(profile.metaData.snowpackHeight), margin + 144, topLine + 16.1, 30);
+            drawParam("Snowpack depth:", formatters.formatCm(profile.snowpackHeight), margin + 144, topLine + 16.1, 30);
 
             console.log("9!");
 
-            drawParam("Elevation:", formatters.formatElevation(profile.metaData.elevation), margin, upperLine + 12 + 8.5, 18);
+            drawParam("Elevation:", formatters.formatElevation(profile.elevation), margin, upperLine + 12 + 8.5, 18);
             console.log("10a!");
-            drawParam("Slope:", formatters.formatSlope(profile.metaData.slope), margin, upperLine + 12 + 15.5, 18);
+            drawParam("Slope:", formatters.formatSlope(profile.slope), margin, upperLine + 12 + 15.5, 18);
             console.log("10b!");
-            drawParam("Aspect:", formatters.formatDirection(profile.metaData.aspect), margin, upperLine + 12 + 22.5, 18);
+            drawParam("Aspect:", formatters.formatDirection(profile.aspect), margin, upperLine + 12 + 22.5, 18);
             console.log("10c!");
-            drawParam("Air temp.:", formatters.formatTemp(profile.metaData.airTemp), margin, upperLine + 12 + 29.5, 18);
+            drawParam("Air temp.:", formatters.formatTemp(profile.airTemp), margin, upperLine + 12 + 29.5, 18);
             console.log("10d!");
-            drawParam("Sky:", formatters.formatSky(profile.metaData.sky), margin, upperLine + 12 + 36.5, 18);
+            drawParam("Sky:", formatters.formatSky(profile.sky), margin, upperLine + 12 + 36.5, 18);
             console.log("10e!");
-            drawSkySymbol(profile.metaData.sky, margin + 10.5, upperLine + 12 + 33.2);
+            drawSkySymbol(profile.sky, margin + 10.5, upperLine + 12 + 33.2);
 
             console.log("10!");
 
-            drawParam("Wind:", formatters.formatWind(profile.metaData.windSpeed,profile.metaData.windDirection), margin + 45, upperLine + 12 + 8.5, 27);
+            drawParam("Wind:", formatters.formatWind(profile.windSpeed,profile.windDirection), margin + 45, upperLine + 12 + 8.5, 27);
             console.log("11a!");
 
-            drawParam("Blowing snow:", formatters.formatBlowingSnow(profile.metaData.blowingSnow,profile.metaData.blowingSnowDirection), margin + 45, upperLine + 12 + 15.5, 27);
+            drawParam("Blowing snow:", formatters.formatBlowingSnow(profile.blowingSnow,profile.blowingSnowDirection), margin + 45, upperLine + 12 + 15.5, 27);
             console.log("11b!");
 
-            drawParam("Precipitation:", formatters.formatPrecip(profile.metaData.precipType), margin + 45, upperLine + 12 + 22.5, 27);
+            drawParam("Precipitation:", formatters.formatPrecip(profile.precipType), margin + 45, upperLine + 12 + 22.5, 27);
             console.log("11c!");
 
-            drawParam("Foot Pen. (PF):", formatters.formatCm(profile.metaData.PF), margin + 45, upperLine + 12 + 29.5, 27);
+            drawParam("Foot Pen. (PF):", formatters.formatCm(profile.PF), margin + 45, upperLine + 12 + 29.5, 27);
             console.log("11d!");
 
-            drawParam("Ski Pen. (PS):", formatters.formatCm(profile.metaData.PS), margin + 45, upperLine + 12 + 36.5, 27);
+            drawParam("Ski Pen. (PS):", formatters.formatCm(profile.PS), margin + 45, upperLine + 12 + 36.5, 27);
 
             console.log("11!");
 
@@ -778,9 +770,9 @@ return {
 
             console.log("12!");
 
-            if (profile.metaData.notes) {
+            if (profile.notes) {
                 render.setFont("helvetica", 8);
-                render.drawText(130.5, upperLine + 18, profile.metaData.notes, 70);
+                render.drawText(130.5, upperLine + 18, profile.notes, 70);
             }
 
             console.log("13!");

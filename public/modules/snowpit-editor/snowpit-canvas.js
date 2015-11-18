@@ -155,13 +155,10 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
         scope.getGrainType = function(grainType) {
             if (!grainType) return;
             for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
-                if (snowpitConstants.grainTypes[i].legacyCode == grainType.category) {
-                    for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
-                        if (snowpitConstants.grainTypes[i].types[j].code == grainType.code) {
-                            return snowpitConstants.grainTypes[i].types[j];
-                        }
+                for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+                    if (snowpitConstants.grainTypes[i].types[j].icssg == grainType) {
+                        return snowpitConstants.grainTypes[i].types[j];
                     }
-                    break;
                 }
             }
         }
@@ -260,9 +257,9 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
             scope._sideLayers = [];
 
             // combine stability tests and layer comments into one array
-            var allComments = angular.copy(scope.profile.notes);
+            var allComments = angular.copy(scope.profile.tests);
             angular.forEach(scope.profile.layers,function(layer) {
-                if (layer.notes) allComments.push({ depth: (scope.profile.depth - layer.depth - layer.height), comment: layer.notes });
+                if (layer.tests) allComments.push({ depth: (scope.profile.depth - layer.depth - layer.height), comment: layer.tests });
             });
 
             // "merge" comments at same depth
@@ -749,14 +746,14 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 }
 
                 // plot surface temp to air temp
-                if (surfaceTemp != null && scope.profile.metaData && scope.profile.metaData.airTemp != null 
-                    && scope.profile.metaData.airTemp <= 0
+                if (surfaceTemp != null && scope.profile.airTemp != null 
+                    && scope.profile.airTemp <= 0
                     && scope.profile.temps && scope.profile.temps.length > 0) {
 
-                    console.log("air temp:" + scope.profile.metaData.airTemp);
+                    console.log("air temp:" + scope.profile.airTemp);
 
                     var surfaceTemp = (maxTemp - Math.abs(surfaceTemp)) * (_width / maxTemp) + 1; 
-                    var airTemp = (maxTemp - Math.abs(scope.profile.metaData.airTemp * 2)) * (_width / maxTemp) + 1;
+                    var airTemp = (maxTemp - Math.abs(scope.profile.airTemp * 2)) * (_width / maxTemp) + 1;
                     context.setLineDash([5,5]);
                     context.beginPath();
                     context.moveTo(surfaceTemp, paddingTop);
@@ -1071,18 +1068,18 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 context.fillRect(0, paddingTop - surfaceLayerHeight, column.width - 70, surfaceLayerHeight);
 
                 // draw surface grain type and size
-                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainType) {
+                if (scope.profile.surfaceGrainType) {
                     drawGrainType({
-                        grainType: scope.profile.metaData.surfaceGrainType,
-                        grainType2: scope.profile.metaData.surfaceGrainType2,
+                        grainType: scope.profile.surfaceGrainType,
+                        grainType2: scope.profile.surfaceGrainType2,
                         sideLayerHeightClient: surfaceLayerHeight
                     }, paddingTop);
                 }
                 // draw surface grain size
-                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainSize) {
+                if (scope.profile.surfaceGrainSize) {
                     drawGrainSize({
-                        grainSize: scope.profile.metaData.surfaceGrainSize,
-                        grainSize2: scope.profile.metaData.surfaceGrainSize2,
+                        grainSize: scope.profile.surfaceGrainSize,
+                        grainSize2: scope.profile.surfaceGrainSize2,
                         sideLayerHeightClient: surfaceLayerHeight
                     }, paddingTop);
                 }

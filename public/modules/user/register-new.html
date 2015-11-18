@@ -25,7 +25,7 @@ margin-bottom: 5px !important;
 <section ng-controller="RegisterController" ng-cloak class="login-page">
 	<img class="logo" src="/img/avanet_logo.png"/>
 
-	<div class="login-form" style="max-width:760px;width:95%;" ng-style="{ opacity: busy ? 0 : 1 }">
+	<div class="login-form" style="width:95%;" ng-style="{ opacity: busy ? 0 : 1, 'max-width': isPending ? '490px' : '760px' }">
 
 		<div ng-if="org" style="margin-bottom:24px;">
 			<div style="text-align:center;color:#fff;font-size:40px;">{{ org.name }}</div>
@@ -42,14 +42,27 @@ margin-bottom: 5px !important;
 
 	    <!-- professional info -->
 		<div class="panel panel-default" style="border:none;">
-	 		<div class="panel-heading" style="text-align:left;font-size:26px;font-weight:599;background-color:#fff;padding:15px 0px 12px 28px;">Sign up for Avanet
-	 		<div ng-if="showPro" style="display:inline-block;color:#999;margin-left:6px;font-weight:100;">/&nbsp;&nbsp;Professional Information</div>
+	 		<div ng-hide="isPending" class="panel-heading" style="text-align:left;font-size:26px;font-weight:599;background-color:#fff;padding:15px 0px 12px 28px;border-bottom:none;">Sign up for Avanet
+		 		<div ng-if="showPro" style="display:inline-block;color:#999;margin-left:6px;font-weight:100;">/&nbsp;&nbsp;Professional Information</div>
+
+		 		<div ng-if="!showPro" style="float:right;">
+		 			<a href="/login" style="font-size: 16px; font-weight: 100; margin-right: 30px; position: relative; bottom: 3px;">LOGIN</a>
+		 		</div>
+
 	 		</div>
+
+			<div ng-show="isPending" style="background:#f5f5f5;text-align:center;border-radius:3px 3px 0px 0px;">
+
+				<h3 style="font-size:20px;margin:0px;font-weight:100;line-height:24px;padding: 20px;">You've been invited to join your colleagues at<br/>
+				<b style="line-height:40px;font-size: 25px;">{{ orgName }}</b>
+				<br/>and snow safety professionals<br/>around the world on Avanet.</h3>
+
+			</div>
 			<ul class="list-group">
 			    <li class="list-group-item container-fluid" style="padding-top:0px;padding-bottom:0px;">
 
 	 		<div class="row">
-	 			<div class="col-xs-6" style="padding-top:20px;padding-right:28px;padding-left:28px;text-align:left;" ng-if="!showPro">
+	 			<div ng-class="isPending ? 'col-xs-12' : 'col-xs-6'" style="padding-top:20px;padding-right:28px;padding-left:28px;text-align:left;padding-bottom:10px;" ng-if="!showPro">
 			    	<div role="form" class="_form">
 					  <div class="form-group" name="name">
 					    <label>Full name</label>
@@ -57,7 +70,7 @@ margin-bottom: 5px !important;
 					  </div>
 					  <div class="form-group" name="email">
 					    <label>Email</label>
-					    <input type="email" class="form-control input-lg" ng-model="reg.email" required="!isPending" placeholder="">
+					    <input type="email" class="form-control input-lg" ng-model="reg.email" required="!isPending" placeholder="" ng-disabled="isPending">
 					  </div>
 					  <div class="form-group" name="password">
 					    <label>Password</label>
@@ -68,11 +81,13 @@ margin-bottom: 5px !important;
 					    <input type="password" class="form-control input-lg" ng-model="reg.passwordConfirm" required placeholder="">
 					  </div>
 
-					  <label>Are you a snow safety professional?</label>
-					  <div class="btn-group">
-				        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="true">Yes</label>
-				        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="false">No</label>
-			    		</div>
+					  	<div ng-hide="isPending">
+						  <label>Are you a snow safety professional?</label>
+						  <div class="btn-group">
+					        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="true">Yes</label>
+					        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="false">No</label>
+			    			</div>
+		    			</div>
 
 					</div>
 
@@ -134,20 +149,20 @@ margin-bottom: 5px !important;
 				</div>
 
 
-				<div ng-class="showPro ? 'col-xs-5' : 'col-xs-6'" style="background:#f5f5f5;color:#555;font-weight:100;font-size:13px;padding:24px 30px;text-align:left;">
+				<div ng-class="showPro ? 'col-xs-5' : 'col-xs-6'" style="background:#f5f5f5;color:#555;font-weight:100;font-size:13px;padding:24px 30px;text-align:left;" ng-hide="isPending">
 
-				<h3 style="margin:0px;font-weight:100;">Community Values</h3>
-				<br/>
+					<h3 style="margin:0px;font-weight:100;">Community Values</h3>
+					<br/>
 
-				<b>We are a team -</b> When we work together and share information, we all win.  We believe in positively contributing to our community and sharing for the greater good.
-				<br/><br/>
-				<b>We put safety first -</b> We are a community of leaders.  We set the example and deeply respect the mountains, their beauty, and their inherent dangers.
-				<br/><br/>
-				<b>We get educated -</b> We are always learning in the mountains and will never know everything.  Education is a lifelong process and we seek out avalanche education courses, wilderness first aid courses, and more, so we can be educated stewards in the mountains, and we encourage others to do the same.
-				<br/><br/>
-				<b>We plan -</b> Great days in the mountains begin with thoughtful planning.  We take the time to think about the specific conditions of the day, consider our group dynamics, bring all necessary safety gear, and create a backup plan.  Then we reflect and try to be better every time.
-				<br/><br/>
-				<b>We take ownership -</b> We own our information.  We are proud of what we share with others and we only share information we believe will be helpful to the community.
+					<b>We are a team -</b> When we work together and share information, we all win.  We believe in positively contributing to our community and sharing for the greater good.
+					<br/><br/>
+					<b>We put safety first -</b> We are a community of leaders.  We set the example and deeply respect the mountains, their beauty, and their inherent dangers.
+					<br/><br/>
+					<b>We get educated -</b> We are always learning in the mountains and will never know everything.  Education is a lifelong process and we seek out avalanche education courses, wilderness first aid courses, and more, so we can be educated stewards in the mountains, and we encourage others to do the same.
+					<br/><br/>
+					<b>We plan -</b> Great days in the mountains begin with thoughtful planning.  We take the time to think about the specific conditions of the day, consider our group dynamics, bring all necessary safety gear, and create a backup plan.  Then we reflect and try to be better every time.
+					<br/><br/>
+					<b>We take ownership -</b> We own our information.  We are proud of what we share with others and we only share information we believe will be helpful to the community.
 
 				</div>
 				</div>

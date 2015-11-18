@@ -954,12 +954,15 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                         context.fillText(")", connectorWidth + 43, depth2 - (layer.sideLayerHeightClient / 2) + 5);
                     }
                     else if (layer.grainType) {
-                        var scale = scope.getGrainType(layer.grainType).scale;
-                        if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
-                        var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
-                        if (offsetTop == null) offsetTop = 0;
+                        var _grainType = scope.getGrainType(layer.grainType);
+                        if (_grainType) {
+                            var scale = _grainType.scale;
+                            if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
+                            var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
+                            if (offsetTop == null) offsetTop = 0;
 
-                        centerText(context, scope.getGrainType(layer.grainType).symbol, 45, connectorWidth, depth2 - (layer.sideLayerHeightClient / 2) + 6 + offsetTop);
+                            centerText(context, scope.getGrainType(layer.grainType).symbol, 45, connectorWidth, depth2 - (layer.sideLayerHeightClient / 2) + 6 + offsetTop);
+                        }
                     }
                 }
                 var drawGrainSize = function(layer, depth2) {

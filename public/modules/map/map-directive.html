@@ -13,11 +13,15 @@
       		
       		<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
 			
-			<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+			<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+			ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
+			>{{ layer.name }}</div>
 
 			<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
 			
-			<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}">{{ layer.name }}</div>
+			<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+			ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
+			>{{ layer.name }}</div>
 
         </a></li></ul>
     </div>

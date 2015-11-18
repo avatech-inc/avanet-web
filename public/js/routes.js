@@ -60,18 +60,18 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
         //     }]
         // })
 
-        // .state('index.profile', {
-        //     url: 'obs/:profileId',
-        //     views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
-        //     //sticky: true,
-        //     data: {
-        //         showPreviewPane: true
-        //     }
-        //     // data: {
-        //     //     title: 'AvaTech',
-        //     //     requireLogin: true 
-        //     // }
-        // })
+        .state('index.ob-side', {
+            url: 'obs/:profileId',
+            views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
+            //sticky: true,
+            data: {
+                showPreviewPane: true
+            }
+            // data: {
+            //     title: 'AvaTech',
+            //     requireLogin: true 
+            // }
+        })
 
         // .state('index.obs', {
         //     url: 'avalanches/:observationId',

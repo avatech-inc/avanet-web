@@ -134,16 +134,20 @@ angular.module('avatech').controller('ObservationPreviewController',
         }
 
         // snowpit canvas settings
-        $scope.graphWidth = 180;
+        $scope.graphWidth = 200;
         $scope.columns = [
             { width: 125 },
             { width: 25 },
             { width: $scope.graphWidth },
-            { width: 240 }
+            { width: 150 }
         ];
         $scope.snowpitWidth = $scope.columns.reduce(function(a,b){ return { width: a.width + b.width}; }).width;
-        $scope.snowpitHeight = 500;
-        $scope.canvasOptions = { labelColor: "#222", commentLineColor: "#aaa", dashedLineColor: "#ddd", showDepth: true, showDensity: true };
+        $scope.snowpitHeight = 550;
+        $scope.canvasOptions = { labelColor: "#222", commentLineColor: "#aaa", dashedLineColor: "#ddd", showDepth: true, showDensity: true, 
+            drawGrainSize: false,
+            drawWaterContent: false, 
+            drawSurfaceLabel: false
+        };
         $scope.settings = {
             selectedLayer: null,
             dragging: null,

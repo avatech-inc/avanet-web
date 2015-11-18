@@ -177,6 +177,9 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
             if (options.print == null) options.print = false;
             if (options.showDepth == null) options.showDepth = true;
             if (options.showDensity == null) options.showDensity = true;
+            if (options.drawGrainSize == null) options.drawGrainSize = true;
+            if (options.drawWaterContent == null) options.drawWaterContent = true;
+            if (options.drawSurfaceLabel == null) options.drawSurfaceLabel = true;
 
             // only call once
             if (options.scale) scale = options.scale; // 4
@@ -966,6 +969,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     }
                 }
                 var drawGrainSize = function(layer, depth2) {
+                    if (!options.drawGrainSize) return;
                     context.fillStyle = options.labelColor;
                     context.font = "11px 'roboto condensed'";
                     if (layer.grainSize) { 
@@ -1008,10 +1012,12 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     drawGrainSize(layer, depth2);
 
                     // draw water content
-                    context.fillStyle = "#444";
-                    context.font = "11px 'roboto condensed'";
-                    if (layer.waterContent) {
-                        centerText(context, layer.waterContent, 30, connectorWidth + 60 + 42, depth2 - (layer.sideLayerHeightClient / 2) + 4.5);
+                    if (options.drawWaterContent) {
+                        context.fillStyle = "#444";
+                        context.font = "11px 'roboto condensed'";
+                        if (layer.waterContent) {
+                            centerText(context, layer.waterContent, 30, connectorWidth + 60 + 42, depth2 - (layer.sideLayerHeightClient / 2) + 4.5);
+                        }
                     }
 
                     // depth axis labels (relative to right side of canvas)
@@ -1095,7 +1101,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     context.fillText(depthText, column.width - paddingLeft + 3.5, 3.5 + paddingTop);
 
                     context.font = "100 10px 'roboto condensed'";
-                    context.fillText("SURFACE", column.width - paddingLeft + 22, 3.5 + paddingTop);
+                    if (options.drawSurfaceLabel) context.fillText("SURFACE", column.width - paddingLeft + 22, 3.5 + paddingTop);
                 }
 
                 // top labels
@@ -1105,11 +1111,15 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 centerText(context, "GRAIN", 30, 37.5, 21);
                 centerText(context, "TYPE", 30, 37.5, 31);
 
-                centerText(context, "GRAIN", 30, 90.5, 21);
-                centerText(context, "SIZE", 30, 90.5, 31);
+                if (options.drawGrainSize) {
+                    centerText(context, "GRAIN", 30, 90.5, 21);
+                    centerText(context, "SIZE", 30, 90.5, 31);
+                }
 
-                centerText(context, "WATER", 30, 133, 21);
-                centerText(context, "CONTENT", 30, 133, 31);
+                if (options.drawWaterContent) {
+                    centerText(context, "WATER", 30, 133, 21);
+                    centerText(context, "CONTENT", 30, 133, 31);
+                }
 
             });
 

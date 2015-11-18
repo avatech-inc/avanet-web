@@ -1,6 +1,5 @@
-
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, Lightbox, $http) {
+    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http) { //Lightbox
 
         $rootScope.$broadcast('resizeMap');
 
@@ -20,7 +19,7 @@ angular.module('avatech').controller('ObservationPreviewController',
         }
 
         $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.observation.photos, index);
+            //Lightbox.openModal($scope.observation.photos, index);
         }
 
         // ------------------------------------------------------------------------------------------

@@ -10,7 +10,8 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'avatech.profiles',
     'colorpicker.module',
     'credit-cards',
-    'angular-country-picker'
+    'angular-country-picker',
+    'pikaday'
 ]);
 
 angular.module('avatech.system', []);
@@ -61,6 +62,14 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
 
   }
 ]);
+
+// configure pikaday
+angular.module('avatech')
+  .config(['pikadayConfigProvider', function(pikaday) {
+    pikaday.setConfig({
+      format: "MM/DD/YYYY"
+    });
+  }])
 
 // configure Restangular
 angular.module('avatech').config(function(RestangularProvider) {

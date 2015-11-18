@@ -169,25 +169,26 @@
 
 		<div style="padding-top:70px;text-align:center;">
 
-			<div id="ios" style="display:none">
+			<div style="margin-top:10px;">
 
-				<button onclick="install_ios()"
-				class="btn btn-primary btn-lg" style="padding-top:18px;padding-bottom:15px;"><i class="fa fa-download fa-lg"></i>&nbsp;&nbsp;Download Avanet app</button>
+				<h1 style="font-weight:100;font-size:40px;">Download the <span style="font-weight:700">Avanet</span> mobile app</h1>
+				<h3>Now available for iOS</h3>
+
+				<a target="_blank" href="https://itunes.apple.com/us/app/avanet/id1002265185"><img src="/img/appstore.svg" style="width:230px;"/></a>
+
+				<br/><br/><br/>
+				<div style='border-top:1px solid #aaa;max-width:600px;width:90%;margin:auto;text-align:center;display:inline-block;padding-top:20px;'>
+				Looking to sync your Avatech SP device profiles to Avanet?<br/>
+				Download the <b>Avanet SP Sync</b> app for iOS and Android<br/>
+				<br/>
+				<a target="_blank" href="https://itunes.apple.com/us/app/avanet-sp-sync/id1039081086"><img src="/img/appstore.svg" style="width:120px;"/></a>
+				&nbsp;&nbsp;&nbsp;
+				<a target="_blank" href="https://play.google.com/store/apps/details?id=com.avatech.avanetpro"><img src="/img/google-play-badge.png" style="width:117px;"/></a>
+				</div>
 
 			</div>
-			<div id="ios_downloading" style="display:none;margin-top:10px;">
-				<div style="font-weight:bold;font-size:21px;padding-left:20px;padding-right:20px;">Your Avanet app is downloading!</div><br/>
-				<div style="font-size:18px;padding-left:30px;padding-right:30px;">Go to your home screen to<br/>see installation progress<br/>and launch the app.<br/></div>
 
-				<!--<a id="link" href="avanet://">launch app</a>-->
-			</div>
-
-			<div id="android" style="display:none;margin-top:10px;">
-
-				<a href="https://play.google.com/store/apps/details?id=com.avatech.avanetpro" class="btn btn-primary btn-lg" style="padding-top:18px;padding-bottom:15px;"><i class="fa fa-download fa-lg"></i>&nbsp;&nbsp;Install Avanet app</a>
-
-			</div>
-			<div id="unkown" style="display:none;margin-top:16px;font-size:23px;">
+			<!--<div id="unkown" style="display:none;margin-top:16px;font-size:23px;">
 				Enter your phone number and we'll send<br/>you a link to download the Avanet app
 				<br/><br/>
 
@@ -203,7 +204,7 @@
 				We sent a text message to <span id="num" style="font-weight:bold;"></span>.
 				<br/><br/>
 				You should receive it in just a moment.
-			</div>
+			</div>-->
 		</div>
 
 
@@ -216,15 +217,15 @@
 
 		<script type="text/javascript">
 
-			if (iOS) {
-				document.getElementById("ios").style.display = "";
-			}
-			else if (Android) {
-				document.getElementById("android").style.display = "";
-			}
-			else {
-				document.getElementById("unkown").style.display = "";
-			}
+			// if (iOS) {
+			// 	document.getElementById("ios").style.display = "";
+			// }
+			// else if (Android) {
+			// 	document.getElementById("android").style.display = "";
+			// }
+			// else {
+			// 	document.getElementById("unkown").style.display = "";
+			// }
 
 		  var appurl = 'avanet://';
 

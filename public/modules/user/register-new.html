@@ -82,68 +82,51 @@ margin-bottom: 5px !important;
 				<div class="col-xs-7" style="padding-top:20px;padding-right:28px;padding-left:28px;text-align:left;" ng-if="showPro">
 			    	<div role="form" class="_form">
 		    			<div>
-						  <div class="form-group half-left-60" name="name">
+						  <div class="form-group half-left-60" name="org">
 						    <label>Organization</label>
-						    <input type="text" class="form-control input-lg" ng-model="reg.fullName" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.org" required="showPro" placeholder="">
 						  </div>
-						  <div class="form-group half-right-40" name="name">
+						  <div class="form-group half-right-40" name="orgSize">
 						    <label>Size</label>
-						    <input type="text" class="form-control input-lg" ng-model="reg.fullName" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.orgSize"  placeholder="">
 						  </div>
 					  </div>
 
-					  <div class="form-group" name="email">
+					  <div class="form-group" name="jobTitle">
 					    <label>Job title</label>
-					    <input type="email" class="form-control input-lg" ng-model="reg.email" required="!isPending" placeholder="">
+					    <input type="text" class="form-control input-lg" ng-model="reg.jobTitle" required="showPro" placeholder="">
 					  </div>
 				  	   <div>
-						  <div class="form-group half-left" name="password">
+						  <div class="form-group half-left" name="profession">
 						    <label>Profession</label>
-						    <input type="password" class="form-control input-lg" ng-model="reg.password" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.profession" required="showPro" placeholder="">
 						  </div>
-						  <div class="form-group half-right" name="passwordConfirm">
+						  <div class="form-group half-right" name="certifications">
 						    <label>Certifications</label>
-						    <input type="password" class="form-control input-lg" ng-model="reg.passwordConfirm" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.certifications" placeholder="">
 						  </div>
 					  </div>
 
-					  <div class="form-group" name="passwordConfirm">
+					  <div class="form-group" name="city">
 					    <label>City</label>
-					    <input type="password" class="form-control input-lg" ng-model="reg.passwordConfirm" required placeholder="">
+					    <input type="text" class="form-control input-lg" ng-model="reg.city" required="showPro" placeholder="">
 					  </div>
 
 					  <div>
-						  <div class="form-group half-left" name="passwordConfirm">
+						  <div class="form-group half-left" name="state">
 						    <label>State / Province</label>
-						    <input type="password" class="form-control input-lg" ng-model="reg.passwordConfirm" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.state" placeholder="">
 						  </div>
-						  <div class="form-group half-right" name="passwordConfirm">
+						  <div class="form-group half-right" name="postal">
 						    <label>Zip / Postal</label>
-						    <input type="password" class="form-control input-lg" ng-model="reg.passwordConfirm" required placeholder="">
+						    <input type="text" class="form-control input-lg" ng-model="reg.postal" placeholder="">
 						  </div>
 					  </div>
 
 					  <div class="form-group" name="passwordConfirm">
 					    <label>Country</label>
-					    <select class="form-control input-lg" ng-model="reg.country" required pvp-country-picker> </select>
+					    <select class="form-control input-lg" ng-model="reg.country" required="showPro" pvp-country-picker> </select>
 					  </div>
-
-					  <!--<label>Are you a snow safety professional?</label>
-					  <div class="btn-group">
-				        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="true">Yes</label>
-				        <label class="btn btn-default btn-lg" ng-model="reg.isPro" btn-radio="false">No</label>
-			    		</div>-->
-
-
-					  <!--<div class="form-group">
-					    <div class="col-sm-offset-0 col-sm-12">
-					      <div class="checkbox" style="width:auto !important;padding-left:0px !important;border:none;background:transparent;text-align:left;position:relative;top:6px;line-height:1.3em;">
-					        <label >
-					          <input type="checkbox" ng-model="isPro"> <span ng-if="!org">I certify that I am a snow safety professional and understand that I am joining a professional platform.</span>
-					        </label>
-					      </div>
-					    </div>
-					  </div>-->
 
 					</div>
 

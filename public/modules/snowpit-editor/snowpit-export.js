@@ -676,7 +676,7 @@ return {
             //ctx.fillText("Snow Profile",0,60);
 
             ctx.font="700 68px 'Roboto Condensed'";
-            ctx.fillText("AvaNet",0,60);
+            ctx.fillText("Avanet",0,60);
 
             ctx.font="100 68px 'Roboto Condensed'";
             ctx.fillStyle = "#000";

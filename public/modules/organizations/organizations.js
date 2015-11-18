@@ -8,7 +8,7 @@ angular.module('avatech').controller('OrganizationsController', function ($scope
     $scope.userIsAdmin = function() {
         var isAdmin = false;
 
-        // if user is AvaNet admin, also can admin group
+        // if user is Avanet admin, also can admin group
         if ($scope.global.user.admin) return true;
 
         angular.forEach($scope.members, function(member) {

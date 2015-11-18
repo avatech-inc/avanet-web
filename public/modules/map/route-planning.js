@@ -115,78 +115,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
         // save when route is edited
         var routeSaveTimer;
-        $scope.$watch('route.name', function() {
-            console.log('saving route!')
-            // if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
-
-            // if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
-            // routeSaveTimer = $timeout(function() {
-
-            //     console.log("saving!!");
-
-            //     var _route = {
-            //         name: $scope.route.name,
-            //         points: [],
-            //         terrain: [],
-            //         stats: $scope.route.stats,
-            //         // GeoJSON
-            //         path: {
-            //             type: "LineString",
-            //             coordinates: []
-            //         }
-            //     };
-
-            //     // save elevation profile
-            //     // angular.forEach(elevationProfilePoints, function(point) {
-            //     //    _route.terrain.push({
-            //     //         coords: [ point.lng, point.lat ],
-            //     //         original: point.original,
-            //     //         aspect: point.aspect,
-            //     //         slope: point.slope,
-            //     //         elevation: point.elevation,
-            //     //         totalTimeEstimateMinutes: point.totalTimeEstimateMinutes,
-            //     //         totalDistance: point.totalDistance,
-            //     //         originalIndex: point.originalIndex,
-            //     //         index: point.index,
-            //     //    });
-            //     // });
-
-            //     angular.forEach(_line.editing._markers, function(marker) {
-            //         _route.path.coordinates.push([ marker._latlng.lng, marker._latlng.lat ]);
-
-            //         _route.points.push({ 
-            //             coords: [ marker._latlng.lng, marker._latlng.lat ],
-            //             waypoint: marker.waypoint
-            //         });
-            //     });
-
-            //     if (!$scope.route._id) {
-            //         $http.post(window.apiBaseUrl + "routes", _route)
-            //         .then(function(res) {
-            //             if (res.data._id) {
-            //                 $scope.route._id = res.data._id;
-            //                 $scope.imageURL = res.data.imageURL;
-
-            //                 // add to routes datastore
-            //                 Routes.add($scope.route);
-
-            //                 // replace URL with recieved _id
-            //                 $state.params.routeId = $scope.route._id;
-            //                 $state.transitionTo($state.current, $state.params, { inherit: true, notify: true });
-            //             }
-            //         });
-            //     }
-            //     else {
-            //          $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
-            //         .then(function(data) {
-
-            //         });
-            //     }
-
-            // }, 1000);
-        });
-
-        $scope.saveRoute = function() {
+        $scope.$watch('route', function() {
+            //console.log('saving route!')
             if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
 
             if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
@@ -238,7 +168,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                             $scope.imageURL = res.data.imageURL;
 
                             // add to routes datastore
-                            Routes.add($scope.route);
+                            _route._id = $scope.route._id;
+                            Routes.add(_route);
 
                             // replace URL with recieved _id
                             $state.params.routeId = $scope.route._id;
@@ -250,10 +181,84 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                      $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
                     .then(function(data) {
 
+                        // add to routes datastore
+                        _route._id = $scope.route._id;
+                        Routes.add(_route);
                     });
                 }
+
             }, 1000);
-        }
+
+        }, true);
+
+        // $scope.saveRoute = function() {
+        //     if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
+
+        //     if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
+        //     routeSaveTimer = $timeout(function() {
+
+        //         console.log("saving!!");
+
+        //         var _route = {
+        //             name: $scope.route.name,
+        //             points: [],
+        //             terrain: [],
+        //             stats: $scope.route.stats,
+        //             // GeoJSON
+        //             path: {
+        //                 type: "LineString",
+        //                 coordinates: []
+        //             }
+        //         };
+
+        //         // save elevation profile
+        //         // angular.forEach(elevationProfilePoints, function(point) {
+        //         //    _route.terrain.push({
+        //         //         coords: [ point.lng, point.lat ],
+        //         //         original: point.original,
+        //         //         aspect: point.aspect,
+        //         //         slope: point.slope,
+        //         //         elevation: point.elevation,
+        //         //         totalTimeEstimateMinutes: point.totalTimeEstimateMinutes,
+        //         //         totalDistance: point.totalDistance,
+        //         //         originalIndex: point.originalIndex,
+        //         //         index: point.index,
+        //         //    });
+        //         // });
+
+        //         angular.forEach(_line.editing._markers, function(marker) {
+        //             _route.path.coordinates.push([ marker._latlng.lng, marker._latlng.lat ]);
+
+        //             _route.points.push({ 
+        //                 coords: [ marker._latlng.lng, marker._latlng.lat ],
+        //                 waypoint: marker.waypoint
+        //             });
+        //         });
+
+        //         if (!$scope.route._id) {
+        //             $http.post(window.apiBaseUrl + "routes", _route)
+        //             .then(function(res) {
+        //                 if (res.data._id) {
+        //                     $scope.route._id = res.data._id;
+        //                     $scope.imageURL = res.data.imageURL;
+
+        //                     // add to routes datastore
+        //                     Routes.add($scope.route);
+
+        //                     // replace URL with recieved _id
+        //                     $state.params.routeId = $scope.route._id;
+        //                     $state.transitionTo($state.current, $state.params, { inherit: true, notify: true });
+        //                 }
+        //             });
+        //         }
+        //         else {
+        //              $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
+        //             .then(function(data) {
+
+        //             });
+        //         }
+        //     }, 1000);
+        // }
 
         // hide icons when not in edit mode
         $scope.$watch("routeControl.editing", function() {

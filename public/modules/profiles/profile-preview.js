@@ -1,6 +1,6 @@
 
-angular.module('avatech').controller('ProfilePreviewController', [ '$scope', '$rootScope', '$location', '$state', '$stateParams', 'Profiles', 'snowpitExport', 'snowpitViews', 'FontLoader', 'Global', 'Lightbox',
-    function ($scope, $rootScope, $location, $state, $stateParams, Profiles, snowpitExport, snowpitViews, FontLoader, Global, Lightbox) {
+angular.module('avatech').controller('ProfilePreviewController',
+    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, Lightbox, $http) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -56,8 +56,11 @@ angular.module('avatech').controller('ProfilePreviewController', [ '$scope', '$r
         if ($stateParams.profileId) {
             $scope.profileId = $stateParams.profileId;
             // load profile
-            Profiles.get({ profileId: $stateParams.profileId }, function(profile) {
-
+            //Profiles.get({ profileId: $stateParams.profileId }, function(profile) {
+            $http.get(window.apiBaseUrl + "observations/" + $stateParams.profileId)
+            .then(function(res) {
+                var profile = res.data;
+                
                 // broadcast so map can show location
                 $rootScope.$broadcast('profileLoaded', profile);
 
@@ -106,4 +109,4 @@ angular.module('avatech').controller('ProfilePreviewController', [ '$scope', '$r
             $state.go('^');
         };
     }
-])
+);

@@ -1,6 +1,6 @@
 <section ng-controller="MapController">
 	<section ng-class="{ 'hide-main': isFullScreen() }" >
-		<div id="map-header" ng-hide="isDemo" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
+		<div id="map-header" ng-hide="isDemo" ng-style="{ right: (showPreviewPane() ? 0 : (showRoutePane() ? 290 : 0) ), left: (isDemo ? 0 : 280) }">
 
 				<div ob-search="obSearch" style="float:left;"
 					orgs="global.orgs"
@@ -17,7 +17,7 @@
 
 		</div>
 
-		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 585 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0), left: (isDemo ? 0 : 280), top: (isDemo ? 46 : 90)  }">
+		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 480 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0), left: (isDemo ? 0 : 280), top: (isDemo ? 46 : 90)  }">
 			<div map="map" 
 				obs="profiles"
 				hover-ob="hoverOb"

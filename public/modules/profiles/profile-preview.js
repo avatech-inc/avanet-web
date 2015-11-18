@@ -104,9 +104,9 @@ angular.module('avatech').controller('ProfilePreviewController',
         $scope.exportJPEG = function() { snowpitExport.JPEG($scope.profile, $scope.settings); };
         $scope.exportCSV = function() { snowpitExport.CSV($scope.profile); };
 
-        $scope.close = function () {
-            $rootScope.$broadcast('resizeMap');
-            $state.go('^');
-        };
+        // $scope.close = function () {
+        //     $rootScope.$broadcast('resizeMap');
+        //     $state.go('^');
+        // };
     }
 );

@@ -3,15 +3,20 @@
 angular.module('avatech').factory('snowpitExport', ['$q','snowpitConstants','$compile','$rootScope','Global', function ($q, snowpitConstants,$compile,$rootScope, Global) { 
 
 
-scope.getGrainType = function(grainType) {
-    if (!grainType) return;
+var getGrainType = function(layer, isSecondary) {
+    var icssg = "";
+    if (!layer || !layer["grainType" + isSecondary]) return "";
     for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
-        for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
-            if (snowpitConstants.grainTypes[i].types[j].icssg == grainType) {
-                return snowpitConstants.grainTypes[i].types[j];
+        if (snowpitConstants.grainTypes[i].legacyCode == layer["grainType" + isSecondary].category) {
+            for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+                if (snowpitConstants.grainTypes[i].types[j].code == layer["grainType" + isSecondary].code) {
+                    icssg = snowpitConstants.grainTypes[i].types[j].icssg;
+                }
             }
+            break;
         }
     }
+    return icssg;
 }
 
 function numberWithCommas(x) {
@@ -305,8 +310,8 @@ return {
             text += layer.height + ",";
             text += layer.hardness + ",";
             text += layer.hardness2 + ",";
-            text += getGrainType(layer.grainType).icssg + ",";
-            text += getGrainType(layer.grainType).icssg + "";
+            text += getGrainType(layer, "") + ",";
+            text += getGrainType(layer, "2") + "";
 
             text += "\n";
         });

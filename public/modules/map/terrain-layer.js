@@ -50,6 +50,12 @@ var AvatechTerrainLayer = function (options) {
     terrainLayer.contexts = {};
     terrainLayer.needsRedraw = false;
     terrainLayer.overlayType;
+
+    // terrainLayer.on('tileunload', function(key) {
+    //     console.log("event:");
+    //     console.log(key);
+    // });
+
     // clear existing _pruneTiles function to control clearing of layers on our own
     // otherwise, noticeable flash/lag when leaflet animates zoom
     terrainLayer._pruneTiles = function () { };

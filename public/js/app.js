@@ -9,7 +9,8 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'avatech.system',
     'avatech.profiles',
     'colorpicker.module',
-    'credit-cards'
+    'credit-cards',
+    'angular-country-picker'
 ]);
 
 angular.module('avatech.system', []);

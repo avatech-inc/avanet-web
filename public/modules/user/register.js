@@ -41,9 +41,16 @@ angular.module('avatech.system').controller('RegisterController',
         }
     }
     $scope.register = function() {
+          $scope.showPro = true;
+          return;
+          
         $scope.showError = null;
         if(!$scope.registerForm.$valid) {
             $scope.showError = "Please complete all required fields";
+            $scope.scrollToError();
+        }
+        else if($scope.reg.fullName.indexOf(' ') == -1) {
+            $scope.showError = "Please enter your full name";
             $scope.scrollToError();
         }
         else if ($scope.reg.password.length && $scope.reg.password.length < 6) {
@@ -54,12 +61,12 @@ angular.module('avatech.system').controller('RegisterController',
             $scope.showError = "Make sure your passwords match";
             $scope.scrollToError();
         }
-        else if (!$scope.isPro) {
-            if ($scope.org)
-              alert("You must certify that you are a registered student of " + $scope.org.name  + ".");
-            else 
-              alert("You must certify that you are a snow professional.");
-            return;
+        else if ($scope.reg.isPro == null) {
+            // if ($scope.org)
+            //   alert("You must certify that you are a registered student of " + $scope.org.name  + ".");
+            // else 
+            alert("Please specify if you are a snow safety professional.");
+            //return;
         }
         else if (!$scope.acceptTerms) {
             alert("You must accept the Terms of Service.");
@@ -67,43 +74,80 @@ angular.module('avatech.system').controller('RegisterController',
         }
         else {
 
-            $scope.busy = true;
+          setTimeout(function() {
 
-            $('html,body').animate({
-              scrollTop: 0
-            }, 300);
+            // if rec, signup!
+            if ($scope.reg.isPro === false) {
 
-            var newUser = {
-                fullName: $scope.reg.name,
-                email: $scope.reg.email,
-                jobTitle: $scope.reg.jobTitle,
-                profession: $scope.reg.profession,
-                org: $scope.reg.org,
-                city: $scope.reg.city,
-                state: $scope.reg.state,
-                postal: $scope.reg.postal,
-                country: $scope.reg.country,
-                password: $scope.reg.password,
+                $scope.busy = true;
+                $('html,body').animate({ scrollTop: 0 }, 300);
 
-                userHashId: $scope.userHashId,
-                orgHashId: $stateParams.orgHashId,
-                userType: "pro"
+                var newUser = {
+                  fullName: $scope.reg.fullName,
+                  email: $scope.reg.email,
+                  password: $scope.reg.password,
+                  userType: "rec+"
+                }
+
+                // post to API
+                Restangular.all('users').post(newUser)
+                // success
+                .then(function (data) {
+                    mixpanel.track("registered");
+                    Global.login(data.email, newUser.password);
+                }, 
+                // error
+                function(response) {
+                    $timeout(function(){
+                      $scope.busy = false;
+                      $scope.showError = response.data.message;
+                      $scope.scrollToError();
+                    }, 1000);
+                });
+
+            }
+            // if pro, show next screen
+            if ($scope.reg.isPro === true) {
+              //alert("pro signup!!!");
+              $scope.showPro = true;
+
             }
 
-            Restangular.all('users').post(newUser)
-            // success
-            .then(function (data) {
-                mixpanel.track("registered");
-                Global.login(data.email, newUser.password);
-            }, 
-            // error
-            function(response) {
-                $timeout(function(){
-                  $scope.busy = false;
-                  $scope.showError = response.data.message;
-                  $scope.scrollToError();
-                }, 1000);
-            });
+          }, 500);
+
+            // var newUser = {
+            //     fullName: $scope.reg.name,
+            //     email: $scope.reg.email,
+            //     jobTitle: $scope.reg.jobTitle,
+            //     profession: $scope.reg.profession,
+            //     org: $scope.reg.org,
+            //     city: $scope.reg.city,
+            //     state: $scope.reg.state,
+            //     postal: $scope.reg.postal,
+            //     country: $scope.reg.country,
+            //     password: $scope.reg.password,
+
+            //     userHashId: $scope.userHashId,
+            //     orgHashId: $stateParams.orgHashId,
+            //     userType: "pro"
+            // }
+
+            // Restangular.all('users').post(newUser)
+            // // success
+            // .then(function (data) {
+            //     mixpanel.track("registered");
+            //     Global.login(data.email, newUser.password);
+            // }, 
+            // // error
+            // function(response) {
+            //     $timeout(function(){
+            //       $scope.busy = false;
+            //       $scope.showError = response.data.message;
+            //       $scope.scrollToError();
+            //     }, 1000);
+            // });
+
+
         }
     };
 

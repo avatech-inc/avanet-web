@@ -11,6 +11,9 @@ angular.module('avatech').controller('ProfilePreviewController',
         $scope.go = function(url) {
             $location.path(url);
         }
+        // // formatters
+        // $scope.formatters = snowpitExport.formatters;
+        
 
         // views
 
@@ -27,9 +30,6 @@ angular.module('avatech').controller('ProfilePreviewController',
             return _view;
         }
 
-        // formatters
-        $scope.formatters = snowpitExport.formatters;
-        
         // snowpit canvas settings
         $scope.graphWidth = 180;
         $scope.columns = [
@@ -60,7 +60,7 @@ angular.module('avatech').controller('ProfilePreviewController',
             $http.get(window.apiBaseUrl + "observations/" + $stateParams.profileId)
             .then(function(res) {
                 var profile = res.data;
-                
+
                 // broadcast so map can show location
                 $rootScope.$broadcast('profileLoaded', profile);
 
@@ -96,9 +96,9 @@ angular.module('avatech').controller('ProfilePreviewController',
             });
         }
 
-        $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.profile.photos, index);
-        }
+        // $scope.showPhoto = function(index) {
+        //     Lightbox.openModal($scope.profile.photos, index);
+        // }
 
         $scope.exportPDF = function() { snowpitExport.PDF($scope.profile, $scope.settings); };
         $scope.exportJPEG = function() { snowpitExport.JPEG($scope.profile, $scope.settings); };

@@ -923,7 +923,7 @@ window.ElevationWidget = function() {
 
                 this.waypoints.append('svg:circle')
                     .attr('cx', item.xDiagCoord)
-                    .attr('cy', this._y(item.elevation))
+                    .attr('cy', this._y(item.elevation) + 2)
                     .attr('r','3')
                     .attr("class", "elevation-profile-waypoint")
                     .attr("style", "fill: " + "yellow" + ";stroke:" + _color + ";stroke-width:1;pointer-events: none;")

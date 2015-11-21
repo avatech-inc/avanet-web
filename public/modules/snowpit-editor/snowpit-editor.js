@@ -704,11 +704,9 @@ angular.module('avatech')
                 $scope.profile.published = true;
                 angular.extend($scope.profile, sharing);
                 $scope.update();
-
-                $location.path('/p/' + $scope.profile._id);
-
             }, function () {
                 // on dismiss
+                $location.path('/obs/' + $scope.profile._id);
             });
         }
 

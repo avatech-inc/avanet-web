@@ -6,6 +6,7 @@ angular.module('avatech').controller('ObservationPreviewController',
         $scope.global = Global;
 
         $scope.formatters = snowpitExport.formatters;
+        $scope.formatters = snowpitExport.formatters;
 
         $scope.discussMode = false;
 
@@ -183,54 +184,131 @@ angular.module('avatech').controller('ObservationPreviewController',
 
         var schema = {
         "observation_wind": [
-            ["windLoading", "Wind loading"],
-            ["windVariability", "Wind windVariability"],
-            ["spatialExtent", "Spatial extent"],
-            ["windSpeedEstimated", "Wind speed estimated"],
-            ["windSpeedMeasured", "Wind speed measured"],
-            ["windDirectionEstimated", "Wind direction estimated"],
-            ["blowingSnowDirection", "Blowing snow direction"],
-            ["blowingSnowExtent", "Blowing snow extent"]
+            ["windLoading", "Wind loading", {
+                "PREV": "Previous",
+                "CUR": "Current"
+                }],
+            ["windVariability", "Wind windVariability",{
+                "CON":"Consistent",
+                "VAR":"Variable"
+                }],
+            ["spatialExtent", "Spatial extent",{
+                "LOC":"Localized",
+                "WIDE":"Widespread"
+                }],
+            ["windSpeedEstimated", "Wind speed estimated",{
+                "C":"Calm",
+                "L":"Light",
+                "M":"Moderate",
+                "S":"Strong",
+                "X":"Extreme",
+                }],
+            ["windSpeedMeasured", "Wind speed measured", "windSpeed"],
+            ["windDirectionEstimated", "Wind direction estimated", "direction"], 
+            ["blowingSnowDirection", "Blowing snow direction", "direction"],
+            ["blowingSnowExtent", "Blowing snow extent",{
+                "NONE": "NONE",
+                "PREV": "PREV",
+                "L": "Light",
+                "M": "Moderate",
+                "I": "Intense",
+                "U": "Unkown"
+                }]
           ],
           "observation_weather": [
-            ["precipitationRate", "Precip. rate"],
-            ["precipitationType", "Precip. type"],
-            ["skyCondition", "Sky condition"],
-            ["barometricPressure", "Barometric pressure"],
-            ["pressureTrend", "Pressure trend"],
-            ["maxTemperature", "Max temp."],
-            ["minTemperature", "Min temp."],
-            ["presentTemperature", "Present temp."],
-            ["relativeHumidity", "Relative humidity"],
-            ["thermographTemperature", "Thermograph temp."],
-            ["thermographTrend", "Thermograph trend"]
+            ["precipitationRate", "Precip. rate",{
+                "S-1":"S-1/RV VERY LIGHT",
+                "S1":"S1/RL LIGHT",
+                "S2":"S2/RM MODERATE",
+                "S5":"S5/RH HEAVY",
+                "S10":"S10 VERY HEAVY"
+                }],
+            ["precipitationType", "Precip. type",{
+                "NO":"NONE",
+                "RA":"RAIN",
+                "SN":"SNOW",
+                "RS":"RAIN & SNOW",
+                "GR":"HAIL",
+                "ZR":"FREEZING RAIN",
+                }],
+            ["skyCondition", "Sky condition",{
+                "CLR":"CLEAR",
+                "FEW":"FEW",
+                "SCT":"SCATTERED",
+                "BKN":"BROKEN",
+                "OVC":"OVERCAST",
+                "X":"OBSCURED"
+                }],
+            ["barometricPressure", "Barometric pressure", "mb"],
+            ["pressureTrend", "Pressure trend",{
+                "RR":"RISING RAPIDLY",
+                "R":"RISING",
+                "S":"STEADY",
+                "F":"FALLING",
+                "FR":"FALLING RAPIDLY"
+                }],
+            ["maxTemperature", "Max temp.", "temp"],
+            ["minTemperature", "Min temp.", "temp"],
+            ["presentTemperature", "Present temp.", "temp"],
+            ["relativeHumidity", "Relative humidity", "percent"],
+            ["thermographTemperature", "Thermograph temp.", "temp"],
+            ["thermographTrend", "Thermograph trend",{
+                "RR":"RISING RAPIDLY",
+                "R":"RISING",
+                "S":"STEADY",
+                "F":"FALLING",
+                "FR":"FALLING RAPIDLY"
+                }]
           ],
           "observation_snowpack-test": [
-            ["name", "Test Type"],
+            ["name", "Test Type",{
+                "ECT":"EXTENDED COLUMN",
+                "CT":"COMPRESSION",
+                "RB":"RUTSCHBLOCK",
+                "SB":"STUFFBLOCK",
+                "STE":"SHOVEL SHEAR",
+                "DPT":"DEEP TAP",
+                "PST":"PROPAGATION SAW",
+                "HTE":"HAND SHEAR",
+                "SVT":"SHOVEL TILT"
+                }],
             ["score", "Score"],
             ["shear", "Shear quality"],
-            ["fractureCharacter", "Fracture character"],
+            ["fractureCharacter", "Fracture character",{
+                "SP":"Sudden planar",
+                "SC":"Sudden collapse",
+                "RP":"Resistant planar",
+                "PC":"Progressive Compression",
+                "BRK":"Break",
+                }],
             ["nbTaps", "Number of taps"],
-            ["isolatedColumnLength", "Isolated column length"],
-            ["sawCutLength", "Saw cut length"],
-            ["weakLayerDepth", "Weak layer depth"],
-            ["criticalGrainForm", "Critical grain type"],
-            ["criticalGrainSizeMax", "Critical grain size (max)"],
-            ["criticalGrainSizeMin", "Critical grain size (min)"],
+            ["isolatedColumnLength", "Isolated column length", "cm"],
+            ["sawCutLength", "Saw cut length", "cm"],
+            ["weakLayerDepth", "Weak layer depth", "cm"],
+            ["criticalGrainForm", "Critical grain type","grainType"],
+            ["criticalGrainSizeMax", "Critical grain size (max)", "mm"],
+            ["criticalGrainSizeMin", "Critical grain size (min)", "mm"],
           ],
           "observation_snowpack": [
-            ["snowQuality", "Snow quality"],
-            ["surfaceGrainForm", "Surface grain type"],
-            ["cracking", "Cracking"],
-            ["whumpfing", "Whumpfing"],
-            ["footPenetration", "Foot pen."],
-            ["skiPenetration", "Ski pen."],
-            ["snowPackDepthEstimate", "Snowpack depth estimate"],
-            ["newSnowDepthEstimate", "New snow depth estimate"],
-            ["surfaceGrainSizeMax", "Surface grain size (max)"],
-            ["surfaceGrainSizeMin", "Surface grain size (min)"],
-            ["surfaceTemperature", "Surface temp."],
-            ["twentyCMTemperature", "20 cm. temp."]
+            ["snowQuality", "Snow quality",{
+                "POW":"POWDER",
+                "CRUD":"CRUD",
+                "CRUST":"CRUSTY",
+                "HARD":"HARD",
+                "SLUSH": "SLUSHY",
+                "SPRING":"SPRING SNOW"
+                }],
+            ["surfaceGrainForm", "Surface grain type", "grainType"],
+            ["cracking", "Cracking","bool"],
+            ["whumpfing", "Whumpfing","bool"],
+            ["footPenetration", "Foot pen.", "cm"],
+            ["skiPenetration", "Ski pen.", "cm"],
+            ["snowPackDepthEstimate", "Snowpack depth estimate", "cm"],
+            ["newSnowDepthEstimate", "New snow depth estimate", "cm"],
+            ["surfaceGrainSizeMax", "Surface grain size (max)", "mm"],
+            ["surfaceGrainSizeMin", "Surface grain size (min)", "mm"],
+            ["surfaceTemperature", "Surface temp.", "temp"],
+            ["twentyCMTemperature", "20 cm. temp.", "temp"]
           ]}
 
           $scope.getTable = function(ob) {
@@ -242,9 +320,55 @@ angular.module('avatech').controller('ObservationPreviewController',
                 for (var i = 0; i < items.length; i++) {
                     var key = items[i][0];
                     var desc = items[i][1];
+                    var dataType = items[i][2];
 
-                    var inOb = ob[key];
-                    if (inOb) table.push({ key: key, description: desc, value: inOb });
+                    var val = ob[key];
+                    if (val !== null && val != undefined) {
+                        // if enum
+                        if (dataType !== null && typeof dataType === 'object') {
+                            var enumVal = dataType[val];
+                            if (enumVal) val = enumVal;
+                        }
+                        // if bool
+                        else if (dataType == "bool") {
+                            if (val === true) val = "Yes";
+                            if (val === false) val = "No";
+                        }
+                        // temp
+                        else if (dataType == "temp") {
+                            val = $scope.formatters.formatTemp(val);
+                        }
+                        // direction
+                        else if (dataType == "direction") {
+                            val = $scope.formatters.formatDirection(val);
+                        }
+                        // cm
+                        else if (dataType == "cm") {
+                            val = $scope.formatters.formatCmOrIn(val);
+                        }
+                        // percent
+                        else if (dataType == "percent") {
+                            val += "%";
+                        }
+                        // millibars (barometric pressure)
+                        else if (dataType == "mb") {
+                            val += " mb";
+                        }
+                        // mm (for grain size at the moment, no conversion to imperial needed)
+                        else if (dataType == "mm") {
+                            val += " mm";
+                        }
+                        // wind speed (m/s and mi/h)
+                        else if (dataType == "windSpeed") {
+                            val = $scope.formatters.formatWindSpeed(val);
+                        }
+                        // grain type
+                        else if (dataType == "grainType") {
+                            val = $scope.formatters.formatGrainType(val);
+                        }
+                    }
+
+                    if (val) table.push({ key: key, description: desc, value: val });
                 }
 
             }
@@ -299,8 +423,8 @@ angular.module('avatech').controller('ObservationPreviewController',
 
                 var ob = res.data;
                     
-                // // broadcast so map can show location
-                // $rootScope.$broadcast('profileLoaded', profile);
+                // broadcast so map can show location
+                $rootScope.$broadcast('observationLoaded', ob);
 
                 $scope.table = $scope.getTable(ob);
 
@@ -313,6 +437,12 @@ angular.module('avatech').controller('ObservationPreviewController',
                         var num = parseFloat(temp.temp);
                         if (!isNaN(num)) temp.temp = num * 2;
                     });
+
+                    // var d = $("<div style='font-family:snowsymbols';>thequickbrownfoxjumpsoverthelazydog</div>");
+                    // d.appendTo(document.body);
+                    // d.resize(function(){
+                    //     console.log("RESIZED!");
+                    // })
 
                     // make sure fonts are loaded so canvas renders them
                     var fontLoader = new FontLoader(["Roboto Condensed","snowsymbols"], {
@@ -345,14 +475,5 @@ angular.module('avatech').controller('ObservationPreviewController',
 
             });
         }
-
-
-
-        // 
-        // $scope.exportPDF = function() { snowpitExport.PDF($scope.profile, $scope.settings); };
-        // $scope.exportJPEG = function() { snowpitExport.JPEG($scope.profile, $scope.settings); };
-        // $scope.exportCSV = function() { snowpitExport.CSV($scope.profile); };
-
-
     }
 );

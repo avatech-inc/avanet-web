@@ -22,6 +22,20 @@ angular.module('avatech').controller('ObservationPreviewController',
         $scope.showPhoto = function(index) {
             Lightbox.openModal($scope.observation.photos, index);
         }
+
+        $scope.getMediaURL = function(media) {
+            if (media.type == "photo") {
+                return media.URL;
+            }
+            else if (media.type == "video") {
+                var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);
+                filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));
+                var url = "http://res.cloudinary.com/avatech/video/upload/so_50p/" + filename + ".jpg";
+                return url;
+            }
+            else if (media.type == "audio") {
+                return "";
+            }
         }
 
         // ------------------------------------------------------------------------------------------

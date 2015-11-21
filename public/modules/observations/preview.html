@@ -60,6 +60,50 @@
     box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
 }
 
+/*  ------------ */
+
+.photos .media-container {
+	position: relative;
+	cursor: pointer;
+	margin:0px 7px;
+}
+.photos .media-container img {
+	height: 130px;
+}
+.photos .media-container:before {
+    display:block;
+    content:'';
+    position:absolute;
+    width:100%;
+    height:100%;
+    -moz-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+    -webkit-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+    box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.15);
+}
+.photos .media-container:hover:before {
+    -moz-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+    -webkit-box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+    box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,0.5);
+}
+.photos .media-container.video:after {
+    content: '\f04b';
+    font-family: 'FontAwesome';
+    position: absolute;
+    z-index: 1000;
+    font-size: 50px;
+    top: 26px;
+    left: 44px;
+    padding-top: 32px;
+    background: #fff;
+    border-radius: 1000px;
+    height: 80px;
+    width: 80px;
+    text-align: center;
+    padding-left: 7px;
+    opacity: .5;
+}
+
+
 .headshot {
 	background-color: #aaa;
 	height:40px;
@@ -68,6 +112,8 @@
     background-size: cover;
     background-position: center center;
 }
+
+
 
 /*--------------------------------------------------*/
 
@@ -358,6 +404,20 @@ scrollable always-visible="true">
 		<div class="sectionHeader">Notes</div>
 		<div style="font-size:13px;padding:5px 20px 14px 14px;font-weight:100;line-height:16px;">{{ observation.notes }}</div>
 	</div>-->
+
+	<!-- media -->
+	<div ng-show="observation.media && observation.media.length > 0">
+		<div style="clear:both;border-bottom:1px solid #eee;"></div>
+		<div class="sectionHeader">Media</div>
+		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
+			<div ng-repeat="media in observation.media" style="vertical-align:top;display:inline-block;" ng-click="showPhoto($index)">
+				<div class="media-container" ng-class="media.type">
+					<img src="{{ getMediaURL(media) }}"/>
+				</div>
+				<!--<span style='font-size:11px;'>{{ photo.caption }}</span>-->
+			</div>
+		</div>
+	</div>
 
 	<!-- photos -->
 	<div ng-show="observation.photos && observation.photos.length > 0">

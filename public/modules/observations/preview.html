@@ -103,6 +103,20 @@ table.metaData td span {
 	color: #888;
 }
 
+/* observation data table */
+
+table.vals {
+	margin: 10px;
+}
+table.vals td {
+	padding: 6px;
+	font-size: 15px;
+}
+table.vals td.key {
+	color: #999;
+	font-weight: 100;
+}
+
 </style>
 
 <div class="popupHeader">
@@ -324,31 +338,6 @@ scrollable always-visible="true">
 		<!-- EVERYTHING ELSE -->
 
 		<div ng-if="observation.type != 'sp-profile' && observation.type != 'avalanche' && observation.type != 'snowpit'">
-
-<!-- 			name: {{ name }}<br/>
-			Score: {{ score }}<br/>
-			shear: {{ shear }}<br/>
-			shear: {{ fractureCharacter }}<br/>
-			shear: {{ criticalGrainForm }}<br/>
-			shear: {{ nbTaps }}<br/>
-			shear: {{ sawCutLength }}<br/>
-			shear: {{ weakLayerDepth }}<br/>
-			shear: {{ criticalGrainSizeMin }}<br/>
-			shear: {{ criticalGrainSizeMax }}<br/> -->
-
-			<style>
-				table.vals {
-					margin: 10px;
-				}
-				table.vals td {
-					padding: 6px;
-					font-size: 15px;
-				}
-				table.vals td.key {
-					color: #999;
-					font-weight: 100;
-				}
-			</style>
 			<table class="vals">
 				<tr ng-repeat="row in table">
 					<td class="key">{{ row.description }}:</td>

@@ -20,7 +20,8 @@
     "underscore": "~1.7.0",
     "angular-ui-router": "~0.2.15",
     "pikaday-angular": "~2.0.0",
-    "ngjs-color-picker": "~1.0.4"
+    "ngjs-color-picker": "~1.0.4",
+    "angular-audio": "~1.7.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.5",

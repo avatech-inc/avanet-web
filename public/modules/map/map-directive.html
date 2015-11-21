@@ -66,9 +66,7 @@
       <button type="button" class="dropdown-toggle">
         <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;<span ng-show="terrainOverlay">&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span></span>
       </button>
-      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;">
-
-	    	<div style="padding: 12px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative;bottom:3px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 200px;"/></div>
+      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;padding-top:0px;"><li><a style="background:#fff !important;padding:0px;border-radius: 3px; overflow: hidden;">
 
 	    	<div ng-show="terrainOverlay == 'custom'">
 
@@ -117,21 +115,19 @@
 			  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
 		  				</div>
 				    </div>
-
-				  	<div class="accordion-item">
-				    	<div class="header">
-				            Color
-				        </div>
-				        <div class="content">
-			    			<input class="form-control" colorpicker="hex" type="text" ng-model="customTerrain.color" />
-		    			</div>
-				    </div>
 			    </accordion-new>
 
-  				<br/>
+			  	<div class="accordion-item">
+			    	<div class="header" style="cursor:default;">
+			            Color
+			            <ngjs-color-picker selected="customTerrain.color" style="float:right; margin-right: 9px; margin-top: 3px;"></ngjs-color-picker>
+			        </div>
+			    </div>
 	    	</div>
 
-	    	<div class="btn-group" style="margin: 2px 6px;">
+	    	<div style="padding: 12px;padding-bottom:0px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative; bottom:3px; font-weight:bold; font-size: 12px; margin-right: 4px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 199px;"/></div>
+
+	    	<div class="btn-group" style="margin: 7px 6px 2px 6px">
 		        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'elevation'">Elevation</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'slope'">
 		        Slope</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'aspect'">
 		        Aspect</label><!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" btn-radio="'hillshade'">

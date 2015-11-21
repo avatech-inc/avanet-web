@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal) {
+    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
 
         $scope.global = Global;
 
@@ -204,10 +204,11 @@ angular.module('avatech')
             //     console.log("Saved!");
             // });
 
-            $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
-            .then(function(res) {
-                console.log("Saved!");
-            });
+            // $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
+            // .then(function(res) {
+            //     console.log("Saved!");
+            // });
+            Observations.save($scope.getSanitizedProfileCopy());
         };
 
         // copy and normalize temps

@@ -1,20 +1,14 @@
-angular.module('avatech').factory('DeviceUploadModal', [ '$modal',
-    function ($modal) {
-
-        return { open: function(options) {
-
-            var modalInstance = $modal.open({
-                templateUrl: '/modules/device-upload-modal/modal.html',
-                controller: 'DeviceUploadModalController',
-                backdrop: 'static',
-                windowClass: 'width-400'
-            });
-
-            return modalInstance.result;
-
-        }
-    } }
-]);
+angular.module('avatech').factory('DeviceUploadModal', function ($modal) {
+    return { open: function(options) {
+        var modalInstance = $modal.open({
+            templateUrl: '/modules/device-upload-modal/modal.html',
+            controller: 'DeviceUploadModalController',
+            backdrop: 'static',
+            windowClass: 'width-400'
+        });
+        return modalInstance.result;
+    }
+}});
 
 angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', '$location', '$rootScope', '$modalInstance', '$timeout', '$http', 'Global', 'Observations',
     function ($scope, $location, $rootScope, $modalInstance, $timeout, $http, Global, Observations) {
@@ -64,7 +58,7 @@ angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', 
             $timeout(function() { $scope.$apply(); });
         }
         $scope.invalidDevice = function() {
-            alert("The device you selected is not an Avatech SP. Please try again.")
+            alert("The device you selected is not an Avatech SP.")
             $scope.screen = "selectDevice";
             $timeout(function() { $scope.$apply(); });
         }
@@ -91,7 +85,7 @@ angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', 
 ]);
 
 
-// file upload
+// upload button directive
 
 angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', function($q, $http, $timeout) {
   return {
@@ -108,7 +102,7 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
       onprogress: '&',
       cancel: '=',
     },
-    template: "<button class='upload-area btn btn-primary btn-lg'>Select SP1<input name='fileUpload' type='file' webkitdirectory directory mozdirectory></button>",
+    template: "<button class='upload-area btn btn-primary btn-lg'>Select SP<input name='fileUpload' type='file' webkitdirectory directory mozdirectory></button>",
     link: function(scope, element) {
 
       scope.$watch("cancel",function(){
@@ -143,11 +137,10 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
             console.log("FILES: " + hashes.length);
 
             // ask server which should be uploaded
-            $http.post('/v1/tests/checkUpload', { hashes: hashes }).
+            $http.post(window.apiBaseUrl + 'sp/checkIfExists', { hashes: hashes }).
               success(function(newHashes) {
 
                 if (newHashes.length == 0) {
-                    console.log("NOTHING!");
                     if (scope.oncomplete) scope.oncomplete({ uploaded: [] });
                     return;
                 }
@@ -159,10 +152,8 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
                 // uploaded files
                 var uploaded = [];
 
-                //for (var i = 0; i < newHashes.length; i++) {
                 angular.forEach(newHashes, function(hash) {
 
-                    //var hash = newHashes[i];
                     var file = _files[hash];
                     var reader = new FileReader();
                     reader.onload = function(e) {
@@ -221,7 +212,7 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
 
             setTimeout(function() {
 
-              xhr.open("POST", "/v1/tests/upload", true);
+              xhr.open("POST", window.apiBaseUrl + "sp/upload", true);
 
               // set token
               xhr.setRequestHeader('Auth-Token', $http.defaults.headers.common['Auth-Token']);
@@ -268,27 +259,23 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
           } 
         }
 
-        var checkInput = function() {
-            document.body.onfocus = null;
-            console.log(filesUpload.value == null);
-            // check if uplpading
-            setTimeout(function(){
-                if (filesUpload.value == "") {
-                    scope.oncancel();
-                }
-            }, 20 * 1000); // wait 20 seconds
-        }
+        // var checkInput = function() {
+        //     document.body.onfocus = null;
+        //     console.log(filesUpload.value == null);
+        //     // check if uplpading
+        //     setTimeout(function(){
+        //         if (filesUpload.value == "") {
+        //             console.log("cancelled!");
+        //             scope.oncancel();
+        //         }
+        //     }, 20 * 1000); // wait 20 seconds
+        // }
 
         filesUpload.addEventListener("click", function() {
             if (scope.onstart) scope.onstart();
-            console.log("click!");
             console.log(filesUpload.test);
-            document.body.onfocus = function () { setTimeout(checkInput, 200); };
+            //document.body.onfocus = function () { setTimeout(checkInput, 200); };
         });
-
-        // filesUpload.addEventListener("blur", function() {
-        //     console.log("blur!!!");
-        // });
         
         filesUpload.addEventListener("change", function() {
             traverseFiles(this.files);

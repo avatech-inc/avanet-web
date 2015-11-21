@@ -45,11 +45,11 @@ var formatters = {
         return org.name;
     },
     formatCm: function(str) {
-        if (!str) return "--";
+        if (str === null) return "--";
         return str + " cm";
     },
     formatCmOrIn: function(str) {
-        if (!str || isNaN(str)) return "--";
+        if (str === null || isNaN(str)) return "--";
 
         var val;
         if (Global.user.settings.elevation == 1) 
@@ -62,7 +62,7 @@ var formatters = {
         return this.formatElevation(str);
     },
     formatKmOrMiles: function(str) {
-        if (!str || isNaN(str)) return "--";
+        if (str === null || isNaN(str)) return "--";
 
         var km = parseFloat(str);
         if (Global.user.settings.elevation == 1) 
@@ -73,7 +73,7 @@ var formatters = {
         return this.formatElevation(str);
     },
     formatElevation: function(str) {
-        if (!str || isNaN(str)) return "--";
+        if (str === null || isNaN(str)) return "--";
 
         var val;
         if (Global.user.settings.elevation == 1) 
@@ -94,11 +94,11 @@ var formatters = {
         }
     },
     formatSlope: function(str) {
-        if (!str || isNaN(str)) return "--";
+        if (str === null || isNaN(str)) return "--";
         return parseFloat(str).toFixed(0) + "°";
     },
     formatDirection: function(str) {
-        if (str == null) return "--";
+        if (str === null) return "--";
 
         var direction = parseFloat(str);
         if (isNaN(direction)) return "--";
@@ -141,7 +141,7 @@ var formatters = {
         return direction + "° " + str;
     },
     formatWindSpeed: function(str) {
-        if (!str || isNaN(str)) return "--";
+        if (str === null || isNaN(str)) return "--";
 
         var speed = parseFloat(str);
         // imperial = mi/h

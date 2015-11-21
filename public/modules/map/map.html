@@ -150,7 +150,14 @@
 					<div ng-repeat="profile in $parent.filteredDrafts = (myProfiles | filter: my_unpublished) | orderBy : '-updated' track by profile._id" class="side-list-item short">
 						<a href="{{ profile.type == 'sp-profile' ? '/t/' + profile._id : '/profiles/' + profile._id }}" style="padding:0px;color:#666;font-weight:100;">
 
-							<div class="check" onclick="return false;">
+						<style>
+							.check.disabled {
+								pointer-events: none;
+								opacity: 0;
+							}
+						</style>
+
+							<div class="check" ng-class="{ disabled: profile.type == 'snowpit' }" onclick="return false;">
 								<i class="fa" 
 								ng-class="{ 
 								'fa-square-o': !isProfileSelected(profile),

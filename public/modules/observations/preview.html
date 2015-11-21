@@ -200,7 +200,8 @@ scrollable always-visible="true">
 		<!--<i class="fa fa-location-arrow" style="vertical-align:top;color:#aaa;margin-top:4px;margin-right:12px;float:left;font-size:30px;"></i>-->
 		<div style='display:inline-block;line-height:18px;vertical-align:top;'>
 		<b>Location</b><br/>
-		{{ formatters.format(observation.locationName) }}<br/>
+		<span ng-show="observation.locationName">{{ formatters.format(observation.locationName) }}</span>
+		<span ng-hide="observation.locationName">{{ formatters.formatLatLng(observation.location) }}</span>
 		</div>
 	</div>
 

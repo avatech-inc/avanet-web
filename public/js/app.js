@@ -11,7 +11,8 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'colorpicker.module',
     'credit-cards',
     'angular-country-picker',
-    'pikaday'
+    'pikaday',
+    'ngjsColorPicker'
 ]);
 
 angular.module('avatech.system', []);

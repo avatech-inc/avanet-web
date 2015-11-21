@@ -338,7 +338,7 @@ angular.module('avatech').controller('ObservationPreviewController',
                     var dataType = items[i][2];
 
                     var val = ob[key];
-                    if (val !== null && val != undefined) {
+                    if (val !== null && val !== undefined) {
                         // if enum
                         if (dataType !== null && typeof dataType === 'object') {
                             var enumVal = dataType[val];
@@ -381,9 +381,9 @@ angular.module('avatech').controller('ObservationPreviewController',
                         else if (dataType == "grainType") {
                             val = $scope.formatters.formatGrainType(val);
                         }
-                    }
 
-                    if (val) table.push({ key: key, description: desc, value: val });
+                        table.push({ key: key, description: desc, value: val });
+                    }
                 }
 
             }

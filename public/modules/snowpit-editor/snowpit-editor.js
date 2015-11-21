@@ -187,8 +187,6 @@ angular.module('avatech')
             $http.post(window.apiBaseUrl + "observations/", profile)
             .then(function(res) {
 
-                console.log("Created!");
-                console.log(res);
                 var _profile = res.data;
 
                 $scope._isNew = false;
@@ -196,14 +194,6 @@ angular.module('avatech')
                 $scope.loading = false;
                 $location.path('profiles/' + _profile._id).replace();
             });
-            // <nointernet>
-            // profile.$save(function(profile) {
-            //     console.log("Created!");
-            //     $scope._isNew = false;
-            //     $scope.profile._id = profile._id;
-            //     //$scope.loading = false;
-            //     $location.path('profiles/' + profile._id).replace();
-            // });
         };
         // update current profile
         $scope.update = function() {
@@ -719,40 +709,6 @@ angular.module('avatech')
             }, function () {
                 // on dismiss
             });
-
-            // var modalInstance = $modal.open({
-            //     templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
-            //     controller: 'SnowpitPublishModalController',
-            //     windowClass: 'width-480',
-            //     //backdrop: 'static',
-            //     resolve: {
-            //         objectName: function() { return 'profile' },
-            //         initialSharing: function () {
-            //           return {
-            //             level: $scope.profile.sharingLevel,
-            //             orgs: $scope.profile.sharedOrganizations,
-            //             avyCenter: $scope.profile.shareWithAvyCenter,
-            //             students: $scope.profile.shareWithStudents,
-            //           };
-            //         }
-            //     }
-            // });
-
-            // modalInstance.result.then(function (sharing) {
-                
-            //     $scope.profile.published = true;
-            //     $scope.profile.sharingLevel = sharing.level;
-            //     $scope.profile.shareWithAvyCenter = sharing.avyCenter;
-            //     $scope.profile.sharedOrganizations = sharing.selectedOrgs;
-            //     $scope.profile.shareWithStudents = sharing.students;
-
-            //     $scope.update();
-
-            //     $location.path('/p/' + $scope.profile._id);
-
-            // }, function () {
-            //     // on dismiss
-            // });
         }
 
         // PHOTO UPLOAD

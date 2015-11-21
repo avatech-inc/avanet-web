@@ -25,7 +25,7 @@
     }
     .share i.icon {
       font-size: 37px;
-      margin-top: 5px;
+      margin-top: 6px;
       float: left;
       width: 50px;
     }
@@ -152,140 +152,146 @@
 
     .select-org {
       border-bottom: 1px solid #e5e5e5;
+      font-weight:bold;
       padding-left: 10px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: 13px;
+      padding-bottom: 12px;
+      padding-right:10px;
+    }
+    .select-org select {
+      width: 214px;
+      float: right;
+      bottom: 7px;
+      position: relative;
+      font-weight: 100;
     }
 
-</style>  
-<!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
-    <!--<div class="modalClose" ng-click="close()"><i class="fa fa-times"></i></div>-->
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 style="font-size:22px;font-weight:100;padding-top:3px;">Publish</h3>
+</style>
+<div class="modal-content">
+    <div class="modal-header">
+        <h3 style="font-size:22px;font-weight:100;padding-top:3px;">Publish</h3>
+    </div>
+
+    <!--<div class="select-org" ng-if="global.user.userType.indexOf('pro') > -1">
+        Organization to publish as:
+
+        <select class="form-control" ng-model="sharing.organization" ng-options="org._id as org.name for org in global.orgs">
+        </select>
+    </div>-->
+
+    <div class="modal-body" style="margin-top:8px;margin-bottom:8px;padding:0;text-align:center;">
+
+      <div ng-if="global.user.userType.indexOf('pro') == -1" style="text-align:left;padding:4px 14px 19px 14px;font-size:18px;">
+        Publishing an observation will make it available to all users of Avanet. Before publishing, please make certain that all information you are submitting is accurate to the best of your ability.<br/><br/>
+        <b>Are you sure you're ready to publish?</b>
+      </div>
+
+      <div ng-if="global.user.userType.indexOf('pro') > -1">
+
+        <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'public' }" ng-click="sharing.sharingLevel='public'">
+            <i class="icon fa fa-globe"></i>
+            <div class="title">Public</div>
+            <div class="desc">Viewable by all users</div>
         </div>
-        <!--<div class="select-org" ng-if="global.user.student === false && global.orgs.length > 1">
-            Organization to publish as:
-        </div>-->
-        <div class="modal-body" style="margin-top:8px;margin-bottom:8px;padding:0;text-align:center;">
 
-          <div ng-if="global.user.student === true" style="text-align:left;padding:4px 14px 19px 14px;font-size:18px;">
-            Publishing this observation will make it available to all AvaNet students and professionals. Before publishing, please make certain that this observation is accurate to the best of your ability.<br/><br/>
-            <b>Are you sure you're ready to publish?</b>
-          </div>
+        <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'pros' }" ng-click="sharing.sharingLevel='pros'">
+            <i class="icon fa fa-briefcase"></i>
+            <div class="title">Professionals</div>
+            <div class="desc">Viewable by all professional users</div>
+        </div>
 
-          <div ng-if="global.user.student === false">
+        <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'org' }" ng-click="sharing.sharingLevel='org'">
+            <i class="icon fa fa-group"></i>
+            <div class="title">Organization</div>
+            <div class="desc">Viewable by the selected organizations</div>
 
-            <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'pros' }" ng-click="sharing.sharingLevel='pros'">
-                <i class="icon fa fa-globe"></i>
-                <div class="title">All Professionals</div>
-                <div class="desc">Viewable by all professionals on AvaNet.</div>
+            <div ng-show="sharing.sharingLevel == 'org' ">
+
+            <div style="padding-top:10px;border-top:1px solid #ccc;margin-top:10px;text-align:left;padding-left:4px;">
             </div>
 
-            <!--<div class="share" style="pointer-events:none;position:relative;">
-                <img src="/img/comingsoon.png" style="position: absolute;width: 90px;height: 90px;top: -2px;right: -2px;"/>
-                <i class="fa fa-group"></i>
-                <div class="title">Organization</div>
-                <div class="desc">All members of your organization will be able to see this profile.</div>
-            </div>
-            <div class="share" style="pointer-events:none;position:relative;">
-                <img src="/img/comingsoon.png" style="position: absolute;width: 90px;height: 90px;top: -2px;right: -2px;"/>
-                <i class="fa fa-globe"></i>
-                <div class="title">All Professionals</div>
-                <div class="desc">All professionals on AvaNet will be able to see this profile.</div>
-            </div>-->
+            <div class="btn-group userSelect" dropdown style="float:left;">
+              <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
+                <i class="fa fa-plus"></i> Add Organization
+              </button>
+              <ul class="dropdown-menu" role="menu" style="width:260px;min-height:54px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+              
+              <div ng-show="global.orgs && global.orgs.length > 0" class='subheader'>My Organizations
 
-            <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'org' }" ng-click="sharing.sharingLevel='org'">
-                <i class="icon fa fa-group"></i>
-                <div class="title">Organization</div>
-                <div class="desc">Viewable by the selected organizations.</div>
-
-                <div style="padding-top:10px;border-top:1px solid #ccc;margin-top:10px;text-align:left;padding-left:4px;">
+                <div class="selectAll" ng-click="selectAllOrgs()" close-dropdown-on-click>Select All
+                <span class="arrow"><i class="fa fa-plus"></i></span>
                 </div>
+              </div>
+              <ul ng-show="global.orgs && global.orgs.length > 0" class="results">
+                <li ng-repeat="org in global.orgs" ng-click="addOrg(org)" close-dropdown-on-click ng-class="{ isMember: isSelected(org._id) }">
+                  {{ org.name }} 
+                  <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
 
-                <div class="btn-group userSelect" dropdown style="float:left;">
-                  <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
-                    <i class="fa fa-plus"></i> Add Organization
-                  </button>
-                  <ul class="dropdown-menu" role="menu" style="width:260px;min-height:54px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
-                  
-                  <div ng-show="global.orgs && global.orgs.length > 0" class='subheader'>My Organizations
+                  <span class="arrow"><i class="fa fa-plus"></i></span>
+                </li>
+              </ul>
 
-                    <div class="selectAll" ng-click="selectAllOrgs()" close-dropdown-on-click>Select All
-                    <span class="arrow"><i class="fa fa-plus"></i></span>
-                    </div>
+              <div class='subheader mid'>Outside Organizations</div>
+
+              <div style="padding:3px 12px;">
+
+                  <div class="form-group" style="margin-bottom:0;position:relative;">
+                    <input type="text" class="form-control" placeholder="Search for an organization by name" ng-model="search.query" ng-change="doSearch()">
+                    <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
                   </div>
-                  <ul ng-show="global.orgs && global.orgs.length > 0" class="results">
-                    <li ng-repeat="org in global.orgs" ng-click="addOrg(org)" close-dropdown-on-click ng-class="{ isMember: isSelected(org._id) }">
-                      {{ org.name }} 
-                      <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
 
-                      <span class="arrow"><i class="fa fa-plus"></i></span>
-                    </li>
-                  </ul>
-
-                  <div class='subheader mid'>Outside Organizations</div>
-
-                  <div style="padding:3px 12px;">
-
-                      <div class="form-group" style="margin-bottom:0;position:relative;">
-                        <input type="text" class="form-control" placeholder="Search for an organization by name" ng-model="search.query" ng-change="doSearch()">
-                        <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
-                      </div>
-
-                      <div class="no-results" ng-show="search.results.length == 0 && !search.email">
-                        No results
-                      </div>
-                    </div>
-
-                    <ul ng-show="search.results.length > 0" class="results">
-                      <li ng-repeat="result in search.results" ng-click="addOrg(result)" close-dropdown-on-click ng-class="{ isMember: isSelected(result._id) }">
-                        {{ result.name }} 
-                        <span ng-show="result.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
-
-                        <span class="arrow"><i class="fa fa-plus"></i></span>
-                      </li>
-                    </ul>
-                    <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
-
-                    </a></li></ul>
+                  <div class="no-results" ng-show="search.results.length == 0 && !search.email">
+                    No results
+                  </div>
                 </div>
 
-                <ul class="selectedOrgs" ng-show="sharing.sharedOrganizations && sharing.sharedOrganizations.length > 0">
-                  <li ng-repeat="org in sharing.sharedOrganizations">
-                    <i class="fa fa-times x" ng-click="removeOrg(org)" title="remove this organization"></i>
-                    {{ org.name }}
-                    <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+                <ul ng-show="search.results.length > 0" class="results">
+                  <li ng-repeat="result in search.results" ng-click="addOrg(result)" close-dropdown-on-click ng-class="{ isMember: isSelected(result._id) }">
+                    {{ result.name }} 
+                    <span ng-show="result.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+
+                    <span class="arrow"><i class="fa fa-plus"></i></span>
                   </li>
                 </ul>
+                <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
 
+                </a></li></ul>
             </div>
 
-            <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'private' }" ng-click="sharing.sharingLevel='private'">
-                <i class="icon fa fa-lock"></i>
-                <div class="title">Private</div>
-                <div class="desc">Viewable only by you.</div>
-            </div>
-
-            <div class="share-long" style="margin-bottom:4px;" ng-show="sharing.sharingLevel == 'pros'">
-            <label style="font-weight:500;margin:0;padding:0;">
-              <input type="checkbox" ng-model="sharing.shareWithStudents">&nbsp;&nbsp;
-              Share with avalanche education students</label>
-            </div>
-            <div class="share-long" ng-show="sharing.sharingLevel == 'pros'">
-            <label style="font-weight:500;margin:0;padding:0;" >
-              <input type="checkbox" ng-model="sharing.shareWithAvyCenter">&nbsp;&nbsp;
-              Share with local and regional forecast centers</label>
-            </div>
-
+            <ul class="selectedOrgs" ng-show="sharing.sharedOrganizations && sharing.sharedOrganizations.length > 0">
+              <li ng-repeat="org in sharing.sharedOrganizations">
+                <i class="fa fa-times x" ng-click="removeOrg(org)" title="remove this organization"></i>
+                {{ org.name }}
+                <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>EDUCATION</span></span>
+              </li>
+            </ul>
           </div>
-
-
-
         </div>
-        <div class="modal-footer">
-           <button class="btn btn-default btn-lg" ng-click="close()" style="float:left;">Cancel</button>
 
-           <button class="btn btn-primary btn-lg" ng-click="publish()">Publish</button>
+        <div class="share" ng-class="{ 'selected':sharing.sharingLevel == 'private' }" ng-click="sharing.sharingLevel='private'">
+            <i class="icon fa fa-lock"></i>
+            <div class="title">Private</div>
+            <div class="desc">Viewable only by you</div>
         </div>
+
+        <!--
+        <div class="share-long" style="margin-bottom:4px;" ng-show="sharing.sharingLevel == 'pros'">
+        <label style="font-weight:500;margin:0;padding:0;">
+          <input type="checkbox" ng-model="sharing.shareWithStudents">&nbsp;&nbsp;
+          Share with avalanche education students</label>
+        </div>
+        <div class="share-long" ng-show="sharing.sharingLevel == 'pros'">
+        <label style="font-weight:500;margin:0;padding:0;" >
+          <input type="checkbox" ng-model="sharing.shareWithAvyCenter">&nbsp;&nbsp;
+          Share with local and regional forecast centers</label>
+        </div>
+        -->
+
+      </div>
     </div>
+    <div class="modal-footer">
+       <button class="btn btn-default btn-lg" ng-click="close()" style="float:left;">Cancel</button>
+
+       <button class="btn btn-primary btn-lg" ng-click="publish()">Publish</button>
+    </div>
+</div>

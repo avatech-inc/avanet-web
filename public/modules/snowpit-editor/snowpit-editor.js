@@ -707,21 +707,11 @@ angular.module('avatech')
             }
 
             PublishModal.open({ 
-                initialSharing: {
-                    sharingLevel: $scope.profile.sharingLevel,
-                    sharedOrganizations: $scope.profile.sharedOrganizations,
-                    shareWithAvyCenter: $scope.profile.shareWithAvyCenter,
-                    shareWithStudents: $scope.profile.shareWithStudents,
-                } 
+                initialSharing: angular.copy($scope.profile)
             })
             .then(function (sharing) {
-
                 $scope.profile.published = true;
-                $scope.profile.sharingLevel = sharing.sharingLevel;
-                $scope.profile.shareWithAvyCenter = sharing.shareWithAvyCenter;
-                $scope.profile.sharedOrganizations = sharing.sharedOrganizations;
-                $scope.profile.shareWithStudents = sharing.shareWithStudents;
-
+                angular.extend($scope.profile, sharing);
                 $scope.update();
 
                 $location.path('/p/' + $scope.profile._id);

@@ -1,64 +1,25 @@
-angular.module('avatech').factory('PublishModal', [ '$modal',
-    function ($modal) {
-        // modalInstance.result.then(function (sharing) {
+angular.module('avatech').factory('PublishModal', function ($modal) {
+    return { open: function(options) {
 
-        //     angular.forEach($scope.selectedProfiles,function(profile) {
-
-        //         // get profile from array
-        //         // todo: clean this up, not very angular-y...
-        //         // this needs to be done since updating myProfiles replaces the references
-        //         // should really implement a central store like in the app, with the same
-        //         // replace-or-add type functionality
-        //         // for (var i = 0; i < $scope.myProfiles.length; i++) {
-        //         //     var _profile = $scope.myProfiles[i];
-        //         //     if (_profile.type == profile.type && _profile._id == profile._id)  profile = _profile;
-        //         // }
-
-        //         profile.published = true;
-        //         profile.sharingLevel = sharing.level;
-        //         profile.shareWithAvyCenter = sharing.avyCenter;
-        //         profile.sharedOrganizations = sharing.selectedOrgs;
-        //         profile.shareWithStudents = sharing.students;
-
-        //         Observations.save(profile);
-
-        //     });
-    
-        //     // clear selected profiles
-        //     $scope.selectedProfiles = [];
-
-        // }, function () {
-        //     // on dismiss
-        // });
-
-        return { open: function(options) {
-
-            if (!options.initialSharing) options.initialSharing = null;
-            
-             var modalInstance = $modal.open({
-                templateUrl: '/modules/publish-modal/modal.html',
-                controller: 'PublishModalController',
-                windowClass: 'width-400',
-                //backdrop: 'static',
-                resolve: {
-                    //objectName: function() { return 'profile' },
-                    initialSharing: function () {
-                        return options.initialSharing;
-                      // return {
-                      //   level: null,
-                      //   orgs: null,
-                      //   avyCenter: null,
-                      //   students: null
-                      // };
-                    }
+        if (!options.initialSharing) options.initialSharing = null;
+        
+         var modalInstance = $modal.open({
+            templateUrl: '/modules/publish-modal/modal.html',
+            controller: 'PublishModalController',
+            windowClass: 'width-400',
+            //backdrop: 'static',
+            resolve: {
+                initialSharing: function () {
+                    return options.initialSharing;
                 }
-            });
+            }
+        });
 
-            return modalInstance.result;
+        return modalInstance.result;
 
-        }
-    } }
-]);
+    }
+}
+});
 
 angular.module('avatech').controller('PublishModalController', [ '$scope','$modalInstance', 'initialSharing', '$timeout', 'Global', 'Restangular', 
     function ($scope, $modalInstance, initialSharing, $timeout, Global, Restangular) {
@@ -68,7 +29,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
         $scope.sharing = {
             published: true,
             organization: null,
-            sharingLevel: "pros",
+            sharingLevel: "public",
             shareWithAvyCenter: true,
             shareWithStudents: true,
             sharedOrganizations: []
@@ -88,14 +49,14 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
         };
         $scope.publish = function () {
             // if student
-            if ($scope.global.user.student === true) {
+            if ($scope.global.user.userType.indexOf("pro") == -1) {
                 $scope.sharing.published = true;
                 $scope.sharing.organization = null;
-                $scope.sharing.sharingLevel = "student";
+                $scope.sharing.sharingLevel = "public";
                 $scope.sharing.shareWithAvyCenter = true;
                 $scope.sharing.shareWithStudents = true;
                 $scope.sharing.sharedOrganizations = [];
-
+                console.log($scope.sharing);
                 $modalInstance.close($scope.sharing);
             }
             // if regular user
@@ -126,25 +87,6 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
 
                 Restangular.all("orgs").getList({ query: $scope.search.query }).then(function(orgs) {
                     $scope.search.searching = false;
-
-                    // if (users.length == 0) {
-                    //     if ($scope.search.query.indexOf('@') > -1 && validateEmail($scope.search.query)) $scope.search.email =  $scope.search.query;
-                    //     else $scope.search.email = null;
-                    // }
-
-                    // $scope.members = [];
-                    // // detect if already members
-                    // for (var r = 0; r < users.length; r++) {
-                    //     var user = users[r];
-                    //     for (var i = 0; i < $scope.members.length; i ++) {
-                    //         if ($scope.members[i].user._id == user._id) {
-                    //             user.isMember = true;
-                    //             break;
-                    //         }
-                    //     }
-                    //     if (user.isMember == null) user.isMember = false;
-                    // }
-
                     if (!$scope.abortSearch) $scope.search.results = orgs;
                 });            
 
@@ -173,6 +115,5 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
             console.log(index);
             $scope.sharing.sharedOrganizations.splice(index, 1);    
         }
-
     }
 ]);

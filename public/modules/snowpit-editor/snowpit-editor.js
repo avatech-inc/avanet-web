@@ -222,7 +222,7 @@ angular.module('avatech')
                 if (!isNaN(num)) temp.temp = num / 2;
             });
 
-            // make sure observation type is set
+            // make sure observation type is always set
             profile.type = 'snowpit';
 
             return profile;

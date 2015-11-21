@@ -15,7 +15,7 @@
     "angular-moment": "~0.8.0",
     "restangular": "~1.4.0",
     "lodash": "~2.4.1",
-    "angular-bootstrap-lightbox": "~0.3.2",
+    "angular-bootstrap-lightbox": "~0.10.0",
     "ment.io": "~0.9.20",
     "underscore": "~1.7.0",
     "angular-ui-router": "~0.2.15",

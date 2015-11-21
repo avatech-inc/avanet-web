@@ -20,18 +20,11 @@ angular.module('avatech.system', []);
 
 angular.module('avatech.profiles', []);
 
-// angular.module('avatech').factory('Lightbox', function() {    
-//     return {
-//         // restrict: 'A',
-//         // link: function(scope, el, attrs) {    
-//         //     // el.bind('click', function($event) {
-//         //     //   var el = $($event.target).closest(".open");
-//         //     //   if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
-//         //     //   scope.$apply();
-//         //     // });
-//         // }
-//     };        
-// });
+angular.module('avatech').config(function (LightboxProvider) {
+  LightboxProvider.getImageUrl = function (image) {
+    return image.URL;
+  };
+});
 
 // configure angular schema forms
 angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecoratorsProvider', 'sfPathProvider',

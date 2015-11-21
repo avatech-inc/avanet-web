@@ -1,10 +1,8 @@
-
 angular.module('avatech').directive('accordionNew', function () {
     return {
         restrict: 'E',
         link: function (scope, elem, attrs, ctrl) {
             $(elem).find(".header").click(function() {
-
                 if ($(this).parent().hasClass("open")) {
                     $(this).parent().removeClass("open");
                 }

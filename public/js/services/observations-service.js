@@ -68,11 +68,20 @@ angular.module('avatech').service('Observations',
 	this.save = function(observation) {
 		replaceObservation(observation);
 
-        // update on server
-        // todo: update!
-        // if (observation.type == 'test') {
-        // 	$http.post("/v1/tests", observation);
-        // }
+    // update
+    if (observation._id) {
+
+      $http.put(window.apiBaseUrl + "observations/" + observation._id, observation)
+      .then(function(_observation) {
+          angular.extend(observation, _observation);
+          replaceObservation(observation);
+      });
+
+    }
+    // todo: create?
+    else {
+
+    }
 	};
 
 	this.remove = function(observation) {

@@ -1,5 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox) {
+    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -21,6 +21,25 @@ angular.module('avatech').controller('ObservationPreviewController',
 
         $scope.showPhoto = function(index) {
             Lightbox.openModal($scope.observation.photos, index);
+        }
+        $scope.showMedia = function(media, $event) {
+            console.log($event);
+            if (media.type == "photo") {
+                Lightbox.openModal($scope.observation.photos, index);
+            }
+            else if (media.type == "audio") {
+                // if already loaded, toggle pause/play
+                if ($scope.audio && $scope.audio.id == media.URL) {
+                    if ($scope.audio.paused) $scope.audio.play();
+                    else $scope.audio.pause();
+                }
+                // load and play
+                else {
+                    $scope.audio = ngAudio.load(media.URL);
+                    console.log($scope.audio);
+                    $scope.audio.play();
+                }
+            }
         }
 
         $scope.getMediaURL = function(media) {

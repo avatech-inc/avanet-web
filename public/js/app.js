@@ -100,8 +100,9 @@ angular.module('avatech').config(function($translateProvider, $translatePartialL
     // set language
     $translateProvider.preferredLanguage('en');
 
+    // enable proper escaping of HTML
+    //$translateProvider.useSanitizeValueStrategy('escape');
 });
-
 angular.module('avatech').config(function(cfpLoadingBarProvider) {
     cfpLoadingBarProvider.includeSpinner = false;
     cfpLoadingBarProvider.includeBar = false;

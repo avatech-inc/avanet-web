@@ -80,15 +80,11 @@
         </li>
 
         <li class="dropdown">
-	        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>
-	        <ul class="dropdown-menu">
-	          <!--<li><a href="#">Account</a></li>
-	          <li ng-if="global.user.admin" class="divider"></li>
-            <li role="presentation" class="dropdown-header">ORGANIZATIONS</li>
-            <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}</a></li>
-            <li ><a href="/orgs/new"><i class="fa fa-plus"></i>New Organization</a></li>
-            <li ng-if="global.orgs.length > 0" class="divider"></li>-->
+	        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <div class="headshot" ng-style="{ 'background-image':'url(' + (observation.user.profilePhotoURL ? global.user.profilePhotoURL : '/img/nophoto.jpg' ) + ')' }"></div>
 
+          {{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>
+	        <ul class="dropdown-menu">
 
             <li><a href="/settings">{{ 'user_settings' | translate }}</a></li>
             <li ng-hide="isDemo" class="divider"></li>

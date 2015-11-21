@@ -98,6 +98,7 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
     $scope.isProfileSelected = function(profile) {
         return ($scope.getProfileSelectedIndex(profile) != -1);
     }
+
     $scope.publishProfiles = function() {
         PublishModal.open({ initialSharing: null })
         .then(function (sharing) {

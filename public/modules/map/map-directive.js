@@ -607,14 +607,14 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             aspect_low: 0,
             aspect_high: 359,
         };
-        var customTerrainTimer;
+        //var customTerrainTimer;
         scope.$watch('customTerrain', function() {
-            if (customTerrainTimer) clearTimeout(customTerrainTimer);
-            customTerrainTimer = setTimeout(function(){
+            //if (customTerrainTimer) clearTimeout(customTerrainTimer);
+            //customTerrainTimer = setTimeout(function(){
                 if (scope.customTerrain.color.indexOf('#') == 0) scope.customTerrain.color = scope.customTerrain.color.substr(1);
                 scope.terrainLayer.customParams = angular.copy(scope.customTerrain);
                 scope.terrainLayer.needsRedraw = true;
-            }, 20);
+            //}, 20);
         }, true);
     }
     else initLoad();

@@ -1,4 +1,3 @@
-
 angular.module('avatech').controller('ObservationsController', ['$scope', '$q', '$location', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular', 'LocationSelectModal', 'Confirm', 'Lightbox',
 function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Global, Restangular, LocationSelectModal, Confirm, Lightbox) {
     $scope.global = Global;
@@ -164,22 +163,22 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
         }
 
          // todo: abstract this into controller
-            var modalInstance = $modal.open({
-                templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
-                controller: 'SnowpitPublishModalController',
-                windowClass: 'width-480',
-                resolve: {
-                    objectName: function() { return 'observation' },
-                    initialSharing: function () {
-                      return {
-                        level: $scope.obs.sharingLevel,
-                        orgs: $scope.obs.sharedOrganizations,
-                        avyCenter: $scope.obs.shareWithAvyCenter,
-                        students: $scope.obs.shareWithStudents,
-                      };
-                    }
-                }
-            });
+            // var modalInstance = $modal.open({
+            //     templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
+            //     controller: 'SnowpitPublishModalController',
+            //     windowClass: 'width-480',
+            //     resolve: {
+            //         objectName: function() { return 'observation' },
+            //         initialSharing: function () {
+            //           return {
+            //             level: $scope.obs.sharingLevel,
+            //             orgs: $scope.obs.sharedOrganizations,
+            //             avyCenter: $scope.obs.shareWithAvyCenter,
+            //             students: $scope.obs.shareWithStudents,
+            //           };
+            //         }
+            //     }
+            // });
 
             modalInstance.result.then(function (sharing) {
                 
@@ -188,8 +187,7 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
                 $scope.obs.shareWithAvyCenter = sharing.avyCenter;
                 $scope.obs.sharedOrganizations = sharing.selectedOrgs;
                 $scope.obs.shareWithStudents = sharing.students;
-
-                $scope.obs.type = "avy";
+                $scope.obs.type = "avalanche";
 
                 console.log($scope.obs);
 

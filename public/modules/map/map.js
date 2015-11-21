@@ -116,14 +116,19 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
         $scope.selectedList = 'my_unpublished';
     });
 
-    $scope.$on('profileLoaded', function(e, profile) {
-        if (!profile || !profile.location) return;
+    // when an observation preview is loaded, go to location on map
+    $scope.$on('observationLoaded', function(e, ob) {
+        if (!ob || !ob.location) return;
         $timeout(function() {
-            // close open popup
+            var point = new L.LatLng(ob.location[1], ob.location[0]);
+            // close any open popups
             var closebtn = $(".leaflet-popup-close-button");
             if (closebtn.length) closebtn[0].click();
-            // pan to location
-            $scope.map.panTo({ lat: profile.location[1], lng: profile.location[0] });
+
+            // if location is outside current map, pan to location
+            if ($scope.map && !$scope.map.getBounds().contains(point)) {
+                $scope.map.panTo(point);
+            }
         });
     });
 

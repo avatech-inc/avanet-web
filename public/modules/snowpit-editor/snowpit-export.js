@@ -1,22 +1,28 @@
+angular.module('avatech').factory('snowpitExport', function ($q, snowpitConstants,$compile,$rootScope, Global) { 
 
-
-angular.module('avatech').factory('snowpitExport', ['$q','snowpitConstants','$compile','$rootScope','Global', function ($q, snowpitConstants,$compile,$rootScope, Global) { 
-
-
-var getGrainType = function(layer, isSecondary) {
-    var icssg = "";
-    if (!layer || !layer["grainType" + isSecondary]) return "";
+// var getGrainType = function(layer, isSecondary) {
+//     var icssg = "";
+//     if (!layer || !layer["grainType" + isSecondary]) return "";
+//     for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
+//         if (snowpitConstants.grainTypes[i].legacyCode == layer["grainType" + isSecondary].category) {
+//             for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+//                 if (snowpitConstants.grainTypes[i].types[j].code == layer["grainType" + isSecondary].code) {
+//                     icssg = snowpitConstants.grainTypes[i].types[j].icssg;
+//                 }
+//             }
+//             break;
+//         }
+//     }
+//     return icssg;
+// }
+var getGrainType = function(icssg) {
     for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
-        if (snowpitConstants.grainTypes[i].legacyCode == layer["grainType" + isSecondary].category) {
-            for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
-                if (snowpitConstants.grainTypes[i].types[j].code == layer["grainType" + isSecondary].code) {
-                    icssg = snowpitConstants.grainTypes[i].types[j].icssg;
-                }
+        for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+            if (snowpitConstants.grainTypes[i].types[j].icssg == icssg) {
+                return snowpitConstants.grainTypes[i].types[j];
             }
-            break;
         }
     }
-    return icssg;
 }
 
 function numberWithCommas(x) {
@@ -53,6 +59,10 @@ var formatters = {
         if (!org || org == "" || !org.name) return "--";
         return org.name;
     },
+    formatCm: function(str) {
+        if (!str) return "--";
+        return str + " cm";
+    },
     formatCmOrIn: function(str) {
         if (!str || isNaN(str)) return "--";
 
@@ -87,10 +97,6 @@ var formatters = {
 
         return "--";
     },
-    formatCm: function(str) {
-        if (!str) return "--";
-        return str + " cm";
-    },
     formatTemp: function(str) {
         var temp = parseFloat(str);
         if (isNaN(temp)) return "--";
@@ -103,8 +109,8 @@ var formatters = {
         }
     },
     formatSlope: function(str) {
-        if (!str) return "--";
-        return str + "°";
+        if (!str || isNaN(str)) return "--";
+        return parseFloat(str).toFixed(0) + "°";
     },
     formatDirection: function(str) {
         if (str == null) return "--";
@@ -148,6 +154,17 @@ var formatters = {
         direction = direction.toFixed(0);
         
         return direction + "° " + str;
+    },
+    formatWindSpeed: function(str) {
+        if (!str || isNaN(str)) return "--";
+
+        var speed = parseFloat(str);
+        // imperial = mi/h
+        if (Global.user.settings.elevation == 1) return (speed * 2.23694).toFixed(2) + " mi/h";
+        // metric = m/s
+        else return str + " m/s";
+
+        return "--";
     },
     formatPrecip: function(str) {
         if (!str) return "--";
@@ -297,6 +314,13 @@ var formatters = {
         }
         else str = Math.floor(minutes) + " min";
         return str;
+    },
+    formatGrainType: function(icssg) {
+        var grainType = getGrainType(icssg);
+        if (grainType) {
+            return icssg + " - " + grainType.desc;
+        }
+        return "--";
     }
 };
 
@@ -310,8 +334,8 @@ return {
             text += layer.height + ",";
             text += layer.hardness + ",";
             text += layer.hardness2 + ",";
-            text += getGrainType(layer, "") + ",";
-            text += getGrainType(layer, "2") + "";
+            if (layer.grainType) text += layer.grainType + ",";
+            if (layer.grainType2) text += layer.grainType2 + "";
 
             text += "\n";
         });
@@ -973,4 +997,4 @@ return {
     }
 }
 
-}]);
+});

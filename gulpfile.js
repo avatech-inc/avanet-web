@@ -49,20 +49,16 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
  
 gulp.task('clean-css', function() {
   return gulp.src('public/css', {read: false})
-        .pipe(clean({ force: true }));
+  .pipe(clean({ force: true }));
 })
 gulp.task('compass', ['clean-css'], function() {
   return gulp.src(['public/sass/**/*.scss','public/modules/**/*.scss'])
-        .pipe(sass({ errLogToConsole: true }))
-        .pipe(gulp.dest('public/css'));
+  .pipe(sass({ errLogToConsole: true }))
+  .pipe(gulp.dest('public/css'));
 });
 
 gulp.task('ng-annotate', function() {
-  return gulp.src([
-    '_dist/public/js/**/*.js',
-    '_dist/public/modules/**/*.js',
-    '!_dist/public/js/lib'
-  ])
+  return gulp.src(['_dist/public/assets/*.js'])
   .pipe(ngAnnotate())
   .pipe(gulp.dest(function(file) { return file.base; }));
 });
@@ -277,10 +273,10 @@ gulp.task('build', function(done) {
     'copy',
     // strip out 'console.log' etc.
     'strip-debug',
-    // add angular [] annotations
-    'ng-annotate',
     // concat files
     'combine', 
+    // add angular [] annotations
+    'ng-annotate',
     // clean main.html
     'clean-html',
     // uglify javascript

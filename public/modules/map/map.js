@@ -125,6 +125,7 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
     }
 
     $scope.$on('goToUnpublished', function() { 
+        $scope.selectedTab = 'obs';
         $scope.selectedList = 'my_unpublished';
     });
 

@@ -596,7 +596,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         // custom terrain visualization
         scope.elevationMax = Global.user.settings.elevation == 0 ? 8850 : 8850;
         scope.customTerrain = {
-            color: '#ffcc00',
+            color: '#FFFF00',
 
             elev_low: 0,
             elev_high: scope.elevationMax,

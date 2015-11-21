@@ -125,7 +125,7 @@ table.vals td.key {
 	<div class="buttons">
 		<div ng-show="observation">
 
-			<div class="btn-group filter right" ng-hide="discussMode">
+			<div class="btn-group filter right" ng-hide="discussMode || !observation.published">
 		      <button type="button" ng-click="discussMode = !discussMode"><i class="ion-chatboxes"></i>&nbsp;&nbsp;Discuss
 		      </button>
 	      	</div>

@@ -101,26 +101,13 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
     $scope.publishProfiles = function() {
         PublishModal.open({ initialSharing: null })
         .then(function (sharing) {
-
-            angular.forEach($scope.selectedProfiles,function(profile) {
-
-                profile.published = true;
-                profile.sharingLevel = sharing.sharingLevel;
-                profile.shareWithAvyCenter = sharing.shareWithAvyCenter;
-                profile.sharedOrganizations = sharing.sharedOrganizations;
-                profile.shareWithStudents = sharing.shareWithStudents;
-
-                console.log(sharing);
-
+            // update profiles with new sharing settings
+            angular.forEach($scope.selectedProfiles, function(profile) {
+                angular.extend(profile, sharing);
                 Observations.save(profile);
-
             });
-    
             // clear selected profiles
             $scope.selectedProfiles = [];
-
-        }, function () {
-            // on dismiss
         });
     }
 

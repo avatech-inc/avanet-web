@@ -340,6 +340,21 @@ header.navbar {
     width: 100% !important;
   }
 
+  .headshot {
+    background-color: #aaa;
+    height: 30px;
+    width: 30px;
+    border-radius: 100px;
+    background-size: cover;
+    background-position: center center;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: top;
+    top: 8px;
+    position: relative;
+  }
+
+
   /* dropdowns */
   ul.dropdown-menu {
     background: #444;

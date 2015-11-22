@@ -35,11 +35,11 @@ angular.module('avatech').controller('ObservationPreviewController',
             // get index
             var index = non_audio_media.indexOf(media);
 
-            // if video, replace .mov with .mp4 so we can play with native HTML5
-            if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
-                media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
-                console.log(media.URL);
-            }
+            // // if video, replace .mov with .mp4 so we can play with native HTML5
+            // if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
+            //     media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
+            //     console.log(media.URL);
+            // }
 
             // show media
             if (media.type == "photo" || media.type == "video") {

@@ -1,26 +1,4 @@
-// angular.module('avatech').factory('LocationSelectModal', [ '$modal',
-//     function ($modal) {
-
-//         return { open: function(options) {
-
-//             var modalInstance = $modal.open({
-//                 templateUrl: '/modules/location-select-modal/location-select-modal.html',
-//                 controller: 'LocationSelectModalController',
-//                 backdrop: 'static',
-//                 resolve: {
-//                     initialLocation: function () {
-//                       return options.initialLocation
-//                     }
-//                 }
-//             });
-
-//             return modalInstance.result;
-
-//         }
-//     } }
-// ]);
-
-angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $timeout, $modalInstance, initialLocation, Global) {
+angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $timeout, $uibModalInstance, initialLocation, Global) {
 
         $scope.global = Global;
 
@@ -521,7 +499,7 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
         // $scope.form = {};
 
-        // // $modalInstance.opened.then(function(){ });
+        // // $uibModalInstance.opened.then(function(){ });
 
         // $scope.loadMap = function(){
         //     // mapbox uses lat/lng, DB uses lng/lat
@@ -578,10 +556,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
         // }
 
         $scope.close = function () {
-            $modalInstance.dismiss();
+            $uibModalInstance.dismiss();
         };
         $scope.select = function () {
-            $modalInstance.close($scope.form.location);
+            $uibModalInstance.close($scope.form.location);
         };
 
         // on map search select

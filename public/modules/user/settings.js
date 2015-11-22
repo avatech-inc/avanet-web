@@ -1,6 +1,5 @@
-
-angular.module('avatech').controller('SettingsController', ['$scope', '$q', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular', '$http', 'LocationSelectModal',
-function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular, $http, LocationSelectModal) {
+angular.module('avatech').controller('SettingsController', 
+function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $http, LocationSelectModal) {
     $scope.global = Global;
 
     $scope.loadSettings = function() { 
@@ -274,4 +273,4 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         });
     }
 
-}]);
+});

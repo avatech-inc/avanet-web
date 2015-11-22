@@ -1,6 +1,6 @@
-angular.module('avatech').factory('LocationSelectModal', function ($modal) {
+angular.module('avatech').factory('LocationSelectModal', function ($uibModal) {
     return { open: function(options) {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: '/modules/location-select-modal/location-select-modal.html',
             controller: 'LocationSelectModalController',
             backdrop: 'static',
@@ -17,7 +17,7 @@ angular.module('avatech').factory('LocationSelectModal', function ($modal) {
 });
 
 angular.module('avatech').controller('LocationSelectModalController',
-    function ($scope, $timeout, $modalInstance, initialLocation, Global) {
+    function ($scope, $timeout, $uibModalInstance, initialLocation, Global) {
 
         $scope.global = Global;
 
@@ -25,7 +25,7 @@ angular.module('avatech').controller('LocationSelectModalController',
         $scope.mapHolder = {};
         $scope.coords = {};
 
-        // $modalInstance.opened.then(function(){ });
+        // $uibModalInstance.opened.then(function(){ });
 
         var mapWatcher = $scope.$watch('mapHolder.map', function() {
             if ($scope.mapHolder.map) {
@@ -73,10 +73,10 @@ angular.module('avatech').controller('LocationSelectModalController',
         }
 
         $scope.close = function () {
-            $modalInstance.dismiss();
+            $uibModalInstance.dismiss();
         };
         $scope.select = function () {
-            $modalInstance.close($scope.form.location);
+            $uibModalInstance.close($scope.form.location);
         };
 
         $scope.form.coordSystem = Global.user.settings.coordSystem;

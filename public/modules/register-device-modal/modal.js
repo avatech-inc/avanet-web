@@ -1,7 +1,7 @@
-angular.module('avatech').factory('RegisterDeviceModal', function ($modal) {
+angular.module('avatech').factory('RegisterDeviceModal', function ($uibModal) {
         return { open: function(options) {
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: '/modules/register-device-modal/modal.html',
                 controller: 'RegisterDeviceModalController',
                 backdrop: 'static',
@@ -15,14 +15,14 @@ angular.module('avatech').factory('RegisterDeviceModal', function ($modal) {
 });
 
 angular.module('avatech').controller('RegisterDeviceModalController',
-    function ($scope, $modalInstance, $timeout, $http, Global, Restangular) {
+    function ($scope, $uibModalInstance, $timeout, $http, Global, Restangular) {
 
         $scope.global = Global;
 
         $scope.serial = { number: "" };
 
         $scope.close = function () {
-            $modalInstance.dismiss();
+            $uibModalInstance.dismiss();
         };
         $scope.register = function () {
 

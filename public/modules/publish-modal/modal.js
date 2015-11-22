@@ -1,9 +1,9 @@
-angular.module('avatech').factory('PublishModal', function ($modal) {
+angular.module('avatech').factory('PublishModal', function ($uibModal) {
     return { open: function(options) {
 
         if (!options.initialSharing) options.initialSharing = null;
         
-         var modalInstance = $modal.open({
+         var modalInstance = $uibModal.open({
             templateUrl: '/modules/publish-modal/modal.html',
             controller: 'PublishModalController',
             windowClass: 'width-400',
@@ -21,8 +21,8 @@ angular.module('avatech').factory('PublishModal', function ($modal) {
 }
 });
 
-angular.module('avatech').controller('PublishModalController', [ '$scope','$modalInstance', 'initialSharing', '$timeout', 'Global', 'Restangular', 
-    function ($scope, $modalInstance, initialSharing, $timeout, Global, Restangular) {
+angular.module('avatech').controller('PublishModalController', [ '$scope','$uibModalInstance', 'initialSharing', '$timeout', 'Global', 'Restangular', 
+    function ($scope, $uibModalInstance, initialSharing, $timeout, Global, Restangular) {
 
         $scope.global = Global;
 
@@ -45,7 +45,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
         }
 
         $scope.close = function () {
-            $modalInstance.dismiss();
+            $uibModalInstance.dismiss();
         };
         $scope.publish = function () {
             // if student
@@ -57,7 +57,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
                 $scope.sharing.shareWithStudents = true;
                 $scope.sharing.sharedOrganizations = [];
                 console.log($scope.sharing);
-                $modalInstance.close($scope.sharing);
+                $uibModalInstance.close($scope.sharing);
             }
             // if regular user
             else {
@@ -65,7 +65,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$moda
                 if ($scope.sharing.sharingLevel == 'org' && $scope.sharing.sharedOrganizations.length == 0)
                     alert("Please add an organization to share with.")
                 else
-                    $modalInstance.close($scope.sharing);
+                    $uibModalInstance.close($scope.sharing);
             }
         };
 

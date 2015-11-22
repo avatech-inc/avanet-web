@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
+    function ($scope, $state, $stateParams, $location, $http, $timeout, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
 
         $scope.global = Global;
 

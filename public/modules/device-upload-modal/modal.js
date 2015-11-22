@@ -1,6 +1,6 @@
-angular.module('avatech').factory('DeviceUploadModal', function ($modal) {
+angular.module('avatech').factory('DeviceUploadModal', function ($uibModal) {
     return { open: function(options) {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: '/modules/device-upload-modal/modal.html',
             controller: 'DeviceUploadModalController',
             backdrop: 'static',
@@ -10,8 +10,8 @@ angular.module('avatech').factory('DeviceUploadModal', function ($modal) {
     }
 }});
 
-angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', '$location', '$rootScope', '$modalInstance', '$timeout', '$http', 'Global', 'Observations',
-    function ($scope, $location, $rootScope, $modalInstance, $timeout, $http, Global, Observations) {
+angular.module('avatech').controller('DeviceUploadModalController',
+    function ($scope, $location, $rootScope, $uibModalInstance, $timeout, $http, Global, Observations) {
 
         $scope.global = Global;
 
@@ -20,14 +20,9 @@ angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', 
 
         $scope.close = function() {
             $scope.cancelled = true;
-            $modalInstance.dismiss();
-
-            $location.path("/");
-            $rootScope.$broadcast('goToUnpublished');
-            $scope.close();
+            $uibModalInstance.dismiss();
         };
         $scope.closeAfterUpload = function() { 
-            //$location.path("/");
             $rootScope.$broadcast('goToUnpublished');
             $scope.close();
         }
@@ -82,12 +77,12 @@ angular.module('avatech').controller('DeviceUploadModalController', [ '$scope', 
             $timeout(function() { $scope.$apply(); });
         }
     }
-]);
+);
 
 
 // upload button directive
 
-angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', function($q, $http, $timeout) {
+angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
   return {
     restrict: 'E',
     scope: { 
@@ -282,4 +277,4 @@ angular.module('avatech').directive('sp1Upload', ['$q', '$http','$timeout', func
         }, false);
     }
   };
-}]);
+});

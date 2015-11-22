@@ -23,6 +23,7 @@ var argv = require('yargs').argv;
 var stripDebug = require('gulp-strip-debug');
 var rename = require("gulp-rename");
 var htmlmin = require('gulp-htmlmin');
+var insert = require('gulp-insert');
 
 var s3 = require("gulp-s3");
 var aws = {

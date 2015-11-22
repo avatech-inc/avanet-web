@@ -25,7 +25,7 @@ angular.module('avatech').service('Routes',
         $http({
             method: 'GET',
             url: window.apiBaseUrl + "users/" + Global.user._id + "/routes",
-            responseType: "application/json",
+            responseType: "json",
             params: {
                 verbose: false
             }

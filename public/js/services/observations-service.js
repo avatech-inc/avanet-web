@@ -25,7 +25,7 @@ angular.module('avatech').service('Observations',
         $http({
             method: 'GET',
             url: window.apiBaseUrl + "users/" + Global.user._id + "/observations",
-            responseType: "application/json",
+            responseType: "json",
             params: {
                 verbose: false
             }

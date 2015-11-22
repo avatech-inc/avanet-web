@@ -34,24 +34,27 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 
+function isNorU(val) {
+    return (val === null || val === undefined);
+}
+
 var formatters = {
 
     format: function(str) {
-        if (!str || str == "") return "--";
+        if (isNorU(str) || str == "") return "--";
         return str;
     },
     formatOrg: function(org) {
-        if (!org || org == "" || !org.name) return "--";
+        if (isNorU(org) || org == "" || !org.name) return "--";
         return org.name;
     },
     formatCm: function(str) {
-        if (str === null) return "--";
+        if (isNorU(str)) return "--";
         return str + " cm";
     },
     formatCmOrIn: function(str) {
-        if (str === null || isNaN(str)) return "--";
+        if (isNorU(str) || isNaN(str)) return "--";
 
-        var val;
         if (Global.user.settings.elevation == 1) 
             return numberWithCommas(Math.round(parseFloat(str) * 0.393701)) + " in";
         else return numberWithCommas(Math.round(parseFloat(str))) + " cm";
@@ -62,7 +65,7 @@ var formatters = {
         return this.formatElevation(str);
     },
     formatKmOrMiles: function(str) {
-        if (str === null || isNaN(str)) return "--";
+        if (isNorU(str) || isNaN(str)) return "--";
 
         var km = parseFloat(str);
         if (Global.user.settings.elevation == 1) 
@@ -73,7 +76,7 @@ var formatters = {
         return this.formatElevation(str);
     },
     formatElevation: function(str) {
-        if (str === null || isNaN(str)) return "--";
+        if (isNorU(str) || isNaN(str)) return "--";
 
         var val;
         if (Global.user.settings.elevation == 1) 
@@ -84,7 +87,7 @@ var formatters = {
     },
     formatTemp: function(str) {
         var temp = parseFloat(str);
-        if (isNaN(temp)) return "--";
+        if (isNorU(str) || isNaN(temp)) return "--";
 
         if (Global.user.settings.tempUnits == 0)
             return temp.toFixed(1) + "°C";
@@ -94,11 +97,11 @@ var formatters = {
         }
     },
     formatSlope: function(str) {
-        if (str === null || isNaN(str)) return "--";
+        if (isNorU(str) || isNaN(str)) return "--";
         return parseFloat(str).toFixed(0) + "°";
     },
     formatDirection: function(str) {
-        if (str === null) return "--";
+        if (isNorU(str)) return "--";
 
         var direction = parseFloat(str);
         if (isNaN(direction)) return "--";
@@ -141,7 +144,7 @@ var formatters = {
         return direction + "° " + str;
     },
     formatWindSpeed: function(str) {
-        if (str === null || isNaN(str)) return "--";
+        if (isNorU(str) || isNaN(str)) return "--";
 
         var speed = parseFloat(str);
         // imperial = mi/h
@@ -152,7 +155,7 @@ var formatters = {
         return "--";
     },
     formatPrecip: function(str) {
-        if (!str) return "--";
+        if (isNorU(str)) return "--";
 
         if (str == "NO") return "No Precipitation";
 
@@ -174,7 +177,7 @@ var formatters = {
         return "--";
     },
     formatSky: function(str) {
-        if (!str || str == "") return "--";
+        if (isNorU(str) || str == "") return "--";
         if (str == "CLR") return "Clear";
         if (str == "FEW") return "Few";
         if (str == "SCT") return "Scattered";

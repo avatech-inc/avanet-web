@@ -2,22 +2,6 @@
 
 <header ng-if="global.user" class="navbar navbar-fixed-top navbar-inverse">
 
-<!--
-	<a class="logo" href="/"><img src="/img/logo.png"/></a>
-
-<!--
-	<ul class="nav pull-right" ng-show="global.user">
-		<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				{{global.user.name}} <b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li ><a href="/logout">Logout</a></li>
-			</ul>
-		</li>
-	</ul>
--->
-
 <div class="container">
 
     <div class="navbar-header">
@@ -42,17 +26,17 @@
       <ul class="nav navbar-nav navbar-right" ng-if="global.user">
  
 
-        <li class="dropdown" ng-hide="isDemo">
-          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
+        <li uib-dropdown ng-hide="isDemo">
+          <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
             <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
-            <li><a href="/avalanches/new">{{ 'avalanche' | translate }}</a></li>
+            <!--<li><a href="/avalanches/new">{{ 'avalanche' | translate }}</a></li>
 
             <li><a href="/observations/weather/new">{{ 'weather' | translate }}</a></li>
             <li><a href="/observations/snowpack/new">{{ 'snowpack' | translate }}</a></li>
             <li><a href="/observations/snowpack-test/new">{{ 'snowpack-test' | translate }}</a></li>
             <li><a href="/observations/snow-conditions/new">{{ 'snow-conditions' | translate }}</a></li>
-            <li><a href="/observations/wind/new">{{ 'wind' | translate }}</a></li>
+            <li><a href="/observations/wind/new">{{ 'wind' | translate }}</a></li>-->
             
             <li class="divider"></li>
 
@@ -68,8 +52,8 @@
           <a style="font-weight:500;color:#fff;" href="/observations">My Observations</a>
         </li>-->
 
-        <li class="dropdown" ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
-          <a style="font-weight:500;color:#fff;" href="#" class="dropdown-toggle" data-toggle="dropdown">{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
+        <li uib-dropdown ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
+          <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle>{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}
             <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'education' | translate }}</span></span>
@@ -79,8 +63,8 @@
           </ul>
         </li>
 
-        <li class="dropdown">
-	        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <li uib-dropdown>
+	        <a href="#" uib-dropdown-toggle>
             <div class="headshot" ng-style="{ 'background-image':'url(' + (observation.user.profilePhotoURL ? global.user.profilePhotoURL : '/img/nophoto.jpg' ) + ')' }"></div>
 
           {{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>

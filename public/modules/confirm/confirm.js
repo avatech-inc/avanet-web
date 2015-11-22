@@ -3,6 +3,8 @@ angular.module('avatech').factory('Confirm', function ($uibModal) {
         var modalInstance = $uibModal.open({
             templateUrl: '/modules/confirm/confirm.html',
             controller: 'ConfirmController',
+            backdrop: 'static',
+            windowClass: 'width-400',
             resolve: {
                 message: function() { return message; }
             }
@@ -11,8 +13,6 @@ angular.module('avatech').factory('Confirm', function ($uibModal) {
     }
 }
 });
-
-
 angular.module('avatech').controller('ConfirmController', function ($scope, $uibModalInstance,message) {
 	$scope.message = message;
     $scope.no = function () {

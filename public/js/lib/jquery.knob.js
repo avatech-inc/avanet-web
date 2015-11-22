@@ -820,7 +820,6 @@
 
                 pa = this.arc(this.angleHigh - 6);
                 var thisAngle = this.arc(this.angleLow + 6);
-                console.log(pa);
                 c.beginPath();
                 c.strokeStyle = '#ccc';
                 c.arc(this.xy, this.xy, this.radius, thisAngle.s, pa.e, pa.d);

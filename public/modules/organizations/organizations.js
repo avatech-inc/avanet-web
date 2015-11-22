@@ -86,7 +86,7 @@ angular.module('avatech').controller('OrganizationsController', function ($scope
         .then(function (member) {
             // add new member to  collection
             $scope.members.push(member);
-            $scope.$apply();
+            //$scope.$apply();
         }
         // error
         , function(){

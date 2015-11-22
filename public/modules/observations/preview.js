@@ -6,7 +6,6 @@ angular.module('avatech').controller('ObservationPreviewController',
         $scope.global = Global;
 
         $scope.formatters = snowpitExport.formatters;
-        $scope.formatters = snowpitExport.formatters;
 
         $scope.discussMode = false;
 
@@ -19,12 +18,6 @@ angular.module('avatech').controller('ObservationPreviewController',
             $location.path(url);
         }
 
-        $scope.showPhoto = function(media) {
-            // // clear audio
-            // var media = angular.copy($scope.observation.photos
-            // // get index
-            // Lightbox.openModal($scope.observation.photos, index);
-        }
         $scope.showMedia = function(media) {
             // clear audio
             var non_audio_media = [];
@@ -34,12 +27,6 @@ angular.module('avatech').controller('ObservationPreviewController',
             });
             // get index
             var index = non_audio_media.indexOf(media);
-
-            // // if video, replace .mov with .mp4 so we can play with native HTML5
-            // if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
-            //     media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
-            //     console.log(media.URL);
-            // }
 
             // show media
             if (media.type == "photo" || media.type == "video") {
@@ -423,44 +410,7 @@ angular.module('avatech').controller('ObservationPreviewController',
             return table;
           }
 
-
-        // views
-
-        // $scope.views = snowpitViews;
-        // $scope.setView = function(view) {
-        //     // calculate views
-        //     angular.forEach($scope.views,function(view){ if (view.func) view.func($scope); });
-        //     // set view
-        //     $scope.settings.view = view;
-        // }
-        // $scope.getView = function() {
-        //     var _view = null;
-        //     angular.forEach($scope.views, function(view){ if (view.id == $scope.settings.view) _view = view; });
-        //     return _view;
-        // }
-        
-        // // snowpit canvas settings
-        // $scope.graphWidth = 180;
-        // $scope.columns = [
-        //     { width: 125 },
-        //     { width: 25 },
-        //     { width: $scope.graphWidth },
-        //     { width: 240 }
-        // ];
-        // $scope.snowpitWidth = $scope.columns.reduce(function(a,b){ return { width: a.width + b.width}; }).width;
-        // $scope.snowpitHeight = 500;
-        // $scope.canvasOptions = { labelColor: "#222", commentLineColor: "#aaa", dashedLineColor: "#ddd", showDepth: true, showDensity: true };
-        // $scope.settings = {
-        //     selectedLayer: null,
-        //     dragging: null,
-        //     hoverDragLayer: null,
-        //     view: null,
-        //     depthDescending: true,
-        //     fontsLoaded: false,
-        //     tempMode: false,
-        //     tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
-        // }
-
+        // load observation
 
         if ($stateParams.observationId) {
             $scope.profileId = $stateParams.observationId;
@@ -483,12 +433,6 @@ angular.module('avatech').controller('ObservationPreviewController',
                         var num = parseFloat(temp.temp);
                         if (!isNaN(num)) temp.temp = num * 2;
                     });
-
-                    // var d = $("<div style='font-family:snowsymbols';>thequickbrownfoxjumpsoverthelazydog</div>");
-                    // d.appendTo(document.body);
-                    // d.resize(function(){
-                    //     console.log("RESIZED!");
-                    // })
 
                     // make sure fonts are loaded so canvas renders them
                     var fontLoader = new FontLoader(["Roboto Condensed","snowsymbols"], {

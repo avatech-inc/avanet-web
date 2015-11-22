@@ -201,6 +201,11 @@ a[title="Open in new tab"] { display: none; }
 
 			<!-- all buttons -->
 	      	<div style="display:inline-block;float:right;">
+
+				<div class="btn-group filter right" ng-if="global.user._id == observation.user._id" ng-hide="discussMode">
+			      <button type="button" ng-click="delete()"><i class="ion-trash-a"></i>&nbsp;&nbsp;Delete</button>
+		      	</div><!-- tooltip-placement="bottom" uib-tooltip="Delete" -->
+
 				<div class="btn-group filter right" ng-hide="discussMode || !observation.published">
 			      <button type="button" ng-click="discussMode = !discussMode"><i class="ion-chatboxes"></i>&nbsp;&nbsp;Discuss
 			      </button>

@@ -128,7 +128,7 @@ angular.module('avatech.system').controller('MapController', function ($scope, $
 
             // if location is outside current map, pan to location
             if ($scope.map && !$scope.map.getBounds().contains(point)) {
-                $scope.map.panTo(point);
+                $scope.map.setView(point, 13, { animate: false });
             }
         });
     });

@@ -23,13 +23,14 @@ angular.module('avatech.profiles', []);
 
 angular.module('avatech').config(function (LightboxProvider) {
   LightboxProvider.getImageUrl = function (media) {
-
     // if video, replace .mov with .mp4 so we can play with native HTML5 (for Cloudinary)
     if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
         media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
     }
-
     return media.URL;
+  };
+  LightboxProvider.getImageCaption = function (media) {
+    return null;
   };
 });
 

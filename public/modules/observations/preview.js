@@ -168,12 +168,11 @@ angular.module('avatech').controller('ObservationPreviewController',
         // ------------------------------------------------------------------------------------------
         // SNOWPIT
 
-        // views
-
+        // snowpit views
         $scope.views = snowpitViews;
         $scope.setView = function(view) {
             // calculate views
-            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope); });
+            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope.observation); });
             // set view
             $scope.settings.view = view;
         }
@@ -209,9 +208,9 @@ angular.module('avatech').controller('ObservationPreviewController',
             tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
         }
 
-        $scope.exportPDF = function() { snowpitExport.PDF($scope.profile, $scope.settings); };
-        $scope.exportJPEG = function() { snowpitExport.JPEG($scope.profile, $scope.settings); };
-        $scope.exportCSV = function() { snowpitExport.CSV($scope.profile); };
+        $scope.exportPDF = function() { snowpitExport.PDF($scope.observation, $scope.settings); };
+        $scope.exportJPEG = function() { snowpitExport.JPEG($scope.observation, $scope.settings); };
+        $scope.exportCSV = function() { snowpitExport.CSV($scope.observation); };
 
         // --------------------------------------------------------------------------------
         // SP PROFILES
@@ -465,8 +464,6 @@ angular.module('avatech').controller('ObservationPreviewController',
 
         if ($stateParams.observationId) {
             $scope.profileId = $stateParams.observationId;
-            // load profile
-            //Profiles.get({ profileId: $stateParams.profileId }, function(profile) {
             $http.get(window.apiBaseUrl + "observations/" + $stateParams.observationId)
             .then(function(res) {
 
@@ -479,10 +476,10 @@ angular.module('avatech').controller('ObservationPreviewController',
 
                 if ($scope.observation == "snowpit") {
 
-                    var profile = angular.copy(ob);
+                    var _ob = angular.copy(ob);
 
                     // normalize temps
-                    angular.forEach(profile.temps, function(temp) { 
+                    angular.forEach(_ob.temps, function(temp) { 
                         var num = parseFloat(temp.temp);
                         if (!isNaN(num)) temp.temp = num * 2;
                     });
@@ -506,16 +503,11 @@ angular.module('avatech').controller('ObservationPreviewController',
                             }
 
                             //$scope.settings.fontsLoaded = true;
-                            $scope.observation = angular.copy(profile);
+                            $scope.observation = angular.copy(_ob);
                             $scope.$apply();
                         }
-                        //, "fontLoaded": function(fontFamily) {
-                        //     // One of the fonts was loaded
-                        //     console.log("font loaded: " + fontFamily);
-                        // }
                     }, 3000);
                     fontLoader.loadFonts();
-
                 }
                 // all other observation types
                 else {

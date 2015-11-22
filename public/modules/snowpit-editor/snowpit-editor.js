@@ -538,7 +538,7 @@ angular.module('avatech')
             $scope.settings.view = view;
         }
         $scope.calculateViews = function() {
-            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope); });
+            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope.profile); });
         }
 
         // TOGGLE DEPTH

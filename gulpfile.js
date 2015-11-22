@@ -67,7 +67,7 @@ gulp.task('strip-debug', function() {
   return gulp.src([
     '_dist/public/js/**/*.js',
     '_dist/public/modules/**/*.js',
-    '!_dist/public/js/lib',
+    //'!_dist/public/js/lib',
   ])
   .pipe(stripDebug())
   .pipe(gulp.dest(function(file) { return file.base; }));

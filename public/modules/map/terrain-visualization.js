@@ -1,4 +1,132 @@
-window.terrainVisualization = {
+// register module
+angular.module('terrain', []);
+
+angular.module('terrain').factory('terrainVisualization', function () { 
+
+    var colorMaps = {
+
+        elevation: [
+            { color: "fd4bfb", val: 0 },
+            { color: "1739fb", val: 380 * 2 },
+            { color: "00aeff", val: 380 * 3 },
+            { color: "28f937", val: 380 * 4 },
+            { color: "fefa37", val: 380 * 7 },
+            { color: "e6000b", val: 380 * 13 },
+            { color: "910209", val: 380 * 14 },
+            { color: "6a450c", val: 380 * 15 },
+            { color: "8b8b8b", val: 380 * 16 },
+            { color: "ffffff", val: 8400 },
+        ],
+        slope: [
+            { color: "ffffff", val: 0 },
+            { color: "00f61c", val: 6 },
+            { color: "02fbd2", val: 11 },
+            { color: "01c6f6", val: 17 },
+            { color: "3765f9", val: 22 },
+            { color: "9615f8", val: 27 },
+            { color: "eb02d0", val: 31 },
+            { color: "fb1978", val: 35 },
+            { color: "ff5c17", val: 39 },
+            { color: "f9c304", val: 42 },
+            { color: "fefe2b", val: 45 },
+            { color: "000000", val: 80 },
+        ],
+        aspect: [
+            { color: "c0fc33", val: 0 },
+            { color: "3bc93d", val: 22 },
+            { color: "3cca99", val: 67 },
+            { color: "1b29e1", val: 112 },
+            { color: "7e3ac8", val: 157 },
+            { color: "fb0b1a", val: 202 },
+            { color: "fc9325", val: 247 },
+            { color: "fefc37", val: 292 },
+            { color: "c0fc33", val: 338 },
+            { color: "c0fc33", val: 360 },
+        ]
+    };
+
+    // convert to rgb first for quicker math in getColor()
+    var colorMapsProcessed = {};
+    // angular.forEach(colorMaps, function(colorMap, key) {
+    //     var colorMap = angular.copy(colorMap);
+    //     for (var i = 0; i < colorMap.length; i++)
+    //         colorMap[i].color = hexToRGB(colorMap[i].color);
+    //     colorMapsProcessed[key] = colorMap;
+    // });
+    angular.forEach(colorMaps, function(colorMap, key) {
+        colorMapsProcessed[key] = getColorMap(colorMap);
+    });
+
+
+    // function getColor(colorMap, val) {
+    //     // return if above max values
+    //     if (val > colorMap[colorMap.length - 1].val) return;
+    //     // get color from color map
+    //     for (var i = 0; i < colorMap.length - 1; i++) {
+    //         if (val >= colorMap[i].val &&  val <= colorMap[i + 1].val) {
+    //             var thisStep = colorMap[i];
+    //             var nextStep = colorMap[i+1];
+    //             var percent = getPercent(thisStep.val, nextStep.val, val);
+    //             return blendRGBColors(thisStep.color, nextStep.color, percent);
+    //         }
+    //     }
+    // }
+
+    function convertInt(_int) {
+        return [
+            (0xFFFE0000 & _int) >> 17, // elevation
+            (0x1FC00 & _int) >> 10, // slope
+            (0x1FF & _int) // aspect
+        ];
+    }
+
+    function blendRGBColors(c0, c1, p) {
+        return [Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],
+                Math.round(Math.round(c1[1] - c0[1]) * (p / 100)) + c0[1],
+                Math.round(Math.round(c1[2] - c0[2]) * (p / 100)) + c0[2]
+            ];
+    }
+    function blendHexColors(c0, c1, p) {
+        c0 = hexToRGB(c0);
+        c1 = hexToRGB(c1);
+        return blendRGBColors(c0, c1, p);
+    }
+
+    function hexToRGB(hex) {
+        var bigint = parseInt(hex, 16);
+        return [
+            (bigint >> 16) & 255,
+            (bigint >> 8) & 255,
+            (bigint & 255)
+        ];
+    }
+
+    function getPercent(min, max, val) {
+        return Math.floor(((val - min) * 100) / (max - min));
+    }
+
+    function getColorMap(steps){
+        var colorMap = [];
+        //var maxValue = steps[steps-1].val;
+        //var increment = parseInt(maxValue / steps.length);
+
+        for (var s = 0; s < steps.length; s++) {
+            if (s == steps.length - 1) break;
+            var min = steps[s].val;
+            var max = steps[s+1].val;
+
+            var minColor = steps[s].color;
+            var maxColor = steps[s+1].color;
+
+            for (var i = min; i <= max; i++)
+                colorMap[i] = blendHexColors(minColor,maxColor, getPercent(min, max, i));
+        }
+        return colorMap;
+    }
+
+    return {
+
+    colorMaps: colorMaps,
 
     hillshade: function(dem) {
 
@@ -56,110 +184,6 @@ window.terrainVisualization = {
 
     render: function(data, overlayType, customParams) {
 
-        function convertInt(_int) {
-            return [
-                (0xFFFE0000 & _int) >> 17, // elevation
-                (0x1FC00 & _int) >> 10, // slope
-                (0x1FF & _int) // aspect
-            ];
-        }
-
-        function blendRGBColors(c0, c1, p) {
-            return [Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],
-                    Math.round(Math.round(c1[1] - c0[1]) * (p / 100)) + c0[1],
-                    Math.round(Math.round(c1[2] - c0[2]) * (p / 100)) + c0[2]
-                ];
-        }
-        function blendHexColors(c0, c1, p) {
-            c0 = hexToRGB(c0);
-            c1 = hexToRGB(c1);
-            return blendRGBColors(c0, c1, p);
-        }
-        function hexToRGB(hex) {
-            return [
-                parseInt(hex.substring(0,2),16),
-                parseInt(hex.substring(2,4),16),
-                parseInt(hex.substring(4,6),16)
-            ];
-        }
-
-        function getPercent(min, max, val) {
-            return Math.floor(((val - min) * 100) / (max - min));
-        }
-
-        function getColorMap(steps){
-            var colorMap = [];
-            //var maxValue = steps[steps-1].val;
-            //var increment = parseInt(maxValue / steps.length);
-
-            for (var s = 0; s < steps.length; s++) {
-                if (s == steps.length - 1) break;
-                var min = steps[s].val;
-                var max = steps[s+1].val;
-
-                var minColor = steps[s].color;
-                var maxColor = steps[s+1].color;
-
-                for (var i = min; i <= max; i++)
-                    colorMap[i] = blendHexColors(minColor,maxColor, getPercent(min, max, i));
-            }
-            return colorMap;
-        }
-
-        var elevationColorMap = getColorMap([
-            { color: "fd4bfb", val: 0 },
-            { color: "1739fb", val: 380 * 2 },
-            { color: "00aeff", val: 380 * 3 },
-            { color: "28f937", val: 380 * 4 },
-            { color: "fefa37", val: 380 * 7 },
-            { color: "e6000b", val: 380 * 13 },
-            { color: "910209", val: 380 * 14 },
-            { color: "6a450c", val: 380 * 15 },
-            { color: "8b8b8b", val: 380 * 16 },
-            { color: "ffffff", val: 8400 },
-        ]);
-
-        var slopeColorMap = getColorMap([
-            { color: "ffffff", val: 0 },
-            { color: "00f61c", val: 6 },
-            { color: "02fbd2", val: 11 },
-            { color: "01c6f6", val: 17 },
-            { color: "3765f9", val: 22 },
-            { color: "9615f8", val: 27 },
-            { color: "eb02d0", val: 31 },
-            { color: "fb1978", val: 35 },
-            { color: "ff5c17", val: 39 },
-            { color: "f9c304", val: 42 },
-            { color: "fefe2b", val: 45 },
-            { color: "000000", val: 80 },
-        ]);
-
-        var aspectColorMap = getColorMap([
-            { color: "c0fc33", val: 0 },
-            { color: "3bc93d", val: 22 },
-            { color: "3cca99", val: 67 },
-            { color: "1b29e1", val: 112 },
-            { color: "7e3ac8", val: 157 },
-            { color: "fb0b1a", val: 202 },
-            { color: "fc9325", val: 247 },
-            { color: "fefc37", val: 292 },
-            { color: "c0fc33", val: 338 },
-            { color: "c0fc33", val: 360 },
-        ]);
-
-        // Bruce Tremper's scale
-
-        var steepnessColorMap = getColorMap([
-            { color: "00ff00", val: 0 },
-            { color: "00ff00", val: 20 },
-            { color: "ffff00", val: 30 },
-            //{ color: "1b29e1", val: 34 },
-            { color: "ff0000", val: 42 },
-            { color: "ffff00", val: 70 },
-        ]);
-
-        // ------------------------------------------------------------------------
-
         var new_pixels = new Uint8ClampedArray(256 * 256 * 4);
 
         for (var i=0; i < data.length; i++) {
@@ -199,19 +223,22 @@ window.terrainVisualization = {
             // ELEVATION
             if (overlayType == "elevation") {
                 if (new_elevation > 0 && new_elevation > 0)
-                    newColor = elevationColorMap[new_elevation];
+                    //newColor = getColor(colorMapsProcessed.elevation, new_elevation);
+                    newColor = colorMapsProcessed.elevation[new_elevation];
             }
 
             // SLOPE
             if (overlayType == "slope") {
                 if (new_slope > 0 && new_slope <= 80)
-                    newColor = slopeColorMap[new_slope];
+                    //newColor = getColor(colorMapsProcessed.slope, new_slope);
+                    newColor = colorMapsProcessed.slope[new_slope];
             }
 
             // ASPECT
             if (overlayType == "aspect") {
                 if (new_aspect > 0 && new_aspect <= 360)
-                    newColor = aspectColorMap[new_aspect];
+                    //newColor = getColor(colorMapsProcessed.aspect, new_aspect);
+                    newColor = colorMapsProcessed.aspect[new_aspect];
             }
 
             // MKS (aspect-slope)
@@ -278,3 +305,5 @@ window.terrainVisualization = {
         return new_pixels;
     }
 }
+
+});

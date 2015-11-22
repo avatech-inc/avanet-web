@@ -13,7 +13,8 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'angular-country-picker',
     'pikaday',
     'ngjsColorPicker',
-    'ngAudio'
+    'ngAudio',
+    'terrain'
 ]);
 
 angular.module('avatech.system', []);

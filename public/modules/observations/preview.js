@@ -19,13 +19,31 @@ angular.module('avatech').controller('ObservationPreviewController',
             $location.path(url);
         }
 
-        $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.observation.photos, index);
+        $scope.showPhoto = function(media) {
+            // // clear audio
+            // var media = angular.copy($scope.observation.photos
+            // // get index
+            // Lightbox.openModal($scope.observation.photos, index);
         }
-        $scope.showMedia = function(media, $event) {
-            console.log($event);
-            if (media.type == "photo") {
-                Lightbox.openModal($scope.observation.photos, index);
+        $scope.showMedia = function(media) {
+            // clear audio
+            var non_audio_media = [];
+            angular.forEach($scope.observation.media, function(m){
+                if (m.type == "photo" || m.type == "video")
+                    non_audio_media.push(m);
+            });
+            // get index
+            var index = non_audio_media.indexOf(media);
+
+            // if video, replace .mov with .mp4 so we can play with native HTML5
+            if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
+                media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
+                console.log(media.URL);
+            }
+
+            // show media
+            if (media.type == "photo" || media.type == "video") {
+                Lightbox.openModal(non_audio_media, index);
             }
             else if (media.type == "audio") {
                 // if already loaded, toggle pause/play
@@ -42,7 +60,7 @@ angular.module('avatech').controller('ObservationPreviewController',
             }
         }
 
-        $scope.getMediaURL = function(media) {
+        $scope.getThumbnailURL = function(media) {
             if (media.type == "photo") {
                 return media.URL;
             }
@@ -51,9 +69,6 @@ angular.module('avatech').controller('ObservationPreviewController',
                 filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));
                 var url = "http://res.cloudinary.com/avatech/video/upload/so_50p/" + filename + ".jpg";
                 return url;
-            }
-            else if (media.type == "audio") {
-                return "";
             }
         }
 

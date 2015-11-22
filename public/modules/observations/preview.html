@@ -188,6 +188,9 @@ table.vals td.key {
 	font-weight: 100;
 }
 
+/* hide modal "open tab" button */
+a[title="Open in new tab"] { display: none; }
+
 </style>
 
 <div class="popupHeader">
@@ -435,7 +438,7 @@ scrollable always-visible="true">
 		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
 			<div ng-repeat="media in observation.media" style="vertical-align:top;display:inline-block;" ng-click="showMedia(media, $event)">
 				<div class="media-container" ng-class="media.type">
-					<img src="{{ getMediaURL(media) }}" ng-show="media.type == 'photo' || media.type == 'video'" />
+					<img src="{{ getThumbnailURL(media) }}" ng-show="media.type == 'photo' || media.type == 'video'" />
 					<div class="inner" ng-if="media.type == 'audio'">
 						<i class="fa fa-volume-up"></i>
 						<input type="range" min="0" max="1" step="0.01" ng-model="audio.progress"

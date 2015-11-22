@@ -1,5 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio) {
+    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -57,6 +57,13 @@ angular.module('avatech').controller('ObservationPreviewController',
                 var url = "http://res.cloudinary.com/avatech/video/upload/so_50p/" + filename + ".jpg";
                 return url;
             }
+        }
+
+        $scope.delete = function() {
+            Confirm.open("Are you sure you want to delete this observation? This will also delete it from your Avanet mobile apps.").then(function() {
+                Observations.remove($scope.observation);
+                $scope.close();
+            });
         }
 
         // ------------------------------------------------------------------------------------------

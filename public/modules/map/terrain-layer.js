@@ -3,10 +3,21 @@
 
 var AvatechTerrainLayer = function (options) {
 
-    var $q = angular.injector(["ng"]).get("$q");
+    // get angular module dependencies
+    var injector = angular.injector(["ng","terrain"]);
+    var $q = injector.get("$q");
+    var terrainVisualization = injector.get("terrainVisualization");
 
     options.underzoom = true;
+    options.updateWhenIdle = true;
+    options.maxNativeZoom = 13;
+
+    // base terrain layer on leaflet GridLayer
     var terrainLayer = new L.GridLayer(options);
+
+    terrainLayer.redrawQueue = [];
+    terrainLayer.needsRedraw = false;
+    terrainLayer.overlayType;
 
     terrainLayer.createTile = function(tilePoint, tileLoaded) {
         // create tile canvas element
@@ -46,52 +57,6 @@ var AvatechTerrainLayer = function (options) {
         return tileSize;
     }
 
-    terrainLayer.redrawQueue = [];
-    terrainLayer.needsRedraw = false;
-    terrainLayer.overlayType;
-
-    terrainLayer.on('tileunload', function(e) {
-        console.log("unload event:");
-        e.tile._terrainData = null;
-    });
-
-    // clear existing _pruneTiles function to control clearing of layers on our own
-    // otherwise, noticeable flash/lag when leaflet animates zoom
-    terrainLayer._pruneTiles = function () { };
-
-    // duplicate of original _pruneTiles function from Leaflet's GridLayer.js
-    terrainLayer._pruneTiles2 = function () {
-        var key, tile;
-
-        for (key in this._tiles) {
-            tile = this._tiles[key];
-            tile.retain = tile.current;
-        }
-        for (key in this._tiles) {
-            tile = this._tiles[key];
-            if (tile.current && !tile.active) {
-                var coords = tile.coords;
-                if (!this._retainParent(coords.x, coords.y, coords.z, coords.z - 5)) {
-                    this._retainChildren(coords.x, coords.y, coords.z, coords.z + 2);
-                }
-            }
-        }
-        var self = this;
-        for (key in this._tiles) {
-            if (!this._tiles[key].retain) {
-                self._removeTile(key);
-            }
-        }
-    };
-
-    // clear old 'layers'
-    var layerClearTimer;
-    terrainLayer.on('load', function (e) {
-        console.log("terrain loaded!");
-        if (layerClearTimer) clearTimeout(layerClearTimer);
-        layerClearTimer = setTimeout(function() { terrainLayer._pruneTiles2() }, 600);
-    });
-
     terrainLayer.updateTile = function(ctx, pixels) {
         // get tile size
         var tileSize = ctx.canvas.width;
@@ -124,6 +89,7 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.drawTile = function(canvas, tilePoint) {
         var context = canvas.getContext('2d');
+        //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
         function redraw() {
             // if no terrain overlay specified, clear canvas
@@ -131,12 +97,10 @@ var AvatechTerrainLayer = function (options) {
                 context.clearRect (0, 0, canvas.width, canvas.height);
                 return;
             }
-
             // get pixels
             var pixels;
             if (terrainLayer.overlayType == "hillshade") pixels = terrainVisualization.hillshade(canvas._terrainData)
             else pixels = terrainVisualization.render(canvas._terrainData, terrainLayer.overlayType, terrainLayer.customParams); 
-
             // draw canvas
             terrainLayer.updateTile(context, pixels.buffer);
         }
@@ -174,18 +138,13 @@ var AvatechTerrainLayer = function (options) {
             // if PNG was succesfully decoded
             if (png) {
                 var pixels = png.decodePixels();
-                var pixelBuffer = new Uint8ClampedArray(pixels).buffer;
-                //var buffer = new Uint32Array(pixelBuffer)
-                // var converted = terrainLayer.convert(buffer);
-                // console.log("  pixels2: " + new Uint32Array(pixelBuffer).byteLength);
-                // console.log("converted: " + (converted.length * 3 * 8));
-                //canvas._terrainData = converted;
-                canvas._terrainData = new Uint32Array(pixelBuffer);
+                canvas._terrainData = new Uint32Array(new Uint8ClampedArray(pixels).buffer);
 
                 canvas._terrainLoaded.resolve();
 
                 // fire tileLoaded callback
                 if (canvas._tileLoaded) {
+                    console.log("loaded!");
                     canvas._tileLoaded(null, canvas);
                     // remove the function so it can't be called twice
                     canvas._tileLoaded = null;
@@ -207,10 +166,8 @@ var AvatechTerrainLayer = function (options) {
         xhr.send(null);
     }
 
-    var lastSync;
     terrainLayer.redraw = function() {
         if (terrainLayer.needsRedraw) {
-            //console.log("Redraw Queue Size: " + terrainLayer.redrawQueue.length);
             terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
         }
         terrainLayer.needsRedraw = false;
@@ -218,15 +175,26 @@ var AvatechTerrainLayer = function (options) {
     }
     terrainLayer.redraw();
 
-    terrainLayer.convertInt = function(_int) {
+    terrainLayer.setOverlayType = function(overlayType) {
+        terrainLayer.options.updateWhenIdle = (!overlayType);
+        console.log("updateWhenIdle: " + terrainLayer.options.updateWhenIdle);
+        terrainLayer.overlayType = overlayType;
+        terrainLayer.needsRedraw = true;
+    }
+    terrainLayer.setCustomParams = function(customParams) {
+        terrainLayer.customParams = customParams;
+        terrainLayer.needsRedraw = true;
+    }
+
+    // ----- Terrain data querying ------
+
+    function convertInt(_int) {
         return [
             (0xFFFE0000 & _int) >> 17, // elevation
             (0x1FC00 & _int) >> 10, // slope
             (0x1FF & _int) // aspect
         ];
     }
-    
-    // ----- Terrain data querying ------
 
     function latLngToTilePoint(lat, lng, zoom) {
         lat *= (Math.PI/180);
@@ -319,7 +287,7 @@ var AvatechTerrainLayer = function (options) {
             var arrayIndex = (pointInTile.y * 256 + pointInTile.x);
 
             // get terrain data
-            var _terrainData = terrainLayer.convertInt(canvas._terrainData[arrayIndex]);
+            var _terrainData = convertInt(canvas._terrainData[arrayIndex]);
 
             var terrainData = { 
                 lat: lat,

@@ -425,14 +425,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             point_sw.y -= padding; point_sw.x += padding;
             point_sw = scope.map.containerPointToLatLng(point_sw);
 
-            // get obs from server
-            // Restangular.all("observations")
-            // .withHttpConfig({ timeout: scope.canceler.promise })
-            // .getList({
-            //     nelat: point_ne.lat, nelng: point_ne.lng, 
-            //     swlat: point_sw.lat, swlng: point_sw.lng, 
-            //     verbose: false
-            // })
             $http({
                 method: 'GET',
                 url: window.apiBaseUrl + "observations",

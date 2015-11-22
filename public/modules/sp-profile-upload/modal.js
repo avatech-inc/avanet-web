@@ -1,7 +1,7 @@
 angular.module('avatech').factory('DeviceUploadModal', function ($uibModal) {
     return { open: function(options) {
         var modalInstance = $uibModal.open({
-            templateUrl: '/modules/device-upload-modal/modal.html',
+            templateUrl: '/modules/sp-profile-upload/modal.html',
             controller: 'DeviceUploadModalController',
             backdrop: 'static',
             windowClass: 'width-400'

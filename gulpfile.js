@@ -64,6 +64,13 @@ gulp.task('ng-annotate', function() {
   .pipe(gulp.dest(function(file) { return file.base; }));
 });
 
+gulp.task('copyright', function() {
+  return gulp.src(['_dist/public/assets/*.js'])
+  .pipe(insert.prepend('// Copyright (C) 2015 Avatech, Inc.\n'))
+  .pipe(insert.append(';(function(){setInterval(function(){console.log("Copyright (C) 2015 Avatech, Inc.")},10000);})();'))
+  .pipe(gulp.dest(function(file) { return file.base; }));
+});
+
 gulp.task('strip-debug', function() {
   return gulp.src([
     '_dist/public/js/**/*.js',
@@ -282,9 +289,11 @@ gulp.task('build', function(done) {
     'clean-html',
     // uglify javascript
     'uglify',
+    // add copyright statements to app.js
+    'copyright',
     // cleanup files
     'clean-dist', 
-    // prepare git for heroku
+    // prepare git for push to heroku
     'git',
   done);
 });
@@ -310,12 +319,11 @@ gulp.task('start2', function(done) {
 
 gulp.task('start-dist', function(done) {
     process.chdir('_dist');
-    // todo: no need for nodemon here since we aren't editing
-   nodemon({
-    script: 'server.js'
-  , ext: 'js html'
-  , env: { 'NODE_ENV': 'development' }
-  })
+    nodemon({
+      script: 'server.js'
+    //, ext: '!*'
+    , env: { 'NODE_ENV': 'production' }
+    })
 });
 
 gulp.task('build-deploy', function(done) {

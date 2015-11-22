@@ -299,20 +299,16 @@ gulp.task('build', function(done) {
 });
 
 gulp.task('start', function(done) {
-  runSequence('compass','buildMain','start2', done);
+  runSequence('compass','buildMain','run', done);
 });
 
-gulp.task('start2', function(done) {
- //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
+gulp.task('run', function(done) {
   // todo:
-  // - livereload when public changes 'public/**/*'
   // - buildMain when js folder changes?
    nodemon({
     script: 'server.js'
   , ext: 'js html'
   //, watch: ['public','app','config', '!public/tiles']
-  //, verbose: true
-  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist','/.sass-cache','/.tmp']
   , env: { 'NODE_ENV': 'development' }
   });
 });

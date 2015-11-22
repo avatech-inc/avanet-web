@@ -436,7 +436,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             $http({
                 method: 'GET',
                 url: window.apiBaseUrl + "observations",
-                responseType: "application/json",
+                responseType: "json",
                 params: {
                     nelat: point_ne.lat, nelng: point_ne.lng, 
                     swlat: point_sw.lat, swlng: point_sw.lng, 

@@ -1,5 +1,5 @@
-<div class="btn-group filter" dropdown>
-  <button type="button" class="btn btn-default dropdown-toggle">
+<div class="btn-group filter" uib-dropdown>
+  <button type="button" class="btn btn-default" uib-dropdown-toggle>
   	<span style="padding-right:3px;">{{ 'type' | translate }}</span> 
 
     <span class="caret" ng-show="obSearch.isDefaultType()"></span>
@@ -10,7 +10,7 @@
     	<i class="ion-close-round"></i>
     </span>
   </button>
-  	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+  	<ul class="dropdown-menu listSelect" ng-click="$event.stopPropagation()" role="menu" style="height:auto;width:auto;">
     	<li ng-repeat="obType in obSearch.observationTypes"
     		ng-click="obSearch.type_select(obType)"
     	><a><i class="fa" ng-class="obSearch.searchQuery.type[obType] ? 'fa-check-square' : 'fa-square-o'"></i>
@@ -19,8 +19,8 @@
  	</ul>
 </div>
 
-<div class="btn-group filter" dropdown style="">
-  <button type="button" class="btn btn-default dropdown-toggle">
+<div class="btn-group filter" uib-dropdown style="">
+  <button type="button" class="btn btn-default" uib-dropdown-toggle>
     <span style="padding-right:3px;">{{ 'time' | translate }}</span>
   	<span style="padding-right:3px;color:#999;">
 	    <span ng-show="obSearch.searchQuery.days == 1">Today</span>
@@ -42,8 +42,8 @@
   </ul>
 </div>
 
-<div class="btn-group filter" dropdown ng-show="showPublisher">
-  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+<div class="btn-group filter" uib-dropdown ng-show="showPublisher">
+  <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
     <span style="padding-right:3px;">{{ 'publisher' | translate }}</span> 
 
     <span class="caret" ng-show="obSearch.isDefaultPublisher()"></span>
@@ -54,7 +54,7 @@
     	<i class="ion-close-round"></i>
     </span>
   </button>
-  	<ul class="dropdown-menu listSelect" role="menu" style="height:auto;width:auto;">
+  	<ul class="dropdown-menu listSelect" ng-click="$event.stopPropagation()" role="menu" style="height:auto;width:auto;">
     	<li ng-click="obSearch.publisher_selectMe()"
     		ng-dblclick="obSearch.publisher_selectMe(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.me || obSearch.searchQuery.publisher.me == null? 'fa-check-square' : 'fa-square-o'"></i>Me</a></li>
 
@@ -74,8 +74,8 @@
     </ul>
 </div>
 
-<div class="btn-group filter" dropdown style="">
-  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+<div class="btn-group filter" uib-dropdown style="">
+  <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
     <span style="padding-right:3px;">{{ 'elevation' | translate }}</span>
     <span class="caret" ng-show="obSearch.searchQuery.elev_low == 0 && obSearch.searchQuery.elev_high == obSearch.elevationMax"></span>
     <span style="color:#999;" ng-show="(obSearch.searchQuery.elev_low != 0 || obSearch.searchQuery.elev_high != obSearch.elevationMax) && obSearch.searchQuery.elev_low != obSearch.searchQuery.elev_high">
@@ -89,7 +89,7 @@
     	<i class="ion-close-round"></i>
     </span>
   </button>
-  <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+  <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="height:auto;width:auto;"><li><a>
   	<slider-new style="width:340px"
 	    ng-model="obSearch.searchQuery.elev_low"
 	    ng-model-range="obSearch.searchQuery.elev_high"
@@ -102,8 +102,8 @@
     </a></li></ul>
 </div>
 
-<div class="btn-group filter" dropdown style="">
-  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+<div class="btn-group filter" uib-dropdown style="">
+  <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
     <span style="padding-right:3px;">{{ 'slope_aspect' | translate }}</span> 
     <span class="caret" ng-show="obSearch.searchQuery.aspect_low == 0 && obSearch.searchQuery.aspect_high == 359"></span>
     <span style="color:#999;" ng-show="(obSearch.searchQuery.aspect_low != 0 || obSearch.searchQuery.aspect_high != 359) && obSearch.searchQuery.aspect_low != obSearch.searchQuery.aspect_high">
@@ -117,7 +117,7 @@
     	<i class="ion-close-round"></i>
     </span>
   </button>
-  <ul class="dropdown-menu" role="menu" style="height:114px;width:auto;"><li><a>
+  <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="height:114px;width:auto;"><li><a>
 
 		<input-direction-range input-class="form-control" ng-model="obSearch.searchQuery.aspect_low" angle-low="obSearch.searchQuery.aspect_low" angle-high="obSearch.searchQuery.aspect_high"></input-direction-range>
 
@@ -126,8 +126,8 @@
     </a></li></ul>
 </div>
 
-<div class="btn-group filter" dropdown style="">
-  <button type="button" class="dropdown-toggle" ng-click="$broadcast('refreshSlider')">
+<div class="btn-group filter" uib-dropdown style="">
+  <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
     <span style="padding-right:3px;">{{ 'slope_angle' | translate }}</span> 
     <span class="caret" ng-show="obSearch.searchQuery.slope_low == 0 && obSearch.searchQuery.slope_high == 70"></span>
     <span style="color:#999;" ng-show="(obSearch.searchQuery.slope_low != 0 || obSearch.searchQuery.slope_high != 70) && obSearch.searchQuery.slope_low != obSearch.searchQuery.slope_high">
@@ -141,7 +141,7 @@
     	<i class="ion-close-round"></i>
     </span>
   </button>
-  <ul class="dropdown-menu" role="menu" style="height:auto;width:auto;"><li><a>
+  <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="height:auto;width:auto;"><li><a>
   	<slider-new style="width:240px"
 	    ng-model="obSearch.searchQuery.slope_low"
 	    ng-model-range="obSearch.searchQuery.slope_high"

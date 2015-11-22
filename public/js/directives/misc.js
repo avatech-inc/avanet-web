@@ -266,7 +266,7 @@ angular.module('avatech').directive('closeDropdownOnClick', function() {
             el.bind('click', function($event) {
               console.log("dropdown clicked!");
               var el = $($event.target).closest(".open");
-              if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
+              if (el && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
               scope.$apply();
             });
         }

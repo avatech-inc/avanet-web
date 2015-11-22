@@ -211,9 +211,9 @@ ul.results li:hover .arrow{
 				Click to upload logo
 			</div>
 
-			<div class="logoEdit btn-group" dropdown ng-if="org.logoUrl && userIsAdmin()">
+			<div class="logoEdit btn-group" uib-dropdown ng-if="org.logoUrl && userIsAdmin()">
 
-			      <div class="dropdown-toggle">
+			      <div uib-dropdown-toggle class="dropdown-toggle">
 			      	
 		      		<img src="{{ org.logoUrl }}"/>
 
@@ -332,11 +332,11 @@ ul.results li:hover .arrow{
 
 			<div style="text-align:right;">
 
-				<div ng-if="userIsAdmin()"  class="btn-group userSelect" dropdown>
-			      <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
-			        <i class="fa fa-plus"></i> Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
+				<div ng-if="userIsAdmin()" class="btn-group userSelect" uib-dropdown>
+			      <button type="button" uib-dropdown-toggle class="btn btn-primary" ng-click="newSearch()">
+			        <i class="fa fa-plus"></i>&nbsp;&nbsp;Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
 			      </button>
-			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;" ng-click="$event.stopPropagation()">
 			    	
 			    	<div style="padding:3px 12px;">
 				        <div class="form-group" style="margin-bottom:0;position:relative;">
@@ -381,7 +381,7 @@ ul.results li:hover .arrow{
 
 
 					<div class="right">
-						<div class="btn-group memberMenu" dropdown>
+						<div class="btn-group memberMenu" uib-dropdown>
 
 						<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
 							<span ng-hide="member.user.pending">
@@ -389,14 +389,14 @@ ul.results li:hover .arrow{
 					        </span>
 						</div>
 
-					      <button ng-if="userIsAdmin()" type="button" class="dropdown-toggle btn btn-default" style="width:100px;text-align:left;">
+					      <button ng-if="userIsAdmin()" type="button" class="btn btn-default" style="width:100px;text-align:left;" uib-dropdown-toggle>
 					      	<span ng-hide="member.user.pending">
 						        {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
 					        </span>
 					        <span ng-show="member.user.pending">
 					        	Pending
 					        </span>
-						        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
+					        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
 					      </button>
 					      <ul class="dropdown-menu pull-right" role="menu">
 
@@ -453,31 +453,19 @@ ul.results li:hover .arrow{
 						</div>
 
 						<div class="right">
-							<div class="btn-group memberMenu" dropdown>
+							<div class="btn-group memberMenu" uib-dropdown>
 
 							<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
 								Student
 							</div>
 
-						      <button ng-if="userIsAdmin()" type="button" class="dropdown-toggle btn btn-default" style="width:100px;text-align:left;">
+						      <button ng-if="userIsAdmin()" type="button" uib-dropdown-toggle class="btn btn-default" style="width:100px;text-align:left;">
 						      	<span ng-hide="member.user.pending">
 							        Student
 						        </span>
 							        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
 						      </button>
 						      <ul class="dropdown-menu pull-right" role="menu">
-
-
-						      	<!--<li><a ng-class="{ disable: !member.admin || isOnlyAdmin(member), selected: !member.admin }" href="#" ng-click="setMemberAdmin(member, false)" close-dropdown-on-click>
-							      	<b>{{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}</b> <i class="fa fa-check check"></i><br/>
-						      		<div class='desc'>Can view {{ (org.type=='Avalanche education' ? 'instructors and students' : 'members') }} and share data shared across the organization.</div>
-						      	</a></li>
-
-						      	<li><a ng-class="{ disable: member.admin, selected: member.admin }" href="#" ng-click="setMemberAdmin(member, true)" close-dropdown-on-click>
-						      		<b>Admin</b> <i class="fa fa-check check"></i><br/>
-						      		<div class='desc'>Can also add/remove {{ org.type=='Avalanche education' ? 'instructors and students' : 'members' }} and change organization settings.</div>
-						      	</a></li>
-						      	<li class="divider"></li>-->
 
 						      	<li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeStudent(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
 

@@ -178,11 +178,11 @@ ul.results li:hover .arrow{
 				        <label class="btn btn-default" ng-model="obs.trigger" btn-radio="'U'" uncheckable>Unknown</label>
 				    </div>	
 
-					<div class="btn-group userSelect" dropdown ng-show="obs.trigger == 'N'" style="margin-top:4px;">
-				      <button  type="button" class="dropdown-toggle btn btn-default">
+					<div class="btn-group userSelect" uib-dropdown ng-show="obs.trigger == 'N'" style="margin-top:4px;">
+				      <button  type="button" uib-dropdown-toggle class="btn btn-default">
 				        <i class="fa fa-plus"></i> Add Secondary Natural Trigger
 				      </button>
-				      <ul class="dropdown-menu" role="menu" style="width:300px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+				      <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="width:300px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
 				        <ul class="results">
 				        	<li ng-repeat="type in naturalTriggers" ng-click="addTrigger(type)" ng-class="{ isMember: hasTrigger(type) }" close-dropdown-on-click>
 				        		{{ type.name }}
@@ -193,11 +193,11 @@ ul.results li:hover .arrow{
 				        </a></li></ul>
 	    			</div>
 
-					<div class="btn-group userSelect" dropdown ng-show="obs.trigger == 'A'" style="margin-top:4px;">
-				      <button  type="button" class="dropdown-toggle btn btn-default">
+					<div class="btn-group userSelect" uib-dropdown ng-show="obs.trigger == 'A'" style="margin-top:4px;">
+				      <button  type="button" uib-dropdown-toggle class="btn btn-default">
 				        <i class="fa fa-plus"></i> Add Secondary Artificial Trigger
 				      </button>
-				      <ul class="dropdown-menu" role="menu" style="width:300px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+				      <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="width:300px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
 				    	
 				        <div ng-repeat="cat in ['Explosive','Vehicle','Human','Miscellaneous']">
 					        <div class="subheader" ng-class="{ 'first': $index == 0 }">{{ cat }}</div>

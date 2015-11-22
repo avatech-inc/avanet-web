@@ -108,13 +108,13 @@ table.metaData td span {
 		      </button>
 	      	</div>
 
-			<div class="btn-group filter right" dropdown ng-if="global.user._id == profile.user._id" ng-hide="discussMode">
+			<div class="btn-group filter right" ng-if="global.user._id == profile.user._id" ng-hide="discussMode">
 		      <button type="button" ng-click="go('/profiles/' + profile._id)"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit</button>
 		    </div>
 
 		    
-			<div class="btn-group filter right" dropdown ng-hide="discussMode">
-		      <button type="button" class="dropdown-toggle"><i class="ion-eye"></i>&nbsp;<span ng-show="settings.view == null">Views
+			<div class="btn-group filter right" uib-dropdown ng-hide="discussMode">
+		      <button type="button" uib-dropdown-toggle><i class="ion-eye"></i>&nbsp;<span ng-show="settings.view == null">Views
 		      <!--<i class="fa fa-caret-down" style="margin-right:2px;"></i>--></span>
 
 		      <span ng-show="settings.view != null && getView()">View: {{ getView().name }}
@@ -125,8 +125,8 @@ table.metaData td span {
 		      	<li ng-repeat="view in views"><a ng-click="setView(view.id)" href="#" close-dropdown-on-click><i ng-style="{ opacity: settings.view == view.id ? 1 : 0 }" class="fa fa-check"></i>{{ view.name }}</a></li>
 		    </div>
 
-			<div class="btn-group filter right" dropdown ng-hide="discussMode">
-			  <button type="button" class="dropdown-toggle">
+			<div class="btn-group filter right" uib-dropdown ng-hide="discussMode">
+			  <button type="button" uib-dropdown-toggle>
 			    <i class="fa fa-download"></i>&nbsp;&nbsp;Download
 			  </button>
 			    <ul class="dropdown-menu" role="menu">

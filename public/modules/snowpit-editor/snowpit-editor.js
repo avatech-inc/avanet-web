@@ -64,6 +64,17 @@ angular.module('avatech')
         // show other tooltips
         $('.tooltip-trigger').tooltip();
 
+        $scope.getThumbnailURL = function(media) {
+            if (media.type == "photo") {
+                url = media.URL;
+                if (url.indexOf("cloudinary.com") > -1) {
+                    var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);
+                    filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));
+                    url = "http://res.cloudinary.com/avatech/image/upload/w_300/" + filename + ".jpg";
+                }
+                return url;
+            }
+        }
 
         // beacuse of the ui.router hack to allow url transition without loading new state,
         // we have to manually keep track of when to reload state (when they release 'dyanmic
@@ -111,7 +122,7 @@ angular.module('avatech')
                     layers: [],
                     temps: [],
                     tests: [],
-                    photos: [],
+                    media: [],
                     density: [],
                     metaData: { },
                     user: { fullName: Global.user.fullName, _id: Global.user._id },
@@ -180,7 +191,7 @@ angular.module('avatech')
             if ((profile.layers && profile.layers.length == 0) &&
                 (profile.temps && profile.temps.length == 0) &&
                 (profile.tests && profile.tests.length == 0) &&
-                (profile.photos && profile.photos.length == 0) &&
+                (profile.media && profile.media.length == 0) &&
                 (profile.density && profile.density.length == 0) &&
                 (profile.metaData && Object.keys(profile.metaData).length == 0)) return;
 
@@ -711,8 +722,8 @@ angular.module('avatech')
         // PHOTO UPLOAD
 
         $scope.deletePhoto = function(index) {
-            if (index == 0) $scope.profile.photos.shift();
-            else $scope.profile.photos.splice(index,1);
+            if (index == 0) $scope.profile.media.shift();
+            else $scope.profile.media.splice(index,1);
         }
 
         $scope.onFileAdd = function(file) {
@@ -726,16 +737,19 @@ angular.module('avatech')
         }
 
         $scope.onFileUpload = function(file) {
-            if ($scope.profile.photos == null) $scope.profile.photos = [];
+            if ($scope.profile.media == null) $scope.profile.media = [];
             file.uploading = false;
             file.caption = file.name;
-            $scope.profile.photos.unshift(file);
+            file.type = "photo";
+            file.URL = file.url;
+            delete file.url;
+            $scope.profile.media.unshift(file);
             $scope.$apply();
         };
 
 
         $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.profile.photos, index);
+            Lightbox.openModal($scope.profile.media, index);
         }
 
         // UTILITIES

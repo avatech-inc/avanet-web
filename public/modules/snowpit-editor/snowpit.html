@@ -586,17 +586,16 @@
 					{{ upload.name }}
 				</div>
 
-				<div ng-repeat="photo in profile.photos" class="photo-thumb" style="position:relative; vertical-align:top;height:145px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
+				<div ng-repeat="photo in profile.media" class="photo-thumb" style="position:relative; vertical-align:top;height:111px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
 
-					<div thumbnail="photo"
-
+					<div ng-style="{ 'background-image': 'url(' + getThumbnailURL(photo) + ')' }"
 					style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
 
 						<!--<div ng-show="photo.uploading" style="padding-top:22px;font-size:40px;"><i class="fa fa-circle-o-notch fa-spin"></i></div>-->
 
 					</div>
 
-					<input ng-model="photo.caption" class="photo=caption form-control input-sm" />
+					<!--<input ng-model="photo.caption" class="photo=caption form-control input-sm" />-->
 
 					<button ng-click="deletePhoto($index)" class="photo-delete"><i class="fa fa-trash-o"></i></button>
 				</div>

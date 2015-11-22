@@ -257,7 +257,7 @@ a[title="Open in new tab"] { display: none; }
 				      	<li><a href="#" ng-click="exportCSV()" close-dropdown-on-click><i class="fa fa-file-excel-o"></i>Download CSV</a></li>
 			      	</ul>
 				</div>
-				
+
 				<div class="btn-group filter right" ng-if="global.user._id == observation.user._id" ng-hide="discussMode">
 			      <button type="button" ng-click="go('/profiles/' + observation._id)"><i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit</button>
 			    </div>
@@ -501,20 +501,6 @@ scrollable always-visible="true">
 						<i class="fa fa-play"></i>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- photos -->
-	<div ng-show="observation.photos && observation.photos.length > 0">
-		<div style="clear:both;border-bottom:1px solid #eee;"></div>
-		<div class="sectionHeader">Photos</div>
-		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
-			<div ng-repeat="photo in observation.photos" style="vertical-align:top;display:inline-block;" ng-click="showPhoto($index)">
-				<div class="image-container">
-					<img src="{{ photo.url }}"/>
-				</div>
-				<!--<span style='font-size:11px;'>{{ photo.caption }}</span>-->
 			</div>
 		</div>
 	</div>

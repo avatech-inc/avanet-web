@@ -49,7 +49,13 @@ angular.module('avatech').controller('ObservationPreviewController',
 
         $scope.getThumbnailURL = function(media) {
             if (media.type == "photo") {
-                return media.URL;
+                url = media.URL;
+                if (url.indexOf("cloudinary.com") > -1) {
+                    var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);
+                    filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));
+                    url = "http://res.cloudinary.com/avatech/image/upload/w_300/" + filename + ".jpg";
+                }
+                return url;
             }
             else if (media.type == "video") {
                 var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);

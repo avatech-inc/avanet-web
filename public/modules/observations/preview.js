@@ -48,6 +48,7 @@ angular.module('avatech').controller('ObservationPreviewController',
         }
 
         $scope.getThumbnailURL = function(media) {
+            // http://cloudinary.com/documentation/image_transformations
             if (media.type == "photo") {
                 url = media.URL;
                 if (url.indexOf("cloudinary.com") > -1) {
@@ -57,6 +58,7 @@ angular.module('avatech').controller('ObservationPreviewController',
                 }
                 return url;
             }
+            // http://cloudinary.com/documentation/video_manipulation_and_delivery#generating_video_thumbnails
             else if (media.type == "video") {
                 var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);
                 filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));

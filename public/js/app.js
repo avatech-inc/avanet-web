@@ -1,12 +1,19 @@
 // define app
-angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio',
+angular.module('avatech', [
+    'ngRoute', 'ngTouch',
+    'ui.bootstrap', 'ui.router', 'ui.route', 
+    'restangular', 
+    'LocalStorageModule', 
+    'angularMoment', 
+    'sun.scrollable', 
+    'vr.directives.slider', 
+    'FontLoader', 
+    'mentio',
     'pascalprecht.translate',
     'schemaForm',
     'pasvaz.bindonce',
     'ct.ui.router.extras',
     'bootstrapLightbox',
-    'angulartics', 'angulartics.mixpanel',
-    'colorpicker.module',
     'credit-cards',
     'angular-country-picker',
     'pikaday',
@@ -14,10 +21,6 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'ngAudio',
     'terrain'
 ]);
-
-angular.module('avatech.system', []);
-
-angular.module('avatech.profiles', []);
 
 angular.module('avatech').config(function (LightboxProvider) {
   LightboxProvider.getImageUrl = function (media) {
@@ -122,7 +125,7 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 
 // the first thing that gets run
 angular.module('avatech').run(
- function($rootScope, $route, $location, $state, $stateParams, $document, $http, $uibModalStack, Observations, Routes, Global) {
+ function($rootScope, $location, $state, $stateParams, $document, $http, $uibModalStack, Observations, Routes, Global) {
 
     // init global service
     Global.init();
@@ -170,7 +173,6 @@ angular.module('avatech').run(
     });
 
     // 3. after route change
-    //$rootScope.$on("$routeChangeSuccess", function(event, current, previous) {
     $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
         // resize map based on new layout
         $rootScope.$broadcast('resizeMap');

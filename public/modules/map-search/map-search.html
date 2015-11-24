@@ -4,14 +4,14 @@
       <button type="button" uib-dropdown-toggle ng-click="focusLocationSearchInput()">
         <i class="fa fa-search"></i>
       </button>
-      <ul class="dropdown-menu" role="menu"><li><a style="padding:0;background:#fff !important;">
+      <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu"><li><a style="padding:0;background:#fff !important;">
 
       	<input type="text" class="form-control input-sm search location-search-input" 
 	      	ng-model="geo.query"
 	      	placeholder="{{ 'search_location' | translate }}">
 
         <div class="results">
-        	<div ng-repeat="result in geo.results" ng-click="goTo(result)">	
+        	<div ng-repeat="result in geo.results" ng-click="goTo(result)" close-dropdown-on-click>	
         		<div style="font-weight:400;">{{ result.name }}</div>
         		<div style="font-weight:100;">
         			<span ng-show="result.adminName2">{{ result.adminName2 }}, </span>{{ result.adminName1 }} {{ result.countryCode }} <span style="float:right;color:#ccc;display:none;">{{ result.fcodeName}}</span>

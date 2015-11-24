@@ -1,4 +1,4 @@
-angular.module('avatech').directive('mapSearch', function() {
+angular.module('avatech').directive('mapSearch', function($timeout, $log, $http, $q) {
   return {
     restrict: 'E',
     scope: {
@@ -16,7 +16,7 @@ angular.module('avatech').directive('mapSearch', function() {
       // });
     },
 
-    controller: ['$scope', '$timeout', '$log', function($scope, $timeout, $log) {
+    controller: function($scope, $timeout, $log, $http, $q) {
 
         // -- map location search --
 
@@ -97,28 +97,37 @@ angular.module('avatech').directive('mapSearch', function() {
             return d[n][m];
         }
 
+        var abort;
         var timer;
         $scope.$watch('geo.query', function() {
+            // clear current results
             $scope.geo.results = [];
+
+            if (abort) abort.abort();
             if (timer) $timeout.cancel(timer);
             timer = $timeout(function(){
               $scope.geoSearch();
-            },250);
+            }, 300);
         }, true);
 
         $scope.geo = { query: '', results: [] }
         $scope.geoSearch = function() {
             $log.debug($scope.geo.query);
 
-            // clear current results
-            $scope.geo.results = [];
             $scope.geo.query = $scope.geo.query.trim();
             if ($scope.geo.query == "") return;
             //codeAddress($scope.geo.geoQuery);
 
             if ($scope.geo.query.length < 3) return;
 
-            $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
+
+            //abort = $q.defer();
+            abort = $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
+            // .success(function(data, status, headers, config) {
+
+            // });
+            // $http({ method: 'GET', timeout: abort.promise, 
+            //     url: "https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech" })
             .success(function(data, status, headers, config) {
 
             // geoSort(data.geonames, 40.633052, -111.5658795);
@@ -300,8 +309,6 @@ angular.module('avatech').directive('mapSearch', function() {
         $scope.goTo = function(result) {
           $scope.locationSelect({ location: { lat: parseFloat(result.lat), lng: parseFloat(result.lng) } });
         }
-    }]
-
+    }
   }
-
 });

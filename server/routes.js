@@ -3,29 +3,8 @@ var path = require('path');
 
 module.exports = function(app) {
 
-    // NOT PORTED:
-
-    // User
-    // app.get('/v1/users/:userId/stats', auth.requireLogin, auth.requireAdmin, users.getUserStats);
-
-    // Organizations
-    // app.get('/v1/orgs/education/:orgHashId', orgs.showEducation);
-
-    // ---------------------------------------------------------
-
-    // Device Profiles
-    // this handles both create and update
-    // app.post('/v1/tests', auth.requireLogin, tests.create);
-    // app.get('/v1/tests', auth.requireLogin, tests.getAll);
-    // app.post('/v1/tests/checkUpload', auth.requireLogin, tests.checkUpload);
-    // app.post('/v1/tests/upload', auth.requireLogin, tests.upload);
-    // app.get('/v1/tests/downloadData', auth.requireLogin, auth.requirePermission('bulkDownload'), tests.downloadRawData);
-    // app.get('/v1/tests/:testId', auth.requireLogin, tests.show);
-
-    // ---------------------------------------------------------
-
     // File Upload
-
+    
     var multiparty = require('multiparty');
     var uuid = require('node-uuid');
     var knox = require('knox');
@@ -59,12 +38,10 @@ module.exports = function(app) {
         });
 
     });
-    
-    //app.get('/test500', function(req,res) { res.json(nonExistentVariable); });
 
-    // app.get('/download-app', function(req,res) { 
-    //    res.sendFile(path.join(__dirname, './views', 'download-app.html'));
-    // });
+    app.get('/download-app', function(req,res) { 
+        res.sendFile(path.join(__dirname, './views', 'download-app.html'));
+    });
     app.get('/app', function(req,res) { 
         res.sendFile(path.join(__dirname, './views', 'download-app.html'));
     });
@@ -98,6 +75,7 @@ module.exports = function(app) {
     app.get('/sp1manual', getManual);
     app.get('/manual', getManual);
 
+    // wildcard
     app.get('*', function(req,res) { 
         res.sendFile(path.join(__dirname, './views', 'main.html'));
     });

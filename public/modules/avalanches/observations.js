@@ -80,7 +80,7 @@ function ($scope, $q, $log, $location, $stateParams, $location, $modal, $timeout
         $scope.obs.photos.unshift(file);
         $scope.$apply();
 
-        console.log($scope.obs);
+        //console.log($scope.obs);
     };
 
 

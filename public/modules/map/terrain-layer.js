@@ -144,7 +144,7 @@ var AvatechTerrainLayer = function (options) {
 
                 // fire tileLoaded callback
                 if (canvas._tileLoaded) {
-                    console.log("loaded!");
+                    //console.log("loaded!");
                     canvas._tileLoaded(null, canvas);
                     // remove the function so it can't be called twice
                     canvas._tileLoaded = null;
@@ -177,7 +177,7 @@ var AvatechTerrainLayer = function (options) {
 
     terrainLayer.setOverlayType = function(overlayType) {
         terrainLayer.options.updateWhenIdle = (!overlayType);
-        console.log("updateWhenIdle: " + terrainLayer.options.updateWhenIdle);
+        //console.log("updateWhenIdle: " + terrainLayer.options.updateWhenIdle);
         terrainLayer.overlayType = overlayType;
         terrainLayer.needsRedraw = true;
     }
@@ -317,7 +317,7 @@ var AvatechTerrainLayer = function (options) {
     // callback will only return after all tiles have loaded, so we don't have
     // to worry about checking if terrain tiles have been loaded before querying.
     terrainLayer.getTerrainDataBulk = function(points, callback) {
-        console.log("getTerrainDataBulk!");
+        //console.log("getTerrainDataBulk!");
         var promises = [];
         // call 'getTerrainData' for each point
         for (var i = 0; i < points.length; i++) {
@@ -330,7 +330,7 @@ var AvatechTerrainLayer = function (options) {
         // keep track of recieved data in original order
         var receivedPoints = [];
         $q.all(promises).then(function(results) {
-            console.log("everything resolved!");
+            //console.log("everything resolved!");
             for (var i = 0; i < results.length; i++) {
                 var terrainData = results[i];
                 receivedPoints[terrainData.index] = terrainData;

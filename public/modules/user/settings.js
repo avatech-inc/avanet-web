@@ -11,11 +11,6 @@ function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $h
 
             $scope.settings = angular.copy(user.settings);
         });
-
-        // RestObject.getList('members').then(function (members) {
-        //     console.log(members);
-        //     $scope.members = members;
-        // });
     };
     $scope.loadSettings();
 
@@ -45,16 +40,11 @@ function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $h
         }
         // merge and save
 
-        // console.log($scope.tempUser);
-        // return;
         delete $scope.tempUser.location;
 
         $scope.tempUser.save()
         // success
         .then(function(user) {
-            console.log($scope.tempUser);
-            console.log(user);
-
             $scope.user = user;
             Global.setUser($scope.user);
             $scope.tempUser = Restangular.copy(user);
@@ -77,9 +67,6 @@ function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $h
         
         // if new location set, save user
         if (oldLocation.toString() != newLocation.toString()) {
-            // console.log("updating here too!!!")
-            // console.log(oldLocation);
-            // console.log(newLocation);
             $scope.user.save();
             mixpanel.track("changed home location");
             $scope.global.setUser($scope.user);
@@ -262,7 +249,6 @@ function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $h
             // zipFileName += "_" + $scope.currentTest.profile.
             // download in browser
             // var dataUrl = data.buffer;
-            console.log(data);
             var link = document.createElement('a');
             angular.element(link).attr('href', data.url);//.attr('download', zipFileName + ".zip")
             link.click();

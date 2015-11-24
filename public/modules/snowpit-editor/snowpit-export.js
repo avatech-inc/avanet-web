@@ -676,7 +676,6 @@ return {
                 else if (PDForJPEG == "JPEG") {
 
                     setTimeout(function() {
-                        console.log(_canvas);
                         _canvas.toBlob(function(blob) {
                             saveAs(blob, "profile.jpg");
                         }, "image/jpeg", 1);

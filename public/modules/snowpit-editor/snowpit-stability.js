@@ -75,8 +75,6 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
             if (isNaN(newComment.depth)) newComment.depth = null;
             if (newComment.depth != null && $scope.depthDescending) newComment.depth = $scope.profile.depth - newComment.depth;
 
-            console.log(newComment);
-
             // save
             angular.copy(newComment, $scope.test);
 
@@ -91,8 +89,6 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
             if ($scope.newComment.depth != null && $scope.depthDescending) $scope.newComment.depth = $scope.profile.depth - $scope.newComment.depth;
 
             $scope.newComment.isNew = false;
-
-            console.log($scope.newComment);
 
             if (!$scope.profile.tests) $scope.profile.tests = [];
             $scope.profile.tests.push($scope.newComment);

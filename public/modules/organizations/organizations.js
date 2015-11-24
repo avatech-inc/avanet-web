@@ -1,4 +1,4 @@
-angular.module('avatech').controller('OrganizationsController', function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular) { 
+angular.module('avatech').controller('OrganizationsController', function ($scope, $q, $log, $stateParams, $location, $timeout, Global, Restangular) { 
     $scope.global = Global;
 
     $scope.newOrg = {};
@@ -30,9 +30,9 @@ angular.module('avatech').controller('OrganizationsController', function ($scope
     }
 
     $scope.create = function() {
-        console.log($scope.newOrgForm.$valid);
+        $log.debug($scope.newOrgForm.$valid);
         if (!$scope.newOrgForm.$valid) return;
-        console.log($scope.newOrgForm);
+        $log.debug($scope.newOrgForm);
 
         Restangular.all('orgs').post($scope.newOrg).then(function(newOrg) {
             $location.path('orgs/' + newOrg._id);
@@ -90,7 +90,7 @@ angular.module('avatech').controller('OrganizationsController', function ($scope
         }
         // error
         , function(){
-            console.log(member);
+            $log.debug(member);
         });
     }
     $scope.addMember = function(user) {

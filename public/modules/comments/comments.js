@@ -1,4 +1,4 @@
-angular.module('avatech').directive('commentsNew', function($http, $timeout, $sce, Restangular) {
+angular.module('avatech').directive('commentsNew', function($http, $log, $timeout, $sce, Restangular) {
   return {
     restrict: 'E',
     scope: { 
@@ -17,7 +17,7 @@ angular.module('avatech').directive('commentsNew', function($http, $timeout, $sc
             Restangular.all("users").getList({ query: $scope.search.query }).then(function(response) {
               var results = [];
               for (var i = 0; i < response.length; i++) {
-                console.log(result);
+                $log.debug(result);
                 var result = response[i];
                 results.push({ id: result._id, name: result.fullName, avatar: '', type: 'user' });
               }
@@ -46,7 +46,7 @@ angular.module('avatech').directive('commentsNew', function($http, $timeout, $sc
           
           $('textarea.comment').mentionsInput('val', function(comment) {
 
-          console.log(comment);
+          $log.debug(comment);
 
           if (comment == "" || comment == null) return;
 
@@ -102,14 +102,12 @@ angular.module('avatech').directive('commentsNew', function($http, $timeout, $sc
         var regex = /@\[([A-Za-z0-9 \-]+)\]\(user:([A-Za-z0-9\-]+)\)/igm;
         //var match = regex.exec(comment);
 
-        //console.log(match);
-
         var match;
         while ((match = regex.exec(comment)) !== null)
         {
           var name = match[1];
           var id = match[2];
-          console.log(match[0]);
+          $log.debug(match[0]);
           comment = comment.replace(match[0],"<span style='border-bottom:1px solid #ccc;'>" + name + "</span>");
         }
         // if (match.length == 3) {

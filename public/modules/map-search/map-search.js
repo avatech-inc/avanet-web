@@ -16,7 +16,7 @@ angular.module('avatech').directive('mapSearch', function() {
       // });
     },
 
-    controller: ['$scope', '$timeout', function($scope, $timeout) {
+    controller: ['$scope', '$timeout', '$log', function($scope, $timeout, $log) {
 
         // -- map location search --
 
@@ -108,7 +108,7 @@ angular.module('avatech').directive('mapSearch', function() {
 
         $scope.geo = { query: '', results: [] }
         $scope.geoSearch = function() {
-            console.log($scope.geo.query);
+            $log.debug($scope.geo.query);
 
             // clear current results
             $scope.geo.results = [];
@@ -196,7 +196,7 @@ angular.module('avatech').directive('mapSearch', function() {
             var exlcude = ['church','cemetery','mine(s)','tower','golf course','island','mall','museum','library'];
             data.geonames = data.geonames.filter(function(a) {
                 var code = a.fcodeName;
-                console.log(a.countryCode);
+                $log.debug(a.countryCode);
                 if (exlcude.indexOf(code) == -1 && a.countryCode != undefined) return a;
             });
 
@@ -254,7 +254,7 @@ angular.module('avatech').directive('mapSearch', function() {
                     var _merged = merged[i];
                     if (_merged.length == 1) { finalResults.push(_merged[0]); continue; }
 
-                    console.log("----------------------- " + i);
+                    $log.debug("----------------------- " + i);
                     // for (var m = 0; m < _merged.length; m++) {
                     //     var result = _merged[m];
                     //     var name = result.name.toLowerCase().trim();
@@ -275,7 +275,7 @@ angular.module('avatech').directive('mapSearch', function() {
 
                     for (var m = 0; m < _merged.length; m++) {
                         var result = _merged[m];
-                        console.log(result.name + ": " + result.quality + " / " + result.score);
+                        $log.debug(result.name + ": " + result.quality + " / " + result.score);
                     }
 
                     // pick first

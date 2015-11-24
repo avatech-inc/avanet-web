@@ -1,4 +1,4 @@
-angular.module('avatech').controller('RoutePlanningController', function($http, $q, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport) {
+angular.module('avatech').controller('RoutePlanningController', function($http, $q, $log, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport) {
 
     $scope.formatters = formatters = snowpitExport.formatters;
     $scope.loading = true;
@@ -34,7 +34,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
     var _line;
     // $scope.$watchCollection('_line.editing._markers',function(){
-    //     console.log("markers editing!!!!!!!!")
+    //     $log.debug("markers editing!!!!!!!!")
     //     if (_line && _line.editing && _line.editing._markers)
     //         $scope.route.markers = _line.editing._markers;
     // });
@@ -85,7 +85,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     // load terrain
                     processUpdate(function() {
                         // elevation profile has been loaded
-                        console.log("elevation profile has been loaded!");
+                        $log.debug("elevation profile has been loaded!");
                         // note: this will still get called even if no terrain is present
                         editingOn();
                         $scope.loading = false;
@@ -116,13 +116,13 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         // save when route is edited
         var routeSaveTimer;
         $scope.$watch('route', function() {
-            //console.log('saving route!')
+            //$log.debug('saving route!')
             if (!_line || !_line.editing || (_line.editing._markers && _line.editing._markers.length < 2)) return;
 
             if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
             routeSaveTimer = $timeout(function() {
 
-                console.log("saving!!");
+                $log.debug("saving!!");
 
                 var _route = {
                     name: $scope.route.name,
@@ -197,7 +197,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         //     if (routeSaveTimer) $timeout.cancel(routeSaveTimer);
         //     routeSaveTimer = $timeout(function() {
 
-        //         console.log("saving!!");
+        //         $log.debug("saving!!");
 
         //         var _route = {
         //             name: $scope.route.name,
@@ -456,15 +456,15 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // var metersPerPixel = $scope.getMetersPerPixel();
             // var inchesPerMeter = 39.3701;
             // // var pixelsPerMeter = metersPerPixel * 
-            // // console.log("pixelsPerMeter: " + pixelsPerMeter);
+            // // $log.debug("pixelsPerMeter: " + pixelsPerMeter);
             // var mapScale = Math.round(inchesPerMeter * metersPerPixel * $scope.getPixelsPerScreenInch());
             // var feetPerInch = Math.round(mapScale / 12.0);
             // var pixelsPerCm = $scope.getPixelsPerScreenInch() / 2.54;
             // var metersPerCm = Math.round(metersPerPixel * pixelsPerCm);
             // // todo: when above 1 mile or 1 km, show in mile and km
-            // // console.log("MAP SCALE: 1:" + mapScale)
-            // console.log("metersPerPixel: " + metersPerPixel)
-            // // console.log("metersPerCm: " + metersPerCm)
+            // // $log.debug("MAP SCALE: 1:" + mapScale)
+            // $log.debug("metersPerPixel: " + metersPerPixel)
+            // // $log.debug("metersPerCm: " + metersPerCm)
 
             // // draw map scale
             // var scale_canvas = DrawScaleCanvas(metersPerPixel);
@@ -710,9 +710,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                 // route terrain stats
                 if (elevationProfilePoints) {
-                    //console.log("here!!!!!!!!!!!!!!!!!");
+                    //$log.debug("here!!!!!!!!!!!!!!!!!");
                    $scope.route.stats = calculateLineSegmentStats(elevationProfilePoints);
-                   //console.log($scope.route.stats);
+                   //$log.debug($scope.route.stats);
                 }
             }, 10);
         }
@@ -876,7 +876,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     makeWaypointbutton.innerHTML = '<i class="fa fa-map-marker"></i>&nbsp;&nbsp;Make Waypoint';
                     makeWaypointbutton.addEventListener("click", function() {
                         // if (marker._index == 0 || marker._index == _line.editing._markers.length - 1) {
-                        //     console.log("can't create waypoint on start point or end point")
+                        //     $log.debug("can't create waypoint on start point or end point")
                         //     return;
                         // }
 
@@ -893,7 +893,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                     deleteButton.innerHTML = '<i class="ion-trash-a"></i>&nbsp;&nbsp;Delete';
                     deleteButton.addEventListener("click", function() {
                         if (_line.editing._markers.length == 1) {
-                            console.log("can't delete only point");
+                            $log.debug("can't delete only point");
                             return;
                         }
                         _line.editing._onMarkerClick({ target: marker });
@@ -954,7 +954,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         function processUpdate(callback) {
             updateSegments();
 
-            console.log("processUpdate!")
+            $log.debug("processUpdate!")
 
             var points = _line._latlngs;
 
@@ -979,11 +979,11 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                 if (!receivedPoints || receivedPoints.length == 0) return;
 
-                console.log("TERRAIN DATA LAODED!")
+                $log.debug("TERRAIN DATA LAODED!")
 
                 // store elevation profile for later
                 elevationProfilePoints = angular.copy(receivedPoints);
-                //console.log(receivedPoints);
+                //$log.debug(receivedPoints);
 
                 // calculate route stats/time, etc.
                 calculateRouteStats();
@@ -1001,8 +1001,8 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
                 saveLinePoints();
             });
-            //console.log("promises!");
-            //console.log(promises);
+            //$log.debug("promises!");
+            //$log.debug(promises);
             updateSegments();
         }
 
@@ -1016,7 +1016,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
 
 
             for (var i = 0; i < points.length; i++) {
-                //console.log(i);
+                //$log.debug(i);
                 var point = points[i];
                 if (!point) continue;
 
@@ -1196,7 +1196,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
           // $.getJSON("http://api.tiles.mapbox.com/v4/surface/mapbox.mapbox-terrain-v1.json?layer=contour&fields=ele&points=" +
           //   point_string 
           //   + "&access_token=pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg", function(data) {
-          //       console.log(data.results);
+          //       $log.debug(data.results);
 
           //       geoJSON.features[0].geometry.coordinates = [];
           //       for (var i=0; i< data.results.length; i++) {
@@ -1315,7 +1315,7 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             // end GPX
             gpx += '</gpx>';
 
-            //console.log(gpx);
+            //$log.debug(gpx);
 
             var gpxData = 'data:application/gpx+xml;charset=utf-8,' + encodeURIComponent(gpx);
             var link = document.createElement('a');

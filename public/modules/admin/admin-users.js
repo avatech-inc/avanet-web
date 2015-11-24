@@ -1,4 +1,4 @@
-angular.module('avatech').controller('AdminUsersController', function ($scope, $location, $http, Global, Restangular) {
+angular.module('avatech').controller('AdminUsersController', function ($scope, $log, $location, $http, Global, Restangular) {
     $scope.global = Global;
 
     // executes on 'page load'
@@ -200,14 +200,14 @@ angular.module('avatech').controller('AdminUsersController', function ($scope, $
     $scope.toggleDisabled = function(user) {
         user.disabled = !user.disabled;
         user.$update(function(data) {
-            console.log(data);
+            $log.debug(data);
         });
     }
 
     $scope.toggleTest = function(user) {
         user.test = !user.test;
         user.$update(function(data) {
-            console.log(data);
+            $log.debug(data);
         });
     }
 

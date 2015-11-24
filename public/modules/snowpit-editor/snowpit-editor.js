@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
+    function ($scope, $state, $stateParams, $location, $log, $http, $timeout, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
 
         $scope.global = Global;
 
@@ -83,9 +83,9 @@ angular.module('avatech')
             if (fromState.name == toState.name) {
                 var isUrlUpdate = (fromParams.profileId == "new" && toParams.profileId == $scope.profile._id);
                 if (!isUrlUpdate) {
-                    console.log("reload!");
+                    $log.debug("reload!");
                     var go = $scope.$on('$stateChangeSuccess', function () { 
-                        console.log("success!");
+                        $log.debug("success!");
                         $state.go(toState.name, toParams, { reload: true }); 
                         go();
                     });
@@ -98,18 +98,18 @@ angular.module('avatech')
             "fontsLoaded": function(error) {
                 if (error !== null) {
                     // Reached the timeout but not all fonts were loaded
-                    console.log(error.message);
-                    console.log(error.notLoadedFontFamilies);
+                    $log.debug(error.message);
+                    $log.debug(error.notLoadedFontFamilies);
                 } else {
                     // All fonts were loaded
-                    console.log("all fonts were loaded");
+                    $log.debug("all fonts were loaded");
                 }
                 $scope.settings.fontsLoaded = true;
                 $scope.$apply();
             },
             "fontLoaded": function(fontFamily) {
                 // One of the fonts was loaded
-                console.log("font loaded: " + fontFamily);
+                $log.debug("font loaded: " + fontFamily);
             }
         }, 3000);
         fontLoader.loadFonts();
@@ -175,7 +175,7 @@ angular.module('avatech')
             Confirm.open("Are you sure you want to delete this snowpit?").then(function (yes) {
                 // user pressed yes
                 $scope.profile.$remove(function(profile) {
-                    console.log("removed!");
+                    $log.debug("removed!");
                     $location.path('/');
                 });
             }, function () {
@@ -212,12 +212,12 @@ angular.module('avatech')
 
             // <nointernet>
             // profile.$update(function() {
-            //     console.log("Saved!");
+            //     $log.debug("Saved!");
             // });
 
             // $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
             // .then(function(res) {
-            //     console.log("Saved!");
+            //     $log.debug("Saved!");
             // });
             Observations.save($scope.getSanitizedProfileCopy());
         };
@@ -434,7 +434,7 @@ angular.module('avatech')
             $scope.selectTemp($scope.profile.temps[index]);
         }
         $scope.deleteTemp = function(temp) {
-            console.log("delete!");
+            $log.debug("delete!");
             var index = null;
             for (var i = 0; i < $scope.profile.temps.length; i++) {
                 if ($scope.profile.temps[i] == temp) index = i;
@@ -766,8 +766,8 @@ angular.module('avatech')
         //         , maxDate: new Date()
         //         //, format: 'YYYY-MM-DD'
         //         , onSelect: function() {
-        //             //console.log(picker.toString());
-        //             //console.log(this.getMoment().format('Do MMMM YYYY'));
+        //             //$log.debug(picker.toString());
+        //             //$log.debug(this.getMoment().format('Do MMMM YYYY'));
         //         }
         //     });
         //     // todo:find a more elegant way to make sure the picker loads the date
@@ -818,7 +818,7 @@ angular.module('avatech')
             // remove existing tooltips
             $timeout(function(){ $(".tooltip").remove() });
             // show hardness drag tooltip
-            console.log(ControlScope.tooltips);
+            $log.debug(ControlScope.tooltips);
             if (ControlScope.tooltips) { $timeout(function(){ $(".hardnessBar").tooltip('show') }); }
 
           $document.unbind('mousemove', mousemove);
@@ -901,7 +901,7 @@ angular.module('avatech')
                         ControlScope.settings.selectedLayer.hardness2 = key;
                     }
                     else if (attrs.draggableType == "top") {
-                        console.log("top!");
+                        $log.debug("top!");
                         ControlScope.settings.selectedLayer.hardness2 = initialHardness2;
                         ControlScope.settings.selectedLayer.hardness = key;
                     }

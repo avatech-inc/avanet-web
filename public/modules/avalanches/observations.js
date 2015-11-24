@@ -1,5 +1,5 @@
-angular.module('avatech').controller('ObservationsController', ['$scope', '$q', '$location', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular', 'LocationSelectModal', 'Confirm', 'Lightbox',
-function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Global, Restangular, LocationSelectModal, Confirm, Lightbox) {
+angular.module('avatech').controller('ObservationsController',
+function ($scope, $q, $log, $location, $stateParams, $location, $modal, $timeout, Global, Restangular, LocationSelectModal, Confirm, Lightbox) {
     $scope.global = Global;
 
     $scope.obs = {}; 
@@ -46,7 +46,7 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
       Confirm.open("Are you sure you want to delete?").then(function (yes) {
             // user pressed yes
             $scope.obs.remove().then(function(profile) {
-                console.log("removed!");
+                $log.debug("removed!");
             });
             $location.path('/');
         }, function () {
@@ -189,7 +189,7 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
                 $scope.obs.shareWithStudents = sharing.students;
                 $scope.obs.type = "avalanche";
 
-                console.log($scope.obs);
+                $log.debug($scope.obs);
 
                 if ($scope.observationId == "new") {
                     Restangular.all('observations').post($scope.obs).then(function(newOrg) {
@@ -387,4 +387,4 @@ function ($scope, $q, $location, $stateParams, $location, $modal, $timeout, Glob
             });
         }
 
-}]);
+});

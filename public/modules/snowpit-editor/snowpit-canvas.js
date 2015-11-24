@@ -753,8 +753,6 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     && scope.profile.airTemp <= 0
                     && scope.profile.temps && scope.profile.temps.length > 0) {
 
-                    console.log("air temp:" + scope.profile.airTemp);
-
                     var surfaceTemp = (maxTemp - Math.abs(surfaceTemp)) * (_width / maxTemp) + 1; 
                     var airTemp = (maxTemp - Math.abs(scope.profile.airTemp * 2)) * (_width / maxTemp) + 1;
                     context.setLineDash([5,5]);

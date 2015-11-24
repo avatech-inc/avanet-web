@@ -11,7 +11,7 @@ angular.module('avatech').factory('DeviceUploadModal', function ($uibModal) {
 }});
 
 angular.module('avatech').controller('DeviceUploadModalController',
-    function ($scope, $location, $rootScope, $uibModalInstance, $timeout, $http, Global, Observations) {
+    function ($scope, $location, $rootScope, $uibModalInstance, $log, $timeout, $http, Global, Observations) {
 
         $scope.global = Global;
 
@@ -129,7 +129,7 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
                     hashes.push(hash);
                 }
             }
-            console.log("FILES: " + hashes.length);
+            $log.debug("FILES: " + hashes.length);
 
             // ask server which should be uploaded
             $http.post(window.apiBaseUrl + 'sp/checkIfExists', { hashes: hashes }).
@@ -156,7 +156,7 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
                         uploadFile(fileBytes, function(data) {
 
                             if (data.hash && uploaded.indexOf(data.hash) == -1) uploaded.push(data.hash);
-                            else if (data.hash) console.log("DUPLICATE!");
+                            else if (data.hash) $log.debug("DUPLICATE!");
 
                             uploadCount++;
                             setTimeout(function(){
@@ -167,7 +167,7 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
                             // complete
                             if(uploadCount == newHashes.length) {
                                 if (scope.oncomplete) scope.oncomplete({ uploaded: uploaded });
-                                console.log("UPLOADED: " + uploaded.length);
+                                $log.debug("UPLOADED: " + uploaded.length);
                             }
                         });
                     }
@@ -187,7 +187,7 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
           // Update progress bar
           xhr.upload.addEventListener("progress", function (evt) {
             if (evt.lengthComputable) {
-              console.log((evt.loaded / evt.total) * 100 + "%"); 
+              $log.debug((evt.loaded / evt.total) * 100 + "%"); 
             }
           }, false);
           
@@ -256,11 +256,11 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
 
         // var checkInput = function() {
         //     document.body.onfocus = null;
-        //     console.log(filesUpload.value == null);
+        //     $log.debug(filesUpload.value == null);
         //     // check if uplpading
         //     setTimeout(function(){
         //         if (filesUpload.value == "") {
-        //             console.log("cancelled!");
+        //             $log.debug("cancelled!");
         //             scope.oncancel();
         //         }
         //     }, 20 * 1000); // wait 20 seconds
@@ -268,7 +268,7 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
 
         filesUpload.addEventListener("click", function() {
             if (scope.onstart) scope.onstart();
-            console.log(filesUpload.test);
+            $log.debug(filesUpload.test);
             //document.body.onfocus = function () { setTimeout(checkInput, 200); };
         });
         

@@ -56,7 +56,6 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$uibM
                 $scope.sharing.shareWithAvyCenter = true;
                 $scope.sharing.shareWithStudents = true;
                 $scope.sharing.sharedOrganizations = [];
-                console.log($scope.sharing);
                 $uibModalInstance.close($scope.sharing);
             }
             // if regular user
@@ -110,9 +109,7 @@ angular.module('avatech').controller('PublishModalController', [ '$scope','$uibM
             return isSelected;
         }
         $scope.removeOrg = function(org) {
-            console.log(org);
             var index = $scope.sharing.sharedOrganizations.indexOf(org);
-            console.log(index);
             $scope.sharing.sharedOrganizations.splice(index, 1);    
         }
     }

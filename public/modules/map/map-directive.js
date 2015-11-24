@@ -1,4 +1,4 @@
-angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, terrainVisualization) {
+angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, $log, terrainVisualization) {
   return {
     restrict: 'A',
     templateUrl: "/modules/map/map-directive.html",
@@ -309,7 +309,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             var zoom = scope.map.getZoom();
 
             if (!scope.detailMode && zoom >= detailedZoomMin) {
-                console.log("DETAIL MODE ON");
+                $log.debug("DETAIL MODE ON");
                 scope.detailMode = true;
 
                 // redraw icons
@@ -320,7 +320,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 if (heatMap) heatMap.setOptions({ radius: 1, blur: 1, maxZoom: 20 });
             }
             else if (scope.detailMode && zoom < detailedZoomMin) {
-                console.log("DETAIL MODE OFF");
+                $log.debug("DETAIL MODE OFF");
                 scope.detailMode = false;
 
                 // redraw icons
@@ -477,11 +477,11 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             else scope.loadProfiles();
             // var terrainLoaded = $q.defer();
 
-            // //console.log("is terrain layer already loaded? " + scope.terrainLayer._isLoaded);
+            // //$log.debug("is terrain layer already loaded? " + scope.terrainLayer._isLoaded);
             // if (scope.terrainLayer) {
             //     //scope.terrainLayer.once('load', function() { terrainLoaded.resolve(); });
-            //     scope.terrainLayer.once('loading', function() { console.log('1. loading') });
-            //     scope.terrainLayer.once('load', function() { console.log('2. loaded!') });
+            //     scope.terrainLayer.once('loading', function() { $log.debug('1. loading') });
+            //     scope.terrainLayer.once('load', function() { $log.debug('2. loaded!') });
             // } 
             // else terrainLoaded.resolve();
 
@@ -492,7 +492,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
             //     $q.all([ terrainLoaded.promise, getObs ])
             //     .then(function(data) {
-            //         console.log("--- !!! both terrain and obs are loaded !!! ---");
+            //         $log.debug("--- !!! both terrain and obs are loaded !!! ---");
             //         var obs = data[1];
 
             //         scope.profiles = obs;

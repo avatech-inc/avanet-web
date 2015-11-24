@@ -1,5 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
+    function ($scope, $rootScope, $location, $state, $log, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -41,7 +41,6 @@ angular.module('avatech').controller('ObservationPreviewController',
                 // load and play
                 else {
                     $scope.audio = ngAudio.load(media.URL);
-                    console.log($scope.audio);
                     $scope.audio.play();
                 }
             }
@@ -454,11 +453,11 @@ angular.module('avatech').controller('ObservationPreviewController',
                         "fontsLoaded": function(error) {
                             if (error !== null) {
                                 // Reached the timeout but not all fonts were loaded
-                                console.log(error.message);
-                                console.log(error.notLoadedFontFamilies);
+                                $log.debug(error.message);
+                                $log.debug(error.notLoadedFontFamilies);
                             } else {
                                 // All fonts were loaded
-                                console.log("all fonts were loaded");
+                                $log.debug("all fonts were loaded");
                             }
 
                             //$scope.settings.fontsLoaded = true;

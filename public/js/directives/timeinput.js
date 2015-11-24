@@ -10,7 +10,6 @@ angular.module('avatech').directive('time', function($compile) {
     //replace: true,
     //require: 'ngModel',
     link: function(scope, elem, attr, ctrl) {
-      console.debug(scope);
 
       scope._model = null;
 

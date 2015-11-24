@@ -55,6 +55,44 @@
 					<label>Munter rate: Up</label> <input type="number" ng-model="munterRate.up" style="width: 38px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
 					<label>Down</label>
 					<input type="number" ng-model="munterRate.down" style="width: 38px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
+					<button class="info-button" uib-tooltip="The Munter Method was developed by Werner Munter to calculate time estimates for ski touring and mountaineering. A higher rate means faster travel time - traditional rates are 4 for traveling uphill and 10 for downhill. You should adjust these rates according to your personal preferences and abilities, as well as the complexity of the terrain." tooltip-trigger="focus" tooltip-placement="bottom" tooltip-class="customClass"><i class="fa fa-question-circle"></i></button>
+					  <style>
+			            .info-button {
+			            	margin-left: 4px;
+						    border: none;
+						    background: transparent;
+						    font-size: 20px;
+						    width: 24px;
+						    padding: 0;
+						    height: 24px;
+						    line-height: 24px;
+						    vertical-align: top;
+						    outline: none;
+						}
+						.info-button:hover, .info-button:focus {
+						    color: #428bca;
+						}
+			            .tooltip.customClass {
+			             	margin-left: -100px;
+			             	opacity: 1;
+			            }
+			            .tooltip.customClass .tooltip-inner {
+						    color: #000;
+						    background-color: #f5f5f5;
+						    box-shadow: 0 0px 8px rgba(0,0,0,.5);
+						    font-size: 12px;
+						    line-height: 14px;
+						    width: 240px;
+						    max-width: 240px;
+						    padding: 10px 12px;
+						    text-align: left;
+						    border:2px solid #428bca;
+			            }
+			            /* Hide arrow */
+			            .tooltip.customClass .tooltip-arrow {
+			                display: none;
+			            } 
+			        </style>
 				</div>
 			</div>
 

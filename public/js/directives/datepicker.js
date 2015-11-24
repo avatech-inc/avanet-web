@@ -1,6 +1,3 @@
-
-
-
 angular.module('avatech').directive('datetimepicker', function ($window, $log) {
     return {
         require:'^ngModel',
@@ -18,17 +15,6 @@ angular.module('avatech').directive('datetimepicker', function ($window, $log) {
 
             scope.dateInput = angular.copy(scope.internalDate);
             scope.timeInput = angular.copy(scope.internalDate);
-          }, true);
-
-          scope.$watch('internalDate',function(){
-
-
-            //if (!scope.internalDate) scope.theDate.$setValidity("bad date", false);
-            
-            //scope.theDate = scope.internalDate.toISOString();
-
-            // $log.debug("COMBINED: " + scope.theDate);
-            // $log.debug("--------------------------");
           }, true);
 
           scope.$watch('dateInput',function() {
@@ -51,10 +37,9 @@ angular.module('avatech').directive('datetimepicker', function ($window, $log) {
 
         }
       };
-    }
-  ]);
+    });
 
-angular.module('avatech').directive('moDateInput', ['$window', function ($window) {
+angular.module('avatech').directive('moDateInput', function ($window) {
     return {
         require:'^ngModel',
         restrict:'A',
@@ -104,10 +89,10 @@ angular.module('avatech').directive('moDateInput', ['$window', function ($window
             });
         }
     };
-}]);
+});
 
 
-angular.module('avatech').directive('dateInput', ['$window', function ($window) {
+angular.module('avatech').directive('dateInput', function ($window) {
     return {
         require:'^ngModel',
         restrict:'A',

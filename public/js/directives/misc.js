@@ -240,7 +240,7 @@ angular.module('avatech').directive('closeDropdownOnClick', function() {
         restrict: 'A',
         link: function(scope, el, attrs) {    
             el.bind('click', function($event) {
-              console.log("dropdown clicked!");
+              //console.log("dropdown clicked!");
               var el = $($event.target).closest(".open");
               if (el && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
               scope.$apply();
@@ -258,7 +258,7 @@ angular.module('avatech').directive('tooltipHideOnClick', function() {
               // if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
               // scope.$apply();
               el.data().$scope.tt_isOpen = false;
-              console.log(el.data().$scope.tt_isOpen);
+              //console.log(el.data().$scope.tt_isOpen);
             });
         }
     };        

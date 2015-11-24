@@ -22,6 +22,12 @@ angular.module('avatech', [
     'terrain'
 ]);
 
+// configure console debug
+angular.module('avatech').config(function($logProvider){
+  $logProvider.debugEnabled(false);
+});
+
+// configure lightbox
 angular.module('avatech').config(function (LightboxProvider) {
   LightboxProvider.getImageUrl = function (media) {
     // if video, replace .mov with .mp4 so we can play with native HTML5 (for Cloudinary)

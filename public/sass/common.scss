@@ -548,62 +548,64 @@ slider span.bar {
   -webkit-box-shadow: none;
   box-shadow: none;
 }*/
-slider span.pointer {
-  cursor: ew-resize;
-  width: 10px;
-  height: 10px;
-  top: -5px;
-  margin-left:5px;
-  background-color: #fff;
-  border: 2px solid #000;
-  z-index: 2;
-  border-radius: 99px;
-  z-index:999;
-  opacity: 1;
-}
-slider span.pointer:hover {
-  opacity: 1;
-}
-slider span.pointer.active {
-  opacity: 1;
-}
 
-slider.long span.pointer {
-  cursor: col-resize;
-  width: 16px;
-  height: 100%;
-  top: 0px;
-  bottom: 0px;
-  background-color: transparent;
-  border: none;
-  z-index: 2;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  opacity: 1;
-  z-index: 998;
-}
-slider span.pointer:hover:after {
-  background-color: #000;
-}
-slider span.pointer.active:after {
-  background-color: #f00;
-}
-slider span.bubble {
-  cursor: default;
-  top: -22px;
-  padding: 1px 3px 1px 3px;
-  font-size: 0.7em;
-  font-family: sans-serif;
-}
-slider span.bubble.selection {
-  top: 15px;
-}
-slider span.bubble.limit {
-  color: #808080;
-}
+
+// slider span.pointer {
+//   cursor: ew-resize;
+//   width: 10px;
+//   height: 10px;
+//   top: -5px;
+//   margin-left:5px;
+//   background-color: #fff;
+//   border: 2px solid #000;
+//   z-index: 2;
+//   border-radius: 99px;
+//   z-index:999;
+//   opacity: 1;
+// }
+// slider span.pointer:hover {
+//   opacity: 1;
+// }
+// slider span.pointer.active {
+//   opacity: 1;
+// }
+
+// slider.long span.pointer {
+//   cursor: col-resize;
+//   width: 16px;
+//   height: 100%;
+//   top: 0px;
+//   bottom: 0px;
+//   background-color: transparent;
+//   border: none;
+//   z-index: 2;
+//   -webkit-border-radius: 0;
+//   border-radius: 0;
+//   opacity: 1;
+//   z-index: 998;
+// }
+// slider span.pointer:hover:after {
+//   background-color: #000;
+// }
+// slider span.pointer.active:after {
+//   background-color: #f00;
+// }
+// slider span.bubble {
+//   cursor: default;
+//   top: -22px;
+//   padding: 1px 3px 1px 3px;
+//   font-size: 0.7em;
+//   font-family: sans-serif;
+// }
+// slider span.bubble.selection {
+//   top: 15px;
+// }
+// slider span.bubble.limit {
+//   color: #808080;
+// }
 
 /* temp slider */
-slider.temp {
+slider-new.temp {
   span.bar {
     // opacity: 1 !important;
     // background: rgba(0,0,0,.3);

@@ -225,15 +225,53 @@
 
 					</div>
 
+					<style>
+						/* hide standard html5 range input */
+						input.temp[type=range] {
+						  	-webkit-appearance: none;
+					  		background: transparent;
+					    	outline: none !important;
+						}
+
+						input.temp[type=range]::-moz-range-track {
+					  		background: transparent;
+					    	outline: none !important;
+					    	border: none !important;
+						}
+						/*input.temp[type=range]::-webkit-slider-thumb {
+						  -webkit-appearance: none;
+						}*/
+						input[type=range]::-moz-focus-outer {
+					    	border: 0;
+					    }
+						input.temp[type=range]:focus {
+							outline: none !important;
+						}
+
+						input.temp {
+						    position: absolute;
+						    margin: 0;
+						    margin-right: -5px;
+						    z-index: 9999;
+						    width: 104%;
+						    left: -2%;
+						    bottom: 16px;
+						    height: 16px;
+						}
+					</style>
+
 					<!-- temperature profile -->
 					<div ng-class="{ 'newHide':!settings.tempMode }" ng-style="{ 'pointer-events': settings.tempMode ? 'all' : 'none' }" style="position:absolute;width:100%;height:100%;">
 				
 						<!-- temp sliders -->
 						<script type="text/ng-template" id="/_slider.html">
-							<slider ng-mouseover="selectTemp(temp)" class="temp" style="position:absolute;margin:0;right:1px;left:-9px;z-index:9999;width:auto;"  floor="-60" ceiling="0" step="1" precision="0" ng-model="temp.temp"></slider>
+							<input type="range" ng-mouseover="selectTemp(temp)" class="temp" 
+								min="-60" max="0" step="1" ng-model="temp.temp"></input>
 				      	</script>
 						<div ng-repeat="temp in profile.temps" style="position:absolute;pointer-events:all;" ng-style="{ width: graphWidth, top: (temp.depth * ((snowpitHeight - 95) / profile.depth)) + 40 }">
-							<ng-include src="'/_slider.html'"></ng-include>
+							<!--<ng-include src="'/_slider.html'"></ng-include>-->
+							<input type="range" ng-mouseover="selectTemp(temp)" class="temp" 
+								min="-60" max="0" step="1" ng-model="temp.temp"></input>
 
 							<form style="opacity:0;transition:opacity 100ms;white-space:nowrap;border-radius:2px;padding:2px;background:rgba(255,255,255,.85);box-shadow:0px 0px 4px rgba(0,0,0,.5);position:relative;display:inline-block;margin-left: 12px;bottom:10px;font-size:10px;z-index:9999;text-shadow:0 0 1px white;cursor:default;font-weight:400;" ng-style="{ left: graphWidth - (-temp.temp * (graphWidth / 60)), opacity: selectedTemp == temp ? 1 : 0, 'pointer-events': selectedTemp == temp ? 'all' : 'none' }">
 

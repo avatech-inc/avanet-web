@@ -9,10 +9,8 @@
 		<meta name="keywords" content="">
 		<meta name="description" content="Avanet is a mountain safety platform for professional and recreational backcountry travelers">
     <link rel="icon" type="image/png" href="/img/favicon.png">
-
 		
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
 
     <!-- build:css -->
@@ -20,62 +18,49 @@
 		<link rel="stylesheet" href="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css">
 		<link rel="stylesheet" href="/lib/ngjs-color-picker/css/ngjs-color-picker.css">
 		<link rel="stylesheet" href="/css/common.css">
+		<link rel="stylesheet" href="/css/map-search/map-search.css">
 		<link rel="stylesheet" href="/css/map/map.css">
 		<link rel="stylesheet" href="/css/map/route-planning.css">
-		<link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
-		<link rel="stylesheet" href="/css/map-search/map-search.css">
 		<link rel="stylesheet" href="/css/user/login.css">
+		<link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
 		<!-- endinject -->
     <!-- endbuild -->
 
-  	<!-- all CSS after this is NOT minified -->
-
   	<!-- ionicons -->
   	<link href='//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' rel='stylesheet' />
-
   	<!-- MapBox / Leaflet -->
 		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
-
 		<!-- d3 -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-
 		<!-- google maps 'geometry' API for geo calculations -->
 		<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
-
-    	<!-- Sentry / Raven -->
-    	<script src="//cdn.ravenjs.com/1.1.18/jquery,native/raven.min.js"></script>
-
-    	<!-- Stripe Checkout -->
+    <!-- Sentry / Raven -->
+    <script src="//cdn.ravenjs.com/1.1.18/jquery,native/raven.min.js"></script>
+    <!-- Stripe Checkout -->
 		<script src="https://checkout.stripe.com/checkout.js"></script>
-
 		<!-- canvg: canvas-svg converter -->
 		<script src="https://gabelerner.github.io/canvg/rgbcolor.js"></script> 
 		<script src="https://gabelerner.github.io/canvg/StackBlur.js"></script>
 		<script src="https://gabelerner.github.io/canvg/canvg.js"></script> 
 
-		<!--if lt IE 9-->
-		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-
 		<!-- Heap -->
-	      <script type="text/javascript">
+    <script type="text/javascript">
     		window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+t+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-
-	      	  var _env = "@@env";
+	      	var _env = "@@env";
 		      if (_env == "production") heap.load("894126234"); // production
 		      else heap.load("416778563"); // dev
 		</script>
-
-	    <!-- Mixpanel -->
-	    <script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+    <!-- Mixpanel -->
+    <script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
 			for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 			mixpanel.init("2c3bc97e77c92d7706fe7a743a0afb6a");
 		</script><!-- end Mixpanel -->
-
 	</head>
 	<body window-resize ng-cloak>
 		<div ng-include="'/modules/header/header.html'"></div>
 		<section class="content" ui-view></section>
 		
+    <!-- API error -->
 		<div id="api-error" style="display:none;">
 			<h1>Oops!</h1>
 			<h2>Our servers are experiencing exceptionally high traffic.<br/><br/>Please try again shortly.</h2>
@@ -94,6 +79,7 @@
 		<script src="/js/lib/utm.js"></script>
 		<script src="/js/lib/greatCircle.js"></script>
 		<script src="/js/lib/WorldMagneticModel.js"></script>
+		<script src="/js/lib/DrawDeclinationCanvas.js"></script>
 		<script src="/lib/underscore/underscore.js"></script>
 		<script src="/js/lib/PruneCluster.js"></script>
 		<script src="/js/lib/leaflet-heat.js"></script>
@@ -155,9 +141,9 @@
 		<script src="/modules/avalanches/observation-preview-modal.js"></script>
 		<script src="/modules/avalanches/observation-preview.js"></script>
 		<script src="/modules/avalanches/observations.js"></script>
-		<script src="/modules/comments/comments.js"></script>
 		<script src="/modules/confirm/confirm.js"></script>
 		<script src="/modules/header/header.js"></script>
+		<script src="/modules/comments/comments.js"></script>
 		<script src="/modules/location-select-modal/location-select-modal.js"></script>
 		<script src="/modules/map/layers.js"></script>
 		<script src="/modules/map/linear-graph.js"></script>
@@ -181,9 +167,8 @@
 		<script src="/modules/snowpit-editor/snowpit-graphs.js"></script>
 		<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
 		<script src="/modules/snowpit-editor/snowpit-views.js"></script>
-		<script src="/modules/sp-profiles/sp-profile-graphs.js"></script>
-		<script src="/modules/sp-profiles/test-preview.js"></script>
 		<script src="/modules/sp-profile-upload/modal.js"></script>
+		<script src="/modules/sp-profiles/sp-profile-graphs.js"></script>
 		<script src="/modules/user/forgot-password.js"></script>
 		<script src="/modules/user/login.js"></script>
 		<script src="/modules/user/register.js"></script>
@@ -205,14 +190,12 @@
 		<!-- endinject -->
     <!-- endbuild -->
 		
+    <!-- Configure Sentry -->
   	<script>
-    		// sentry configuration
 			Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
-			    // we highly recommend restricting exceptions to a domain in order to filter out clutter
-			    //whitelistUrls: ['example.com/scripts/']
+			    whitelistUrls: ['localhost','avatech.com']
           release: '@@release'
 			}).install();
 		</script>
-
 	</body>
 </html>

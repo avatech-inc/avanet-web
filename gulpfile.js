@@ -31,8 +31,6 @@ var aws = {
   , bucket: 'avanet'
 };
 
-// ----------------------------------------------------------------------------------
-
   var bundleName = "avanet";
   var releaseVersion;
 
@@ -53,7 +51,7 @@ var aws = {
     // world magnetic model
     'public/js/lib/WorldMagneticModel.js', 
     // DrawDeclinationCanvas
-    //'public/js/lib/DrawDeclinationCanvas.js', 
+    'public/js/lib/DrawDeclinationCanvas.js', 
     // DrawScaleCanvas
     //'public/js/lib/DrawScaleCanvas.js', 
     // underscore

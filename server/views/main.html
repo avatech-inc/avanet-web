@@ -18,11 +18,11 @@
 		<link rel="stylesheet" href="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css">
 		<link rel="stylesheet" href="/lib/ngjs-color-picker/css/ngjs-color-picker.css">
 		<link rel="stylesheet" href="/css/common.css">
-		<link rel="stylesheet" href="/css/map-search/map-search.css">
 		<link rel="stylesheet" href="/css/map/map.css">
 		<link rel="stylesheet" href="/css/map/route-planning.css">
-		<link rel="stylesheet" href="/css/user/login.css">
+		<link rel="stylesheet" href="/css/map-search/map-search.css">
 		<link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
+		<link rel="stylesheet" href="/css/user/login.css">
 		<!-- endinject -->
     <!-- endbuild -->
 
@@ -135,15 +135,15 @@
 		<script src="/js/lib/canvas-toBlob.js"></script>
 		<script src="/js/app.js"></script>
 		<script src="/js/routes.js"></script>
-		<script src="/modules/admin/admin-orgs.js"></script>
-		<script src="/modules/admin/admin-users.js"></script>
-		<script src="/modules/admin/admin.js"></script>
 		<script src="/modules/avalanches/observation-preview-modal.js"></script>
 		<script src="/modules/avalanches/observation-preview.js"></script>
 		<script src="/modules/avalanches/observations.js"></script>
+		<script src="/modules/admin/admin-orgs.js"></script>
+		<script src="/modules/admin/admin-users.js"></script>
+		<script src="/modules/admin/admin.js"></script>
+		<script src="/modules/comments/comments.js"></script>
 		<script src="/modules/confirm/confirm.js"></script>
 		<script src="/modules/header/header.js"></script>
-		<script src="/modules/comments/comments.js"></script>
 		<script src="/modules/location-select-modal/location-select-modal.js"></script>
 		<script src="/modules/map/layers.js"></script>
 		<script src="/modules/map/linear-graph.js"></script>
@@ -193,7 +193,7 @@
     <!-- Configure Sentry -->
   	<script>
 			Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
-			    whitelistUrls: ['localhost','avatech.com']
+			    whitelistUrls: ['localhost','avatech.com'],
           release: '@@release'
 			}).install();
 		</script>

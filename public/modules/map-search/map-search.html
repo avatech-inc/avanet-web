@@ -10,6 +10,9 @@
 	      	ng-model="geo.query"
 	      	placeholder="{{ 'search_location' | translate }}">
 
+          <div ng-style="{ opacity: searching ? 1 : 0 }" style="display:inline-block;position: absolute; right: 8px; top: 3px; font-size: 16px;color:#ccc;transition:opacity 150ms;">
+        <i class="fa fa-circle-o-notch fa-spin"></i></div>
+
         <div class="results">
         	<div ng-repeat="result in geo.results" ng-click="goTo(result)" close-dropdown-on-click>	
         		<div style="font-weight:400;">{{ result.name }}</div>

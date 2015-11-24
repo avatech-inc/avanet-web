@@ -120,6 +120,7 @@ angular.module('avatech').directive('mapSearch', function($timeout, $log, $http,
 
             if ($scope.geo.query.length < 3) return;
 
+            $scope.searching = true;
 
             //abort = $q.defer();
             abort = $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
@@ -130,6 +131,7 @@ angular.module('avatech').directive('mapSearch', function($timeout, $log, $http,
             //     url: "https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech" })
             .success(function(data, status, headers, config) {
 
+            $scope.searching = false;
             // geoSort(data.geonames, 40.633052, -111.5658795);
 
             var states = {

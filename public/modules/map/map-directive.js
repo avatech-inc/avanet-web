@@ -303,7 +303,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         }
 
          // re-render observation icons when zoom level is changed
-        var detailedZoomMin = 11;
+        var detailedZoomMin = 9;
         scope.detailMode = true;
         scope.map.on('zoomend', function(e) {
             var zoom = scope.map.getZoom();

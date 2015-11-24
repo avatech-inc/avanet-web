@@ -420,7 +420,8 @@ gulp.task('build', function(done) {
     'clean', 
     // copy files into _dist
     'copy',
-    //'sentry',
+    // create release and upload files to Sentry
+    'sentry',
     // combine and minify js and css
     'combine-minify',
     // clean main.html

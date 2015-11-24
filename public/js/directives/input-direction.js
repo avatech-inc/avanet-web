@@ -20,7 +20,6 @@ angular.module('avatech').directive('inputDirectionRange', function() {
           angleLow: '=angleLow',
           angleHigh: '=angleHigh',
         },
-        //template: '<div class="btn-group" dropdown is-open="testTest" ><div><input style="width:50px;" ng-model="_model" class="trigger" ng-focus="testTest = true" ></div><ul class="dropdown-menu" role="menu" style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;">' + selectionArea + '</ul></div>',
         template: '<div style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;display:inline-block;position:relative;"> ' + selectionArea + "</div>",
         link: function(scope, el, attrs) {    
 
@@ -152,32 +151,9 @@ angular.module('avatech').directive('inputDirectionRange', function() {
                 scope.$apply();
               },
               draw: function(context) {
-                //if (scope.angleLow) this.angleLow = scope.angleLow;
-                //if (scope.angleHigh) this.angleHigh = scope.angleHigh;
-                //this.otherAngle = scope.otherAngle;// this.v - 45;
+
               }
             });
-
-            // prevent default dropdown behavior
-            // input.click(function($event) {
-            //     $event.preventDefault();
-            //     $event.stopPropagation();
-            // });
-
-            // // simulate blur
-            // input.keydown(function($event) {
-            //     var keyCode = $event.keyCode || $event.which; 
-            //     if (keyCode == 9) {
-            //       scope-.testTest = false;
-            //       scope.$apply();
-            //     }
-            // });
-
-            // // prevent hide when clicking inside dropdown
-            // $(el[0]).find("ul").click(function($event) {
-            //     $event.preventDefault();
-            //     $event.stopPropagation();
-            // });
         }
     };        
 });
@@ -202,7 +178,7 @@ angular.module('avatech').directive('inputDirection', function() {
         scope: {
           model: '=ngModel'
         },
-        template: '<div class="btn-group" dropdown is-open="testTest" ><div><input style="width:65px;" ng-model="_model" class="trigger" ng-focus="testTest = true" ></div><ul class="dropdown-menu" role="menu" style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;">' + selectionArea + '</ul></div>',
+        template: '<div class="btn-group" uib-dropdown is-open="isOpen" ><div><input style="width:65px;" ng-model="_model" class="trigger" ng-focus="isOpen = true" ></div><ul class="dropdown-menu" role="menu" style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;">' + selectionArea + '</ul></div>',
         link: function(scope, el, attrs) {    
             var input = $(el[0]).find("input.trigger");
 
@@ -316,7 +292,6 @@ angular.module('avatech').directive('inputDirection', function() {
 
               if (!(isNaN(newVal) || newVal === null || newVal === undefined))
                 $(el[0]).find("input.dial").val(newVal).trigger('change');
-
             });
     
             // init jquery-knob
@@ -338,7 +313,7 @@ angular.module('avatech').directive('inputDirection', function() {
             input.keydown(function($event) {
                 var keyCode = $event.keyCode || $event.which; 
                 if (keyCode == 9) {
-                  scope.testTest = false;
+                  scope.isOpen = false;
                   scope.$apply();
                 }
             });

@@ -1,5 +1,4 @@
-angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouterProvider', '$httpProvider',
-    function($routeProvider,$stateProvider, $urlRouterProvider, $httpProvider) {
+angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
         //$httpProvider.interceptors.push('httpRequestInterceptor');
 
@@ -236,4 +235,4 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             templateUrl: '/modules/404/404.html'
         });
     }
-]);
+);

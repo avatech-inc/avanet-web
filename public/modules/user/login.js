@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('LoginController',
+angular.module('avatech').controller('LoginController',
 function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
     
     $scope.busy = false;

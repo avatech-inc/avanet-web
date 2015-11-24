@@ -60,7 +60,7 @@ angular.module('avatech').directive('autoFocus', function() {
     };
 });
 
-angular.module('avatech.system').directive('windowResize', ['$window', function($window) {
+angular.module('avatech').directive('windowResize', ['$window', function($window) {
   return function($scope) {
     $scope._getWindowSize = function() {
       $scope.windowHeight = $window.innerHeight;
@@ -74,7 +74,7 @@ angular.module('avatech.system').directive('windowResize', ['$window', function(
   };
 }]);
 
-angular.module('avatech.system').directive('onChange', function() {    
+angular.module('avatech').directive('onChange', function() {    
     return {
         restrict: 'A',
         scope:{'onChange':'=' },
@@ -252,7 +252,7 @@ angular.module('avatech').directive('closeDropdownOnClick', function() {
     };        
 });
 
-angular.module('avatech.system').directive('tooltipHideOnClick', function() {    
+angular.module('avatech').directive('tooltipHideOnClick', function() {    
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {    
@@ -267,7 +267,7 @@ angular.module('avatech.system').directive('tooltipHideOnClick', function() {
     };        
 });
 
-angular.module('avatech.system').directive('selectOnClick', function () {
+angular.module('avatech').directive('selectOnClick', function () {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {

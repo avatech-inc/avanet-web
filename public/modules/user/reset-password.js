@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('ResetPasswordController', 
+angular.module('avatech').controller('ResetPasswordController', 
 	function ($scope, $http, $stateParams, Global, Restangular) {
 
 	$scope.forgotPasswordToken = $stateParams.forgotPasswordToken;

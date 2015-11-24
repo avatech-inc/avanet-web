@@ -6,8 +6,6 @@ angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap
     'ct.ui.router.extras',
     'bootstrapLightbox',
     'angulartics', 'angulartics.mixpanel',
-    'avatech.system',
-    'avatech.profiles',
     'colorpicker.module',
     'credit-cards',
     'angular-country-picker',

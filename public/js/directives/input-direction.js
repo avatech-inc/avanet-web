@@ -1,5 +1,3 @@
-
-
 angular.module('avatech').directive('inputDirectionRange', function() {    
 
     var selectionArea = "<div class='bg'>";
@@ -25,8 +23,6 @@ angular.module('avatech').directive('inputDirectionRange', function() {
         //template: '<div class="btn-group" dropdown is-open="testTest" ><div><input style="width:50px;" ng-model="_model" class="trigger" ng-focus="testTest = true" ></div><ul class="dropdown-menu" role="menu" style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;">' + selectionArea + '</ul></div>',
         template: '<div style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;display:inline-block;position:relative;"> ' + selectionArea + "</div>",
         link: function(scope, el, attrs) {    
-          console.log(el[0]);
-            //var input = $(el[0]).find("input.trigger");
 
             var input = { focus: function(){}};
 
@@ -63,26 +59,14 @@ angular.module('avatech').directive('inputDirectionRange', function() {
                 $(el[0]).find("input.dial").val(scope.model).trigger('change');
             });
 
-            // var className = attrs["inputClass"];
-            // input.addClass(className);
-
-
             scope.$watch('angleHigh', function(val) {
-                console.log($(el[0]).find("input.dial").data());
-                //$(el[0]).find("input.dial").setAngleHigh(val).trigger('change');
                 $(el[0]).find("input.dial").trigger('setAngleHigh', val).trigger('change');
             });
             scope.$watch('angleLow', function(val) {
-                //$(el[0]).find("input.dial").setAngleLow(val).trigger('change');
                 $(el[0]).find("input.dial").trigger('setAngleLow', val).trigger('change');
             });
 
             scope.$watch('model', function(newVal) {
-              //   console.log(newVal);
-              // if (newVal == null || newVal == undefined) {
-              //   console.log("its null!");
-              //   scope._model = null;
-              // }
               if (newVal === 0) scope._model = "N";
               else if (newVal == 45) scope._model = "NE";
               else if (newVal == 90) scope._model = "E";
@@ -143,9 +127,6 @@ angular.module('avatech').directive('inputDirectionRange', function() {
                     return;
                 }
 
-
-                console.log("hey!!!");
-
               newVal = parseInt(newVal);
 
               if (newVal > 359) newVal = 0;
@@ -158,7 +139,6 @@ angular.module('avatech').directive('inputDirectionRange', function() {
               scope.model = newVal;
 
               if (!(isNaN(newVal) || newVal === null || newVal=== undefined)) {
-                console.log("hey 2!!!");
                 $(el[0]).find("input.dial").val(newVal).trigger('change');
               }
 
@@ -224,7 +204,6 @@ angular.module('avatech').directive('inputDirection', function() {
         },
         template: '<div class="btn-group" dropdown is-open="testTest" ><div><input style="width:65px;" ng-model="_model" class="trigger" ng-focus="testTest = true" ></div><ul class="dropdown-menu" role="menu" style="min-width:100px;height:100px;overflow:hidden;text-align:center;padding-top:4px;margin-top:0px;">' + selectionArea + '</ul></div>',
         link: function(scope, el, attrs) {    
-          console.log(el[0]);
             var input = $(el[0]).find("input.trigger");
 
             $(el[0]).find("div.dir.dir-N").mousedown(function($event) {
@@ -264,12 +243,6 @@ angular.module('avatech').directive('inputDirection', function() {
             input.addClass(className);
 
             scope.$watch('model', function(newVal) {
-
-              //   console.log(newVal);
-              // if (newVal == null || newVal == undefined) {
-              //   console.log("its null!");
-              //   scope._model = null;
-              // }
               if (newVal === 0) scope._model = "N";
               else if (newVal == 45) scope._model = "NE";
               else if (newVal == 90) scope._model = "E";

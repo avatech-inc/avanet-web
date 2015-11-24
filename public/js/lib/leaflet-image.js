@@ -44,9 +44,6 @@ module.exports = function leafletImage(map, callback) {
     }
 
     // markers
-    console.log("overlay panes:");
-    console.log(map.getPanes().markerPane);
-
     map.eachLayer(function(l) {
         // if (l instanceof L.Layer)
         //     layerQueue.defer(handleCanvasLayer, l._canvas);
@@ -261,14 +258,12 @@ module.exports = function leafletImage(map, callback) {
             ctx = canvas.getContext('2d'),
             size = marker._icon.getBoundingClientRect().width;
 
-        console.log("MARKER");
         var SVGstring;
         var bgimg = $(marker._icon).css('background-image');
         if (bgimg && bgimg.indexOf("<svg") > -1) {
             SVGstring = bgimg.substring(bgimg.indexOf("viewBox"));
             SVGstring = "<svg " + SVGstring.substring(0,SVGstring.length - 2);
             SVGstring = SVGstring.replace(/\\/g,'');
-            console.log(SVGstring);
 
             var _canvas = document.createElement('canvas');
             _canvas.width = _canvas.height = size * multiplier;

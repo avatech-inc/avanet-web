@@ -11,7 +11,6 @@ angular.module('avatech').factory("Global",
             redirectUrl: null,
 
             setUser: function(user) {
-                console.log("updating user");
                 localStorageService.set('user', angular.copy(user));
                 _this._data.user = angular.copy(user);
             },

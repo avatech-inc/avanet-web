@@ -1,7 +1,7 @@
 
 
 
-angular.module('avatech').directive('datetimepicker', ['$window', function ($window) {
+angular.module('avatech').directive('datetimepicker', function ($window, $log) {
     return {
         require:'^ngModel',
         restrict:'E',
@@ -27,24 +27,24 @@ angular.module('avatech').directive('datetimepicker', ['$window', function ($win
             
             //scope.theDate = scope.internalDate.toISOString();
 
-            // console.log("COMBINED: " + scope.theDate);
-            // console.log("--------------------------");
+            // $log.debug("COMBINED: " + scope.theDate);
+            // $log.debug("--------------------------");
           }, true);
 
           scope.$watch('dateInput',function() {
-            console.log(scope.dateInput);
-            if (!scope.dateInput) return console.log("BAD DATE!");
+            $log.debug(scope.dateInput);
+            if (!scope.dateInput) return $log.debug("BAD DATE!");
 
-            //console.log("    DATE: " + scope.dateInput.toISOString());
+            //$log.debug("    DATE: " + scope.dateInput.toISOString());
             scope.internalDate.setDate(scope.dateInput.getDate());
             scope.internalDate.setMonth(scope.dateInput.getMonth());
             scope.internalDate.setFullYear(scope.dateInput.getFullYear());
           }, true);
 
           scope.$watch('timeInput',function(){
-            if (!scope.timeInput) return console.log("BAD TIME!");
+            if (!scope.timeInput) return $log.debug("BAD TIME!");
 
-            //console.log("    TIME: " + scope.timeInput.toISOString());
+            //$log.debug("    TIME: " + scope.timeInput.toISOString());
             scope.internalDate.setMinutes(scope.timeInput.getMinutes());
             scope.internalDate.setHours(scope.timeInput.getHours());
           }, true);
@@ -70,8 +70,8 @@ angular.module('avatech').directive('moDateInput', ['$window', function ($window
                       maxDate: new Date(),
                       //, format: 'YYYY-MM-DD'
                       onSelect: function() {
-                          //console.log(picker.toString());
-                          //console.log(this.getMoment().format('Do MMMM YYYY'));
+                          //$log.debug(picker.toString());
+                          //$log.debug(this.getMoment().format('Do MMMM YYYY'));
                       }
                   });
                   // todo:find a more elegant way to make sure the picker loads the date
@@ -138,4 +138,4 @@ angular.module('avatech').directive('dateInput', ['$window', function ($window) 
             });
         }
     };
-}]);
+});

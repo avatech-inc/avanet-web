@@ -1,4 +1,4 @@
-angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $timeout, $uibModalInstance, initialLocation, Global) {
+angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $log, $timeout, $uibModalInstance, initialLocation, Global) {
 
         $scope.global = Global;
 
@@ -482,9 +482,9 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
             $scope.$broadcast('schemaFormValidate');
 
-            console.log("is valid? " + $scope.form_elements.obsForm.$valid);
+            $log.debug("is valid? " + $scope.form_elements.obsForm.$valid);
 
-            console.log($scope.model);
+            $log.debug($scope.model);
 
             // Then we check if the form is valid
             // if (form.$valid) {

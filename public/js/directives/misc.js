@@ -26,7 +26,6 @@ angular.module('avatech').directive('onenter', function() {
       $(elem).keydown(function(event) {
          if (event.keyCode == 13) {
             scope.onenter();
-            console.log("enter!");
             return false;
          }
       });
@@ -41,7 +40,6 @@ angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($t
       scope.focus = function(modelName) {
         if (!scope[modelName]) scope[modelName] = 0;
         scope[modelName]++;
-        console.log(scope[modelName]);
       };
       scope.$watch(model, function(value) {
         $timeout(function() {
@@ -106,7 +104,6 @@ angular.module('avatech').directive('metersOrFeet', ['$window','$parse', functio
 
             ctrl.$formatters.unshift(function (modelValue) {
                 if (modelValue === null) return;
-                console.log("2: " + modelValue);
 
                 // if feet
                 if (metersOrFeet == 1) return Math.round(modelValue * 3.28084);

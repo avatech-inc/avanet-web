@@ -46,11 +46,8 @@ angular.module('avatech').directive('time', function($compile) {
 
       function validate(text) {
         var newTime = parseTime(text);
-        console.log(newTime);
         if (newTime !== null) scope.model = newTime;
         else scope.model = null;
-
-        console.log(scope.model);
         scope.$apply();
       }
 

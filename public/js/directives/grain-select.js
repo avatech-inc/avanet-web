@@ -50,8 +50,6 @@ angular.module('avatech').directive('grainSelect', function(snowpitConstants) {
                 scope.selectedCategory = category.code;
             };
             scope.setGrainType = function(code) {
-                console.log("set grain type!");
-                console.log(code);
                 scope.grainType = code;
             }; 
         }

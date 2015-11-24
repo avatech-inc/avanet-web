@@ -6,12 +6,6 @@ angular.module('avatech').directive('obSearch', function($timeout, $q, $rootScop
         obSearch: '=obSearch',
         showPublisher: '=showPublisher',
         orgs: '=orgs'
-        // terrainLayer: '=terrainLayer',
-        // profiles: '=obs',
-        // detailMode: '=detailMode',
-        // loadingNew: '=loadingNew',
-        // loadingProfiles: '=loading',
-        // hoverOb: '=hoverOb'
     },
     link: function(scope, element) {
 		scope.obSearch = new ObSearch();
@@ -56,7 +50,7 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 		var defaultPublisher = { orgs: null, outsideOrgs: true, me: true, rec: true };
 	    this.searchQuery = {
-	        days: 365,
+	        days: 7,
 
 	        elev_low: 0,
 	        elev_high: this.elevationMax,
@@ -156,7 +150,14 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 
 	    this.search_date = function(val) { 
 	        var d = new Date();
-	        d.setDate(d.getDate() - this.searchQuery.days);
+	        // hack for 'today' (since midnight)
+	        if (this.searchQuery.days == 0) {
+	        	// set to midnight
+	        	d.setHours(0,0,0,0);
+	        }
+	        else {
+		        d.setDate(d.getDate() - this.searchQuery.days);
+		    }
 
 	        if (new Date(val.date) > d) return true;
 	        else return false;
@@ -345,7 +346,5 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	    // add all observation types to query as default
 	    this.setDefaultType();
 
-
 	}
-
 });

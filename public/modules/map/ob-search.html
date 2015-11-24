@@ -23,7 +23,10 @@
   <button type="button" class="btn btn-default" uib-dropdown-toggle>
     <span style="padding-right:3px;">{{ 'time' | translate }}</span>
   	<span style="padding-right:3px;color:#999;">
-	    <span ng-show="obSearch.searchQuery.days == 1">Today</span>
+      <span ng-show="obSearch.searchQuery.days == 0">Today</span>
+	    <span ng-show="obSearch.searchQuery.days == 1">Past 24 hours</span>
+      <span ng-show="obSearch.searchQuery.days == 2">Past 48 hours</span>
+      <span ng-show="obSearch.searchQuery.days == 3">Past 72 hours</span>
 	    <span ng-show="obSearch.searchQuery.days == 7">Past Week</span>
 	    <span ng-show="obSearch.searchQuery.days == 31">Past Month</span>
 	    <span ng-show="obSearch.searchQuery.days == 91">Past 3 Months</span>
@@ -33,12 +36,15 @@
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu list" role="menu">
-     <li ng-click="obSearch.searchQuery.days = 1">Today</li>
-     <li ng-click="obSearch.searchQuery.days = 7">Past Week</li>
-     <li ng-click="obSearch.searchQuery.days = 31">Past Month</li>
-     <li ng-click="obSearch.searchQuery.days = 91">Past 3 Months</li>
-     <li ng-click="obSearch.searchQuery.days = 183">Past 6 Months</li>
-     <li ng-click="obSearch.searchQuery.days = 365">Past Year</li>
+     <li ng-click="obSearch.searchQuery.days = 0">Today</li>
+     <li ng-click="obSearch.searchQuery.days = 1">Past 24 hours</li>
+     <li ng-click="obSearch.searchQuery.days = 2">Past 48 hours</li>
+     <li ng-click="obSearch.searchQuery.days = 3">Past 72 hours</li>
+     <li ng-click="obSearch.searchQuery.days = 7">Past week</li>
+     <li ng-click="obSearch.searchQuery.days = 31">Past month</li>
+     <li ng-click="obSearch.searchQuery.days = 91">Past 3 months</li>
+     <li ng-click="obSearch.searchQuery.days = 183">Past 6 months</li>
+     <li ng-click="obSearch.searchQuery.days = 365">Past year</li>
   </ul>
 </div>
 

@@ -153,8 +153,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
             });
         }
 
-
-
         // plot obs on map
         var obsOnMap = {};
         function plotObsOnMap() {
@@ -170,7 +168,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 }
                 // not on map (ignore if removed)
                 else if (!profile.removed) {
-
                     var marker = new PruneCluster.Marker(profile.location[1], profile.location[0]);
 
                     // associate profile with marker
@@ -184,10 +181,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                     pruneCluster.RegisterMarker(marker);
                     // keep track of all markers placed on map
                     obsOnMap[profile._id] = marker;
-
-                    // add to heatmap
-                    if (heatMap) heatMap.addLatLng([profile.location[1], profile.location[0]]);
-
                 }
             });
             pruneCluster.ProcessView();
@@ -196,6 +189,9 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         // search
         var searchObs = function() {
             if (!scope.obSearch) return;
+            // reset heatmap
+            if (heatMap) heatMap.setLatLngs([]);
+
             // hide all markers
             angular.forEach(obsOnMap, function(marker) {
                 marker.filtered = true;
@@ -208,6 +204,8 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                     ob.filtered = false;
                     obsOnMap[ob._id].filtered = false;
                     obsOnMap[ob._id].data.filtered = false;
+                    // add to heatmap
+                    if (heatMap) heatMap.addLatLng([ob.location[1], ob.location[0]]);
                 }
             });
             pruneCluster.ProcessView();

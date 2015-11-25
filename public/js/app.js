@@ -1,5 +1,6 @@
 // define app
 angular.module('avatech', [
+    'ngRaven',
     'ngRoute', 'ngTouch',
     'ui.bootstrap', 'ui.router', 'ui.route', 
     'restangular', 

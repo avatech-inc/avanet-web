@@ -88,8 +88,6 @@ var aws = {
     // mentions input
     'public/js/lib/jquery.mentionsInput.js',
     'public/js/lib/jquery.elastic.js',
-    // ment.io
-    'public/lib/ment.io/dist/mentio.js', // <--- still used?
     // suncalc
     //'public/js/lib/suncalc.js',
     // moment.js time formatter
@@ -137,8 +135,6 @@ var aws = {
     'public/lib/ngjs-color-picker/css/ngjs-color-picker.css',
     // Angular Audio
     'public/lib/angular-audio/app/angular.audio.js',
-    // FontLoader
-    'public/js/lib/FontLoader.js',
     // nanoscroller
     'public/lib/nanoscroller/bin/javascripts/jquery.nanoscroller.js',
     'public/lib/angular-nanoscroller/scrollable.js',

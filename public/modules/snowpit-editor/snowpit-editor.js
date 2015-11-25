@@ -754,7 +754,7 @@ angular.module('avatech')
         // },1);
     })
 
-.directive('draggable', function($document, $timeout) {
+.directive('draggable', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggable' },
@@ -807,7 +807,7 @@ angular.module('avatech')
     };
   })
 
-.directive('draggableHardness', function($document, $timeout) {
+.directive('draggableHardness', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggableHardness' },

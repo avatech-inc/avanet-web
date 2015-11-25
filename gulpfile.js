@@ -198,7 +198,7 @@ gulp.task('compass', ['clean-css'], function() {
 
 gulp.task('sentry', function() {
   var opt = {
-    DOMAIN: '', // prefix domain in the `name` param when upload file. Leave blank to use path. Do not add trailing slash 
+    DOMAIN: 'https://avanet.avatech.com', // prefix domain in the `name` param when upload file. Leave blank to use path. Do not add trailing slash 
     API_URL: 'https://app.getsentry.com/api/0/projects/avatech/web-client/',
     API_KEY: 'c8d2219c66e54cb1bfe5142927bbc116',
     debug: false ,
@@ -206,7 +206,8 @@ gulp.task('sentry', function() {
   }
   var sentryRelease = require('gulp-sentry-release')('./package.json', opt);
 
-  return gulp.src(_sources, { base: 'public' })
+  //return gulp.src(_sources, { base: 'public' })
+  return gulp.src('_dist/public/assets/*.map', { base: '_dist/public' })
   .pipe(sentryRelease.release());
 });
 
@@ -277,6 +278,7 @@ gulp.task('clean-dist', function() {
     '_dist/public/js',
     '_dist/public/css',
     '_dist/public/sass',
+    '_dist/public/assets/*.map',
     ], { read: false })
       .pipe(clean({ force: true }));
 });
@@ -416,10 +418,10 @@ gulp.task('build', function(done) {
     'clean', 
     // copy files into _dist
     'copy',
-    // create release and upload files to Sentry
-    'sentry',
     // combine and minify js and css
     'combine-minify',
+    // create release and upload source map to Sentry
+    'sentry',
     // clean main.html
     'clean-main',
     // // add copyright statements to app.js

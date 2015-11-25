@@ -361,7 +361,6 @@ return {
             hoverDragLayer: null,
             view: null,
             depthDescending: true,
-            fontsLoaded: false,
             tempMode: false,
             tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
         }

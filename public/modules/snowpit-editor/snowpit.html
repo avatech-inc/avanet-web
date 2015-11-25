@@ -1,9 +1,9 @@
 <section ng-controller="SnowpitController" ng-init="init()">
 
-<div ng-show="loading || !settings.fontsLoaded" class="loading-screen fadeIn">
+<div ng-show="loading" class="loading-screen fadeIn">
 	<i class="fa fa-circle-o-notch fa-spin"></i> <span>Loading</span>
 </div>
-<div ng-style="{ opacity: (!loading && settings.fontsLoaded ? '1' : '0') }">
+<div ng-style="{ opacity: (!loading ? '1' : '0') }">
 	<div class="leftPane">
 
 		<div class="pageHeader">

@@ -99,34 +99,15 @@ angular.module('avatech').config(function($tooltipProvider){
 
 // configure translation
 angular.module('avatech').config(function($translateProvider, $translatePartialLoaderProvider) {
-
     $translatePartialLoaderProvider.addPart('test');
     $translateProvider.useLoader('$translatePartialLoader', {
       urlTemplate: '/translate/{lang}/{part}.json'
     });
-
     // set language
     $translateProvider.preferredLanguage('en');
-
     // enable proper escaping of translation content
     $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
 });
-angular.module('avatech').config(function(cfpLoadingBarProvider) {
-    cfpLoadingBarProvider.includeSpinner = false;
-    cfpLoadingBarProvider.includeBar = false;
-});
-
-// catch angular errors
-// angular.module('avatech').config(['$provide',
-//     function($provide) {
-//         $provide.decorator("$exceptionHandler", function($delegate) {
-//             return function(exception, cause) {
-//                 $delegate(exception, cause);
-//                 Raven.captureException(exception);
-//             };
-//         });
-//     }
-// ]);
 
 // the first thing that gets run
 angular.module('avatech').run(

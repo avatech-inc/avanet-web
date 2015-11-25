@@ -345,6 +345,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 terrainQueryTimer = $timeout(function(){
                     scope.terrainLayer.getTerrainData(e.latlng.lat, e.latlng.lng)
                     .then(function(data) {
+                        if (!data || !data.elevation) return;
                         scope.mapCursorElevation = data.elevation;
                         scope.$apply();
                     });

@@ -82,7 +82,7 @@ angular.module('avatech').controller('DeviceUploadModalController',
 
 // upload button directive
 
-angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout) {
+angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout, $log) {
   return {
     restrict: 'E',
     scope: { 

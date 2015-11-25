@@ -24,22 +24,22 @@ function ($scope, $q, $log, $location, $stateParams, $location, $modal, $timeout
         });
     }
 
-    // set date picker
-    setTimeout(function(){
-        var picker = new Pikaday({
-            field: document.getElementById('datepicker')
-            , maxDate: new Date()
-            //, format: 'YYYY-MM-DD'
-            , onSelect: function() {
-                //console.log(picker.toString());
-                //console.log(this.getMoment().format('Do MMMM YYYY'));
-            }
-        });
-        // todo:find a more elegant way to make sure the picker loads the date
-        setTimeout(function(){
-            picker.setMoment(moment(document.getElementById('datepicker').value));
-        },500);
-    },1);
+    // // set date picker
+    // setTimeout(function(){
+    //     var picker = new Pikaday({
+    //         field: document.getElementById('datepicker')
+    //         , maxDate: new Date()
+    //         //, format: 'YYYY-MM-DD'
+    //         , onSelect: function() {
+    //             //console.log(picker.toString());
+    //             //console.log(this.getMoment().format('Do MMMM YYYY'));
+    //         }
+    //     });
+    //     // todo:find a more elegant way to make sure the picker loads the date
+    //     setTimeout(function(){
+    //         picker.setMoment(moment(document.getElementById('datepicker').value));
+    //     },500);
+    // },1);
 
 
     $scope.remove = function() {

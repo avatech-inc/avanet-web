@@ -333,7 +333,9 @@ scrollable always-visible="true">
 
 	<div style="clear:both;border-bottom:1px solid #eee;"></div>
 
+		<!-- ------------------------------------------------------------------------------------- -->
 		<!-- AVALANCHE -->
+		
 		<div ng-if="observation.type == 'avalanche'">
 
 			<div style="padding:14px;">
@@ -369,7 +371,6 @@ scrollable always-visible="true">
 		</div>
 
 		<!-- ------------------------------------------------------------------------------------- -->
-
 		<!-- MANUAL SNOWPIT -->
 
 		<div ng-if="observation.type == 'snowpit'">
@@ -437,7 +438,6 @@ scrollable always-visible="true">
 		</div>
 
 		<!-- ------------------------------------------------------------------------------------- -->
-
 		<!-- SP PROFILE -->
 
 		<div ng-if="observation.type == 'sp-profile'">
@@ -461,7 +461,6 @@ scrollable always-visible="true">
 		</div>
 
 		<!-- ------------------------------------------------------------------------------------- -->
-
 		<!-- EVERYTHING ELSE -->
 
 		<div ng-if="observation.type != 'sp-profile' && observation.type != 'avalanche' && observation.type != 'snowpit'">

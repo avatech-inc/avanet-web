@@ -66,7 +66,6 @@ angular.module('avatech').directive('windowResize', ['$window', function($window
     };
     angular.element($window).bind("resize", function() {
       $scope._getWindowSize();
-      $scope.$apply();
     });
     $scope._getWindowSize();
   };

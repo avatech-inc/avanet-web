@@ -22,7 +22,7 @@ var concat = require('gulp-concat');
 var htmlreplace = require('gulp-html-replace');
 var bump = require('gulp-bump');
 var tap = require('gulp-tap');
-//var stripDebug = require('gulp-strip-debug');
+var templateCache = require('gulp-angular-templatecache');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -213,7 +213,11 @@ gulp.task('sentry', function() {
 
 var revHashes = {};
 gulp.task('combine-minify', function() {
-  return gulp.src(_sources, { base: 'public' })
+
+  var _sources2 = _sources.slice(0,_sources.length);
+  _sources2.push('_dist/public/assets/templates.js');
+
+  return gulp.src(_sources2, { base: '_dist/public' })
     // start creating source map
     .pipe(sourcemaps.init())
     // combine files
@@ -227,9 +231,6 @@ gulp.task('combine-minify', function() {
 
     // add angular [] annotations
     .pipe(gulpif("*.js", ngAnnotate({ gulpWarnings: false })))
-
-    // strip debug statements
-    //.pipe(gulpif("*.js", stripDebug()))
 
     // uglify JS
     .pipe(gulpif("*.js", uglify()))
@@ -245,7 +246,13 @@ gulp.task('combine-minify', function() {
     // store rev file hashes for use later
     .pipe(tap(function(file) {
       if (file.revHash) revHashes[file.revOrigPath] = file.revHash;    
-  }))
+  }));
+});
+
+gulp.task('template-cache', function () {
+  return gulp.src('_dist/public/modules/**/*.html')
+    .pipe(templateCache({ module: 'avatech', root: '/modules' }))
+    .pipe(gulp.dest('_dist/public/assets'));
 });
 
 gulp.task('clean-main', function() {
@@ -260,25 +267,26 @@ gulp.task('clean-main', function() {
     // replace js files with combined files (include rev hash)
     .pipe(htmlreplace({ 
       js:  '/assets/' + bundleName + '-' + revHashes[bundleName + '.js']  + '.js', 
-      css: '/assets/' + bundleName + '-' + revHashes[bundleName + '.css'] + '.css' 
+      css: '/assets/' + bundleName + '-' + revHashes[bundleName + '.css'] + '.css'
     }))
     // clean html
     .pipe(htmlmin({ 
       removeComments: true,
-      collapseWhitespace: true,
-      preserveLineBreaks: true
+      //collapseWhitespace: true,
+      //preserveLineBreaks: true
     }))
     .pipe(gulp.dest(function(file) { return file.base; }));
 });
 
 gulp.task('clean-dist', function() {
   return gulp.src([
-    '_dist/public/modules/**/*.js',
+    '_dist/public/modules',
     '_dist/public/lib',
     '_dist/public/js',
     '_dist/public/css',
     '_dist/public/sass',
     '_dist/public/assets/*.map',
+    '_dist/public/assets/templates.js',
     ], { read: false })
       .pipe(clean({ force: true }));
 });
@@ -418,10 +426,11 @@ gulp.task('build', function(done) {
     'clean', 
     // copy files into _dist
     'copy',
+    'template-cache',
     // combine and minify js and css
     'combine-minify',
     // create release and upload source map to Sentry
-    'sentry',
+    //'sentry',
     // clean main.html
     'clean-main',
     // // add copyright statements to app.js

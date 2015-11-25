@@ -396,15 +396,15 @@ angular.module('avatech').controller('ObservationPreviewController',
                         }
                         // percent
                         else if (dataType == "percent") {
-                            val += "%";
+                            val = parseInt(val) + "%";
                         }
                         // millibars (barometric pressure)
                         else if (dataType == "mb") {
-                            val += " mb";
+                            val = parseInt(val) + " mb";
                         }
                         // mm (for grain size at the moment, no conversion to imperial needed)
                         else if (dataType == "mm") {
-                            val += " mm";
+                            val = parseFloat(val).toFixed(1) + " mm";
                         }
                         // wind speed (m/s and mi/h)
                         else if (dataType == "windSpeed") {

@@ -267,14 +267,16 @@ var AvatechTerrainLayer = function (options) {
 
         var tile_id = tilePoint.x + ":" + tilePoint.y + ":" + parseInt(terrainLayer._map.getZoom());
         var tile = terrainLayer._tiles[tile_id]
-        if (!tile) return; // todo: promise?
+        if (!tile) {
+            //promise.resolve(null);
+            return promise.promise;
+        }
 
         var canvas = tile.el;
 
         // wait for tile to load
         canvas._terrainLoaded.promise.then(function() {
-            // make sure full tile is loaded
-            //if (!canvas._terrainData || canvas._terrainData.length != (256 * 256)) return; // todo: promise?
+            // make sure terrain is loaded
             if (!canvas._terrainData) return;
 
             // make sure coords are with bounds

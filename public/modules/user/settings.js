@@ -135,19 +135,9 @@ function ($scope, $q, $stateParams, $location, $timeout, Global, Restangular, $h
 
     $scope.downloadData = function() {
         $scope.downloading = true;
-        $http.get("/v1/tests/downloadData", { 
-            // hashes: hashes,
-            // metaData: metaData,
-            // zipFileName: zipFileName
-        })
-        .success(function (data) { 
-            // var zipFileName = $scope.currentTest.profile.metaData.location;
-            // zipFileName += "_" + $scope.currentTest.profile.
-            // download in browser
-            // var dataUrl = data.buffer;
-            var link = document.createElement('a');
-            angular.element(link).attr('href', data.url);//.attr('download', zipFileName + ".zip")
-            link.click();
+        $http.get(window.apiBaseUrl + "sp/bulkDownload")
+        .success(function (data) {
+            window.location.href = data.url;
             $scope.downloading = false;
         })
         .error(function(){

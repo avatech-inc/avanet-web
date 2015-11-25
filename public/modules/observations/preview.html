@@ -154,7 +154,7 @@ table.metaData {
 	margin-top:5px;
 	margin-bottom:8px;
 	float: left;
-	margin-right:15px;
+	margin-right:5px;
 	font-size: 13px;
 	margin-left:4px;
 	table-layout: fixed;
@@ -333,9 +333,11 @@ scrollable always-visible="true">
 
 	<div style="clear:both;border-bottom:1px solid #eee;"></div>
 
+	<div ng-hide="(observation.type != 'sp-profile' && observation.type != 'avalanche' && observation.type != 'snowpit') && table.length == 0">
+
 		<!-- ------------------------------------------------------------------------------------- -->
 		<!-- AVALANCHE -->
-		
+
 		<div ng-if="observation.type == 'avalanche'">
 
 			<div style="padding:14px;">
@@ -434,7 +436,6 @@ scrollable always-visible="true">
 					{{ formatters.formatCm(observation.PF) }}</div></td>
 				</tr>
 			</table>
-
 		</div>
 
 		<!-- ------------------------------------------------------------------------------------- -->
@@ -474,17 +475,18 @@ scrollable always-visible="true">
 
 		<!-- ------------------------------------------------------------------------------------- -->
 
+		<div style="clear:both;border-bottom:1px solid #eee;"></div>
+	</div>
 
 	<!-- notes -->
 	<div ng-show="observation.notes && observation.notes != ''">
-		<div style="clear:both;border-bottom:1px solid #eee;"></div>
 		<div class="sectionHeader">Notes</div>
 		<div style="font-size:13px;padding:5px 20px 14px 14px;font-weight:100;line-height:16px;">{{ observation.notes }}</div>
+		<div style="clear:both;border-bottom:1px solid #eee;"></div>
 	</div>
 
 	<!-- media -->
 	<div ng-show="observation.media && observation.media.length > 0">
-		<div style="clear:both;border-bottom:1px solid #eee;"></div>
 		<div class="sectionHeader">Media</div>
 		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
 			<div ng-repeat="media in observation.media" style="vertical-align:top;display:inline-block;" ng-click="showMedia(media, $event)">
@@ -502,6 +504,7 @@ scrollable always-visible="true">
 				</div>
 			</div>
 		</div>
+		<div style="clear:both;border-bottom:1px solid #eee;"></div>
 	</div>
 
 </div>

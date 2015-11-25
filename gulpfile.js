@@ -429,7 +429,7 @@ gulp.task('build', function(done) {
     // combine and minify js and css
     'combine-minify',
     // create release and upload source map to Sentry
-    //'sentry',
+    'sentry',
     // clean main.html
     'clean-main',
     // // add copyright statements to app.js

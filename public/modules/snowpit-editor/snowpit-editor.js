@@ -147,16 +147,10 @@ angular.module('avatech')
         };
 
         // delete profile
-        $scope.delete = function(){
-
-            Confirm.open("Are you sure you want to delete this snowpit?").then(function (yes) {
-                // user pressed yes
-                $scope.profile.$remove(function(profile) {
-                    $log.debug("removed!");
-                    $location.path('/');
-                });
-            }, function () {
-                // user pressed no
+        $scope.delete = function() {
+            Confirm.open("Are you sure you want to delete this snowpit?").then(function() {
+                Observations.remove($scope.profile);
+                $location.path('/');
             });
         }
 

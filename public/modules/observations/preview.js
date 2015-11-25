@@ -1,5 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $log, $stateParams, snowpitExport, snowpitViews, FontLoader, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
+    function ($scope, $rootScope, $location, $state, $log, $stateParams, snowpitExport, snowpitViews, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -204,7 +204,6 @@ angular.module('avatech').controller('ObservationPreviewController',
             hoverDragLayer: null,
             view: null,
             depthDescending: true,
-            fontsLoaded: false,
             tempMode: false,
             tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
         }
@@ -448,24 +447,8 @@ angular.module('avatech').controller('ObservationPreviewController',
                         if (!isNaN(num)) temp.temp = num * 2;
                     });
 
-                    // make sure fonts are loaded so canvas renders them
-                    var fontLoader = new FontLoader(["Roboto Condensed","snowsymbols"], {
-                        "fontsLoaded": function(error) {
-                            if (error !== null) {
-                                // Reached the timeout but not all fonts were loaded
-                                $log.debug(error.message);
-                                $log.debug(error.notLoadedFontFamilies);
-                            } else {
-                                // All fonts were loaded
-                                $log.debug("all fonts were loaded");
-                            }
-
-                            //$scope.settings.fontsLoaded = true;
-                            $scope.observation = angular.copy(_ob);
-                            $scope.$apply();
-                        }
-                    }, 3000);
-                    fontLoader.loadFonts();
+                    $scope.observation = angular.copy(_ob);
+                    $scope.$apply();
                 }
                 // all other observation types
                 else {

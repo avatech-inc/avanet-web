@@ -125,7 +125,6 @@ var aws = {
     // regular ol' Bootsrap JS for tooltips
     'public/js/lib/bootstrap.js',
     // Lightbox
-    'public/lib/angular-loading-bar/build/loading-bar.js',
     'public/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.js',
     'public/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css',
     // elevation profile

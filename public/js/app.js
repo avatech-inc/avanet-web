@@ -130,7 +130,7 @@ angular.module('avatech').config(function(cfpLoadingBarProvider) {
 
 // the first thing that gets run
 angular.module('avatech').run(
- function($rootScope, $location, $state, $stateParams, $document, $http, $uibModalStack, Observations, Routes, Global) {
+ function($rootScope, $location, $state, $stateParams, $log, $document, $http, $uibModalStack, Observations, Routes, Global) {
 
     // init global service
     Global.init();
@@ -153,21 +153,21 @@ angular.module('avatech').run(
 
         // redirect from login page if already logged in
         if (toState.name == "login" && Global.user) {
-            console.log("already logged in...");
+            $log.debug("already logged in...");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});
             return;
         }
         // access control
         if (toState.data && toState.data.requireLogin && !Global.user) {
-            console.log("must be logged in");
+            $log.debug("must be logged in");
             event.preventDefault();
             Global.redirectUrl = $location.url();
             $state.transitionTo("login", null, {location:'replace'});
             return;
         }
         if (toState.data && toState.data.requireAdmin && !Global.user.admin) {
-            console.log("admin only");
+            $log.debug("admin only");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});
             return;

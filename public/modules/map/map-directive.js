@@ -68,7 +68,10 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         scope.map.on('load', function(e) { mapLoaded.resolve(); });
 
         // setup heatmap
-        var heatMap = L.heatLayer([], { radius: 1, blur: 1, maxZoom: 20 }).addTo(scope.map);
+        var heatMap;
+        setTimeout(function() {
+            heatMap = L.heatLayer([], { radius: 1, blur: 1, maxZoom: 20 }).addTo(scope.map);
+        },10);
 
         // setup clustering
         var pruneCluster = new PruneClusterForLeaflet();

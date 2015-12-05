@@ -31,21 +31,21 @@ angular.module('avatech').controller('RegisterDeviceModalController',
             $scope.serial.number = $scope.serial.number.toUpperCase();
 
             if (!$scope.serial.number || $scope.serial.number == "") {
-                alert("Please enter your SP1 serial number.");
+                alert("Please enter your SP serial number.");
                 $scope.checking = false; return;
             }
             else if ($scope.serial.number.length != 14) {
-                alert("Your SP1 serial number must be 14 digits - please make sure you entered it correctly.");
+                alert("Your SP serial number must be 14 digits - please make sure you entered it correctly.");
                 $scope.checking = false; return;
             }
-            else if ($scope.serial.number.indexOf("SP1") != 0) {
-                alert('Your SP1 serial number must begin with "SP1"');
+            else if ($scope.serial.number.indexOf("SP") != 0) {
+                alert('Your SP serial number must begin with "SP"');
                 $scope.checking = false; return;
             }
 
             Restangular.one('devices', $scope.serial.number).customPOST({}, 'register')
             // success
-            .then(function(data){
+            .then(function(data) {
                 $scope.registering = true;
                 $timeout(function(){
                     $scope.registering = false;

@@ -64,6 +64,13 @@
 			for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
 			mixpanel.init("2c3bc97e77c92d7706fe7a743a0afb6a");
 		</script><!-- end Mixpanel -->
+
+    <!-- set global avanet vars -->
+    <script>
+      window._releaseVersion = '@@release';
+      //window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
+      window.apiBaseUrl = 'https://api.avatech.com/v2/';
+    </script> 
 	</head>
 	<body window-resize ng-cloak>
 		<div ng-include="'/modules/header/header.html'"></div>
@@ -205,7 +212,7 @@
       Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
           //whitelistUrls: ['localhost','avatech.com'],
           maxMessageLength: 200,
-          release: '@@release'
+          release: window._releaseVersion
       }).install();
     </script>	
 	</body>

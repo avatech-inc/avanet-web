@@ -1,6 +1,3 @@
-//window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
-window.apiBaseUrl = 'https://api.avatech.com/v2/';
-
 angular.element(document).ready(function() {
     // fix facebook bug with redirect
     // (not using fb login at the moment, but still should keep this for reference)

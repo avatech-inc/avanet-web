@@ -17,7 +17,6 @@ var replace = require('gulp-replace-task');
 var gutil = require('gulp-util');
 var argv = require('yargs').argv;
 var htmlmin = require('gulp-htmlmin');
-var insert = require('gulp-insert');
 var concat = require('gulp-concat');
 var htmlreplace = require('gulp-html-replace');
 var bump = require('gulp-bump');
@@ -32,7 +31,6 @@ var aws = {
 };
 
   var bundleName = "avanet";
-  var releaseVersion;
 
   var _sources = [
     // libraries
@@ -188,13 +186,6 @@ gulp.task('compass', ['clean-css'], function() {
   .pipe(gulp.dest('public/css'));
 });
 
-// gulp.task('copyright', function() {
-//   return gulp.src(['_dist/public/assets/*.js'])
-//   .pipe(insert.prepend('// Copyright (C) 2015 Avatech, Inc.\n'))
-//   .pipe(insert.append(';(function(){setInterval(function(){console.log("Copyright (C) 2015 Avatech, Inc.")},10000);})();'))
-//   .pipe(gulp.dest(function(file) { return file.base; }));
-// });
-
 gulp.task('sentry', function() {
   var opt = {
     DOMAIN: 'https://avanet.avatech.com', // prefix domain in the `name` param when upload file. Leave blank to use path. Do not add trailing slash 
@@ -212,6 +203,7 @@ gulp.task('sentry', function() {
 
 var revHashes = {};
 gulp.task('combine-minify', function() {
+  var pkg = require('./package.json');
 
   var _sources2 = _sources.slice(0,_sources.length);
   _sources2.push('_dist/public/assets/templates.js');
@@ -220,10 +212,10 @@ gulp.task('combine-minify', function() {
     // start creating source map
     .pipe(sourcemaps.init())
     // combine files
-    .pipe(gulpif("*.js", concat({ path: bundleName + '.js', cwd: '' })))
-    .pipe(gulpif("*.css", concat({ path: bundleName + '.css', cwd: '' })))
+    .pipe(gulpif("*.js", concat({ path: bundleName + '-' + pkg.version + '.js', cwd: '' })))
+    .pipe(gulpif("*.css", concat({ path: bundleName + '-' + pkg.version + '.css', cwd: '' })))
     // rename the concatenated files for cache-busting
-    .pipe(rev())
+    //.pipe(rev())
 
     // minify CSS
     .pipe(gulpif('*.css', minifyCSS({ keepSpecialComments: 0 })))
@@ -243,30 +235,33 @@ gulp.task('combine-minify', function() {
     .pipe(gulpif('*.map', gulp.dest('_dist/public/assets')))
 
     // store rev file hashes for use later
-    .pipe(tap(function(file) {
-      if (file.revHash) revHashes[file.revOrigPath] = file.revHash;    
-  }));
+  //   .pipe(tap(function(file) {
+  //     if (file.revHash) revHashes[file.revOrigPath] = file.revHash;    
+  // }));
 });
 
 gulp.task('template-cache', function () {
   return gulp.src('_dist/public/modules/**/*.html')
+    // first strip html comments
+    //.pipe(htmlmin({ removeComments: true }))
     .pipe(templateCache({ module: 'avatech', root: '/modules' }))
     .pipe(gulp.dest('_dist/public/assets'));
 });
 
 gulp.task('clean-main', function() {
+  var pkg = require('./package.json');
   return gulp.src('_dist/server/views/main.html')
     // replace variable
     .pipe(replace({
         patterns: [
           { match: 'env', replacement: 'production' },
-          { match: 'release', replacement: releaseVersion }
+          { match: 'release', replacement: pkg.version }
         ]
     }))
     // replace js files with combined files (include rev hash)
     .pipe(htmlreplace({ 
-      js:  '/assets/' + bundleName + '-' + revHashes[bundleName + '.js']  + '.js', 
-      css: '/assets/' + bundleName + '-' + revHashes[bundleName + '.css'] + '.css'
+      js:  '/assets/' + bundleName + '-' + pkg.version + '.js', 
+      css: '/assets/' + bundleName + '-' + pkg.version + '.css'
     }))
     // clean html
     .pipe(htmlmin({ 
@@ -404,27 +399,27 @@ gulp.task('deploy', function(done){
 	});
 });
 
-gulp.task('bump', function(){
-  gulp.src('package.json')
+gulp.task('bump', function() {
+  return gulp.src('package.json')
   .pipe(bump({ type: 'patch' }))
-  // keep track of new version
-  .pipe(tap(function(file){
-      var json = JSON.parse(String(file.contents));
-      releaseVersion = json.version;
-  }))
   .pipe(gulp.dest(function(file) { return file.base; }));
+});
+gulp.task('version-file', function() {
+  var pkg = require('./package.json');
+  fs.writeFileSync('_dist/public/assets/release.json', '{ "version": "' + pkg.version + '" }');
 });
 
 gulp.task('build', function(done) {
   runSequence('compass',
     // bump version
-    'bump',
+    'bump', 
     // inject files into main
     'buildMain',
     // remove existing _dist folder
     'clean', 
     // copy files into _dist
     'copy',
+    // cahce HTML templates in angular $templateCache
     'template-cache',
     // combine and minify js and css
     'combine-minify',
@@ -432,8 +427,8 @@ gulp.task('build', function(done) {
     'sentry',
     // clean main.html
     'clean-main',
-    // // add copyright statements to app.js
-    // 'copyright',
+    // write release/version file
+    'version-file',
     // cleanup files
     'clean-dist', 
     // prepare git for pushing to heroku

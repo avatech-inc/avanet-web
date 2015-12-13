@@ -39,6 +39,8 @@ var aws = {
     'public/js/lib/leaflet.js',
     // Leaflet Draw
     'public/js/lib/leaflet.draw-src.js',
+    // Leaflet context menu
+    'public/js/lib/leaflet.contextmenu-src.js',
     // PNG processing
     'public/js/lib/zlib.js', 
     'public/js/lib/png.js', 

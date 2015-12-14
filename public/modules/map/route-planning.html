@@ -40,6 +40,14 @@
 	<div class="buttons">
 		<div ng-show="route">
 			<!-- all buttons -->
+	      	<div style="display:inline-block;float:right;">
+				<div class="btn-group filter right" ng-if="route._id" ng-hide="discussMode">
+			      <button type="button" ng-click="delete()"><i class="ion-trash-a"></i>&nbsp;&nbsp;Delete</button>
+		      	</div>
+	      	</div>	
+
+	    </div>
+
 		<div class="btn-group filter right">
 		  <button type="button" ng-click="close()">
 			<i class="ion-close-round"></i>

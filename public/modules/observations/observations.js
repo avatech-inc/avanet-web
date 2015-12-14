@@ -605,6 +605,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
             .then(function (sharing) {
                 $scope.model.published = true;
                 angular.extend($scope.model, sharing);
+                Observations.save(angular.copy($scope.model), function(ob) {
+                   
+
+                });
             });
         }
     }

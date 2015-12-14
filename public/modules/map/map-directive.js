@@ -593,8 +593,7 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
 
         // hack to hide zoom control on hideMapButtons
         scope.$watch("hideMapButtons", function() {
-            // todo: map id!!!!!! #map_id .leaflet-control...
-            $(".leaflet-control-zoomslider").css("opacity", scope.hideMapButtons ? 0 : 1);
+            $(mapElement).find(".leaflet-control-zoom").css("opacity", scope.hideMapButtons ? 0 : 1);
         });
 
         // ---------------------------------------------------

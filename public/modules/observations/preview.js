@@ -321,6 +321,11 @@ angular.module('avatech').controller('ObservationPreviewController',
                 "SVT":"SHOVEL TILT"
                 }],
             ["score", "Score"],
+            ["result", "Result",{
+                "E":"Easy",
+                "M":"Moderate",
+                "H":"Hard",
+                }],
             ["shear", "Shear quality"],
             ["fractureCharacter", "Fracture character",{
                 "SP":"Sudden planar",

@@ -106,6 +106,11 @@ angular.module('avatech')
                     type: "snowpit"
                 };
 
+                // if location param is specified, set initial location
+                if ($stateParams.location) {
+                    profile.location = $stateParams.location;
+                }
+
                 if ($scope.global.orgs.length) profile.organization = $scope.global.orgs[0]._id;
 
                 $scope.profile = angular.copy(profile);

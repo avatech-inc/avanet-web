@@ -631,18 +631,44 @@ angular.module('avatech').controller('NewObservationModalController', function (
             {
                 key: "date",
                 type: "datepicker"
+    $scope.schemas['snowpack'] = {
+        type: "object",
+        properties: {
+            snowQuality: {
+                title: "Snow quality",
+                type: "string",
+                enum: ['POW','CRUD', 'CRUST', 'HARD', 'SLUSH', 'SPRING']
             },
             {
                 key: "slope"
+            cracking: {
+                title: "Cracking",
+                type: "boolean",
+                default: null
             },
             {
                 key: "aspect",
                 type: "direction-select"
+            whumpfing: {
+                title: "Whumpfing",
+                type: "boolean",
+                default: null
             },
             {
                 key: "elevation",
                 //type: "direction-select"
             });
+            footPenetration: { title: "Foot penetration", type: "number" },
+            skiPenetration: { title: "Ski penetration", type: "number" },
+            snowPackDepthEstimate: { title: "Snowpack depth estimate", type: "number" },
+            newSnowDepthEstimate: { title: "New snow estimate", type: "number" },
+            surfaceGrainForm: { title: "Surface grain form", type: "string" },
+            surfaceGrainSizeMin: { title: "Surface grain size min", type: "number" },
+            surfaceGrainSizeMax: { title: "Surface grain size max", type: "number" },
+            surfaceTemperature: { title: "Surface Temperature", type: "number" },
+            twentyCMTemperature: { title: "20cm Temperature", type: "number" },
+      }
+    };
 
             // add subit button
             form.push( {

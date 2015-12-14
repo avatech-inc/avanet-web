@@ -151,11 +151,59 @@
         <div ng-show="selectedTab=='notes'" style="padding:14px;">
             <textarea class="form-control" rows="8" ng-model="model.notes"></textarea>
         </div>
+        <div ng-show="selectedTab=='media'">
+            <style>
+            .upload-area {
+                position: relative;
+                width: 97% !important;
+                border: 2px dashed #aaa;
+                border-radius: 5px;
+                margin: 2% !important;
+                text-align: center;
+                color: #777;
+                padding-top: 6px;
+                font-size: 20px;
+            }
+            .upload-area.over {
+                border-color:#ffcc00;
+            }
+            .upoad-area .big { margin-top: 1px; }
+            .upload-area .small {
+                font-size: 13px;
+                margin-top: 4px;
+                font-weight: 100;
+            }
+            .upload-area input {
+                opacity: 0;
+                top: 0;
+                width: 100%;
+                left: 0;
+                bottom: 0;
+                position: absolute;
+                cursor: pointer;
+            }
+            </style>
+                
+            <uploader onadd="onFileAdd(file)" onprogress="onFileProgress(file)" onupload="onFileUpload(file)"></uploader>
 
+            <div ng-repeat="upload in uploading" ng-show="upload.uploading" style="vertical-align:top;height:20px;display:inline-block;width:306px;padding:3px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:left;font-size:11px;line-height:15px;color:#666;">
 
         </div>
         <div class="modal-footer" style="">
            <button class="btn btn-primary" ng-click="submit()">{{ 'submit_button' | translate }}</button>
+                <div class="progress" style="height:12px;width:50px;display:inline-block;background:#fff;margin-right:3px;margin-top:1px;border:1px solid #bbb;border-radius:99px;overflow:hidden;">
+                    <div class="progress-bar progress-bar-striped active" style="transition:width 1500ms;height:100%;display:inline-block;background-size:10px 10px;vertical-align: top;" ng-style="{ width: upload.progress + '%' }"></div>
+                </div>
+                {{ upload.name }}
+            </div>
+
+            <div ng-repeat="photo in model.media" style="vertical-align:top;height:145px;display:inline-block;width:156px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
+                <div ng-style="{ 'background-image': 'url(' + photo.URL + ')' }" style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
+                </div>
+
+                <button ng-click="deletePhoto($index)" class="btn btn-sm btn-default" style="float:left;"><i class="fa fa-trash-o"></i></button>
+                <input ng-model="photo.caption" class="form-control input-sm" style="width:105px;float:right;" />
+            </div>
         </div>
     </div>
 

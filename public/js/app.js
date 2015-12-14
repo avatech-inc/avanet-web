@@ -128,6 +128,32 @@ angular.module('avatech').run(
     // init routes service
     Routes.init();
 
+    // periodically check if new app version is available
+    // var newVersion = false;
+    // setInterval(function() {
+    //     $http.get('/assets/release.json')
+    //     .then(function(res){
+    //         // console.log("current release: " + window._releaseVersion);
+    //         // console.log("    new release: " + res.data.version);
+
+    //         if (window._releaseVersion != res.data.version) {
+    //             newVersion = true;
+    //             console.log("New version available! " + res.data.version);
+    //         }
+    //     });
+    // }, 5 * 60 * 1000);
+
+
+    $rootScope.$on("$locationChangeStart", function(event, newUrl, oldUrl) {
+
+        // console.log("LOCATION!");
+        // console.log(event);
+        // console.log(newUrl);
+        // console.log(oldUrl);
+        // console.log("newVersion? " + newVersion)
+
+    });
+
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
         // close any open modals before navigating to new state
         $uibModalStack.dismissAll();

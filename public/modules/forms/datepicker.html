@@ -12,11 +12,10 @@
          max-date="form.maxDate"
          format="form.format" />-->
 
-  <datetimepicker ng-model="$$value$$"></datetimepicker>
-
+  <input style="width:88px;padding-right:1px;display:inline-block;margin-right:5px;" class="form-control" ng-model="$$value$$" type="text" pikaday="pickerObject" max-date="{{ $root.todaysDate.toISOString() }}" date-input maxlength="10" />
   <!--<input class="form-control" ng-model="$$value$$" mo-date-input schema-validate="form" style="width:100px;display:inline-block;vertical-align:bottom;margin-right:6px;"/>
-
-  <timepicker style="display:inline-block;vertical-align:bottom;" class="timepicker" ng-model="mytime" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>-->
+-->
+  <timepicker style="display:inline-block;vertical-align:bottom;" class="timepicker" ng-model="$$value$$" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>
 
   <span class="help-block" sf-message="form.description"></span>
 

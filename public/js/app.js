@@ -46,27 +46,28 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'direction-select',
-      '/js/forms/direction-select.html'
+      '/modules/forms/direction-select.html'
     );
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'radiobuttons-nullable',
-      '/js/forms/radiobuttons-nullable.html'
+      '/modules/forms/radiobuttons-nullable.html'
     );
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'datepicker',
-      '/js/forms/datepicker.html'
+      '/modules/forms/datepicker.html'
     );
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'grainTypeSelect',
-      '/js/forms/grain-type-select.html'
+      '/modules/forms/grain-type-select.html'
     );
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'trend-select',
-      '/js/forms/trend-select.html'
+      '/modules/forms/trend-select.html'
+    );
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'number',
       '/modules/forms/number.html'

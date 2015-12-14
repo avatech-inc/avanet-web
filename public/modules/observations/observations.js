@@ -318,74 +318,6 @@ angular.module('avatech').controller('NewObservationModalController', function (
             { key: "poorStructure", type: "radiobuttons-nullable" }
         ];
 
-        $scope.schemas['weather'] = {
-            type: "object",
-            properties: {
-                currentTemperature: {
-                    title: "Current Temperature",
-                    type: "number"
-                },
-                maxTemperature: {
-                    title: "Max. Temperature",
-                    type: "number"
-                },
-                minTemperature: {
-                    title: "Min. Temperature",
-                    type: "number"
-                },
-                surfaceTemperature: {
-                    title: "Surface Temperature",
-                    type: "number"
-                },
-                thermographTemperature: {
-                    title: "Thermograph Temperature",
-                    type: "number"
-                },
-                thermographTrend: {
-                    title: "Thermograph Trend",
-                    type: "string",
-                    enum: ['RR','R','S','F','FR']
-                },
-                twentyCMTemperature: {
-                    title: "20cm Snow Temperature",
-                    type: "number"
-                },
-                precipitationType: {
-                    title: "Precipitation Type",
-                    type: "string",
-                    enum: ['RR','R','S','F','FR']
-                },
-                precipitationRate: {
-                    title: "Precipitation Rate",
-                    type: "string",
-                    enum: ['RR','R','S','F','FR']
-                },
-                skyCondition: {
-                    title: "Sky Condition",
-                    type: "string",
-                    enum: ['RR','R','S','F','FR']
-                },
-                rapidWarming: {
-                    title: "Rapid Warming",
-                    type: "boolean",
-                    default: null,
-                },
-                barometricPressure: {
-                    title: "Barometric Pressure",
-                    type: "number"
-                },
-                pressureTrend: {
-                    title: "Pressure Trend",
-                    type: "string",
-                    enum: ['RR','R','S','F','FR']
-                },
-                relativeHumidity: {
-                    title: "Relative Humidity",
-                    type: "number"
-                }
-            }
-          };
-
         $scope.forms['weather'] = [
             { key: "barometricPressure" },
             { key: "currentTemperature" },
@@ -717,6 +649,42 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 type: "submit",
                 title: "Save"
             });
+    $scope.schemas['weather'] = {
+        type: "object",
+        properties: {
+            precipitationType: {
+                title: "Precipitation Type",
+                type: "string",
+                enum: ['NO','RA','SN','RS','GR','ZR']
+            },
+            precipitationRate: {
+                title: "Precipitation Rate",
+                type: "string",
+                enum: ['S-1','S1','S2','S5','S10']
+            },
+            skyCondition: {
+                title: "Sky Condition",
+                type: "string",
+                enum: ['CLR','FEW','SCT','BKN','OVC','X']
+            },
+            maxTemperature: { title: "Max. Temperature", type: "number" },
+            minTemperature: { title: "Min. Temperature", type: "number" },
+            presentTemperature: { title: "Current Temperature", type: "number" },
+            thermographTemperature: { title: "Thermograph Temperature", type: "number" },
+            thermographTrend: {
+                title: "Thermograph Trend",
+                type: "string",
+                enum: ['RR','R','S','F','FR']
+            },
+            relativeHumidity: { title: "Relative Humidity", type: "number" },
+            barometricPressure: { title: "Barometric Pressure", type: "number" },
+            pressureTrend: {
+                title: "Pressure Trend",
+                type: "string",
+                enum: ['RR','R','S','F','FR']
+            },
+        }
+      };
 
             // set global form fields
             for (var i = 0; i < form.length; i++) {

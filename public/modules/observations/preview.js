@@ -1,5 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
-    function ($scope, $rootScope, $location, $state, $log, $stateParams, snowpitExport, snowpitViews, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
+    function ($scope, $rootScope, $location, $uibModal, $state, $log, $stateParams, snowpitExport, snowpitViews, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
 
         $rootScope.$broadcast('resizeMap');
 
@@ -16,6 +16,22 @@ angular.module('avatech').controller('ObservationPreviewController',
 
         $scope.go = function(url) {
             $location.path(url);
+        }
+
+        $scope.edit = function(type) {
+            $uibModal.open({
+                templateUrl: "/modules/observations/new.html",
+                controller: "NewObservationModalController",
+                backdrop: 'static',
+                windowClass: 'width-480',
+                resolve: {
+                  ob: function() { return $scope.observation; }
+                }
+            }).result.then(function(ob) {
+                console.log("obesrvation");
+                console.log(ob);
+                $scope.observation = ob;
+            });
         }
 
         $scope.showMedia = function(media) {

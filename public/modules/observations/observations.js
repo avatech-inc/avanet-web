@@ -588,5 +588,35 @@ angular.module('avatech').controller('NewObservationModalController', function (
         }
 
 
+    // media
 
+    $scope.deletePhoto = function(index) {
+        if (index == 0) $scope.model.media.shift();
+        else $scope.model.media.splice(index,1);
     }
+    $scope.onFileAdd = function(file) {
+        if ($scope.uploading == null) $scope.uploading = [];
+        file.uploading = true;
+        $scope.uploading.unshift(file);
+        $scope.$apply();
+    }
+    $scope.onFileProgress = function(file) {
+        $scope.$apply();
+    }
+    $scope.onFileUpload = function(file) {
+        if ($scope.model.media == null) $scope.model.media = [];
+        file.uploading = false;
+        file.caption = file.name;
+        file.type = "photo";
+        file.URL = file.url;
+        delete file.url;
+        $scope.model.media.unshift(file);
+        $scope.$apply();
+        //console.log($scope.obs);
+    };
+
+    $scope.showPhoto = function(index) {
+       // Lightbox.openModal($scope.model.media, index);
+    }
+
+});

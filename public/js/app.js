@@ -119,6 +119,7 @@ angular.module('avatech').config(function($translateProvider, $translatePartialL
 angular.module('avatech').run(
  function($rootScope, $location, $state, $stateParams, $log, $document, $http, $uibModalStack, Observations, Routes, Global) {
 
+    $rootScope.todaysDate = new Date();
     // init global service
     Global.init();
 

@@ -20,6 +20,17 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
         autoWaypoint: false
     }
 
+    $scope.close = function () {
+        $rootScope.$broadcast('resizeMap');
+        $state.go('^');
+    };
+    $scope.delete = function() {
+        Confirm.open("Are you sure you want to delete this route?").then(function() {
+            Routes.remove($scope.route);
+            $scope.close();
+        });
+    }
+
     $scope._hoverOnLeg = function(index) {
         $scope.hoverOnLeg = index;
     }

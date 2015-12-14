@@ -285,56 +285,6 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 enum: ['ECT','CT','RB','SB','STE','DPT','PST','HTE','SVT'],
                 default: 'ECT'
             },
-            { key: "blowingSnowDirection", type: "direction-select", condition: "['L', 'M', 'I', 'U'].indexOf(model.blowingSnowExtent) != -1"},
-
-          ];
-        $scope.forms['snowpack-test'] = [];
-
-
-
-        $scope.schemas['snowpack'] = {
-            type: "object",
-            properties: {
-                cracking: {
-                    title: "Cracking",
-                    type: "boolean",
-                    default: null
-                },
-                whumpfing: {
-                    title: "Whumpfing",
-                    type: "boolean",
-                    default: null
-                },
-                poorStructure: {
-                    title: "Poor Structure",
-                    type: "boolean",
-                    default: null
-                }
-          }
-        };
-        $scope.forms['snowpack'] = [
-            { key: "cracking", type: "radiobuttons-nullable" },
-            { key: "whumpfing", type: "radiobuttons-nullable" },
-            { key: "poorStructure", type: "radiobuttons-nullable" }
-        ];
-
-        $scope.forms['weather'] = [
-            { key: "barometricPressure" },
-            { key: "currentTemperature" },
-            { key: "maxTemperature" },
-            { key: "minTemperature" },
-            { key: "surfaceTemperature" },
-            { key: "thermographTemperature" },
-            { key: "thermographTrend", type: "trend-select" },
-            { key: "twentyCMTemperature" },
-            { key: "precipitationType",
-                titleMap: [
-                  { "value": "NO", "name": "No Precipitation" },
-                  { "value": "RA", "name": "Rain" },
-                  { "value": "SN", "name": "Snow" },
-                  { "value": "RS", "name": "Mixed Rain & Snow" },
-                  { "value": "GR", "name": "Graupel & Hail" },
-                  { "value": "ZR", "name": "Freezing Rain" }
             score: {
                 title: "Score",
                 type: "string",
@@ -348,131 +298,17 @@ angular.module('avatech').controller('NewObservationModalController', function (
                     'End','SF','Arr'
                 ]
             },
-            { key: "precipitationRate",
-                titleMap: [
-                  { "value": "CLR", "name": "Very Light" },
-                  { "value": "FEW", "name": "Light" },
-                  { "value": "SCT", "name": "Moderate" },
-                  { "value": "BKN", "name": "Heavy" },
-                  { "value": "OVC", "name": "Very Heavy" }
-                ]
             result: {
                 title: "Result",
                 type: "string",
                 enum: ['E','M','H']
             },
-            { key: "skyCondition",
-                titleMap: [
-                  { "value": "CLR", "name": "Clear" },
-                  { "value": "FEW", "name": "Few" },
-                  { "value": "SCT", "name": "Scattered" },
-                  { "value": "BKN", "name": "Broken" },
-                  { "value": "OVC", "name": "Overcast" },
-                  { "value": "X", "name": "Obscured" }
-                ]
             weakLayerDepth: { title: "Depth", type: "number", },
             shear: {
                 title: "Shear quality",
                 type: "string",
                 enum: ['Q1','Q2','Q3']
             },
-            { key: "rapidWarming", type: "radiobuttons-nullable" },
-            { key: "barometricPressure" },
-            { key: "pressureTrend", type: "trend-select" },
-            { key: "relativeHumidity" }
-        ];
-
-         $scope.schemas['snow-conditions'] = {
-            type: "object",
-            properties: {
-                quality: {
-                    title: "Quality",
-                    type: "string",
-                    enum: ['test','test2'],
-                },
-                heightOfSnowpack: {
-                    title: "HS - Height of snowpack",
-                    type: "number"
-                },
-                HN24: {
-                    title: "HN24 - Height of new snow",
-                    type: "number"
-                },
-                HIT: {
-                    title: "HIT",
-                    type: "number"
-                },
-                HST: {
-                    title: "HST",
-                    type: "number",
-                },
-                HN24W: {
-                    title: "HN24W",
-                    type: "number",
-                },
-                density: {
-                    title: "Density",
-                    type: "number",
-                },
-                rainGauge: {
-                    title: "Rain Gauge (mm)",
-                    type: "number",
-                },
-                precipGauge: {
-                    title: "Precip. Gauge (mm)",
-                    type: "number",
-                },
-                footPen: {
-                    title: "Foot Penetration (cm)",
-                    type: "number",
-                },
-                surfaceForm: {
-                    title: "Surface Form",
-                    type: "object",
-                },
-                grainSize: {
-                    title: "Surface Grain Size (mm)",
-                    type: "number",
-                },
-          }
-        };
-        $scope.forms['snow-conditions'] = [
-                { key: "quality" },
-                { key: "heightOfSnowpack" },
-                { key: "HN24" },
-                { key: "HIT" },
-                { key: "HST" },
-                { key: "HN24W" },
-                { key: "density" },
-                { key: "rainGauge" },
-                { key: "precipGauge" },
-                { key: "footPen" },
-                { key: "surfaceForm", type: "grainTypeSelect" },
-                { key: "grainSize" }
-          ];
-
-          // --------------------
-
-          angular.forEach($scope.schemas,function(schema) {
-                schema.properties.date = {
-                    type: "string",
-                    format: "date",
-                    title: "Date & Time",
-                    required: true,
-                };
-                schema.properties.slope = {
-                    title: "Slope",
-                    type: "number"
-                };
-                schema.properties.aspect = {
-                    title: "Aspect",
-                    type: "number"
-                }
-                schema.properties.elevation = {
-                    title: "Elevation",
-                    type: "number"
-                }
-            });
             fractureCharacter: {
                 title: "Fracture character",
                 type: "string",
@@ -627,10 +463,6 @@ angular.module('avatech').controller('NewObservationModalController', function (
     }, true);
 
 
-            form.unshift(
-            {
-                key: "date",
-                type: "datepicker"
     $scope.schemas['snowpack'] = {
         type: "object",
         properties: {
@@ -639,25 +471,16 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 type: "string",
                 enum: ['POW','CRUD', 'CRUST', 'HARD', 'SLUSH', 'SPRING']
             },
-            {
-                key: "slope"
             cracking: {
                 title: "Cracking",
                 type: "boolean",
                 default: null
             },
-            {
-                key: "aspect",
-                type: "direction-select"
             whumpfing: {
                 title: "Whumpfing",
                 type: "boolean",
                 default: null
             },
-            {
-                key: "elevation",
-                //type: "direction-select"
-            });
             footPenetration: { title: "Foot penetration", type: "number" },
             skiPenetration: { title: "Ski penetration", type: "number" },
             snowPackDepthEstimate: { title: "Snowpack depth estimate", type: "number" },
@@ -693,11 +516,6 @@ angular.module('avatech').controller('NewObservationModalController', function (
         { key: "twentyCMTemperature", type:"number", units: "°C" },
     ];
 
-            // add subit button
-            form.push( {
-                type: "submit",
-                title: "Save"
-            });
     $scope.schemas['weather'] = {
         type: "object",
         properties: {
@@ -792,10 +610,7 @@ angular.module('avatech').controller('NewObservationModalController', function (
         },
     ];
 
-          $scope.model = {
-            //name: "this is a name",
-            //created: new Date()
-          };
+    // ----------------------------------------------------------
 
     // add global fields
 

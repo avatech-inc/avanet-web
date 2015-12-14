@@ -686,12 +686,62 @@ angular.module('avatech').controller('NewObservationModalController', function (
         }
       };
 
-            // set global form fields
-            for (var i = 0; i < form.length; i++) {
-                //form[i].fieldHtmlClass = "input-sm";
-                form[i].disableSuccessState = true;
-            }
-          });
+    $scope.forms['weather'] = [
+        { key: "precipitationType",
+            titleMap: [
+              { "value": "NO", "name": "No Precipitation" },
+              { "value": "RA", "name": "Rain" },
+              { "value": "SN", "name": "Snow" },
+              { "value": "RS", "name": "Mixed Rain & Snow" },
+              { "value": "GR", "name": "Graupel & Hail" },
+              { "value": "ZR", "name": "Freezing Rain" }
+            ]
+        },
+        { key: "precipitationRate",
+            titleMap: [
+              { "value": "CLR", "name": "Very Light" },
+              { "value": "FEW", "name": "Light" },
+              { "value": "SCT", "name": "Moderate" },
+              { "value": "BKN", "name": "Heavy" },
+              { "value": "OVC", "name": "Very Heavy" }
+            ]
+        },
+        { key: "skyCondition",
+            titleMap: [
+              { "value": "CLR", "name": "Clear" },
+              { "value": "FEW", "name": "Few" },
+              { "value": "SCT", "name": "Scattered" },
+              { "value": "BKN", "name": "Broken" },
+              { "value": "OVC", "name": "Overcast" },
+              { "value": "X", "name": "Obscured" }
+            ]
+        },
+        { key: "maxTemperature", type:"number", units: "°C"  },
+        { key: "minTemperature", type:"number", units: "°C"  },
+        { key: "presentTemperature", type:"number", units: "°C"  },
+        { key: "thermographTemperature", type:"number", units: "°C" },
+        //{ key: "thermographTrend", type: "trend-select" },
+        { key: "thermographTrend",
+            titleMap: [
+              { "value": "RR", "name": "RR - Rising Rapidly" },
+              { "value": "R", "name": "R - Rain" },
+              { "value": "S", "name": "S - Steady" },
+              { "value": "F", "name": "F - Falling" },
+              { "value": "FR", "name": "FR - Falling Rapidly" }
+            ]
+        },
+        { key: "relativeHumidity", type:"number", units: "%" },
+        { key: "barometricPressure", type:"number", units: "mb" },
+        { key: "pressureTrend", 
+            titleMap: [
+              { "value": "RR", "name": "RR - Rising Rapidly" },
+              { "value": "R", "name": "R - Rain" },
+              { "value": "S", "name": "S - Steady" },
+              { "value": "F", "name": "F - Falling" },
+              { "value": "FR", "name": "FR - Falling Rapidly" }
+            ]
+        },
+    ];
 
           $scope.model = {
             //name: "this is a name",

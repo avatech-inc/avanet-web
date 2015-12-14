@@ -148,6 +148,9 @@
         <div class="modal-body" style="padding:0px;">
     		
              <form name="form_elements.obsForm" ng-submit="onSubmit()" class="obs-form" sf-schema="schemas[obType]" sf-form="forms[obType]" sf-model="model"></form>
+        <div ng-show="selectedTab=='notes'" style="padding:14px;">
+            <textarea class="form-control" rows="8" ng-model="model.notes"></textarea>
+        </div>
 
 
         </div>

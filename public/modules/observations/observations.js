@@ -607,6 +607,9 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 angular.extend($scope.model, sharing);
                 Observations.save(angular.copy($scope.model), function(ob) {
                    
+                    var redirectUrl = '/obs/' + ob._id;
+                    if (redirectUrl == $location.path()) $uibModalInstance.close(ob);
+                    else $location.path(redirectUrl);
 
                 });
             });

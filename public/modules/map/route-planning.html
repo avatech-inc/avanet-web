@@ -1,6 +1,38 @@
 <section ng-controller="RoutePlanningController">
 	<div class="route-box">
-		<div style="padding:10px;font-weight:700;font-size:16px; background:#eee;line-height:24px;" ng-hide="loading">
+
+<style>
+
+.sectionHeader {
+	padding-left: 14px;
+	font-size:18px;
+	font-weight:bold;
+	margin-bottom:5px;
+	margin-top:10px;
+}
+.popupHeader {
+	height: 44px;
+	position: relative;
+	padding-left: 14px;
+	background: #eee;
+	z-index:1000;
+}
+.popupHeader .title {
+	font-size: 20px;
+	font-weight:100;
+	line-height: 45px;
+	float:left;
+}
+.buttons > div {
+	display: inline-block;
+	float:left;
+}
+.buttons {
+	display: inline-block;
+	float:right;
+}
+
+</style>
 		<input type="text" ng-model="route.name" placeholder="Route Name"/>
 
 			<div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-show="route && route.points.length > 1">

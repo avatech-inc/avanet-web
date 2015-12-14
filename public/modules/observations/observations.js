@@ -1,4 +1,4 @@
-angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $log, $timeout, $uibModalInstance, initialLocation, Global) {
+angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $location, $log, $timeout, $uibModalInstance, ob, Global, PublishModal, Observations) {
 
     $scope.global = Global;
 
@@ -6,6 +6,16 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
     $scope.selectedTab = 'ob';
 
+    if (ob._id) $scope.model = angular.copy(ob);
+    else $scope.model = {
+        type: ob.type,
+        location: ob.location,
+        date: new Date(),
+        media: []
+    };
+
+    $scope.schemas = {};
+    $scope.forms = {};
 
     $scope.schemas['avalanche'] = {
         type: "object",

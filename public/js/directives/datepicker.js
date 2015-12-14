@@ -5,7 +5,7 @@ angular.module('avatech').directive('datetimepicker', function ($window, $log) {
         scope: { 
           theDate: '=ngModel'
         },
-        template: '<input class="form-control" ng-model="dateInput" mo-date-input schema-validate="form" style="width:100px;display:inline-block;vertical-align:bottom;margin-right:6px;"/><timepicker style="display:inline-block;vertical-align:bottom;height:34px;" class="timepicker" ng-model="timeInput" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>',
+        template: '<input class="form-control" ng-model="dateInput" schema-validate="form" style="width:100px;display:inline-block;vertical-align:bottom;margin-right:6px;"/><timepicker style="display:inline-block;vertical-align:bottom;height:34px;" class="timepicker" ng-model="timeInput" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>',
         link:function (scope, elm, attrs, ctrl) {
 
           scope.$watch('theDate',function(){
@@ -105,11 +105,11 @@ angular.module('avatech').directive('dateInput', function ($window) {
             
             dateFormat = "YYYY-MM-DD";
 
-            attrs.$observe('moDateInput', function (newValue) {
-                if (dateFormat == newValue || !ctrl.$modelValue) return;
-                dateFormat = newValue;
-                ctrl.$modelValue = new Date(ctrl.$setViewValue);
-            });
+            // attrs.$observe('dateInput', function (newValue) {
+            //     if (dateFormat == newValue || !ctrl.$modelValue) return;
+            //     dateFormat = newValue;
+            //     ctrl.$modelValue = new Date(ctrl.$setViewValue);
+            // });
 
             ctrl.$formatters.unshift(function (modelValue) {
                 if (!dateFormat || !modelValue) return "";

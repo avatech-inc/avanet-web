@@ -599,6 +599,13 @@ angular.module('avatech').controller('NewObservationModalController', function (
         $log.debug($scope.model);
 
         if ($scope.form_elements.obsForm.$valid) {
+            PublishModal.open({ 
+                initialSharing: angular.copy($scope.model)
+            })
+            .then(function (sharing) {
+                $scope.model.published = true;
+                angular.extend($scope.model, sharing);
+            });
         }
     }
 

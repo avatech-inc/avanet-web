@@ -1,7 +1,5 @@
 angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
-        //$httpProvider.interceptors.push('httpRequestInterceptor');
-
       $stateProvider
 
         .state('index', {
@@ -19,38 +17,6 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             data: { }
         })
 
-        // .state('index.newObservation', {
-        //     url: 'observations/:obType/new',
-        //     data: { modal: true },
-        //     onEnter: ['$stateParams', '$state', '$modal', '$resource', function($stateParams, $state, $modal, $resource, $window) {
-        //         $modal.open({
-        //             templateUrl: "/modules/observations/new.html",
-        //             controller: "NewObservationModalController",
-        //             backdrop: 'static',
-        //             windowClass: 'width-480',
-        //             resolve: {
-        //               initialLocation: function() { return {}; }
-        //               //item: "hey!"
-        //             },
-        //             // controller: ['$scope', 'item', function($scope, item) {
-        //             //   $scope.dismiss = function() {
-        //             //     $scope.$dismiss();
-        //             //   };
-
-        //             //   $scope.save = function() {
-        //             //     item.update().then(function() {
-        //             //       $scope.$close(true);
-        //             //     });
-        //             //   };
-        //             // }]
-        //         }).result.finally(function() {
-        //             //alert("!");
-        //             $state.go('^');
-        //             //$window.history.back();
-        //         });
-        //     }]
-        // })
-
         .state('index.ob-side', {
             url: 'obs/:observationId',
             views: { "right-pane": { templateUrl: '/modules/observations/preview.html' } },
@@ -58,10 +24,6 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             data: {
                 showPreviewPane: true
             }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
         })
 
         // Snowpit Editor
@@ -152,7 +114,6 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
                 fullScreen: true
             }
         })
-
 
         // user routes
         .state('login', {

@@ -95,12 +95,6 @@
     }
 
 
-</style>  
-<!--<div class="modal-dialog" ng-init="find()" style="width:400px;">-->
-    <div class="modalClose" ng-click="close()"><i class="ion-close-round"></i></div>
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>New Observation <span class="slash">/</span> <span style="font-weight:500">{{ obType | translate }}</span></h3>
     .tabs {
         border-bottom: 1px solid #eee;
         height: 38px;
@@ -145,9 +139,6 @@
         <div ng-show="selectedTab=='ob'">
             <form name="form_elements.obsForm" ng-submit="onSubmit()" class="obs-form" sf-schema="schemas[model.type]" sf-form="forms[model.type]" sf-model="model"></form>
         </div>
-        <div class="modal-body" style="padding:0px;">
-    		
-             <form name="form_elements.obsForm" ng-submit="onSubmit()" class="obs-form" sf-schema="schemas[obType]" sf-form="forms[obType]" sf-model="model"></form>
         <div ng-show="selectedTab=='notes'" style="padding:14px;">
             <textarea class="form-control" rows="8" ng-model="model.notes"></textarea>
         </div>
@@ -188,9 +179,6 @@
 
             <div ng-repeat="upload in uploading" ng-show="upload.uploading" style="vertical-align:top;height:20px;display:inline-block;width:306px;padding:3px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:left;font-size:11px;line-height:15px;color:#666;">
 
-        </div>
-        <div class="modal-footer" style="">
-           <button class="btn btn-primary" ng-click="submit()">{{ 'submit_button' | translate }}</button>
                 <div class="progress" style="height:12px;width:50px;display:inline-block;background:#fff;margin-right:3px;margin-top:1px;border:1px solid #bbb;border-radius:99px;overflow:hidden;">
                     <div class="progress-bar progress-bar-striped active" style="transition:width 1500ms;height:100%;display:inline-block;background-size:10px 10px;vertical-align: top;" ng-style="{ width: upload.progress + '%' }"></div>
                 </div>
@@ -206,5 +194,7 @@
             </div>
         </div>
     </div>
-
-<!--</div>-->
+    <div class="modal-footer" style="" ng-show="selectedTab=='ob'">
+       <button class="btn btn-primary" ng-click="submit()">{{ 'submit_button' | translate }}</button>
+    </div>
+</div>

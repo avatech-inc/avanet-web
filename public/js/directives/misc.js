@@ -1,3 +1,34 @@
+angular.module('avatech').directive('locationSelectButton', function(LocationSelectModal) {    
+    return {
+        restrict: 'A',
+        scope: {
+          model: '=ngModel'
+        },
+        link: function(scope, el, attrs) {    
+            // el.bind('click', function($event) {
+            //   var el = $($event.target).closest(".open");
+            //   if (el && el.data() && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
+            //   scope.$apply();
+            // });
+            el.bind('click', function($event) {
+
+                LocationSelectModal.open({
+                    initialLocation: scope.model
+                }).then(function (location) {
+                    if (location && location.length == 2) {
+                        location[0] = parseFloat(location[0].toFixed(7)); 
+                        location[1] = parseFloat(location[1].toFixed(7)); 
+                        scope.model = location;
+                    }
+                }, function () {
+                    // on dismiss
+                });
+
+            });
+        }
+    };        
+});
+
 angular.module('avatech').directive('accordionNew', function () {
     return {
         restrict: 'E',

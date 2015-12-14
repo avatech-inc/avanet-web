@@ -102,7 +102,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         //scope.map.scrollWheelZoom.disable();
 
         // add markers layer
-        //scope.mapLayer = L.mapbox.featureLayer().addTo(scope.map);
         scope.mapLayer = L.layerGroup().addTo(scope.map);
 
         // add zoom control to map

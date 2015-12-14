@@ -68,6 +68,10 @@ angular.module('schemaForm').config(
       'location-select',
       '/modules/forms/location-select.html'
     );
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'avalanche-trigger-select',
+      '/modules/forms/avalanche-trigger-select.html'
+    );
       'number',
       '/modules/forms/number.html'
     );

@@ -41,8 +41,8 @@ angular.module('avatech').config(function (LightboxProvider) {
 });
 
 // configure angular schema forms
-angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecoratorsProvider', 'sfPathProvider',
-  function(schemaFormProvider,  schemaFormDecoratorsProvider, sfPathProvider) {
+angular.module('schemaForm').config(
+  function(schemaFormProvider, schemaFormDecoratorsProvider, sfPathProvider) {
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'direction-select',
@@ -72,9 +72,7 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
       'number',
       '/modules/forms/number.html'
     );
-
-  }
-]);
+});
 
 // configure Restangular
 angular.module('avatech').config(function(RestangularProvider) {

@@ -122,6 +122,7 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             templateUrl: '/modules/user/login.html',
             data: { 
                 title: 'Login / Avanet',
+                redirectIfLoggedIn: true,
                 bodyCssClass: 'login'
             }
         })
@@ -146,6 +147,7 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             templateUrl: '/modules/user/register-new.html',
             data: { 
                 title: 'Sign up / Avanet',
+                redirectIfLoggedIn: true,
                 bodyCssClass: 'login'
             }
         })
@@ -154,6 +156,7 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             templateUrl: '/modules/user/register-new.html',
             data: { 
                 title: 'Sign up / Avanet',
+                redirectIfLoggedIn: true,
                 bodyCssClass: 'login'
             }
         })

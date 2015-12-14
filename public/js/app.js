@@ -166,7 +166,7 @@ angular.module('avatech').run(
         $(".tooltip").remove();
 
         // redirect from login page if already logged in
-        if (toState.name == "login" && Global.user) {
+        if (toState.data && toState.data.redirectIfLoggedIn && Global.user) {
             $log.debug("already logged in...");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});

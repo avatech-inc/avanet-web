@@ -193,9 +193,9 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
                 else {
                      $http.put(window.apiBaseUrl + "routes/" + $scope.route._id, _route)
                     .then(function(data) {
-
                         // add to routes datastore
                         _route._id = $scope.route._id;
+                        _route.updated = new Date();
                         Routes.add(_route);
                     });
                 }

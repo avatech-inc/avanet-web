@@ -236,7 +236,7 @@ angular.module('avatech').controller('ObservationPreviewController',
                 "PREV": "Previous",
                 "CUR": "Current"
                 }],
-            ["windVariability", "Wind windVariability",{
+            ["windVariability", "Wind variability",{
                 "CON":"Consistent",
                 "VAR":"Variable"
                 }],

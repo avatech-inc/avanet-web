@@ -276,35 +276,18 @@ angular.module('avatech').controller('NewObservationModalController', function (
         }
     ];
 
+    $scope.schemas['snowpack-test'] = {
+        type: "object",
+        properties: { 
+            name: {
+                title: "Test Type",
+                type: "string",
+                enum: ['ECT','CT','RB','SB','STE','DPT','PST','HTE','SVT'],
+                default: 'ECT'
             },
             { key: "blowingSnowDirection", type: "direction-select", condition: "['L', 'M', 'I', 'U'].indexOf(model.blowingSnowExtent) != -1"},
 
           ];
-
-           $scope.schemas['snowpack-test'] = {
-            type: "object",
-            properties: {
-              // name: { required: true, type: "string", minLength: 2, title: "Name"}, //, description: "Name or alias" 
-              // title: {
-              //   title: "Title!",
-              //   type: "string",
-              //   enum: ['dr','jr','sir','mrs','mr','NaN','dj']
-              // },
-              // another: {
-              //   type: "string", title: "Another Field"
-              // },
-              // created: {
-              //   type: "string",
-              //   format: "date",
-              //   required: true
-              // },
-              // grainType: {
-              //   type: "object",
-              //   title: "Grain type",
-              //   //required: true
-              // },
-          }
-        };
         $scope.forms['snowpack-test'] = [];
 
 
@@ -420,6 +403,17 @@ angular.module('avatech').controller('NewObservationModalController', function (
                   { "value": "RS", "name": "Mixed Rain & Snow" },
                   { "value": "GR", "name": "Graupel & Hail" },
                   { "value": "ZR", "name": "Freezing Rain" }
+            score: {
+                title: "Score",
+                type: "string",
+                enum: [
+                    'ECTPV','ECTP','ECTN','ECTX',
+                    'CTV','CT','CTN',
+                    'RB1','RB2','RB3','RB4','RB5','RB6','RB7',
+                    'SBV','SB10','SB20','SB30','SB40','SB50','SB60','SB70','SBN',
+                    'STC','STV','STE','STM','STH','STN',
+                    'DTV','DT','DTN',
+                    'End','SF','Arr'
                 ]
             },
             { key: "precipitationRate",
@@ -430,6 +424,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
                   { "value": "BKN", "name": "Heavy" },
                   { "value": "OVC", "name": "Very Heavy" }
                 ]
+            result: {
+                title: "Result",
+                type: "string",
+                enum: ['E','M','H']
             },
             { key: "skyCondition",
                 titleMap: [
@@ -440,6 +438,11 @@ angular.module('avatech').controller('NewObservationModalController', function (
                   { "value": "OVC", "name": "Overcast" },
                   { "value": "X", "name": "Obscured" }
                 ]
+            weakLayerDepth: { title: "Depth", type: "number", },
+            shear: {
+                title: "Shear quality",
+                type: "string",
+                enum: ['Q1','Q2','Q3']
             },
             { key: "rapidWarming", type: "radiobuttons-nullable" },
             { key: "barometricPressure" },
@@ -538,6 +541,19 @@ angular.module('avatech').controller('NewObservationModalController', function (
                     type: "number"
                 }
             });
+            fractureCharacter: {
+                title: "Fracture character",
+                type: "string",
+                enum: ['SP','SC','PC','RP','BRK']
+            },
+            nbTaps: { title: "# of taps", type: "number", },
+            sawCutLength: { title: "Saw cut length", type: "number", },
+            isolatedColumnLength: { title: "Isolated column length", type: "number", },
+            criticalGrainForm: { title: "Critical grain form", type: "string" },
+            criticalGrainSizeMin: { title: "Critical grain size min", type: "number" },
+            criticalGrainSizeMax: { title: "Critical grain size max", type: "number" },
+        }
+    };
 
           angular.forEach($scope.forms,function(form) {
 

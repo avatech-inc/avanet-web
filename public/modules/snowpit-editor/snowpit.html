@@ -273,7 +273,8 @@
 
 								<span style="width:40px;margin:0px 4px;">{{ translateTemp(temp.temp) }}</span>
 
-								<input class="depth" style="width:40px;" type="number" ng-value="settings.depthDescending ? profile.depth - temp.depth : temp.depth"/>
+								<!--<input class="depth" style="width:40px;" type="number" ng-value="settings.depthDescending ? profile.depth - temp.depth : temp.depth"/>-->
+								| {{ settings.depthDescending ? profile.depth - temp.depth : temp.depth }}cm
 
 								<span style="cursor:pointer;margin:0 4px;" ng-click="deleteTemp(temp)"><i class="fa fa-times"></i></span>
 

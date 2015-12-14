@@ -669,6 +669,29 @@ angular.module('avatech').controller('NewObservationModalController', function (
             twentyCMTemperature: { title: "20cm Temperature", type: "number" },
       }
     };
+    $scope.forms['snowpack'] = [
+        { key: "snowQuality",
+            titleMap: [
+              { "value": "POW", "name": "Powder" },
+              { "value": "CRUD", "name": "Crud" },
+              { "value": "CRUST", "name": "Crusty" },
+              { "value": "HARD", "name": "Hard" },
+              { "value": "SLUSH", "name": "Slushy" },
+              { "value": "SPRING", "name": "Spring Snow" }
+            ]
+        },
+        { key: "cracking", type: "radiobuttons-nullable" },
+        { key: "whumpfing", type: "radiobuttons-nullable" },
+        { key: "snowPackDepthEstimate", type:"number", units: "cm"  },
+        { key: "newSnowDepthEstimate", type:"number", units: "cm" },
+        { key: "footPenetration", type:"number", units: "cm" },
+        { key: "skiPenetration", type:"number", units: "cm" },
+        { key: "surfaceGrainForm", type: "grainTypeSelect" },
+        { key: "surfaceGrainSizeMin", type:"number", units: "mm" },
+        { key: "surfaceGrainSizeMax", type:"number", units: "mm" },
+        { key: "surfaceTemperature", type:"number", units: "°C" },
+        { key: "twentyCMTemperature", type:"number", units: "°C" },
+    ];
 
             // add subit button
             form.push( {

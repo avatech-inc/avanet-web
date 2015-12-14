@@ -131,6 +131,17 @@
         padding-right: 4px;
     }
 </style> 
+<div class="modalClose" ng-click="close()"><i class="ion-close-round"></i></div>
+<div class="modal-content">
+    <div class="modal-header">
+        <h3><span ng-if="!model._id">New </span>Observation <span class="slash">/</span> <span style="font-weight:500">{{ model.type | translate }}</span></h3>
+    </div>
+    <div class="modal-body" style="padding:0px;">
+        <div class="tabs">
+            <span ng-click="selectedTab='ob'" ng-class="{ selected: selectedTab=='ob' }">Observation</span>
+            <span ng-click="selectedTab='notes'" ng-class="{ selected: selectedTab=='notes' }">Notes</span>
+            <span ng-click="selectedTab='media'" ng-class="{ selected: selectedTab=='media' }">Media</span>
+        </div>
         </div>
         <div class="modal-body" style="padding:0px;">
     		

@@ -37,15 +37,15 @@
 
 			<button class="headerButton" ng-class="{ 'open': settings.tempMode }" ng-click="toggleTempMode()"><i class="ion-thermometer"></i><span>Temperature</span></button>
 
-			<div class="pull-right">
-				<!--<button style="width:90px;" class="headerButton" ng-class="{ 'open': !settings.tempMode }" ng-click="settings.tempMode = false"><i class="fa fa-align-right"></i><span>Layers</span></button>-->
-			</div>
 			<div class="pull-right" ng-show="settings.tempMode">
-
-
 	    		<button class="headerButton" ng-show="settings.tempMode" ng-click="addTemp()"><i class="fa fa-plus"></i><span>Temp</span></button>
-
     		</div>
+			<div class="pull-right" ng-show="settings.tempMode" style="line-height:40px;padding-right:8px;">
+				<span style="text-transform:uppercase;font-size:12px;margin-right:6px;">Temp. Interval:</span>
+				<input class="form-control input-sm" style="width:43px;display:inline-block;padding-right:6px;" ng-model="settings.tempInterval" min="0" type="number"/>
+				<span style="color:#444;font-size:12px;margin-right:6px;">cm</span>
+			</div>
+
 			<div class="pull-right" ng-show="!settings.tempMode">
 
 	    		<button class="headerButton" ng-show="!settings.tempMode" ng-click="addLayer()"

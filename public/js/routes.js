@@ -39,7 +39,8 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             }
         })
         .state('index.profileEditor.details', {
-            url: 'profiles/:profileId'
+            url: 'profiles/:profileId',
+            params: { location : null }
         })
 
         // organizations

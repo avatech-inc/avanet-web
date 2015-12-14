@@ -98,6 +98,46 @@ angular.module('avatech').controller('NewObservationModalController', function (
             //     type: "boolean",
             //     default: null
             // },
+    $scope.schemas['avalanche'] = {
+        type: "object",
+        properties: {
+            avalancheType: {
+                title: "Avalanche type",
+                type: "string",
+                enum: ['L','WL','SS','HS','WS','G','I','SF','C','R','U'],
+            },
+            trigger: {
+                title: "Trigger",
+                type: "string",
+                enum: ['A','N','U'],
+            },
+            secondaryTriggers: {
+                title: "Secondary triggers",
+                type: "array",
+                items: { type: "string" },
+            },
+            selfTriggered: { title: "Self triggered", type: "boolean" },
+            sizeRelative: {
+                title: "Relative size",
+                type: "string",
+                enum: ['R1','R2','R3','R4','R5'],
+            },
+            sizeDestructive: {
+                title: "Relative size",
+                type: "string",
+                enum: ['D1','D2','D3','D4','D5'],
+            },
+            slabThickness: { title: "Slab Thickness", type: "number", description: "cm" },
+            slabWidth: { title: "Slab Width", type: "number" },
+            slabVertical: { title: "Slab Vertical", type: "number" },
+            peopleCaught: { title: "Slab Thickness", type: "number" },
+            peopleInjured: { title: "People Injured", type: "number" },
+            peopleCarried: { title: "People Carried", type: "number" },
+            peopleBuriedPartially: { title: "People Buried Partially", type: "number" },
+            peopleBurriedFully: { title: "People Buried Fully", type: "number" },
+            peopleKilled: { title: "People Killed", type: "number" },
+        }
+    };
             windLoading: {
                 title: "Wind Loading",
                 type: "string",

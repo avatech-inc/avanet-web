@@ -138,6 +138,50 @@ angular.module('avatech').controller('NewObservationModalController', function (
             peopleKilled: { title: "People Killed", type: "number" },
         }
     };
+    $scope.forms['avalanche'] = [
+        { key: "avalancheType",
+            titleMap: [
+              { "value": "L", "name": "Loose-snow avalanche" },
+              { "value": "WL", "name": "Wet loose-snow avalanche" },
+              { "value": "SS", "name": "Soft slab avalanche" },
+              { "value": "HS", "name": "Hard slab avalanche" },
+              { "value": "WS", "name": "Wet slab avalanche" },
+              { "value": "G", "name": "Glide avalanche" },
+              { "value": "I", "name": "Ice fall or avalanche" },
+              { "value": "SF", "name": "Slush flow" },
+              { "value": "C", "name": "Cornice fall (w/o avalanche)" },
+              { "value": "R", "name": "Roof avalanche" },
+              { "value": "U", "name": "Unkown" },
+            ]
+        },
+        { key: "trigger", type: "radiobuttons-nullable",
+            titleMap: [
+              { "value": "A", "name": "Artificial" },
+              { "value": "N", "name": "Natural" },
+              { "value": "U", "name": "Unkown" },
+            ]
+        },
+        { key: "secondaryTriggers", type: "avalanche-trigger-select", trigger: 'A', condition: "model.trigger == 'A'" },
+        { key: "secondaryTriggers", type: "avalanche-trigger-select", trigger: 'N', condition: "model.trigger == 'N'" },
+        { key: "selfTriggered", type: "radiobuttons-nullable" },
+        { key: "sizeRelative", type: "radiobuttons-nullable" },
+        { key: "sizeDestructive", type: "radiobuttons-nullable" },
+        { key: "slabThickness", type:"number", units: "cm" },
+        { key: "slabWidth", type:"number", units: "m" },
+        { key: "slabVertical", type:"number", units: "m" },
+        { key: "peopleCaught" },
+        { key: "peopleCarried" },
+        { key: "peopleBuriedPartially" },
+        { key: "peopleBurriedFully" },
+        { key: "peopleInjured" },
+        { key: "peopleKilled" },
+    ];
+    $scope.$watch('model.trigger',function(oldVal, newVal) {
+        if (oldVal != newVal && $scope.model.secondaryTriggers) 
+            $scope.model.secondaryTriggers = null;
+    }, true);
+
+
             windLoading: {
                 title: "Wind Loading",
                 type: "string",

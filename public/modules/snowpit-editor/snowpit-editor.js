@@ -377,15 +377,24 @@ angular.module('avatech')
         $scope.selectTemp = function(temp){
             $scope.selectedTemp = temp;
         }
+        $scope.settings.tempInterval = 10;
         $scope.addTemp = function() {
             if (!$scope.profile.temps) $scope.profile.temps = [];
-
             var newTemp = null;
             if ($scope.profile.temps.length == 0) {
                 newTemp = { depth: 0, temp: 0 };
             }
             else {
-                var newDepth = $scope.profile.temps[$scope.profile.temps.length-1].depth + 10;
+                var bottomDepth = $scope.profile.temps[$scope.profile.temps.length-1].depth;
+                var spacing = $scope.settings.tempInterval;
+                if (spacing === null || isNaN(spacing)) {
+                    if ($scope.profile.temps.length > 2) spacing = bottomDepth - $scope.profile.temps[$scope.profile.temps.length-2].depth;
+                    else spacing = 10;
+                }
+
+                if (spacing < 0) spacing = 10;
+                if (bottomDepth + spacing > $scope.profile.depth) spacing = $scope.profile.depth - bottomDepth;
+                var newDepth = bottomDepth + spacing;
                 if (newDepth <= $scope.profile.depth)
                     newTemp = { depth: newDepth, temp: $scope.profile.temps[$scope.profile.temps.length-1].temp };
             }

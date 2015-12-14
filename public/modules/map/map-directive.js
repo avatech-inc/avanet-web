@@ -1,4 +1,4 @@
-angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, $log, terrainVisualization) {
+angular.module('avatech').directive('map', function($timeout, $q, $state, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, $log, terrainVisualization, $uibModal) {
   return {
     restrict: 'A',
     templateUrl: "/modules/map/map-directive.html",
@@ -528,35 +528,6 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
                 }, 200);
             }
             else scope.loadProfiles();
-            // var terrainLoaded = $q.defer();
-
-            // //$log.debug("is terrain layer already loaded? " + scope.terrainLayer._isLoaded);
-            // if (scope.terrainLayer) {
-            //     //scope.terrainLayer.once('load', function() { terrainLoaded.resolve(); });
-            //     scope.terrainLayer.once('loading', function() { $log.debug('1. loading') });
-            //     scope.terrainLayer.once('load', function() { $log.debug('2. loaded!') });
-            // } 
-            // else terrainLoaded.resolve();
-
-            // $timeout.cancel(scope.loadProfilesTimer);
-            // scope.loadProfilesTimer = $timeout(function() {
-
-            //     var getObs = scope.loadProfiles();
-
-            //     $q.all([ terrainLoaded.promise, getObs ])
-            //     .then(function(data) {
-            //         $log.debug("--- !!! both terrain and obs are loaded !!! ---");
-            //         var obs = data[1];
-
-            //         scope.profiles = obs;
-            //         plotObsOnMap();
-            //         searchObs();
-            //         scope.loadingProfiles = false;
-            //         scope.loadingNew = false;
-
-            //     });
-
-            // }, 300);
         });
 
         // make sure map loads properly

@@ -1,0 +1,9 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+ 
+  <button location-select-button ng-model="$$value$$" class="btn btn-primary btn-sm" type="button" style="width:150px;margin-top:1px;margin-bottom:2px;padding-left:0px;padding-right:0px;font-size:13px;"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Click to place on map</button>
+
+  <span ng-show="$$value$$" style="padding-left: 12px;"> {{ $$value$$[1] }}, {{ $$value$$[0] }} </span>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

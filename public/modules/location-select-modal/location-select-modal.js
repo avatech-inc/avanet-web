@@ -63,7 +63,7 @@ angular.module('avatech').controller('LocationSelectModalController',
                 else initialLocation = [$scope.global.user.location[1],$scope.global.user.location[0]];
             }
 
-            $scope.mapHolder.map.on('drag', mapChange);
+            //$scope.mapHolder.map.on('drag', mapChange);
             $scope.mapHolder.map.on('moveend', mapChange);
 
             // set starting location and zoom

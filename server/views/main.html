@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+    <title>Avanet</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+		<meta name="keywords" content="">
+		<meta name="description" content="Avanet is a mountain safety platform for professional and recreational backcountry travelers">
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+		
+    <!-- load fonts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+      WebFont.load({
+        custom: {
+          families: ['Roboto Condensed', 'snowsymbols'],
+          testStrings: { 'snowsymbols': 'ajklmnopqruvxwz' }
+        }
+      });
+    </script>
+
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" >
+
+    <!-- build:css -->
+		<!-- inject:css -->
+		<link rel="stylesheet" href="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css">
+		<link rel="stylesheet" href="/lib/ngjs-color-picker/css/ngjs-color-picker.css">
+		<link rel="stylesheet" href="/css/common.css">
+		<link rel="stylesheet" href="/css/map/map.css">
+		<link rel="stylesheet" href="/css/map/route-planning.css">
+		<link rel="stylesheet" href="/css/map-search/map-search.css">
+		<link rel="stylesheet" href="/css/snowpit-editor/snowpit.css">
+		<link rel="stylesheet" href="/css/user/login.css">
+		<!-- endinject -->
+    <!-- endbuild -->
+
+  	<!-- ionicons -->
+  	<link href='//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' rel='stylesheet' />
+  	<!-- MapBox / Leaflet -->
+		<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+		<!-- d3 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+		<!-- google maps 'geometry' API for geo calculations -->
+		<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
+    <!-- Stripe Checkout -->
+		<script src="https://checkout.stripe.com/checkout.js"></script>
+		<!-- canvg: canvas-svg converter -->
+		<script src="https://gabelerner.github.io/canvg/rgbcolor.js"></script> 
+		<script src="https://gabelerner.github.io/canvg/StackBlur.js"></script>
+		<script src="https://gabelerner.github.io/canvg/canvg.js"></script> 
+
+		<!-- Heap -->
+    <script type="text/javascript">
+    		window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+t+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+	      	var _env = "@@env";
+		      if (_env == "production") heap.load("894126234"); // production
+		      else heap.load("416778563"); // dev
+		</script>
+    <!-- Mixpanel -->
+    <script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+			for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+			mixpanel.init("2c3bc97e77c92d7706fe7a743a0afb6a");
+		</script><!-- end Mixpanel -->
+
+    <!-- set global avanet vars -->
+    <script>
+      window._releaseVersion = '@@release';
+      //window.apiBaseUrl = 'http://127.0.0.1:10010/v2/';
+      window.apiBaseUrl = 'https://api.avatech.com/v2/';
+    </script> 
+	</head>
+	<body window-resize ng-cloak>
+		<div ng-include="'/modules/header/header.html'"></div>
+		<section class="content" ui-view></section>
+		
+    <!-- API error -->
+		<div id="api-error" style="display:none;">
+			<h1>Oops!</h1>
+			<h2>Our servers are experiencing exceptionally high traffic.<br/><br/>Please try again shortly.</h2>
+			<img src="/img/light_logo.png"/>
+		</div>
+
+		<!-- jQuery -->
+		<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    
+
+    <!-- build:js -->
+		<!-- inject:js -->
+		<script src="/js/lib/leaflet.js"></script>
+		<script src="/js/lib/leaflet.draw-src.js"></script>
+		<script src="/js/lib/leaflet.contextmenu-src.js"></script>
+		<script src="/js/lib/zlib.js"></script>
+		<script src="/js/lib/png.js"></script>
+		<script src="/js/lib/utm.js"></script>
+		<script src="/js/lib/greatCircle.js"></script>
+		<script src="/js/lib/WorldMagneticModel.js"></script>
+		<script src="/js/lib/DrawDeclinationCanvas.js"></script>
+		<script src="/lib/underscore/underscore.js"></script>
+		<script src="/js/lib/PruneCluster.js"></script>
+		<script src="/js/lib/leaflet-heat.js"></script>
+		<script src="/js/lib/leaflet-image.js"></script>
+		<script src="/js/lib/leaflet_canvas_layer.js"></script>
+		<script src="/js/lib/turf.js"></script>
+		<script src="/js/lib/simplify.js"></script>
+		<script src="/js/lib/graticule.js"></script>
+		<script src="/lib/angular/angular.js"></script>
+		<script src="/lib/angular-cookies/angular-cookies.js"></script>
+		<script src="/lib/angular-route/angular-route.js"></script>
+		<script src="/lib/angular-touch/angular-touch.js"></script>
+		<script src="/lib/restangular/dist/restangular.js"></script>
+		<script src="/lib/objectpath/lib/ObjectPath.js"></script>
+		<script src="/lib/tv4/tv4.js"></script>
+		<script src="/lib/angular-sanitize/angular-sanitize.js"></script>
+		<script src="/lib/angular-schema-form/dist/schema-form.js"></script>
+		<script src="/lib/angular-schema-form/dist/bootstrap-decorator.js"></script>
+		<script src="/lib/angular-bindonce/bindonce.js"></script>
+		<script src="/js/lib/jquery.mentionsInput.js"></script>
+		<script src="/js/lib/jquery.elastic.js"></script>
+		<script src="/lib/moment/moment.js"></script>
+		<script src="/lib/angular-moment/angular-moment.js"></script>
+		<script src="/js/lib/jquery.knob.js"></script>
+		<script src="/lib/blueimp-md5/js/md5.js"></script>
+		<script src="/lib/jspdf/dist/jspdf.debug.js"></script>
+		<script src="/lib/pdfmake/build/pdfmake.js"></script>
+		<script src="/lib/pdfmake/build/vfs_fonts.js"></script>
+		<script src="/lib/angular-local-storage/angular-local-storage.js"></script>
+		<script src="/lib/angular-country-picker/country-picker.js"></script>
+		<script src="/lib/angular-translate/angular-translate.js"></script>
+		<script src="/lib/angular-translate-loader-partial/angular-translate-loader-partial.js"></script>
+		<script src="/lib/angular-ui-router/release/angular-ui-router.js"></script>
+		<script src="/lib/angular-ui-utils/modules/route/route.js"></script>
+		<script src="/lib/ui-router-extras/release/ct-ui-router-extras.js"></script>
+		<script src="/js/lib/ui-bootstrap-0.14.3.js"></script>
+		<script src="/js/lib/ui-bootstrap-tpls-0.14.3.js"></script>
+		<script src="/lib/angular-credit-cards/release/angular-credit-cards.js"></script>
+		<script src="/lib/venturocket-angular-slider/build/angular-slider.js"></script>
+		<script src="/js/lib/bootstrap.js"></script>
+		<script src="/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.js"></script>
+		<script src="/js/lib/elevation-widget.js"></script>
+		<script src="/lib/ngjs-color-picker/js/ngjs-color-picker.js"></script>
+		<script src="/lib/angular-audio/app/angular.audio.js"></script>
+		<script src="/lib/nanoscroller/bin/javascripts/jquery.nanoscroller.js"></script>
+		<script src="/lib/angular-nanoscroller/scrollable.js"></script>
+		<script src="/lib/pikaday/pikaday.js"></script>
+		<script src="/lib/pikaday-angular/pikaday-angular.js"></script>
+		<script src="/js/lib/FileSaver.js"></script>
+		<script src="/js/lib/canvas-toBlob.js"></script>
+		<script src="/js/app.js"></script>
+		<script src="/js/routes.js"></script>
+		<script src="/modules/admin/admin-orgs.js"></script>
+		<script src="/modules/admin/admin-users.js"></script>
+		<script src="/modules/admin/admin.js"></script>
+		<script src="/modules/avalanches/observations.js"></script>
+		<script src="/modules/comments/comments.js"></script>
+		<script src="/modules/confirm/confirm.js"></script>
+		<script src="/modules/forms/avalanche-trigger-select.js"></script>
+		<script src="/modules/header/header.js"></script>
+		<script src="/modules/location-select-modal/location-select-modal.js"></script>
+		<script src="/modules/map/layers.js"></script>
+		<script src="/modules/map/linear-graph.js"></script>
+		<script src="/modules/map/map-directive.js"></script>
+		<script src="/modules/map/map.js"></script>
+		<script src="/modules/map/ob-search.js"></script>
+		<script src="/modules/map/rose-graph.js"></script>
+		<script src="/modules/map/route-planning.js"></script>
+		<script src="/modules/map/terrain-layer.js"></script>
+		<script src="/modules/map/terrain-visualization.js"></script>
+		<script src="/modules/map-search/map-search.js"></script>
+		<script src="/modules/observations/observations.js"></script>
+		<script src="/modules/observations/preview.js"></script>
+		<script src="/modules/organizations/organizations.js"></script>
+		<script src="/modules/publish-modal/modal.js"></script>
+		<script src="/modules/register-device-modal/modal.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-canvas.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-constants.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-editor.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-export.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-graphs.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-stability.js"></script>
+		<script src="/modules/snowpit-editor/snowpit-views.js"></script>
+		<script src="/modules/sp-profile-upload/modal.js"></script>
+		<script src="/modules/sp-profiles/sp-profile-graphs.js"></script>
+		<script src="/modules/user/forgot-password.js"></script>
+		<script src="/modules/user/login.js"></script>
+		<script src="/modules/user/register.js"></script>
+		<script src="/modules/user/reset-password.js"></script>
+		<script src="/modules/user/settings.js"></script>
+		<script src="/js/services/global.js"></script>
+		<script src="/js/services/observations-service.js"></script>
+		<script src="/js/services/routes-service.js"></script>
+		<script src="/js/directives/datepicker.js"></script>
+		<script src="/js/directives/fileupload.js"></script>
+		<script src="/js/directives/grain-select.js"></script>
+		<script src="/js/directives/imageupload.js"></script>
+		<script src="/js/directives/input-direction.js"></script>
+		<script src="/js/directives/misc.js"></script>
+		<script src="/js/directives/textarea-autosize.js"></script>
+		<script src="/js/directives/timeinput.js"></script>
+		<script src="/js/directives/validation.js"></script>
+		<script src="/js/init.js"></script>
+		<!-- endinject -->
+    <!-- endbuild -->
+	
+    <!-- Sentry -->
+    <script src="https://cdn.ravenjs.com/1.3.0/angular,native/raven.min.js"></script>
+    <script>
+      Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
+          //whitelistUrls: ['localhost','avatech.com'],
+          maxMessageLength: 200,
+          release: window._releaseVersion
+      }).install();
+    </script>	
+	</body>
+</html>

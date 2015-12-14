@@ -1,47 +1,40 @@
-angular.module('avatech.system').controller('LoginController',
-function ($scope, $rootScope, $location, $http, Global) {
+angular.module('avatech').controller('LoginController',
+function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
     
     $scope.busy = false;
 
     $scope.submit = function() {
-        $scope.busy = true;
 
         // browser autofill hack
-        $("[ng-model]").each(function(index,el){
-            var ngModel = angular.element(el).data('$ngModelController');
-            var val = $(el).val();
-            ngModel.$setViewValue(val);
-        });
+        // todo: this doesn't seem to work in every case
+        // todo: new way of doing it? just set $scope.email and password by jQuery value...
+        // $("[ng-model]").each(function(index,el){
+        //     var ngModel = angular.element(el).data('$ngModelController');
+        //     var val = $(el).val();
+        //     ngModel.$setViewValue(val);
+        // });
+        $scope.email = $(".signin #email").val();
+        $scope.password = $(".signin #password").val();
+
         // basic validation
         if (!$scope.email || $scope.email == "" || !$scope.password || $scope.password == "") {
-            $scope.busy = false;
             $scope.validationError = "badEntry";
             return;
         }
-        // server auth
-        $http.post("/v1/users/login", { email: $scope.email, password: $scope.password })
-        .success(function (data) { 
-        	// if auth successful, login
-        	if (data.success) {
-                $scope.validationError = null;
-                Global.login(data.user, data.token);
 
-                $rootScope.initPromise = Global.init();
-                // todo: duplicate of app.js
-                if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-                    $rootScope.orgsLoaded = true;
-                });
-            }
-        	// otherwise, show the error
-            else {
-                $scope.validationError = data.error;
-                // reset password field
+        $scope.busy = true;
+
+        // server auth
+        Global.login($scope.email, $scope.password,
+        // login success
+        function() { },  
+        // login error
+        function(message) {
+            $timeout(function(){
+                $scope.validationError = message;
                 $scope.password = "";
                 $scope.busy = false;
-            }
-        })
-        .error(function (data, status) { 
-
+            },1000);
         });
     };
 });

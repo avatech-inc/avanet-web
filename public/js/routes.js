@@ -1,42 +1,6 @@
-
-// define routes
-angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouterProvider', '$httpProvider',
-    function($routeProvider,$stateProvider, $urlRouterProvider, $httpProvider) {
-
-        $httpProvider.interceptors.push('httpRequestInterceptor');
-        // register routes defined in routes.js
-        // for (var route in window.routes) {
-        //     $routeProvider.when(route,window.routes[route]);
-        // };
-        // 404
-        //$routeProvider.otherwise({ templateUrl: '/views/404.html' });
-    
-      //$urlRouterProvider.otherwise("/404");
-
+angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
       $stateProvider
-        // .state('map', {
-        //     url: "/map",
-        //     templateUrl: '/views/map.html',
-        //     controller: 'MapController',
-        //     data: { requireLogin: true }
-        // })
-        // .state('map.profile', {
-        //     url: "/profile/:profileId",
-        //     templateUrl: '/views/tests/preview2.html',
-        //     data: { requireLogin: true }
-        // })
-    
-
-        // .state('index', {
-        //     url: '/',
-        //     templateUrl: '/views/index.html',
-        //     controller: 'IndexController',
-        //     data: { 
-        //         title: 'AvaTech',
-        //         requireLogin: true 
-        //     }
-        // })
 
         .state('index', {
             url: '/',
@@ -47,82 +11,20 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
 
-        .state('index.newObservation', {
-            url: 'observations/:obType/new',
-            data: { modal: true },
-            onEnter: ['$stateParams', '$state', '$modal', '$resource', function($stateParams, $state, $modal, $resource, $window) {
-                $modal.open({
-                    templateUrl: "/modules/observations/new.html",
-                    controller: "NewObservationModalController",
-                    backdrop: 'static',
-                    windowClass: 'width-480',
-                    resolve: {
-                      initialLocation: function() { return {}; }
-                      //item: "hey!"
-                    },
-                    // controller: ['$scope', 'item', function($scope, item) {
-                    //   $scope.dismiss = function() {
-                    //     $scope.$dismiss();
-                    //   };
-
-                    //   $scope.save = function() {
-                    //     item.update().then(function() {
-                    //       $scope.$close(true);
-                    //     });
-                    //   };
-                    // }]
-                }).result.finally(function() {
-                    //alert("!");
-                    $state.go('^');
-                    //$window.history.back();
-                });
-            }]
+        .state('index.route', {
+            url: 'routes/:routeId',
+            views: { "route-pane": { templateUrl: '/modules/map/route-planning.html' } },
+            data: { }
         })
 
-        .state('index.profile', {
-            url: 'p/:profileId',
-            views: { "right-pane": { templateUrl: '/modules/profiles/preview-side.html' } },
+        .state('index.ob-side', {
+            url: 'obs/:observationId',
+            views: { "right-pane": { templateUrl: '/modules/observations/preview.html' } },
             //sticky: true,
             data: {
                 showPreviewPane: true
             }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
         })
-        .state('index.test', {
-            url: 't/:testId',
-            views: { "right-pane": { templateUrl: '/modules/tests/preview-side.html' } },
-            //sticky: true,
-            data: {
-                showPreviewPane: true
-            }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
-        })
-        .state('index.avalanche', {
-            url: 'a/:observationId',
-            views: { "right-pane": { templateUrl: '/modules/avalanches/preview-side.html' } },
-            //sticky: true,
-            data: {
-                showPreviewPane: true
-            }
-            // data: {
-            //     title: 'AvaTech',
-            //     requireLogin: true 
-            // }
-        })
-        // .state('upload', {
-        //     url: '/upload',
-        //     templateUrl: '/views/upload.html',
-        //     data: { 
-        //         title: 'Upload / AvaTech',
-        //         requireLogin: true 
-        //     }
-        // })
 
         // Snowpit Editor
         .state('index.profileEditor', {
@@ -137,67 +39,9 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
         .state('index.profileEditor.details', {
-            url: 'profiles/:profileId'
+            url: 'profiles/:profileId',
+            params: { location : null }
         })
-
-        // .state('profiles', {
-        //     url: '/profiles',
-        //     templateUrl: '/views/profiles/list.html',
-        //     data: { 
-        //         title: 'Profiles / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-
-        // device profiles
-        // .state('tests', {
-        //     url: '/tests',
-        //     templateUrl: '/modules/tests/list.html',
-        //     data: { 
-        //         title: 'Tests / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('test', {
-        //     url: '/tests/:testId',
-        //     templateUrl: '/modules/tests/preview.html',
-        //     data: { 
-        //         title: 'Test Details / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-
-        // field tests
-        // .state('fieldTests', {
-        //     url: '/field-tests',
-        //     templateUrl: '/modules/field-tests/list.html',
-        //     data: { 
-        //         title: 'Field Tests / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('fieldTestNew', {
-        //     url: '/field-tests/new',
-        //     templateUrl: '/modules/field-tests/new.html',
-        //     data: { 
-        //         title: 'New Field Test / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
-        // .state('fieldTest', {
-        //     url: '/field-tests/:testId',
-        //     templateUrl: '/modules/field-tests/view.html',
-        //     data: { 
-        //         title: 'Field Test Details / AvaTech',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles'
-        //     }
-        // })
 
         // organizations
         .state('index.orgNew', {
@@ -221,7 +65,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
 
-        // admin
         .state('index.admin', {
             url: 'admin',
             views: { "content": { templateUrl: '/modules/admin/admin.html' } },
@@ -245,33 +88,22 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             }
         })
 
-        .state('index.obs', {
-            url: 'avalanches/:observationId',
-            views: { "content": { templateUrl: '/modules/avalanches/new.html' } },
-            data: { 
-                title: 'Avalanche Observation / Avanet',
-                requireLogin: true,
-                bodyCssClass: 'profiles',
-                fullScreen: true
-            }
-        })
-
         .state('index.SP1update2', {
             url: 'sp1update',
             views: { "content": { templateUrl: '/modules/firmware-update/SP1update.html' } },
-            data: { 
-                title: 'SP1 Firmware Update / Avanet',
-                requireLogin: true,
-                fullScreen: true
-            }
+            data: { title: 'SP Firmware Update / Avanet', requireLogin: true, fullScreen: true }
         }).state('index.SP1update', {
             url: 'SP1update',
             views: { "content": { templateUrl: '/modules/firmware-update/SP1update.html' } },
-            data: { 
-                title: 'SP1 Firmware Update / Avanet',
-                requireLogin: true,
-                fullScreen: true
-            }
+            data: { title: 'SP Firmware Update / Avanet', requireLogin: true, fullScreen: true }
+        }).state('index.SPupdate', {
+            url: 'SPupdate',
+            views: { "content": { templateUrl: '/modules/firmware-update/SP1update.html' } },
+            data: { title: 'SP Firmware Update / Avanet', requireLogin: true, fullScreen: true }
+        }).state('index.SPupdate1', {
+            url: 'spupdate',
+            views: { "content": { templateUrl: '/modules/firmware-update/SP1update.html' } },
+            data: { title: 'SP Firmware Update / Avanet', requireLogin: true, fullScreen: true }
         })
 
         .state('index.support', {
@@ -283,7 +115,6 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
                 fullScreen: true
             }
         })
-
 
         // user routes
         .state('login', {
@@ -348,10 +179,11 @@ angular.module('avatech').config(['$routeProvider','$stateProvider', '$urlRouter
             url: '/logout',
             onEnter: ['Global', function(Global) { Global.logout(); }]
         })
-        // catchall 404 (instead of $urlRouterProvider.otherwise("/404"), which only supports url redirect)
+
+        // catchall 404 (keeps URL)
         .state('404', {
             url: '/*path',
-            templateUrl: '/views/404.html'
+            templateUrl: '/modules/404/404.html'
         });
     }
-]);
+);

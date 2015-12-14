@@ -1,0 +1,68 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+	<style>
+
+/* add member */
+
+.userSelect .message {
+	margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
+}
+.userSelect .no-results {
+	margin-top: 18px;
+	font-weight: 400;
+	color: #777;
+	font-size: 15px;
+	text-align: center;
+}
+ul.results {
+	list-style-type: none;
+	margin: 0; padding: 0;
+	margin-top: 3px;
+}
+ul.results li {
+	cursor: pointer;
+	padding: 3px 12px;
+	font-size: 11px;
+	font-weight: 500;
+}
+ul.results li.isMember {
+	pointer-events: none;
+	cursor: pointer;
+	opacity: .5;
+}
+ul.results li.isMember:hover {
+	background: transparent !important;
+}
+ul.results li:hover {
+	list-style-type: none;
+	background: #f5f5f5;
+}
+
+ul.results li .arrow { 
+	transition: opacity 150ms;
+	opacity: 0;
+	float: right;
+}
+ul.results li:hover .arrow{
+	opacity: 1;
+}
+avalanche-trigger-select .subheader {
+	font-weight: bold;
+	font-size: 12px;
+	padding-left: 11px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 3px 11px;
+	margin-top: 9px;
+}
+avalanche-trigger-select .subheader.first {
+	border-top: none;
+	padding-top 0px;
+	margin-top: -3px;
+}
+</style>
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+ 
+	<avalanche-trigger-select ng-model="$$value$$" trigger="form.trigger"></avalanche-trigger-select>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

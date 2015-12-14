@@ -1,17 +1,13 @@
 var gulp = require('gulp');
-
-var path = require('path');
 var fs = require("fs");
 var nodemon = require('gulp-nodemon');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var inject = require('gulp-inject');
-var useref = require('gulp-useref');
 var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
 var runSequence = require('run-sequence');
 var rev = require('gulp-rev');
-var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
@@ -20,9 +16,12 @@ var ngAnnotate = require('gulp-ng-annotate');
 var replace = require('gulp-replace-task');
 var gutil = require('gulp-util');
 var argv = require('yargs').argv;
-var rollbar = require('gulp-rollbar');
-var stripDebug = require('gulp-strip-debug');
-//var flatten = require('gulp-flatten');
+var htmlmin = require('gulp-htmlmin');
+var concat = require('gulp-concat');
+var htmlreplace = require('gulp-html-replace');
+var bump = require('gulp-bump');
+var tap = require('gulp-tap');
+var templateCache = require('gulp-angular-templatecache');
 
 var s3 = require("gulp-s3");
 var aws = {
@@ -31,8 +30,140 @@ var aws = {
   , bucket: 'avanet'
 };
 
+  var bundleName = "avanet";
+
+  var _sources = [
+    // libraries
+
+    // Leaflet
+    'public/js/lib/leaflet.js',
+    // Leaflet Draw
+    'public/js/lib/leaflet.draw-src.js',
+    // Leaflet context menu
+    'public/js/lib/leaflet.contextmenu-src.js',
+    // PNG processing
+    'public/js/lib/zlib.js', 
+    'public/js/lib/png.js', 
+    // UTM-lat/lng conversion
+    'public/js/lib/utm.js', 
+    // great circle math
+    'public/js/lib/greatCircle.js', 
+    // world magnetic model
+    'public/js/lib/WorldMagneticModel.js', 
+    // DrawDeclinationCanvas
+    'public/js/lib/DrawDeclinationCanvas.js', 
+    // DrawScaleCanvas
+    //'public/js/lib/DrawScaleCanvas.js', 
+    // underscore
+    'public/lib/underscore/underscore.js', 
+    // Leaflet PruneCluster plugin
+    'public/js/lib/PruneCluster.js',
+    // Leaflet Heatmap plugin
+    'public/js/lib/leaflet-heat.js',
+    // Leaflet Image Export plugin
+    'public/js/lib/leaflet-image.js',
+    // Leaflet Canvas Layer plugin
+    'public/js/lib/leaflet_canvas_layer.js',
+    // turf.js
+    'public/js/lib/turf.js',
+    // simplify.js
+    'public/js/lib/simplify.js',
+    // Leaflet Graticule
+    'public/js/lib/graticule.js',
+    // Angular
+    'public/lib/angular/angular.js',
+    'public/lib/angular-cookies/angular-cookies.js',
+    'public/lib/angular-route/angular-route.js',
+    'public/lib/angular-touch/angular-touch.js',
+    // Restangular
+    'public/lib/restangular/dist/restangular.js',
+    // angular forms
+    'public/lib/objectpath/lib/ObjectPath.js',
+    'public/lib/tv4/tv4.js',
+    'public/lib/angular-sanitize/angular-sanitize.js',
+    'public/lib/angular-schema-form/dist/schema-form.js',
+    'public/lib/angular-schema-form/dist/bootstrap-decorator.js',
+    // bindonce
+    'public/lib/angular-bindonce/bindonce.js',
+    // mentions input
+    'public/js/lib/jquery.mentionsInput.js',
+    'public/js/lib/jquery.elastic.js',
+    // suncalc
+    //'public/js/lib/suncalc.js',
+    // moment.js time formatter
+    'public/lib/moment/moment.js',
+    // angular wrapper for moment.js
+    'public/lib/angular-moment/angular-moment.js',
+    // jQuery Knob
+    'public/js/lib/jquery.knob.js',
+    // md5
+    'public/lib/blueimp-md5/js/md5.js',
+    // jsPDF
+    'public/lib/jspdf/dist/jspdf.debug.js',
+    // pdfmake
+    'public/lib/pdfmake/build/pdfmake.js',
+    'public/lib/pdfmake/build/vfs_fonts.js',
+    // Angular local storage
+    'public/lib/angular-local-storage/angular-local-storage.js',
+    // Angular country picker
+    'public/lib/angular-country-picker/country-picker.js',
+    // Angular Translate
+    'public/lib/angular-translate/angular-translate.js',
+    'public/lib/angular-translate-loader-partial/angular-translate-loader-partial.js',
+    // Angular UI Router
+    'public/lib/angular-ui-router/release/angular-ui-router.js',
+    'public/lib/angular-ui-utils/modules/route/route.js',
+    // Angular UI Router Extras
+    'public/lib/ui-router-extras/release/ct-ui-router-extras.js',
+    // Angular UI Bootstrap
+    'public/js/lib/ui-bootstrap-0.14.3.js',
+    'public/js/lib/ui-bootstrap-tpls-0.14.3.js',
+    // Angular CC forms
+    'public/lib/angular-credit-cards/release/angular-credit-cards.js',
+    // Venturocket UI slider control
+    'public/lib/venturocket-angular-slider/build/angular-slider.js',
+    // regular ol' Bootsrap JS for tooltips
+    'public/js/lib/bootstrap.js',
+    // Lightbox
+    'public/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.js',
+    'public/lib/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.css',
+    // elevation profile
+    'public/js/lib/elevation-widget.js',
+    // color picker
+    'public/lib/ngjs-color-picker/js/ngjs-color-picker.js',
+    'public/lib/ngjs-color-picker/css/ngjs-color-picker.css',
+    // Angular Audio
+    'public/lib/angular-audio/app/angular.audio.js',
+    // nanoscroller
+    'public/lib/nanoscroller/bin/javascripts/jquery.nanoscroller.js',
+    'public/lib/angular-nanoscroller/scrollable.js',
+    // pikaday
+    'public/lib/pikaday/pikaday.js',
+    'public/lib/pikaday-angular/pikaday-angular.js',
+    // FileSaver
+    'public/js/lib/FileSaver.js',
+    // canvas.toBlob()
+    'public/js/lib/canvas-toBlob.js',
+
+    // Avanet App
+    'public/js/app.js',
+    'public/js/routes.js',
+    // app scripts
+    'public/modules/**/*.js',
+    'public/js/services/*.js',
+    'public/js/controllers/*.js',
+    'public/js/controllers/*/*.js',
+    'public/js/directives/*.js',
+    'public/js/directives/*/*.js',
+    'public/css/**/*.css',
+    // init
+    'public/js/init.js',
+  ];
+
+// ----------------------------------------------------------------------------------
+
 gulp.task('upload-s3', function() {
-  return gulp.src('app/views/503-maint.html', { read: true})
+  return gulp.src('server/views/503-maint.html', { read: true})
     .pipe(s3(aws, { headers: { 'x-amz-acl': 'public-read' } }));
 });
 // https://devcenter.heroku.com/articles/error-pages#customize-pages
@@ -41,119 +172,142 @@ gulp.task('push-error-pages', ['upload-s3'], function(done){
     var maint_url = "//s3.amazonaws.com/avanet/503-maint.html";
 
   exec("heroku config:set ERROR_PAGE_URL=" + error_url + " MAINTENANCE_PAGE_URL=" + maint_url + " --app avanet", {cwd: process.cwd }, function(err, stdout, stderr){
-
       gutil.log(stderr);
       gutil.error(stdout);
       done();
      });
 });
  
-
 gulp.task('clean-css', function() {
   return gulp.src('public/css', {read: false})
-        .pipe(clean({ force: true }));
+  .pipe(clean({ force: true }));
 })
 gulp.task('compass', ['clean-css'], function() {
   return gulp.src(['public/sass/**/*.scss','public/modules/**/*.scss'])
-        .pipe(sass({ errLogToConsole: true }))
-        .pipe(gulp.dest('public/css'));
+  .pipe(sass({ errLogToConsole: true }))
+  .pipe(gulp.dest('public/css'));
 });
 
+gulp.task('sentry', function() {
+  var opt = {
+    DOMAIN: 'https://avanet.avatech.com', // prefix domain in the `name` param when upload file. Leave blank to use path. Do not add trailing slash 
+    API_URL: 'https://app.getsentry.com/api/0/projects/avatech/web-client/',
+    API_KEY: 'c8d2219c66e54cb1bfe5142927bbc116',
+    debug: false ,
+    versionPrefix: '', // Append before the version number in package.json 
+  }
+  var sentryRelease = require('gulp-sentry-release')('./package.json', opt);
+
+  //return gulp.src(_sources, { base: 'public' })
+  return gulp.src('_dist/public/assets/*.map', { base: '_dist/public' })
+  .pipe(sentryRelease.release());
+});
+
+var revHashes = {};
 gulp.task('combine-minify', function() {
-    var assets = useref.assets({ searchPath: 'public' });
+  var pkg = require('./package.json');
 
-    // todo: does this have to be _dist?
-  return gulp.src('_dist2/app/views/main.html')
-    .pipe(replace({
-        patterns: [{ match: 'env', replacement: 'production' }]
-    }))
+  var _sources2 = _sources.slice(0,_sources.length);
+  _sources2.push('_dist/public/assets/templates.js');
 
-    .pipe(assets)
-    .pipe(gulpif('*.css', minifyCSS()))
+  return gulp.src(_sources2, { base: '_dist/public' })
+    // start creating source map
+    .pipe(sourcemaps.init())
+    // combine files
+    .pipe(gulpif("*.js", concat({ path: bundleName + '-' + pkg.version + '.js', cwd: '' })))
+    .pipe(gulpif("*.css", concat({ path: bundleName + '-' + pkg.version + '.css', cwd: '' })))
+    // rename the concatenated files for cache-busting
+    //.pipe(rev())
 
-    // string console.log statements
-    .pipe(gulpif('*.js', stripDebug()))
+    // minify CSS
+    .pipe(gulpif('*.css', minifyCSS({ keepSpecialComments: 0 })))
 
-    // sourcemaps
-    .pipe(gulpif('*.js', sourcemaps.init()))
+    // add angular [] annotations
+    .pipe(gulpif("*.js", ngAnnotate({ gulpWarnings: false })))
 
-    // ng-anneotate (add [] style annotations to controllers for minifcation)
-    .pipe(gulpif('*.js', ngAnnotate()))
+    // uglify JS
+    .pipe(gulpif("*.js", uglify()))
 
-    // uglify
-    .pipe(gulpif('*.js', uglify()))
+    // write js source map
+    .pipe(gulpif("*.js", sourcemaps.write(".", { includeContent: true })))
 
-    .pipe(rev())             // rename the concatenated files for cache-busting
-    .pipe(assets.restore())
-    .pipe(useref())
-    .pipe(revReplace())      // substitute in new filenames
+    // add all assets to dist folder
+    .pipe(gulpif('*.css', gulp.dest('_dist/public/assets')))
+    .pipe(gulpif('*.js', gulp.dest('_dist/public/assets')))
+    .pipe(gulpif('*.map', gulp.dest('_dist/public/assets')))
 
-    // sourcemaps
-    // .pipe(rollbar({
-    //   accessToken: '887db6d480c74bab9cee4ab6376f1545',
-    //   version: 'version_test',
-    //   sourceMappingURLPrefix: 'https://avanet.avatech.com'
-    // }))
-    //.pipe(gulpif('*.js', sourcemaps.write('./')))
-
-    .pipe(gulpif('*.css', gulp.dest('_dist2/public')))
-    .pipe(gulpif('*.js', gulp.dest('_dist2/public')))
-    //.pipe(gulpif('*.map', gulp.dest('_dist2/public')))
-
-    .pipe(gulpif('*.html', gulp.dest('_dist2/app/views')))
-
-    //.on('end', done);
-    //.pipe(gulp.dest('_dist4/app/views'));
+    // store rev file hashes for use later
+  //   .pipe(tap(function(file) {
+  //     if (file.revHash) revHashes[file.revOrigPath] = file.revHash;    
+  // }));
 });
+
+gulp.task('template-cache', function () {
+  return gulp.src('_dist/public/modules/**/*.html')
+    // first strip html comments
+    //.pipe(htmlmin({ removeComments: true }))
+    .pipe(templateCache({ module: 'avatech', root: '/modules' }))
+    .pipe(gulp.dest('_dist/public/assets'));
+});
+
+gulp.task('clean-main', function() {
+  var pkg = require('./package.json');
+  return gulp.src('_dist/server/views/main.html')
+    // replace variable
+    .pipe(replace({
+        patterns: [
+          { match: 'env', replacement: 'production' },
+          { match: 'release', replacement: pkg.version }
+        ]
+    }))
+    // replace js files with combined files (include rev hash)
+    .pipe(htmlreplace({ 
+      js:  '/assets/' + bundleName + '-' + pkg.version + '.js', 
+      css: '/assets/' + bundleName + '-' + pkg.version + '.css'
+    }))
+    // clean html
+    .pipe(htmlmin({ 
+      removeComments: true,
+      //collapseWhitespace: true,
+      //preserveLineBreaks: true
+    }))
+    .pipe(gulp.dest(function(file) { return file.base; }));
+});
+
 gulp.task('clean-dist', function() {
-  return gulp.src('_dist2/public/js', {read: false})
-        .pipe(clean({ force: true }));
-})
+  return gulp.src([
+    '_dist/public/modules',
+    '_dist/public/lib',
+    '_dist/public/js',
+    '_dist/public/css',
+    '_dist/public/sass',
+    '_dist/public/assets/*.map',
+    '_dist/public/assets/templates.js',
+    ], { read: false })
+      .pipe(clean({ force: true }));
+});
 
 gulp.task('buildMain', function () {
-  var target = gulp.src('app/views/main.html');
-
-  var sources = gulp.src([
-	  'public/modules/**/*.js',
-    'public/js/services/*.js',
-    'public/js/controllers/*.js',
-    'public/js/controllers/*/*.js',
-    'public/js/directives/*.js',
-    'public/js/directives/*/*.js',
-    'public/css/**/*.css'
-  ],
   // don't read the file contents - we only need filenames
-  {read: false});
- 
-  return target.pipe(inject(sources,{
-        ignorePath: 'public/',
-        addRootSlash: true,
-    }))
-    .pipe(gulp.dest('app/views'));
+  var sources = gulp.src(_sources, { read: false });
+  // inject into main.html
+  return gulp.src('server/views/main.html')
+  .pipe(inject(sources, { ignorePath: 'public/', addRootSlash: true }))
+  .pipe(gulp.dest('server/views'));
 });
 
 gulp.task('clean', function() {
-	return gulp.src('_dist2', {read: false})
-        .pipe(clean({ force: true }));
+	return gulp.src('_dist', {read: false}).pipe(clean({ force: true }));
 })
 
 // copy files to dist folder
 gulp.task('copy', function() {
-   return gulp.src(
-   	['app/**/*','config/**/*',
-    'package.json','server.js','Procfile','newrelic.js',
-     
-    'public/*.txt',
-   	'public/fonts/**',
-   	'public/img/**',
-    'public/js/**',
-    'public/translate/**',
-   	'public/modules/**/*.html',
-    'public/modules/**/terrain-worker.js',
-   	'public/views/**'
-   	]
-   	, { base: './' })
-   .pipe(gulp.dest('_dist2'));
+   return gulp.src([
+    'server/**/*',
+    'package.json','server.js','newrelic.js',
+    'public/**',
+   	], { base: './' })
+   .pipe(gulp.dest('_dist'));
 });
 
 gulp.task('lint',function(){
@@ -168,45 +322,34 @@ gulp.task('lint',function(){
   //   //disallowTrailingWhitespace: false,
   //   validateQuoteMarks: "'"
   // }));
-
-})
+});
 
 // git stuff
 
 gulp.task('remove-git', function() {
-	return gulp.src('_dist2./git', {read: false})
-        .pipe(clean({ force: true }));
-})
+  // remove existing git
+	return gulp.src('_dist./git', {read: false}).pipe(clean({ force: true })); });
 
-var exec = require("child_process").exec;
-var spawn = require('child_process').spawn;
+  var exec = require("child_process").exec;
+  var spawn = require('child_process').spawn;
 
-gulp.task('git', ['remove-git'], function(done){
-		
-    process.chdir('_dist2');
-
-	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr){
-   		gutil.log("Git: repository initialized");
-
-		exec("git add .", {cwd: process.cwd }, function(err, stdout, stderr){
-       		//console.log(stdout);
-       		gutil.log("Git: files added");
-
+  gulp.task('git', ['remove-git'], function(done) {
+  process.chdir('_dist');
+	exec("git init", {cwd: process.cwd }, function(err, stdout, stderr) {
+ 		gutil.log("Git: repository initialized");
+		exec("git add .", {cwd: process.cwd }, function(err, stdout, stderr) {
+   		gutil.log("Git: files added");
 			exec("git commit -m '-'", {cwd: process.cwd }, function(err, stdout, stderr) {
-	       		//console.log(stdout);
-	       		gutil.log("Git: files committed");
-
+       		gutil.log("Git: files committed");
     			process.chdir('../');
-
-	       		done();
+       		done();
 			});
 		});
-     });
+  });
 });
 
-
 gulp.task('deploy', function(done){
-	fs.exists("_dist2",function(exists){
+	fs.exists("_dist",function(exists){
 
 		if (!exists) {
 			gutil.error(gutil.colors.red("dist folder does not exist. run 'gulp build' first."));
@@ -214,38 +357,39 @@ gulp.task('deploy', function(done){
     		return;
 		}
 		
-	    process.chdir('_dist2');
+	    process.chdir('_dist');
 
 	    var remotes = {
-        "production": "git@heroku.com:avanet.git",
-        "demo": "git@heroku.com:avanet-demo.git"
+        "avanet": "git@heroku.com:avanet.git",
+        "avanet-demo": "git@heroku.com:avanet-demo.git",
+        "avanet-demo2": "git@heroku.com:avanet-demo2.git"
       } 
       //var remote = "production"; var app = "avanet";
-      var remote = "demo"; var app = "avanet-demo";
+      var app = "avanet";
       
-      if (argv.to) remote = argv.to;
+      if (argv.to) app = argv.to;
 
-	    exec("git remote rm " + remote, {cwd: process.cwd }, function(err, stdout, stderr){
-			exec("git remote add " + remote + " " + remotes[remote], {cwd: process.cwd }, function(err, stdout, stderr){
+	    exec("git remote rm " + app, {cwd: process.cwd }, function(err, stdout, stderr){
+			exec("git remote add " + app + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr){
 	       		//console.log(stdout);
 	   			gutil.log("git remote added");
 
 					exec("heroku config:set NODE_ENV=production -app " + app, {cwd: process.cwd }, function(err, stdout, stderr){
 
 		       		console.log(stdout);
-		       		gutil.log("Pushing to '" + remote + "'")
+		       		gutil.log("Pushing to '" + app + "'")
               console.log();
 
-					var heroku = spawn("git",["push" ,remote, "master", "-f"], { cwd: process.cwd })
+					var heroku = spawn("git",["push" , app, "master", "-f"], { cwd: process.cwd })
 
 					heroku.stdout.on('data', function (data) { 
             console.log("" + data);
           });
 					heroku.stderr.on('data', function (data) { 
             console.log("" + data); 
-            if ((data + "").indexOf("forced ") != -1) {
+            if ((data + "").indexOf("master -> master ") != -1) {
               console.log(); console.log();
-              gutil.log(gutil.colors.green("DEPLOY SUCCESS TO '" + remote + "'"));
+              gutil.log(gutil.colors.green("DEPLOY SUCCESS TO '" + app + "'"));
               console.log(); console.log();
             }
           });
@@ -257,62 +401,65 @@ gulp.task('deploy', function(done){
 	});
 });
 
-// gulp.task('files', function(done){
-// 	exec("ls -l", {cwd: process.cwd }, function(err, stdout, stderr){
-//    		console.log(stdout);
-//    		done();
-// 	});
-// });
-
-// gulp.task('heroku-login', function () {
-//   //process.chdir('_dist2');
-//   return gulp.src('', {read: false})
-//     .pipe(shell(["ls -l"]
-//     // , {
-//     //   templateData: {
-//     //     f: function (s) {
-//     //       return s.replace(/$/, '.bak')
-//     //     }
-//     //   }
-//     //}
-//     ))
-// })
+gulp.task('bump', function() {
+  return gulp.src('package.json')
+  .pipe(bump({ type: 'patch' }))
+  .pipe(gulp.dest(function(file) { return file.base; }));
+});
+gulp.task('version-file', function() {
+  var pkg = require('./package.json');
+  fs.writeFileSync('_dist/public/assets/release.json', '{ "version": "' + pkg.version + '" }');
+});
 
 gulp.task('build', function(done) {
-  runSequence('compass','buildMain','clean', 'copy','combine-minify', 'clean-dist', 'git',
-              done);
+  runSequence('compass',
+    // bump version
+    'bump', 
+    // inject files into main
+    'buildMain',
+    // remove existing _dist folder
+    'clean', 
+    // copy files into _dist
+    'copy',
+    // cahce HTML templates in angular $templateCache
+    'template-cache',
+    // combine and minify js and css
+    'combine-minify',
+    // create release and upload source map to Sentry
+    'sentry',
+    // clean main.html
+    'clean-main',
+    // write release/version file
+    'version-file',
+    // cleanup files
+    'clean-dist', 
+    // prepare git for pushing to heroku
+    'git',
+  done);
 });
 
 gulp.task('start', function(done) {
-  runSequence('compass','buildMain','start2', done);
+  runSequence('compass','buildMain','run', done);
 });
-gulp.task('start2', function(done) {
- //gulp.watch(['public/sass/**/*.scss','public/modules/**/*.scss',], ['compass']);
 
+gulp.task('run', function(done) {
   // todo:
-  // - livereload when public changes 'public/**/*'
   // - buildMain when js folder changes?
-
    nodemon({
     script: 'server.js'
   , ext: 'js html'
   //, watch: ['public','app','config', '!public/tiles']
-  //, verbose: true
-  //, ignore: ['public/tiles','public/tiles2','tmp/*','/_dist','/_dist2','/.sass-cache','/.tmp']
   , env: { 'NODE_ENV': 'development' }
   });
-
 });
 
 gulp.task('start-dist', function(done) {
-    process.chdir('_dist2');
-
-    // todo: no need for nodemon here since we aren't editing
-   nodemon({
-    script: 'server.js'
-  , ext: 'js html'
-  , env: { 'NODE_ENV': 'development' }
-  })
+    process.chdir('_dist');
+    nodemon({
+      script: 'server.js'
+    //, ext: '!*'
+    , env: { 'NODE_ENV': 'production' }
+    })
 });
 
 gulp.task('build-deploy', function(done) {

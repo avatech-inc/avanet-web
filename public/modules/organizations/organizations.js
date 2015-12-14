@@ -1,14 +1,14 @@
-
-angular.module('avatech').controller('OrganizationsController', ['$scope', '$q', '$stateParams', '$location', '$modal', '$timeout', 'Global', 'Restangular',
-function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restangular) { 
+angular.module('avatech').controller('OrganizationsController', function ($scope, $q, $log, $stateParams, $location, $timeout, Global, Restangular) { 
     $scope.global = Global;
 
     $scope.newOrg = {};
 
+    $scope.selectedTab = null;
+
     $scope.userIsAdmin = function() {
         var isAdmin = false;
 
-        // if user is AvaNet admin, also can admin group
+        // if user is Avanet admin, also can admin group
         if ($scope.global.user.admin) return true;
 
         angular.forEach($scope.members, function(member) {
@@ -30,32 +30,19 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
     }
 
     $scope.create = function() {
-        console.log($scope.newOrgForm.$valid);
+        $log.debug($scope.newOrgForm.$valid);
         if (!$scope.newOrgForm.$valid) return;
-        console.log($scope.newOrgForm);
+        $log.debug($scope.newOrgForm);
 
         Restangular.all('orgs').post($scope.newOrg).then(function(newOrg) {
-            console.log(newOrg);
-            if (newOrg.success != undefined && newOrg.success === false) {
-                // handle error
-                alert(newOrg.error);
-            }
-            else {
-                $location.path('orgs/' + newOrg._id);
-                if (!Global.orgs.length) Global.orgs = [];
-                Global.orgs.push({ name: newOrg.name, _id: newOrg._id });
-            }
-
-        }, function() {
-            // handle error
+            $location.path('orgs/' + newOrg._id);
+            if (!Global.orgs.length) Global.orgs = [];
+            Global.orgs.push({ name: newOrg.name, _id: newOrg._id });
+        }, 
+        // error
+        function(response) {
+            alert(response.data.message);
         });
-        // var org = new Organizations($scope.newOrg);
-        // org.$save(function(newOrg) {
-        //     if (newOrg.success && newOrg.success == false) {
-        //         // handle error
-        //     }
-        //     else $location.path('orgs/' + newOrg._id);
-        // });
     }
     $scope.members = [];
     $scope.students = [];
@@ -70,8 +57,6 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         });
 
         RestObject.getList('members').then(function (members) {
-            console.log(members);
-
             $scope.members = [];
             $scope.students = [];
             angular.forEach(members, function(member) {
@@ -94,38 +79,27 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         member.remove();
         $scope.students.splice(index, 1);
     }
-    $scope.addMember = function(user) {
-        if (user.isMember) return;
-
-        Restangular.one('orgs', $stateParams.orgId)
-        .all('members')
-        .post({ user: user._id }).then(function (member) {
-            // if error...
-            if (member.success !=null && member.success == false) {
-                console.log(member);
-            }
+    function addMember(userIdOrEmail) {
+        Restangular.one('orgs', $stateParams.orgId).all('members')
+        .post({ userIdOrEmail: userIdOrEmail })
+        // success
+        .then(function (member) {
             // add new member to  collection
-            else {
-                $scope.members.push(member);
-            }
+            $scope.members.push(member);
+            //$scope.$apply();
+        }
+        // error
+        , function(){
+            $log.debug(member);
         });
     }
+    $scope.addMember = function(user) {
+        if (user.isMember) return;
+        addMember(user._id);
+    }
     $scope.inviteEmail = function() {
-        console.log($scope.search.email);
         if (!$scope.search.email) return;
-
-        Restangular.one('orgs', $stateParams.orgId)
-        .all('members')
-        .post({ email: $scope.search.email }).then(function (member) {
-            // if error...
-            if (member.success !=null && member.success == false) {
-                console.log(member);
-            }
-            // add new member to  collection
-            else {
-                $scope.members.push(member);
-            }
-        });
+        addMember($scope.search.email);
     }
 
     $scope.allowMemberRemove = function(member) {
@@ -142,7 +116,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
 
     $scope.newSearch = function() {
         $scope.search = { query: "" };
-        $scope.focus('focusSearch');
+        //$scope.focus('focusSearch');
     }
     $scope.doSearch = function() {
         $timeout.cancel($scope.search.timer);
@@ -155,7 +129,7 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         $scope.search.timer = $timeout(function(){
             $scope.search.searching = true;
 
-            Restangular.one("users").getList("search", { query: $scope.search.query }).then(function(users) {
+            Restangular.all("users").getList({ query: $scope.search.query }).then(function(users) {
                 $scope.search.searching = false;
 
                 if (users.length == 0) {
@@ -202,4 +176,4 @@ function ($scope, $q, $stateParams, $location, $modal, $timeout, Global, Restang
         }
     }
 
-}]);
+});

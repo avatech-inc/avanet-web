@@ -1,5 +1,5 @@
 
-angular.module('avatech').directive('imageUpload', ['$http','$timeout', function($http, $timeout) {
+angular.module('avatech').directive('imageUpload', function($http, $timeout, $log) {
   return {
     restrict: 'A',
     scope: { 
@@ -15,7 +15,7 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
 
       var filesUpload = document.createElement("input");
       filesUpload.type = 'file';
-      console.log(element);
+      $log.debug(element);
       label.appendChild(filesUpload);
       element[0].appendChild(label);
 
@@ -32,7 +32,7 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
       function uploadFile (file) {
 
             var ext = file.name.substr(file.name.lastIndexOf(".") + 1).toLowerCase();
-            console.log(ext);
+            $log.debug(ext);
             if (['jpg','png','gif','bmp'].indexOf(ext) == -1) return;
 
             setTimeout(function(){
@@ -90,7 +90,7 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
 
           fileObject.progress = 50; if (scope.onprogress) scope.onprogress({ file: fileObject });
           
-          console.log(canvas.width + "," + canvas.height);
+          $log.debug(canvas.width + "," + canvas.height);
 
           // get data url of canvas
           var dataUrl = canvas.toDataURL("image/jpeg", 1);
@@ -103,7 +103,7 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
           var b64 = dataUrl.slice(dataUrl.indexOf(',')+1);
           var arr = atob(b64).split('').map(function (e) {return e.charCodeAt(0);});
           var blob = new Blob([new Uint8Array(arr)],{ type: "image/jpeg"});
-          console.log(blob);
+          $log.debug(blob);
 
           //setTimeout(function(){
           fileObject.progress = 60; if (scope.onprogress) scope.onprogress({ file: fileObject });
@@ -114,9 +114,9 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
           // Update progress bar
           xhr.upload.addEventListener("progress", function (evt) {
             if (evt.lengthComputable) {
-              console.log((evt.loaded / evt.total) * 100 + "%"); 
+              $log.debug((evt.loaded / evt.total) * 100 + "%"); 
               var progress = (evt.loaded / evt.total) * 100;
-              console.log(progress + "," + fileObject.progress);
+              $log.debug(progress + "," + fileObject.progress);
               if (progress > fileObject.progress) fileObject.progress = progress;
               if (scope.onprogress) scope.onprogress({ file: fileObject });
             }
@@ -198,4 +198,4 @@ angular.module('avatech').directive('imageUpload', ['$http','$timeout', function
         // }, false);
     }
   };
-}]);
+});

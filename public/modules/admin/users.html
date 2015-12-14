@@ -28,12 +28,12 @@
 		        <tbody>
 		          <tr ng-repeat="user in users | orderBy: '-created'" ng-class="{ disabled: user.disabled, test: user.test, bold: user.admin }">
 		            <td style="vertical-align:middle;white-space:nowrap;">
-		            	<div class="btn-group" dropdown>
-						  <button type="button" class="btn btn-default btn-settings btn-sm dropdown-toggle" data-toggle="dropdown">
+		            	<div class="btn-group" uib-dropdown>
+						  <button type="button" class="btn btn-default btn-settings btn-sm" uib-dropdown-toggle>
 						    <i class="fa fa-cog"></i>
 						    <i class="fa fa-caret-down"></i>
 						  </button>
-						  <ul class="dropdown-menu" role="menu">
+						  <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu">
 
 						    <li><a ng-click="toggleDisabled(user)" href="#"><i class="fa fa-ban"></i> {{ ( user.disabled ? "Enable user" : "Disable user") }}
 						    </a></li>

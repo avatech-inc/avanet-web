@@ -1,13 +1,18 @@
-angular.module('avatech.system').controller('ResetPasswordController', 
-	['$scope', '$http', '$stateParams', 'Global', function ($scope, $http, $stateParams, Global) {
+angular.module('avatech').controller('ResetPasswordController', 
+	function ($scope, $http, $stateParams, Global, Restangular) {
 
 	$scope.forgotPasswordToken = $stateParams.forgotPasswordToken;
 	$scope.validToken = null;
 	$scope.successfulReset = false;
 
-	$http.get("/v1/users/reset-password/" + $scope.forgotPasswordToken)
-    .success(function (data) { 
-    	$scope.validToken = data.ok;
+    Restangular.one('users/forgot-password', $scope.forgotPasswordToken).get()
+    // token found
+    .then(function() {
+        $scope.validToken = true;
+    }, 
+    // token not found
+    function(response) {
+        $scope.validToken = false;
     });
 
  	$scope.reset = function() {
@@ -21,18 +26,17 @@ angular.module('avatech.system').controller('ResetPasswordController',
     	// all good, proceed
  		$scope.validationError = null;
 
-        $http.post("/v1/users/reset-password", { 
-        	forgotPasswordToken: $scope.forgotPasswordToken, 
+        Restangular.one('users/forgot-password', $scope.forgotPasswordToken).customPOST({
         	password: $scope.password 
-    	})
-        .success(function (data) { 
-        	console.log(data);
-            if (data.success) {
-            	$scope.successfulReset = true;
-                mixpanel.track("password reset");
-        	}
-        	else $scope.error = data.error;
-            //console.log(data);
+    	}, 'reset')
+         // password reset success
+        .then(function() {
+            $scope.successfulReset = true;
+            mixpanel.track("password reset");
+        }, 
+        // token not found
+        function(response) {
+            $scope.error = "There was an error updating your password. Please try again or contact support for assistance."
         });
     };
-}]);
+});

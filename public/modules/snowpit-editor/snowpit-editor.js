@@ -1,6 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
-    function ($scope, $state, $stateParams, $location, $http, $timeout, $modal, Profiles, snowpitConstants, snowpitViews, snowpitExport, FontLoader, Global, Confirm, LocationSelectModal, Lightbox) {
+    function ($scope, $state, $stateParams, $location, $log, $http, $timeout, snowpitConstants, snowpitViews, snowpitExport, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
 
         $scope.global = Global;
 
@@ -10,6 +10,7 @@ angular.module('avatech')
         $scope.grainSizes = snowpitConstants.grainSizes;
         $scope.hardness = snowpitConstants.hardness;
         $scope.hardnessCount = Object.keys($scope.hardness).length;
+        $scope.today = new Date().toISOString();
 
         // config
         $scope.graphWidth = 320;
@@ -41,7 +42,6 @@ angular.module('avatech')
             hoverDragLayer: null,
             view: null,
             depthDescending: true,
-            fontsLoaded: false,
             tempMode: false,
             tempUnits: Global.user.settings.tempUnits == 0 ? 'C' : 'F'
         }
@@ -63,6 +63,17 @@ angular.module('avatech')
         // show other tooltips
         $('.tooltip-trigger').tooltip();
 
+        $scope.getThumbnailURL = function(media) {
+            if (media.type == "photo") {
+                url = media.URL;
+                if (url.indexOf("cloudinary.com") > -1) {
+                    var filename = media.URL.substr(media.URL.indexOf("upload/") + 7);
+                    filename = filename.substring(filename.indexOf("/") + 1, filename.indexOf("."));
+                    url = "http://res.cloudinary.com/avatech/image/upload/w_300/" + filename + ".jpg";
+                }
+                return url;
+            }
+        }
 
         // beacuse of the ui.router hack to allow url transition without loading new state,
         // we have to manually keep track of when to reload state (when they release 'dyanmic
@@ -71,9 +82,9 @@ angular.module('avatech')
             if (fromState.name == toState.name) {
                 var isUrlUpdate = (fromParams.profileId == "new" && toParams.profileId == $scope.profile._id);
                 if (!isUrlUpdate) {
-                    console.log("reload!");
+                    $log.debug("reload!");
                     var go = $scope.$on('$stateChangeSuccess', function () { 
-                        console.log("success!");
+                        $log.debug("success!");
                         $state.go(toState.name, toParams, { reload: true }); 
                         go();
                     });
@@ -81,40 +92,27 @@ angular.module('avatech')
             }
         });
 
-        // make sure fonts are loaded so canvas renders them
-        var fontLoader = new FontLoader(["Roboto Condensed","snowsymbols"], {
-            "fontsLoaded": function(error) {
-                if (error !== null) {
-                    // Reached the timeout but not all fonts were loaded
-                    console.log(error.message);
-                    console.log(error.notLoadedFontFamilies);
-                } else {
-                    // All fonts were loaded
-                    console.log("all fonts were loaded");
-                }
-                $scope.settings.fontsLoaded = true;
-                $scope.$apply();
-            },
-            "fontLoaded": function(fontFamily) {
-                // One of the fonts was loaded
-                console.log("font loaded: " + fontFamily);
-            }
-        }, 3000);
-        fontLoader.loadFonts();
-
-
         $scope.init = function(){
             if ($stateParams.profileId == "new") {
-                var profile = new Profiles({ 
+                var profile = { 
                     depth: 150,
                     layers: [],
                     temps: [],
-                    notes: [],
-                    photos: [],
+                    tests: [],
+                    media: [],
                     density: [],
                     metaData: { },
-                    user: { fullName: Global.user.fullName, _id: Global.user._id }
-                });
+                    user: { fullName: Global.user.fullName, _id: Global.user._id },
+                    type: "snowpit"
+                };
+
+                // if location param is specified, set initial location
+                if ($stateParams.location) {
+                    profile.location = $stateParams.location;
+                }
+
+                if ($scope.global.orgs.length) profile.organization = $scope.global.orgs[0]._id;
+
                 $scope.profile = angular.copy(profile);
                 $scope.loading = false;
             } else {
@@ -126,12 +124,13 @@ angular.module('avatech')
         // PROFILE CRUD
 
         $scope.findOne = function() {
-            Profiles.get({ profileId: $stateParams.profileId }, function(profile) {
-                if (profile.error) {
-                    return;
-                }
+            $http.get(window.apiBaseUrl + "observations/" + $stateParams.profileId)
+            //Profiles.get({ profileId: $stateParams.profileId }, 
+            .then(function(res) {
 
-                console.log(profile);
+                if (res.status != 200) return;
+
+                var profile = res.data;
 
                 // normalize temps
                 angular.forEach(profile.temps, function(temp) { 
@@ -144,7 +143,6 @@ angular.module('avatech')
 
                 //angular.copy(profile, $scope.profile);
                 $scope.profile = angular.copy(profile);
-                console.log("loaded!");
                 $timeout(function(){
                     $scope.loading = false;
                 },400);
@@ -154,16 +152,10 @@ angular.module('avatech')
         };
 
         // delete profile
-        $scope.delete = function(){
-
-            Confirm.open("Are you sure you want to delete this snowpit?").then(function (yes) {
-                // user pressed yes
-                $scope.profile.$remove(function(profile) {
-                    console.log("removed!");
-                    $location.path('/');
-                });
-            }, function () {
-                // user pressed no
+        $scope.delete = function() {
+            Confirm.open("Are you sure you want to delete this snowpit?").then(function() {
+                Observations.remove($scope.profile);
+                $location.path('/');
             });
         }
 
@@ -174,29 +166,36 @@ angular.module('avatech')
             // if no changes have been made, don't create 
             if ((profile.layers && profile.layers.length == 0) &&
                 (profile.temps && profile.temps.length == 0) &&
-                (profile.notes && profile.notes.length == 0) &&
-                (profile.photos && profile.photos.length == 0) &&
+                (profile.tests && profile.tests.length == 0) &&
+                (profile.media && profile.media.length == 0) &&
                 (profile.density && profile.density.length == 0) &&
                 (profile.metaData && Object.keys(profile.metaData).length == 0)) return;
 
-            // nointernet
-            profile.$save(function(profile) {
-                console.log("Created!");
+            $http.post(window.apiBaseUrl + "observations/", profile)
+            .then(function(res) {
+
+                var _profile = res.data;
+
                 $scope._isNew = false;
-                $scope.profile._id = profile._id;
-                //$scope.loading = false;
-                $location.path('profiles/' + profile._id).replace();
+                $scope.profile._id = _profile._id;
+                $scope.loading = false;
+                $location.path('profiles/' + _profile._id).replace();
             });
         };
-
         // update current profile
         $scope.update = function() {
             var profile = $scope.getSanitizedProfileCopy();
 
             // <nointernet>
-            profile.$update(function() {
-                console.log("Saved!");
-            });
+            // profile.$update(function() {
+            //     $log.debug("Saved!");
+            // });
+
+            // $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
+            // .then(function(res) {
+            //     $log.debug("Saved!");
+            // });
+            Observations.save($scope.getSanitizedProfileCopy());
         };
 
         // copy and normalize temps
@@ -209,6 +208,9 @@ angular.module('avatech')
                 var num = parseFloat(temp.temp);
                 if (!isNaN(num)) temp.temp = num / 2;
             });
+
+            // make sure observation type is always set
+            profile.type = 'snowpit';
 
             return profile;
         }
@@ -238,35 +240,6 @@ angular.module('avatech')
             }, 500);
         }, true);
 
-        // ORG
-        $scope.$watch("orgsLoaded",function(orgsLoaded){
-            if (orgsLoaded === true && $scope.profile && $scope.global.orgs.length > 0) {
-                console.log("ORGS HAVE BEEN LOADED!!!!!")
-                if ($scope.profile.organization == null) 
-                    $scope.profile.organization = $scope.global.orgs[0]._id;
-            }
-            // if (!newProfile) {
-            //     console.log(Global);
-            // }
-
-            // // calculate layer depth (and keep track of index)
-            // var runningDepth = $scope.profile.depth;
-            // angular.forEach($scope.profile.layers,function(layer, index){
-            //     runningDepth -= layer.height;
-            //     layer.depth = runningDepth;
-            //     layer.index = index;
-            // });
-            // // calculate views
-            // $scope.calculateViews();
-
-            // if ($scope.timer) $timeout.cancel($scope.timer);
-            // $scope.timer = $timeout(function(){
-            //     // if new, create
-            //     if ($scope._isNew) $scope.create();
-            //     // otherwise, save
-            //     else if ($scope.profile._id) $scope.update();
-            // }, 500);
-        },true);
 
         // DENSITY
 
@@ -404,15 +377,24 @@ angular.module('avatech')
         $scope.selectTemp = function(temp){
             $scope.selectedTemp = temp;
         }
+        $scope.settings.tempInterval = 10;
         $scope.addTemp = function() {
             if (!$scope.profile.temps) $scope.profile.temps = [];
-
             var newTemp = null;
             if ($scope.profile.temps.length == 0) {
                 newTemp = { depth: 0, temp: 0 };
             }
             else {
-                var newDepth = $scope.profile.temps[$scope.profile.temps.length-1].depth + 10;
+                var bottomDepth = $scope.profile.temps[$scope.profile.temps.length-1].depth;
+                var spacing = $scope.settings.tempInterval;
+                if (spacing === null || isNaN(spacing)) {
+                    if ($scope.profile.temps.length > 2) spacing = bottomDepth - $scope.profile.temps[$scope.profile.temps.length-2].depth;
+                    else spacing = 10;
+                }
+
+                if (spacing < 0) spacing = 10;
+                if (bottomDepth + spacing > $scope.profile.depth) spacing = $scope.profile.depth - bottomDepth;
+                var newDepth = bottomDepth + spacing;
                 if (newDepth <= $scope.profile.depth)
                     newTemp = { depth: newDepth, temp: $scope.profile.temps[$scope.profile.temps.length-1].temp };
             }
@@ -437,7 +419,7 @@ angular.module('avatech')
             $scope.selectTemp($scope.profile.temps[index]);
         }
         $scope.deleteTemp = function(temp) {
-            console.log("delete!");
+            $log.debug("delete!");
             var index = null;
             for (var i = 0; i < $scope.profile.temps.length; i++) {
                 if ($scope.profile.temps[i] == temp) index = i;
@@ -536,12 +518,11 @@ angular.module('avatech')
                 }
             }
         });
-        $scope.$watch('profile.metaData.surfaceGrainType', function(){
-            if ($scope.profile && $scope.profile.metaData &&
-                $scope.profile.metaData.surfaceGrainType == null) {
-                if ($scope.profile.metaData.surfaceGrainType2) {
-                    $scope.profile.metaData.surfaceGrainType = $scope.profile.metaData.surfaceGrainType2;
-                    $scope.profile.metaData.surfaceGrainType2 = null;
+        $scope.$watch('profile.surfaceGrainType', function(){
+            if ($scope.profile && $scope.profile.surfaceGrainType == null) {
+                if ($scope.profile.surfaceGrainType2) {
+                    $scope.profile.surfaceGrainType = $scope.profile.surfaceGrainType2;
+                    $scope.profile.surfaceGrainType2 = null;
                 }
             }
         });
@@ -553,7 +534,7 @@ angular.module('avatech')
             $scope.settings.view = view;
         }
         $scope.calculateViews = function() {
-            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope); });
+            angular.forEach($scope.views,function(view){ if (view.func) view.func($scope.profile); });
         }
 
         // TOGGLE DEPTH
@@ -622,10 +603,9 @@ angular.module('avatech')
                             // if metadata is null, initialize
                             if (!$scope.profile.metaData) $scope.profile.metaData = {};
 
-                            //if ($scope.profile.metaData.location && $scope.profile.metaData.location != "")
-                            $scope.profile.metaData.location = name;
-                            if (place.countryCode) $scope.profile.metaData.country = place.countryCode;
-
+                            if ($scope.profile.locationName == "" || !$scope.profile.locationName)
+                                $scope.profile.locationName = name;
+                           
                             $scope.$apply();
                         }
                     });
@@ -636,7 +616,7 @@ angular.module('avatech')
                             var elevation = data.srtm3.toFixed(0);
                             // check for 'empty' value of -32768 (http://glcfapp.glcf.umd.edu/data/srtm/questions.shtml#negative)
                             if (elevation != -32768) {
-                                $scope.profile.metaData.elevation = elevation; // meters
+                                $scope.profile.elevation = elevation; // meters
                                 $scope.$apply();
                             }
                             // if no data found, check astergdem
@@ -647,14 +627,12 @@ angular.module('avatech')
                                         var elevation = data.astergdem.toFixed(0);
                                         // check for 'empty' value of -9999 
                                         if (elevation != -9999){
-                                            $scope.profile.metaData.elevation = elevation;
+                                            $scope.profile.elevation = elevation;
                                             $scope.$apply();
                                         }
                                     }
                                 });
                             }
-                            //$scope.profile.metaData.elevation = (data.srtm3 * 3.2808399).toFixed(0); // convert to feet
-                            
                         }
                     });
                 }
@@ -715,46 +693,22 @@ angular.module('avatech')
                 return;
             }
 
-            var modalInstance = $modal.open({
-                templateUrl: '/modules/snowpit-editor/snowpit-publish-modal.html',
-                controller: 'SnowpitPublishModalController',
-                windowClass: 'width-480',
-                //backdrop: 'static',
-                resolve: {
-                    objectName: function() { return 'profile' },
-                    initialSharing: function () {
-                      return {
-                        level: $scope.profile.sharingLevel,
-                        orgs: $scope.profile.sharedOrganizations,
-                        avyCenter: $scope.profile.shareWithAvyCenter,
-                        students: $scope.profile.shareWithStudents,
-                      };
-                    }
-                }
-            });
-
-            modalInstance.result.then(function (sharing) {
-                
+            PublishModal.open({ 
+                initialSharing: angular.copy($scope.profile)
+            })
+            .then(function (sharing) {
                 $scope.profile.published = true;
-                $scope.profile.sharingLevel = sharing.level;
-                $scope.profile.shareWithAvyCenter = sharing.avyCenter;
-                $scope.profile.sharedOrganizations = sharing.selectedOrgs;
-                $scope.profile.shareWithStudents = sharing.students;
-
+                angular.extend($scope.profile, sharing);
                 $scope.update();
-
-                $location.path('/p/' + $scope.profile._id);
-
-            }, function () {
-                // on dismiss
+                $location.path('/obs/' + $scope.profile._id);
             });
         }
 
         // PHOTO UPLOAD
 
         $scope.deletePhoto = function(index) {
-            if (index == 0) $scope.profile.photos.shift();
-            else $scope.profile.photos.splice(index,1);
+            if (index == 0) $scope.profile.media.shift();
+            else $scope.profile.media.splice(index,1);
         }
 
         $scope.onFileAdd = function(file) {
@@ -768,16 +722,19 @@ angular.module('avatech')
         }
 
         $scope.onFileUpload = function(file) {
-            if ($scope.profile.photos == null) $scope.profile.photos = [];
+            if ($scope.profile.media == null) $scope.profile.media = [];
             file.uploading = false;
             file.caption = file.name;
-            $scope.profile.photos.unshift(file);
+            file.type = "photo";
+            file.URL = file.url;
+            delete file.url;
+            $scope.profile.media.unshift(file);
             $scope.$apply();
         };
 
 
         $scope.showPhoto = function(index) {
-            Lightbox.openModal($scope.profile.photos, index);
+            Lightbox.openModal($scope.profile.media, index);
         }
 
         // UTILITIES
@@ -788,24 +745,24 @@ angular.module('avatech')
         }
 
         // set date picker
-        setTimeout(function(){
-            var picker = new Pikaday({
-                field: document.getElementById('datepicker')
-                , maxDate: new Date()
-                //, format: 'YYYY-MM-DD'
-                , onSelect: function() {
-                    //console.log(picker.toString());
-                    //console.log(this.getMoment().format('Do MMMM YYYY'));
-                }
-            });
-            // todo:find a more elegant way to make sure the picker loads the date
-            setTimeout(function(){
-                picker.setMoment(moment(document.getElementById('datepicker').value));
-            },500);
-        },1);
+        // setTimeout(function(){
+        //     var picker = new Pikaday({
+        //         field: document.getElementById('datepicker')
+        //         , maxDate: new Date()
+        //         //, format: 'YYYY-MM-DD'
+        //         , onSelect: function() {
+        //             //$log.debug(picker.toString());
+        //             //$log.debug(this.getMoment().format('Do MMMM YYYY'));
+        //         }
+        //     });
+        //     // todo:find a more elegant way to make sure the picker loads the date
+        //     setTimeout(function(){
+        //         picker.setMoment(moment(document.getElementById('datepicker').value));
+        //     },500);
+        // },1);
     })
 
-.directive('draggable', function($document, $timeout) {
+.directive('draggable', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggable' },
@@ -846,7 +803,7 @@ angular.module('avatech')
             // remove existing tooltips
             $timeout(function(){ $(".tooltip").remove() });
             // show hardness drag tooltip
-            console.log(ControlScope.tooltips);
+            $log.debug(ControlScope.tooltips);
             if (ControlScope.tooltips) { $timeout(function(){ $(".hardnessBar").tooltip('show') }); }
 
           $document.unbind('mousemove', mousemove);
@@ -858,7 +815,7 @@ angular.module('avatech')
     };
   })
 
-.directive('draggableHardness', function($document, $timeout) {
+.directive('draggableHardness', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggableHardness' },
@@ -929,7 +886,7 @@ angular.module('avatech')
                         ControlScope.settings.selectedLayer.hardness2 = key;
                     }
                     else if (attrs.draggableType == "top") {
-                        console.log("top!");
+                        $log.debug("top!");
                         ControlScope.settings.selectedLayer.hardness2 = initialHardness2;
                         ControlScope.settings.selectedLayer.hardness = key;
                     }

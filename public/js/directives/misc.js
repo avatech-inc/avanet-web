@@ -1,10 +1,39 @@
+angular.module('avatech').directive('locationSelectButton', function(LocationSelectModal) {    
+    return {
+        restrict: 'A',
+        scope: {
+          model: '=ngModel'
+        },
+        link: function(scope, el, attrs) {    
+            // el.bind('click', function($event) {
+            //   var el = $($event.target).closest(".open");
+            //   if (el && el.data() && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
+            //   scope.$apply();
+            // });
+            el.bind('click', function($event) {
+
+                LocationSelectModal.open({
+                    initialLocation: scope.model
+                }).then(function (location) {
+                    if (location && location.length == 2) {
+                        location[0] = parseFloat(location[0].toFixed(7)); 
+                        location[1] = parseFloat(location[1].toFixed(7)); 
+                        scope.model = location;
+                    }
+                }, function () {
+                    // on dismiss
+                });
+
+            });
+        }
+    };        
+});
 
 angular.module('avatech').directive('accordionNew', function () {
     return {
         restrict: 'E',
         link: function (scope, elem, attrs, ctrl) {
             $(elem).find(".header").click(function() {
-
                 if ($(this).parent().hasClass("open")) {
                     $(this).parent().removeClass("open");
                 }
@@ -28,34 +57,12 @@ angular.module('avatech').directive('onenter', function() {
       $(elem).keydown(function(event) {
          if (event.keyCode == 13) {
             scope.onenter();
-            console.log("enter!");
             return false;
          }
       });
     }
   };
 });
-
-angular.module('avatech').directive('thumbnail', ['$timeout', '$parse',function($timeout, $parse) {
-  return {
-    restrict: 'A',
-    scope: {
-      photo: '=thumbnail'
-    },
-    link: function(scope, element, attrs) {
-
-        scope.$watch('photo', function() {
-
-            var url = scope.photo.url;
-
-            if (scope.photo.cloudinary_id && scope.photo.cloudinary_format) url = "https://res.cloudinary.com/avatech/image/upload/w_200/" + scope.photo.cloudinary_id + "." + scope.photo.cloudinary_format;
-            
-            element[0].style.background = "url('" + url + "')"; 
-        });
-
-    }
-  };
-}]);
 
 angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($timeout, $parse) {
   return {
@@ -64,7 +71,6 @@ angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($t
       scope.focus = function(modelName) {
         if (!scope[modelName]) scope[modelName] = 0;
         scope[modelName]++;
-        console.log(scope[modelName]);
       };
       scope.$watch(model, function(value) {
         $timeout(function() {
@@ -83,7 +89,7 @@ angular.module('avatech').directive('autoFocus', function() {
     };
 });
 
-angular.module('avatech.system').directive('windowResize', ['$window', function($window) {
+angular.module('avatech').directive('windowResize', ['$window', function($window) {
   return function($scope) {
     $scope._getWindowSize = function() {
       $scope.windowHeight = $window.innerHeight;
@@ -91,13 +97,12 @@ angular.module('avatech.system').directive('windowResize', ['$window', function(
     };
     angular.element($window).bind("resize", function() {
       $scope._getWindowSize();
-      $scope.$apply();
     });
     $scope._getWindowSize();
   };
 }]);
 
-angular.module('avatech.system').directive('onChange', function() {    
+angular.module('avatech').directive('onChange', function() {    
     return {
         restrict: 'A',
         scope:{'onChange':'=' },
@@ -129,7 +134,6 @@ angular.module('avatech').directive('metersOrFeet', ['$window','$parse', functio
 
             ctrl.$formatters.unshift(function (modelValue) {
                 if (modelValue === null) return;
-                console.log("2: " + modelValue);
 
                 // if feet
                 if (metersOrFeet == 1) return Math.round(modelValue * 3.28084);
@@ -266,16 +270,15 @@ angular.module('avatech').directive('closeDropdownOnClick', function() {
         restrict: 'A',
         link: function(scope, el, attrs) {    
             el.bind('click', function($event) {
-              console.log("dropdown clicked!");
               var el = $($event.target).closest(".open");
-              if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
+              if (el && el.data() && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
               scope.$apply();
             });
         }
     };        
 });
 
-angular.module('avatech.system').directive('tooltipHideOnClick', function() {    
+angular.module('avatech').directive('tooltipHideOnClick', function() {    
     return {
         restrict: 'A',
         link: function(scope, el, attrs) {    
@@ -284,13 +287,13 @@ angular.module('avatech.system').directive('tooltipHideOnClick', function() {
               // if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
               // scope.$apply();
               el.data().$scope.tt_isOpen = false;
-              console.log(el.data().$scope.tt_isOpen);
+              //console.log(el.data().$scope.tt_isOpen);
             });
         }
     };        
 });
 
-angular.module('avatech.system').directive('selectOnClick', function () {
+angular.module('avatech').directive('selectOnClick', function () {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {

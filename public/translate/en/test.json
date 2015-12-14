@@ -4,8 +4,9 @@
   "student" : "Student",
   "no_location" : "No Location",
   "new_observation" : "New Observation",
+  "new_route" : "New Route",
   "snowpit" : "Snowpit",
-  "sp1_profile" : "SP1 Profile",
+  "sp1_profile" : "SP Profile",
 
   "avalanche" : "Avalanche",
   "weather": "Weather",
@@ -18,16 +19,16 @@
   "submit_button": "Submit",
   "location_select_instructions": "Drag the map to select your location",
   "location_select_button": "Select this location",
-  "usb_upload" : "SP1 USB Upload",
+  "usb_upload" : "SP USB Upload",
   "organizations" : "Organizations",
   "organization" : "Organization",
   "education" : "Education",
   "new_organization" : "New Organization",
   "user_settings" : "User Settings",
   "support" : "Support",
-  "register_device" : "Register your SP1",
+  "register_device" : "Register your SP",
   "download_app" : "Download Avanet App",
-  "firmware_update" : "SP1 Firmware Update",
+  "firmware_update" : "SP Firmware Update",
   "logout" : "Logout",
   "slope_angle" : "Slope",
   "slope_aspect" : "Aspect",
@@ -39,6 +40,10 @@
   "aerial_imagery": "Aerial",
   "search_location" : "Search for a location",
   "click_to_place_on_map" : "Click to place on map",
+  "observations": "Observations",
+  "observation": "Observations",
+  "routes": "Routes",
+  "route": "Routes",
   "all_observations" : "All Observations",
   "my_observations" : "My Observations",
   "pan_and_zoom" : "pan & zoom the map to see more observations",
@@ -69,6 +74,7 @@
   "views": "Views",
   "height": "Height",
   "depth": "Depth",
+  "no_obs_found": "No observations found",
   "settings" : {
     "user_information" : "User Information",
     "full_name" : "Full Name",
@@ -91,9 +97,12 @@
     "farenheit" : "Farenheit",
     "temperature" : "Temperature",
     "bulk_download" : "Bulk Data Download",
-    "bulk_download_sp1_button" : "Download SP1 Data",
+    "bulk_download_sp1_button" : "Download SP Data",
     "profile_photo": "Profile Photo",
-    "upload_profile_photo": "Upload profile photo"
+    "upload_profile_photo": "Upload profile photo",
+    "coordinates": "Coordinate System",
+    "decimalDegrees": "Decimal Degrees",
+    "UTM": "UTM"
   },
   "snowpit_editor": {
     "surface": "Surface",
@@ -128,5 +137,65 @@
   "select_location": {
     "instructions": "Drag the map to select your location",
     "select_button": "Select this location"
+  },
+  "observation_types": {
+    "avalanche": "Avalanche",
+    "weather": "Weather",
+    "wind": "Wind",
+    "snowpack": "Snowpack",
+    "snowpack-test": "Snowpack Test",
+    "sp-profile": "SP Profile",
+    "snowpit": "Snowpit"
+  },
+  "observation_wind": {
+    "windLoading": "Wind loading",
+    "windVariability": "Wind windVariability",
+    "spatialExtent": "Spatial extent",
+    "windSpeedEstimated": "Wind speed estimated",
+    "windSpeedMeasured": "Wind speed measured",
+    "windDirectionEstimated": "Wind direction estimated",
+    "blowingSnowDirection": "Blowing snow direction",
+    "blowingSnowExtent": "Blowing snow extent"
+  },
+  "observation_weather": {
+    "precipitationRate": "Precip. rate",
+    "precipitationType": "Precip. type",
+    "skyCondition": "Sky condition",
+    "barometricPressure": "Barometric pressure",
+    "pressureTrend": "Pressure trend",
+    "maxTemperature": "Max temp.",
+    "minTemperature": "Min temp.",
+    "presentTemperature": "Present temp.",
+    "relativeHumidity": "Relative humidity",
+    "thermographTemperature": "Thermograph temp.",
+    "thermographTrend": "Thermograph trend"
+  },
+  "observation_snowpack-test": {
+    "score": "Score",
+    "shear": "Shear quality",
+    "fractureCharacter": "Fracture character",
+    "name": "Test Type",
+    "nbTaps": "Number of taps",
+    "isolatedColumnLength": "Isolated column length",
+    "sawCutLength": "Saw cut length",
+    "weakLayerDepth": "Weak layer depth",
+    "criticalGrainForm": "Critical grain type",
+    "criticalGrainSizeMax": "Critical grain size (max)",
+    "criticalGrainSizeMin": "Critical grain size (min)"
+  },
+  "observation_snowpack": {
+    "snowQuality": "Snow quality",
+    "surfaceGrainForm": "Surface grain type",
+    "cracking": "Cracking",
+    "whumpfing": "Whumpfing",
+    "footPenetration": "Foot pen.",
+    "skiPenetration": "Ski pen.",
+    "snowPackDepthEstimate": "Snowpack depth estimate",
+    "newSnowDepthEstimate": "New snow depth estimate",
+    "surfaceGrainSizeMax": "Surface grain size (max)",
+    "surfaceGrainSizeMin": "Surface grain size (min)",
+    "surfaceTemperature": "Surface temp.",
+    "twentyCMTemperature": "20 cm. temp."
   }
+
 }

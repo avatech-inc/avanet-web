@@ -1,0 +1,21 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+
+  <input ng-if="!form.fieldAddonLeft && !form.fieldAddonRight"
+         ng-show="form.key"
+         type="{{form.type}}"
+         style="width:90px; display: inline-block; margin-right: 6px;"
+         step="any"
+         ng-model="$$value$$"
+         placeholder="{{form.placeholder}}"
+         class="form-control {{form.fieldHtmlClass}}"
+         id="{{form.key.slice(-1)[0]}}"
+         ng-disabled="form.readonly"
+         schema-validate="form"
+         name="{{form.key.slice(-1)[0]}}"
+         aria-describedby="{{form.key.slice(-1)[0] + 'Status'}}">
+
+  <span>{{ form.units }}</span>
+
+  <span class="help-block" sf-message="form.description"></span>
+</div>

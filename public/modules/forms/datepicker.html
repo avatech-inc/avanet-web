@@ -1,0 +1,54 @@
+<div class="form-group" ng-class="{'has-error': hasError()}">
+  <label class="control-label" ng-show="showTitle()">{{form.title}}</label>
+
+  <!--<input ng-show="form.key"
+         style="background-color: white"
+         type="text"
+         class="form-control"
+         schema-validate="form"
+         ng-model="$$value$$"
+         pick-a-date
+         min-date="form.minDate"
+         max-date="form.maxDate"
+         format="form.format" />-->
+
+  <input style="width:88px;padding-right:1px;display:inline-block;margin-right:5px;" class="form-control" ng-model="$$value$$" type="text" pikaday="pickerObject" max-date="{{ $root.todaysDate.toISOString() }}" date-input maxlength="10" />
+  <!--<input class="form-control" ng-model="$$value$$" mo-date-input schema-validate="form" style="width:100px;display:inline-block;vertical-align:bottom;margin-right:6px;"/>
+-->
+  <timepicker style="display:inline-block;vertical-align:bottom;" class="timepicker" ng-model="$$value$$" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>
+
+  <span class="help-block" sf-message="form.description"></span>
+
+    <style>
+
+    .timepicker tr:first-child,
+    .timepicker tr:last-child {
+      display: none;
+    }
+    .timepicker td { 
+      vertical-align: top !important; 
+      border: none !important; 
+      margin: 0 !important; 
+      display: table-cell !important;
+      padding: 0px !important;
+    }
+
+    .timepicker td:nth-child(1), 
+    .timepicker td:nth-child(3),
+    .timepicker input[type='text'] {
+      width: 40px !important;
+    }
+    .timepicker button {
+      margin-left: 3px;
+    }
+    /* colon */
+    .timepicker td:nth-child(2) {
+      font-weight: bold;
+      line-height: 31px;
+      width: 6px;
+      text-align: center;
+    }
+
+  </style>
+
+</div>

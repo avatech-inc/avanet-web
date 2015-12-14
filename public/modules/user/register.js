@@ -1,44 +1,59 @@
-angular.module('avatech.system').controller('RegisterController', function ($scope, $rootScope, $http, $stateParams, $location, Global) {
-
-	$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
-	$scope.successfulReset = false;
-  $scope.email = "";
-
-  if ($stateParams.userHashId && $stateParams.userHashId != "") {
-  	$http.get("/v1/users/pending/" + $stateParams.userHashId)
-      .success(function (data) { 
-
-          $scope.isPending = data.ok;
-          if ($scope.isPending) $scope.userHashId = $stateParams.userHashId;
-      });
-  }
-  else if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
-    $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
-      .success(function (data) { 
-
-          console.log(data);
-          $scope.isPending = data.ok;
-          if ($scope.isPending) $scope.org = data;
-      });
-  }
-
+angular.module('avatech').controller('RegisterController', 
+  function ($scope, $rootScope, $timeout, $http, $stateParams, $location, Global, Restangular) {
 
     $scope.reg = {};
+
+	//$scope.isPending = (($stateParams.userHashId == "") || !$stateParams.orgHashId) ? false : null;
+  $scope.isPending = (!$stateParams.userHashId || $stateParams.userHashId == "") ? false : null;
+
+    $scope.reg = {};
+  if ($stateParams.userHashId && $stateParams.userHashId != "") {
+    Restangular.one('users/pending', $stateParams.userHashId).get()
+    .then(function(data) {
+      $scope.isPending = true;
+      $scope.userHashId = $stateParams.userHashId;
+
+      if (data.organizations) $scope.orgName = data.organizations[0].name;
+      $scope.reg.email = data.email;
+    },
+    // error
+    function() {
+      $scope.isPending = false;
+    });
+  }
+  
+  // todo: this needs to be re-implemented if we want education edition to work
+  // if ($stateParams.orgHashId && $stateParams.orgHashId != "") {
+  //   $http.get("/v1/orgs/education/" + $stateParams.orgHashId)
+  //     .success(function (data) { 
+  //         console.log(data);
+  //         $scope.isPending = data.ok;
+  //         if ($scope.isPending) $scope.org = data;
+  //     });
+  // }
 
 
     $scope.scrollToError = function(){
         // jQuery stuff, not so elegant but what can ya do
-        var target = $("#errorArea");
-        if (target.length) {
-            $('html,body').animate({
-              scrollTop: target.offset().top - 12
-            }, 300);
-        }
+        // var target = $("#errorArea");
+        // if (target.length) {
+        //     $('html,body').animate({
+        //       scrollTop: target.offset().top - 12
+        //     }, 300);
+        // }
+        $('.login-page').animate({ scrollTop: 0 }, 300);
     }
-    $scope.register = function() {
+
+    $scope.registerPending = function() {
+
         $scope.showError = null;
+
         if(!$scope.registerForm.$valid) {
             $scope.showError = "Please complete all required fields";
+            $scope.scrollToError();
+        }
+        else if($scope.reg.fullName.indexOf(' ') == -1) {
+            $scope.showError = "Please enter your full name";
             $scope.scrollToError();
         }
         else if ($scope.reg.password.length && $scope.reg.password.length < 6) {
@@ -49,55 +64,215 @@ angular.module('avatech.system').controller('RegisterController', function ($sco
             $scope.showError = "Make sure your passwords match";
             $scope.scrollToError();
         }
-        else if (!$scope.isPro) {
-            if ($scope.org)
-              alert("You must certify that you are a registered student of " + $scope.org.name  + ".");
-            else 
-              alert("You must certify that you are a snow professional.");
+        else if (!$scope.acceptTerms) {
+            alert("You must accept the Terms of Service.");
             return;
+        }
+        // all good
+        else {
+            $scope.busy = true;
+        $('.login-page').animate({ scrollTop: 0 }, 300);
+
+          var newUser = {
+            fullName: $scope.reg.fullName,
+            password: $scope.reg.password,
+            // pro fields
+            userHashId: $scope.userHashId,
+            userType: "pro"
+          }
+
+          setTimeout(function(){
+
+              // post to API
+              Restangular.all('users').post(newUser)
+              // success
+              .then(function (data) {
+                  mixpanel.track("registered");
+                  Global.login(data.email, newUser.password);
+              }, 
+              // error
+              function(response) {
+                  // todo: this should never happen, but what if it does...
+                  // $timeout(function(){
+                  //   $scope.busy = false;
+                  //   // showpro is false since this can only be an email error
+                  //   // todo: what about 500 error? alert?
+                  //   $scope.showPro = false;
+                  //   $scope.showError = response.data.message;
+                  //   $scope.scrollToError();
+                  // }, 500);
+              });
+
+          }, 500);
+
+        }
+    }
+    $scope.registerPro = function() {
+
+        $scope.showError = null;
+
+        if(!$scope.registerForm.$valid) {
+            $scope.showError = "Please complete all required fields";
+            $scope.scrollToError();
+        }
+        // all good
+        else {
+              $scope.busy = true;
+        $('.login-page').animate({ scrollTop: 0 }, 300);
+              
+              var newUser = {
+                fullName: $scope.reg.fullName,
+                email: $scope.reg.email,
+                password: $scope.reg.password,
+                userType: "pro",
+                // pro fields
+                org: $scope.reg.org,
+                orgSize: $scope.reg.orgSize,
+                jobTitle: $scope.reg.jobTitle,
+                profession: $scope.reg.profession,
+                certifications: $scope.reg.certifications,
+                city: $scope.reg.city,
+                state: $scope.reg.state,
+                postal: $scope.reg.postal,
+                country: $scope.reg.country
+              }
+
+              setTimeout(function(){
+
+                  // post to API
+                  Restangular.all('users').post(newUser)
+                  // success
+                  .then(function (data) {
+                      mixpanel.track("registered");
+                      Global.login(data.email, newUser.password);
+                  }, 
+                  // error
+                  function(response) {
+                      $timeout(function(){
+                        $scope.busy = false;
+                        // showpro is false since this can only be an email error
+                        // todo: what about 500 error? alert?
+                        $scope.showPro = false;
+                        $scope.showError = response.data.message;
+                        $scope.scrollToError();
+                      }, 500);
+                  });
+
+              }, 500);
+
+        } 
+
+    }
+    $scope.register = function() {
+        if ($scope.showPro) return $scope.registerPro();
+        else if ($scope.isPending) return $scope.registerPending();
+
+          // $scope.showPro = true;
+          // return;
+
+        $scope.showError = null;
+        if(!$scope.registerForm.$valid) {
+            $scope.showError = "Please complete all required fields";
+            $scope.scrollToError();
+        }
+        else if($scope.reg.fullName.indexOf(' ') == -1) {
+            $scope.showError = "Please enter your full name";
+            $scope.scrollToError();
+        }
+        else if ($scope.reg.password.length && $scope.reg.password.length < 6) {
+            $scope.showError = "Password must be at least 6 characters long";
+            $scope.scrollToError();
+        }
+        else if ($scope.reg.password.length && ($scope.reg.password != $scope.reg.passwordConfirm)) {
+            $scope.showError = "Make sure your passwords match";
+            $scope.scrollToError();
+        }
+        else if ($scope.reg.isPro == null) {
+            // if ($scope.org)
+            //   alert("You must certify that you are a registered student of " + $scope.org.name  + ".");
+            // else 
+            alert("Please specify if you are a snow safety professional.");
+            //return;
         }
         else if (!$scope.acceptTerms) {
             alert("You must accept the Terms of Service.");
             return;
         }
         else {
-            //console.log($scope.reg);
 
-            var newUser = {
-                fullName: $scope.reg.name,
-                email: $scope.reg.email,
-                jobTitle: $scope.reg.jobTitle,
-                profession: $scope.reg.profession,
-                org: $scope.reg.org,
-                city: $scope.reg.city,
-                state: $scope.reg.state,
-                postal: $scope.reg.postal,
-                country: $scope.reg.country,
-                password: $scope.reg.password,
+            // if rec, signup!
+            if ($scope.reg.isPro === false) {
 
-                userHashId: $scope.userHashId,
-                orgHashId: $stateParams.orgHashId
+                $scope.busy = true;
+        $('.login-page').animate({ scrollTop: 0 }, 300);
+
+                var newUser = {
+                  fullName: $scope.reg.fullName,
+                  email: $scope.reg.email,
+                  password: $scope.reg.password,
+                  userType: "rec+"
+                }
+
+
+                setTimeout(function() {
+                  // post to API
+                  Restangular.all('users').post(newUser)
+                  // success
+                  .then(function (data) {
+                      mixpanel.track("registered");
+                      Global.login(data.email, newUser.password);
+                  }, 
+                  // error
+                  function(response) {
+                      $timeout(function(){
+                        $scope.busy = false;
+                        $scope.showError = response.data.message;
+                        $scope.scrollToError();
+                      }, 500);
+                  });
+                }, 500);
+            }
+            // if pro, show next screen
+            if ($scope.reg.isPro === true) {
+              //alert("pro signup!!!");
+              $scope.showPro = true;
+        $('.login-page').animate({ scrollTop: 0 }, 300);
+
             }
 
-             $http.post("/v1/users/", newUser)
-            .success(function (data) { 
-                console.log(data);
-                // if creation succesful, login
-                if (data.success == true) { 
-                  Global.login(data.user, data.token);
+            // var newUser = {
+            //     fullName: $scope.reg.name,
+            //     email: $scope.reg.email,
+            //     jobTitle: $scope.reg.jobTitle,
+            //     profession: $scope.reg.profession,
+            //     org: $scope.reg.org,
+            //     city: $scope.reg.city,
+            //     state: $scope.reg.state,
+            //     postal: $scope.reg.postal,
+            //     country: $scope.reg.country,
+            //     password: $scope.reg.password,
 
-                  mixpanel.track("registered");
+            //     userHashId: $scope.userHashId,
+            //     orgHashId: $stateParams.orgHashId,
+            //     userType: "pro"
+            // }
 
-                  $rootScope.initPromise = Global.init();
-                  if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-                      $rootScope.orgsLoaded = true;
-                  });
-                }
-                else if (data.success == false) {
-                    $scope.showError = data.error;
-                    $scope.scrollToError();
-                }
-            });
+            // Restangular.all('users').post(newUser)
+            // // success
+            // .then(function (data) {
+            //     mixpanel.track("registered");
+            //     Global.login(data.email, newUser.password);
+            // }, 
+            // // error
+            // function(response) {
+            //     $timeout(function(){
+            //       $scope.busy = false;
+            //       $scope.showError = response.data.message;
+            //       $scope.scrollToError();
+            //     }, 1000);
+            // });
+
+
         }
     };
 

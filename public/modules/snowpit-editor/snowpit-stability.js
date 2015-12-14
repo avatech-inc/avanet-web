@@ -59,12 +59,12 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
 
         $scope.deleteComment = function() {
             var index = null;
-            angular.forEach($scope.profile.notes, function(_comment, i) {
+            angular.forEach($scope.profile.tests, function(_comment, i) {
                 if (_comment == $scope.test) index = i;
             });
             if (index == null) return;
-            if (index == 0) $scope.profile.notes.shift();
-            else $scope.profile.notes.splice(index, 1);
+            if (index == 0) $scope.profile.tests.shift();
+            else $scope.profile.tests.splice(index, 1);
         };
 
         $scope.saveComment = function() {
@@ -74,8 +74,6 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
             var newComment = angular.copy($scope.newComment);
             if (isNaN(newComment.depth)) newComment.depth = null;
             if (newComment.depth != null && $scope.depthDescending) newComment.depth = $scope.profile.depth - newComment.depth;
-
-            console.log(newComment);
 
             // save
             angular.copy(newComment, $scope.test);
@@ -92,10 +90,8 @@ angular.module('avatech').directive('stabilityTest', ['$http', 'Global', functio
 
             $scope.newComment.isNew = false;
 
-            console.log($scope.newComment);
-
-            if (!$scope.profile.notes) $scope.profile.notes = [];
-            $scope.profile.notes.push($scope.newComment);
+            if (!$scope.profile.tests) $scope.profile.tests = [];
+            $scope.profile.tests.push($scope.newComment);
             $scope.newComment = angular.copy(newCommentDefault);
         }
       }],

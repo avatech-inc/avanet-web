@@ -155,13 +155,10 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
         scope.getGrainType = function(grainType) {
             if (!grainType) return;
             for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
-                if (snowpitConstants.grainTypes[i].legacyCode == grainType.category) {
-                    for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
-                        if (snowpitConstants.grainTypes[i].types[j].code == grainType.code) {
-                            return snowpitConstants.grainTypes[i].types[j];
-                        }
+                for (var j = 0; j < snowpitConstants.grainTypes[i].types.length; j++) {
+                    if (snowpitConstants.grainTypes[i].types[j].icssg == grainType) {
+                        return snowpitConstants.grainTypes[i].types[j];
                     }
-                    break;
                 }
             }
         }
@@ -180,6 +177,9 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
             if (options.print == null) options.print = false;
             if (options.showDepth == null) options.showDepth = true;
             if (options.showDensity == null) options.showDensity = true;
+            if (options.drawGrainSize == null) options.drawGrainSize = true;
+            if (options.drawWaterContent == null) options.drawWaterContent = true;
+            if (options.drawSurfaceLabel == null) options.drawSurfaceLabel = true;
 
             // only call once
             if (options.scale) scale = options.scale; // 4
@@ -260,9 +260,9 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
             scope._sideLayers = [];
 
             // combine stability tests and layer comments into one array
-            var allComments = angular.copy(scope.profile.notes);
+            var allComments = angular.copy(scope.profile.tests);
             angular.forEach(scope.profile.layers,function(layer) {
-                if (layer.notes) allComments.push({ depth: (scope.profile.depth - layer.depth - layer.height), comment: layer.notes });
+                if (layer.tests) allComments.push({ depth: (scope.profile.depth - layer.depth - layer.height), comment: layer.tests });
             });
 
             // "merge" comments at same depth
@@ -385,13 +385,6 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     comment.depthClient = clientDepth;
                     comment.heightClient = _itemHeight;
                 });
-
-                // first comment placement
-                // if (comments.length > 0) {
-                //     if (comments[0].depthClient < 0) {
-                //         comments[0].depthGraph = comments[0].depthClient = 0;
-                //     }
-                // }
 
                 // if last comment is over the bottom edge, pull it up
                 var lastComment = comments[comments.length - 1];
@@ -756,14 +749,12 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 }
 
                 // plot surface temp to air temp
-                if (surfaceTemp != null && scope.profile.metaData && scope.profile.metaData.airTemp != null 
-                    && scope.profile.metaData.airTemp <= 0
+                if (surfaceTemp != null && scope.profile.airTemp != null 
+                    && scope.profile.airTemp <= 0
                     && scope.profile.temps && scope.profile.temps.length > 0) {
 
-                    console.log("air temp:" + scope.profile.metaData.airTemp);
-
                     var surfaceTemp = (maxTemp - Math.abs(surfaceTemp)) * (_width / maxTemp) + 1; 
-                    var airTemp = (maxTemp - Math.abs(scope.profile.metaData.airTemp * 2)) * (_width / maxTemp) + 1;
+                    var airTemp = (maxTemp - Math.abs(scope.profile.airTemp * 2)) * (_width / maxTemp) + 1;
                     context.setLineDash([5,5]);
                     context.beginPath();
                     context.moveTo(surfaceTemp, paddingTop);
@@ -964,15 +955,19 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                         context.fillText(")", connectorWidth + 43, depth2 - (layer.sideLayerHeightClient / 2) + 5);
                     }
                     else if (layer.grainType) {
-                        var scale = scope.getGrainType(layer.grainType).scale;
-                        if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
-                        var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
-                        if (offsetTop == null) offsetTop = 0;
+                        var _grainType = scope.getGrainType(layer.grainType);
+                        if (_grainType) {
+                            var scale = _grainType.scale;
+                            if (scale != null) context.font = (fontSize * scale) + "px snowsymbols";
+                            var offsetTop = scope.getGrainType(layer.grainType).offsetTop;
+                            if (offsetTop == null) offsetTop = 0;
 
-                        centerText(context, scope.getGrainType(layer.grainType).symbol, 45, connectorWidth, depth2 - (layer.sideLayerHeightClient / 2) + 6 + offsetTop);
+                            centerText(context, scope.getGrainType(layer.grainType).symbol, 45, connectorWidth, depth2 - (layer.sideLayerHeightClient / 2) + 6 + offsetTop);
+                        }
                     }
                 }
                 var drawGrainSize = function(layer, depth2) {
+                    if (!options.drawGrainSize) return;
                     context.fillStyle = options.labelColor;
                     context.font = "11px 'roboto condensed'";
                     if (layer.grainSize) { 
@@ -1015,10 +1010,12 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     drawGrainSize(layer, depth2);
 
                     // draw water content
-                    context.fillStyle = "#444";
-                    context.font = "11px 'roboto condensed'";
-                    if (layer.waterContent) {
-                        centerText(context, layer.waterContent, 30, connectorWidth + 60 + 42, depth2 - (layer.sideLayerHeightClient / 2) + 4.5);
+                    if (options.drawWaterContent) {
+                        context.fillStyle = "#444";
+                        context.font = "11px 'roboto condensed'";
+                        if (layer.waterContent) {
+                            centerText(context, layer.waterContent, 30, connectorWidth + 60 + 42, depth2 - (layer.sideLayerHeightClient / 2) + 4.5);
+                        }
                     }
 
                     // depth axis labels (relative to right side of canvas)
@@ -1078,18 +1075,18 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 context.fillRect(0, paddingTop - surfaceLayerHeight, column.width - 70, surfaceLayerHeight);
 
                 // draw surface grain type and size
-                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainType) {
+                if (scope.profile.surfaceGrainType) {
                     drawGrainType({
-                        grainType: scope.profile.metaData.surfaceGrainType,
-                        grainType2: scope.profile.metaData.surfaceGrainType2,
+                        grainType: scope.profile.surfaceGrainType,
+                        grainType2: scope.profile.surfaceGrainType2,
                         sideLayerHeightClient: surfaceLayerHeight
                     }, paddingTop);
                 }
                 // draw surface grain size
-                if (scope.profile.metaData && scope.profile.metaData.surfaceGrainSize) {
+                if (scope.profile.surfaceGrainSize) {
                     drawGrainSize({
-                        grainSize: scope.profile.metaData.surfaceGrainSize,
-                        grainSize2: scope.profile.metaData.surfaceGrainSize2,
+                        grainSize: scope.profile.surfaceGrainSize,
+                        grainSize2: scope.profile.surfaceGrainSize2,
                         sideLayerHeightClient: surfaceLayerHeight
                     }, paddingTop);
                 }
@@ -1102,7 +1099,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     context.fillText(depthText, column.width - paddingLeft + 3.5, 3.5 + paddingTop);
 
                     context.font = "100 10px 'roboto condensed'";
-                    context.fillText("SURFACE", column.width - paddingLeft + 22, 3.5 + paddingTop);
+                    if (options.drawSurfaceLabel) context.fillText("SURFACE", column.width - paddingLeft + 22, 3.5 + paddingTop);
                 }
 
                 // top labels
@@ -1112,11 +1109,15 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                 centerText(context, "GRAIN", 30, 37.5, 21);
                 centerText(context, "TYPE", 30, 37.5, 31);
 
-                centerText(context, "GRAIN", 30, 90.5, 21);
-                centerText(context, "SIZE", 30, 90.5, 31);
+                if (options.drawGrainSize) {
+                    centerText(context, "GRAIN", 30, 90.5, 21);
+                    centerText(context, "SIZE", 30, 90.5, 31);
+                }
 
-                centerText(context, "WATER", 30, 133, 21);
-                centerText(context, "CONTENT", 30, 133, 31);
+                if (options.drawWaterContent) {
+                    centerText(context, "WATER", 30, 133, 21);
+                    centerText(context, "CONTENT", 30, 133, 31);
+                }
 
             });
 

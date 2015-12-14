@@ -1,4 +1,4 @@
-angular.module('avatech').directive('mapSearch', function() {
+angular.module('avatech').directive('mapSearch', function($timeout, $log, $http, $q) {
   return {
     restrict: 'E',
     scope: {
@@ -16,7 +16,7 @@ angular.module('avatech').directive('mapSearch', function() {
       // });
     },
 
-    controller: ['$scope', '$timeout', function($scope, $timeout) {
+    controller: function($scope, $timeout, $log, $http, $q) {
 
         // -- map location search --
 
@@ -97,30 +97,41 @@ angular.module('avatech').directive('mapSearch', function() {
             return d[n][m];
         }
 
+        var abort;
         var timer;
         $scope.$watch('geo.query', function() {
+            // clear current results
             $scope.geo.results = [];
+
+            if (abort) abort.abort();
             if (timer) $timeout.cancel(timer);
             timer = $timeout(function(){
               $scope.geoSearch();
-            },250);
+            }, 300);
         }, true);
 
         $scope.geo = { query: '', results: [] }
         $scope.geoSearch = function() {
-            console.log($scope.geo.query);
+            $log.debug($scope.geo.query);
 
-            // clear current results
-            $scope.geo.results = [];
             $scope.geo.query = $scope.geo.query.trim();
             if ($scope.geo.query == "") return;
             //codeAddress($scope.geo.geoQuery);
 
             if ($scope.geo.query.length < 3) return;
 
-            $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
+            $scope.searching = true;
+
+            //abort = $q.defer();
+            abort = $.getJSON("https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech")
+            // .success(function(data, status, headers, config) {
+
+            // });
+            // $http({ method: 'GET', timeout: abort.promise, 
+            //     url: "https://ba-secure.geonames.net/searchJSON?q=" + $scope.geo.query + "&countryBias=US&featureClass=A&featureClass=L&featureClass=P&featureClass=T&featureClass=V&featureClass=S&style=FULL&maxRows=20&username=avatech" })
             .success(function(data, status, headers, config) {
 
+            $scope.searching = false;
             // geoSort(data.geonames, 40.633052, -111.5658795);
 
             var states = {
@@ -196,7 +207,7 @@ angular.module('avatech').directive('mapSearch', function() {
             var exlcude = ['church','cemetery','mine(s)','tower','golf course','island','mall','museum','library'];
             data.geonames = data.geonames.filter(function(a) {
                 var code = a.fcodeName;
-                console.log(a.countryCode);
+                $log.debug(a.countryCode);
                 if (exlcude.indexOf(code) == -1 && a.countryCode != undefined) return a;
             });
 
@@ -254,7 +265,7 @@ angular.module('avatech').directive('mapSearch', function() {
                     var _merged = merged[i];
                     if (_merged.length == 1) { finalResults.push(_merged[0]); continue; }
 
-                    console.log("----------------------- " + i);
+                    $log.debug("----------------------- " + i);
                     // for (var m = 0; m < _merged.length; m++) {
                     //     var result = _merged[m];
                     //     var name = result.name.toLowerCase().trim();
@@ -275,7 +286,7 @@ angular.module('avatech').directive('mapSearch', function() {
 
                     for (var m = 0; m < _merged.length; m++) {
                         var result = _merged[m];
-                        console.log(result.name + ": " + result.quality + " / " + result.score);
+                        $log.debug(result.name + ": " + result.quality + " / " + result.score);
                     }
 
                     // pick first
@@ -300,8 +311,6 @@ angular.module('avatech').directive('mapSearch', function() {
         $scope.goTo = function(result) {
           $scope.locationSelect({ location: { lat: parseFloat(result.lat), lng: parseFloat(result.lng) } });
         }
-    }]
-
+    }
   }
-
 });

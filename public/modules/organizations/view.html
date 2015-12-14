@@ -168,12 +168,42 @@ ul.results li:hover .arrow{
 .logoEdit .dropdown-toggle:hover .editLogo {
 	opacity: 1;
 }
+.tabButton {
+	margin-top:20px;
+	display:inline-block;
+	position: relative;
+	top: 1px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	padding: 8px 16px;
+	font-size: 16px;
+	margin-right:3px;
+	border: 1px solid #e9e9e9;
+	background:#e9e9e9;
+	border-bottom: 1px solid #e9e9e9;
+	font-weight: bold;
+	color:#555;
+	cursor: pointer;
+	padding-bottom: 7px;
+}
+.tabButton:hover {
+	background: #ccc;
+	border: 1px solid #ccc;
+}
+.tabButton.selected {
+	background:#f5f5f5;
+	border:1px solid #e9e9e9;
+	color:#000;
+	pointer-events: none;
+	border-bottom: 1px solid #f5f5f5;
+	padding-bottom: 8px;
+}
 
 </style>
 
 <section ng-controller="OrganizationsController" ng-init="loadOrg()">
 
-	<div style="background:#fff;padding-top:20px;padding-bottom:20px;border-bottom:1px solid #e9e9e9;" ng-show="org">
+	<div style="background:#fff;padding-top:20px;border-bottom:1px solid #e9e9e9;" ng-show="org">
 
 		<div style="max-width:670px;margin:auto;" ng-show="org">
 
@@ -181,9 +211,9 @@ ul.results li:hover .arrow{
 				Click to upload logo
 			</div>
 
-			<div class="logoEdit btn-group" dropdown ng-if="org.logoUrl && userIsAdmin()">
+			<div class="logoEdit btn-group" uib-dropdown ng-if="org.logoUrl && userIsAdmin()">
 
-			      <div class="dropdown-toggle">
+			      <div uib-dropdown-toggle class="dropdown-toggle">
 			      	
 		      		<img src="{{ org.logoUrl }}"/>
 
@@ -222,19 +252,91 @@ ul.results li:hover .arrow{
 
 		</div>
 
+		<div style="max-width:670px;margin:auto;" ng-show="org">
+			<div class="tabButton" ng-class="{ selected: selectedTab == null }" ng-click="selectedTab = null">Members</div>
+			<!--<div class="tabButton" ng-class="{ selected: selectedTab == 'billing' }" ng-click="selectedTab = 'billing'">Billing</div>-->
+		</div>
 	</div>
 
-	<div class="container" ng-show="org">
+	<div class="container billing" ng-show="org && selectedTab=='billing'">
+		<div style="max-width:670px;margin:auto;padding-top:10px;">
+			<form name="ccForm">
+	        <div class="form-group">
+	          <label for="card-number">Card Number</label>
+	          <input type="text" class="form-control" id="cardNumber" cc-number name="ccNumber" ng-model="card.number">
+	        </div>
+	        <table class="table">
+	          <tr>
+	            <th>Valid</th>
+	            <th>Type</th>
+	          </tr>
+	          <tr>
+	            <td>
+	              {{ccForm.ccNumber.$valid }}
+	            </td>
+	            <td>
+	              {{ ccForm.ccNumber.$ccType || 'Unknown' }}
+	            </td>
+	          </tr>
+	        </table>
+	        <div class="form-group">
+	          <label for="cvc">CVC</label>
+	          <input type="text" class="form-control" id="cvc" cc-cvc cc-type="ccForm.ccNumber.$ccType" name="ccCvc" ng-model="card.cvc">
+	        </div>
+	        <table class="table">
+	          <tr>
+	            <th>Valid</th>
+	          </tr>
+	          <tr>
+	            <td>
+	              {{ccForm.ccCvc.$valid }}
+	            </td>
+	          </tr>
+	        </table>
+	        <div class="form-group">
+	          <label for="card-number">Expiration</label>
+	          <div class="row" cc-exp>
+	            <div class="col-xs-3">
+	              <input placeholder="MM" type="text" class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month">
+	            </div>
+	            <div class="col-xs-3">
+	              <input placeholder="YY" type="text" class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year">
+	            </div>
+	          </div>
+	        </div>
+	        <table class="table">
+	          <tr>
+	            <th>Valid Month</th>
+	            <th>Valid Year</th>
+	            <th>Valid Pair</th>
+	          </tr>
+	          <tr>
+	            <td>
+	              {{ccForm.ccExpMonth.$valid }}
+	            </td>
+	            <td>
+	              {{ccForm.ccExpYear.$valid }}
+	            </td>
+	            <td>
+	              {{!ccForm.$error.ccExp }}
+	            </td>
+	          </tr>
+	        </table>
+	      </form>
+      </div>
+	</div>
+
+	<div class="container" ng-show="org && selectedTab==null">
 
 		<div style="max-width:670px;margin:auto;padding-top:10px;">
 
 			<div style="text-align:right;">
 
-				<div ng-if="userIsAdmin()"  class="btn-group userSelect" dropdown>
-			      <button  type="button" class="dropdown-toggle btn btn-default" ng-click="newSearch()">
-			        <i class="fa fa-plus"></i> Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
+				<div ng-if="userIsAdmin()" class="btn-group userSelect" uib-dropdown>
+			      <button type="button" uib-dropdown-toggle class="btn btn-primary" ng-click="newSearch()">
+			        <i class="fa fa-plus"></i>&nbsp;&nbsp;Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
 			      </button>
-			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;" ng-click="$event.stopPropagation()">
 			    	
 			    	<div style="padding:3px 12px;">
 				        <div class="form-group" style="margin-bottom:0;position:relative;">
@@ -279,7 +381,7 @@ ul.results li:hover .arrow{
 
 
 					<div class="right">
-						<div class="btn-group memberMenu" dropdown>
+						<div class="btn-group memberMenu" uib-dropdown>
 
 						<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
 							<span ng-hide="member.user.pending">
@@ -287,14 +389,14 @@ ul.results li:hover .arrow{
 					        </span>
 						</div>
 
-					      <button ng-if="userIsAdmin()" type="button" class="dropdown-toggle btn btn-default" style="width:100px;text-align:left;">
+					      <button ng-if="userIsAdmin()" type="button" class="btn btn-default" style="width:100px;text-align:left;" uib-dropdown-toggle>
 					      	<span ng-hide="member.user.pending">
 						        {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
 					        </span>
 					        <span ng-show="member.user.pending">
 					        	Pending
 					        </span>
-						        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
+					        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
 					      </button>
 					      <ul class="dropdown-menu pull-right" role="menu">
 
@@ -351,31 +453,19 @@ ul.results li:hover .arrow{
 						</div>
 
 						<div class="right">
-							<div class="btn-group memberMenu" dropdown>
+							<div class="btn-group memberMenu" uib-dropdown>
 
 							<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
 								Student
 							</div>
 
-						      <button ng-if="userIsAdmin()" type="button" class="dropdown-toggle btn btn-default" style="width:100px;text-align:left;">
+						      <button ng-if="userIsAdmin()" type="button" uib-dropdown-toggle class="btn btn-default" style="width:100px;text-align:left;">
 						      	<span ng-hide="member.user.pending">
 							        Student
 						        </span>
 							        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
 						      </button>
 						      <ul class="dropdown-menu pull-right" role="menu">
-
-
-						      	<!--<li><a ng-class="{ disable: !member.admin || isOnlyAdmin(member), selected: !member.admin }" href="#" ng-click="setMemberAdmin(member, false)" close-dropdown-on-click>
-							      	<b>{{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}</b> <i class="fa fa-check check"></i><br/>
-						      		<div class='desc'>Can view {{ (org.type=='Avalanche education' ? 'instructors and students' : 'members') }} and share data shared across the organization.</div>
-						      	</a></li>
-
-						      	<li><a ng-class="{ disable: member.admin, selected: member.admin }" href="#" ng-click="setMemberAdmin(member, true)" close-dropdown-on-click>
-						      		<b>Admin</b> <i class="fa fa-check check"></i><br/>
-						      		<div class='desc'>Can also add/remove {{ org.type=='Avalanche education' ? 'instructors and students' : 'members' }} and change organization settings.</div>
-						      	</a></li>
-						      	<li class="divider"></li>-->
 
 						      	<li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeStudent(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
 

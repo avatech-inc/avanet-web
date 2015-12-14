@@ -1,4 +1,4 @@
-angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', function($http, $timeout, $sce) {
+angular.module('avatech').directive('commentsNew', function($http, $log, $timeout, $sce, Restangular) {
   return {
     restrict: 'E',
     scope: { 
@@ -13,14 +13,14 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
         $('textarea.comment').mentionsInput({
           minChars: 100, // to disable, make 100 (otherwise, 2)
           onDataRequest:function (mode, query, callback) {
-            $http.get('/v1/users/search?query=' + query).then(function(response) {
+
+            Restangular.all("users").getList({ query: $scope.search.query }).then(function(response) {
               var results = [];
-              for (var i = 0; i < response.data.length; i++) {
-                console.log(result);
-                var result = response.data[i];
+              for (var i = 0; i < response.length; i++) {
+                $log.debug(result);
+                var result = response[i];
                 results.push({ id: result._id, name: result.fullName, avatar: '', type: 'user' });
               }
-              //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
               callback.call(this, results);
             });
           }
@@ -31,31 +31,50 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
         $scope.$watch('ownerId', function(){
           if (!$scope.ownerId) return;
 
-          $http.get("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId)
-          .success(function(comments){
+          Restangular.all('comments').customGETLIST($scope.ownerType + "/" + $scope.ownerId)
+          .then(function(comments) {
             $scope.comments = comments;
+          },
+          // error
+          function() { 
+
           });
+
         });
 
       $scope.saveComment = function() {
           
           $('textarea.comment').mentionsInput('val', function(comment) {
 
-          console.log(comment);
+          $log.debug(comment);
 
           if (comment == "" || comment == null) return;
 
             $scope.saving = true;
-            console.log("post:");
-            $http.post("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId, { content: comment })
-            .success(function(newComment){
+
+            // $http.post("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId, { content: comment })
+            // .success(function(newComment){
+            //   newComment.new = true;
+            //   $scope.comments.unshift(newComment);
+            //   $scope.newComment = "";
+            //    $('textarea.comment').mentionsInput('reset');
+            //   $scope.saving = false;
+            // });
+
+
+            Restangular.all('comments').customPOST({ content: comment },
+              $scope.ownerType + "/" + $scope.ownerId)
+            .then(function(newComment) {
               newComment.new = true;
               $scope.comments.unshift(newComment);
               $scope.newComment = "";
-               $('textarea.comment').mentionsInput('reset');
+              $('textarea.comment').mentionsInput('reset');
               $scope.saving = false;
-            });
+            },
+            // error
+            function() { 
 
+            });
             // scroll to top (todo: not angular-y)
             //$(".modal-content .comments.list .nano").nanoScroller({ scroll: 'top' });
         });
@@ -63,7 +82,7 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
 
       $scope.deleteComment = function(commentId, index) {
         // remove from server
-        $http.delete("/v1/comments/" + commentId);
+        Restangular.one("comments", commentId).remove();
         // remove from local collection
         $scope.comments.splice(index, 1);
       }
@@ -83,14 +102,12 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
         var regex = /@\[([A-Za-z0-9 \-]+)\]\(user:([A-Za-z0-9\-]+)\)/igm;
         //var match = regex.exec(comment);
 
-        //console.log(match);
-
         var match;
         while ((match = regex.exec(comment)) !== null)
         {
           var name = match[1];
           var id = match[2];
-          console.log(match[0]);
+          $log.debug(match[0]);
           comment = comment.replace(match[0],"<span style='border-bottom:1px solid #ccc;'>" + name + "</span>");
         }
         // if (match.length == 3) {
@@ -108,70 +125,71 @@ angular.module('avatech').directive('commentsNew', ['$http','$timeout', '$sce', 
 
     }]
   }
-}
-]);
+});
 
-angular.module('avatech').directive('comments', ['$http','$timeout', function($http, $timeout) {
-  return {
-    restrict: 'E',
-    scope: { 
-      // onadd: '&',
-      // onload: '&',
-      // onprogress: '&',
-      // onupload: '&'
-      ownerType: '=',
-      ownerId: '='
-    },
-    templateUrl: '/modules/comments/comments.html',
-    controller: ['$scope','Global', function($scope, Global) {
+// angular.module('avatech').directive('comments', function($http, $timeout) {
+//   return {
+//     restrict: 'E',
+//     scope: { 
+//       // onadd: '&',
+//       // onload: '&',
+//       // onprogress: '&',
+//       // onupload: '&'
+//       ownerType: '=',
+//       ownerId: '='
+//     },
+//     templateUrl: '/modules/comments/comments.html',
+//     controller: ['$scope','Global', function($scope, Global) {
 
-      $scope.global = Global;
+//       $scope.global = Global;
 
-      // load comments 
-      $scope.$watch('ownerId', function(){
-        if (!$scope.ownerId) return;
+//       // load comments 
+//       $scope.$watch('ownerId', function(){
+//         if (!$scope.ownerId) return;
 
-        $http.get("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId)
-        .success(function(comments){
-          $scope.comments = comments;
-        });
-      });
+//         $http.get("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId)
+//         .success(function(comments){
+//           $scope.comments = comments;
+//         });
 
-      $scope.saveComment = function() {
-        if ($scope.newComment == "" || $scope.newComment == null) return;
+//         Restangular.all('comments').customGETLIST($scope.ownerType + "/" + $scope.ownerId)
 
-        $scope.saving = true;
-        console.log("post:");
-        $http.post("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId, { content: $scope.newComment })
-        .success(function(newComment){
-          newComment.new = true;
-          $scope.comments.unshift(newComment);
-          $scope.newComment = "";
-          $scope.saving = false;
-        });
+//       });
 
-        // scroll to top (todo: not angular-y)
-        $(".modal-content .comments.list .nano").nanoScroller({ scroll: 'top' });
-      }
+//       $scope.saveComment = function() {
+//         if ($scope.newComment == "" || $scope.newComment == null) return;
 
-      $scope.deleteComment = function(commentId, index) {
-        // remove from server
-        $http.delete("/v1/comments/" + commentId);
-        // remove from local collection
-        $scope.comments.splice(index, 1);
-      }
+//         $scope.saving = true;
+//         console.log("post:");
+//         $http.post("/v1/comments/" + $scope.ownerType + "/" + $scope.ownerId, { content: $scope.newComment })
+//         .success(function(newComment){
+//           newComment.new = true;
+//           $scope.comments.unshift(newComment);
+//           $scope.newComment = "";
+//           $scope.saving = false;
+//         });
 
-      // todo: (todo: not very angular-y)
-      $scope.adjustHeight = function() {
-        $timeout(function(){
-          var _height = $(".modal-content .commentBox").outerHeight();
-          $(".modal-content  ul.comments.list").css("top",_height);
-          // reset nanoScroller
-          $(".modal-content .comments.list .nano").nanoScroller();
-        },80);
-      }
+//         // scroll to top (todo: not angular-y)
+//         $(".modal-content .comments.list .nano").nanoScroller({ scroll: 'top' });
+//       }
 
-    }]
-  }
-}
-]);
+//       $scope.deleteComment = function(commentId, index) {
+//         // remove from server
+//         $http.delete("/v1/comments/" + commentId);
+//         // remove from local collection
+//         $scope.comments.splice(index, 1);
+//       }
+
+//       // todo: (todo: not very angular-y)
+//       $scope.adjustHeight = function() {
+//         $timeout(function(){
+//           var _height = $(".modal-content .commentBox").outerHeight();
+//           $(".modal-content  ul.comments.list").css("top",_height);
+//           // reset nanoScroller
+//           $(".modal-content .comments.list .nano").nanoScroller();
+//         },80);
+//       }
+
+//     }]
+//   }
+// });

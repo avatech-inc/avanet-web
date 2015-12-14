@@ -1,4 +1,4 @@
-angular.module('avatech').controller('AdminController', ['$scope', '$location', '$http', 'Global', function ($scope, $location, $http, Global) {
+angular.module('avatech').controller('AdminController', function ($scope, $location, $http, Global) {
     
     $scope.pages = [{
     	title: 'Users',
@@ -7,17 +7,14 @@ angular.module('avatech').controller('AdminController', ['$scope', '$location', 
     {
         title: 'Organizations',
         template: '/modules/admin/orgs.html'
-    },
-    {
-        title: 'Preorders',
-        template: '/modules/admin/orders.html'
-    }];
+    }
+    ];
 
     // select first page
-    $scope.selectedPage = $scope.pages[2];
+    $scope.selectedPage = $scope.pages[0];
 
     $scope.selectPage = function(page) {
 		$scope.selectedPage = page;
     }
 
-}]);
+});

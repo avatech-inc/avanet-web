@@ -1,86 +1,87 @@
 // define app
-angular.module('avatech', ['ngResource', 'ngRoute', 'restangular', 'ui.bootstrap', 'ui.router', 'ui.route', 'uiSlider', 'LocalStorageModule', 'angularMoment', 'sun.scrollable', 'vr.directives.slider', 'FontLoader', 'checklist-model', 'mentio',
+angular.module('avatech', [
+    'ngRaven',
+    'ngRoute', 'ngTouch',
+    'ui.bootstrap', 'ui.router', 'ui.route', 
+    'restangular', 
+    'LocalStorageModule', 
+    'angularMoment', 
+    'sun.scrollable', 
+    'vr.directives.slider',
     'pascalprecht.translate',
     'schemaForm',
     'pasvaz.bindonce',
     'ct.ui.router.extras',
     'bootstrapLightbox',
-    'angulartics', 'angulartics.mixpanel',
-    'avatech.system',
-    'avatech.profiles',
-    'colorpicker.module',
+    'credit-cards',
+    'angular-country-picker',
+    'pikaday',
+    'ngjsColorPicker',
+    'ngAudio',
+    'terrain'
 ]);
 
-angular.module('avatech.system', []);
-
-angular.module('avatech.profiles', []);
-
-angular.module('avatech').factory('httpRequestInterceptor', function ($q, $location) {
-    return {
-        responseError: function(rejection) {
-            // do something on error
-            console.log("ERROR!");
-            console.log(rejection);
-            $q.reject(rejection);
-            // if(rejection.status === 404){
-            //     $location.path('/404/');
-            //     return $q.reject(rejection);
-            // }
-         }
-     };
+// configure console debug
+angular.module('avatech').config(function($logProvider){
+  $logProvider.debugEnabled(false);
 });
 
-
-
-// angular.module('avatech').factory('Lightbox', function() {    
-//     return {
-//         // restrict: 'A',
-//         // link: function(scope, el, attrs) {    
-//         //     // el.bind('click', function($event) {
-//         //     //   var el = $($event.target).closest(".open");
-//         //     //   if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
-//         //     //   scope.$apply();
-//         //     // });
-//         // }
-//     };        
-// });
+// configure lightbox
+angular.module('avatech').config(function (LightboxProvider) {
+  LightboxProvider.getImageUrl = function (media) {
+    // if video, replace .mov with .mp4 so we can play with native HTML5 (for Cloudinary)
+    if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
+        media.URL = media.URL.substring(0, media.URL.length - 4) + ".mp4";
+    }
+    return media.URL;
+  };
+  LightboxProvider.getImageCaption = function (media) {
+    return null;
+  };
+});
 
 // configure angular schema forms
-angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecoratorsProvider', 'sfPathProvider',
-  function(schemaFormProvider,  schemaFormDecoratorsProvider, sfPathProvider) {
+angular.module('schemaForm').config(
+  function(schemaFormProvider, schemaFormDecoratorsProvider, sfPathProvider) {
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'direction-select',
-      '/js/forms/direction-select.html'
+      '/modules/forms/direction-select.html'
     );
-
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'radiobuttons-nullable',
-      '/js/forms/radiobuttons-nullable.html'
+      '/modules/forms/radiobuttons-nullable.html'
     );
-
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'datepicker',
-      '/js/forms/datepicker.html'
+      '/modules/forms/datepicker.html'
     );
-
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'grainTypeSelect',
-      '/js/forms/grain-type-select.html'
+      '/modules/forms/grain-type-select.html'
     );
-
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'trend-select',
-      '/js/forms/trend-select.html'
+      '/modules/forms/trend-select.html'
     );
-
-  }
-]);
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'location-select',
+      '/modules/forms/location-select.html'
+    );
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'avalanche-trigger-select',
+      '/modules/forms/avalanche-trigger-select.html'
+    );
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'number',
+      '/modules/forms/number.html'
+    );
+});
 
 // configure Restangular
 angular.module('avatech').config(function(RestangularProvider) {
-    // api url prefix
-    RestangularProvider.setBaseUrl('/v1/');
+    // set API base url
+    RestangularProvider.setBaseUrl(window.apiBaseUrl);
     // support mongodb "_id" format
     RestangularProvider.setRestangularFields({ id: "_id" });
 });
@@ -104,94 +105,83 @@ angular.module('avatech').config(function($tooltipProvider){
 
 // configure translation
 angular.module('avatech').config(function($translateProvider, $translatePartialLoaderProvider) {
-
     $translatePartialLoaderProvider.addPart('test');
     $translateProvider.useLoader('$translatePartialLoader', {
       urlTemplate: '/translate/{lang}/{part}.json'
     });
+    // set language
     $translateProvider.preferredLanguage('en');
-
+    // enable proper escaping of translation content
+    $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
 });
 
-angular.module('avatech').config(function(cfpLoadingBarProvider) {
-    cfpLoadingBarProvider.includeSpinner = false;
-    cfpLoadingBarProvider.includeBar = false;
-});
-
-// catch angular errors
-// angular.module('avatech').config(['$provide',
-//     function($provide) {
-//         $provide.decorator("$exceptionHandler", function($delegate) {
-//             return function(exception, cause) {
-//                 $delegate(exception, cause);
-//                 Raven.captureException(exception);
-//             };
-//         });
-//     }
-// ]);
-
-// angular.module('avatech').run(['$rootScope','$urlRouter', function($rootScope, $urlRouter) {
-//     $rootScope.$on('$locationChangeSuccess', function(evt) {
-//       // Halt state change from even starting
-//       evt.preventDefault();
-//       console.log("HALT!!!!");
-//       // Perform custom logic
-//       // var meetsRequirement = ...
-//       // // Continue with the update and state transition if logic allows
-//       // if (meetsRequirement) $urlRouter.sync();
-//     });
-// }]);
-
+// the first thing that gets run
 angular.module('avatech').run(
- function($rootScope, $route, $location, $state, $stateParams, $document, $http, $modalStack, Observations, Global) {
+ function($rootScope, $location, $state, $stateParams, $log, $document, $http, $uibModalStack, Observations, Routes, Global) {
 
-    // the first thing that gets run:
-
+    $rootScope.todaysDate = new Date();
     // init global service
-    $rootScope.initPromise = Global.init();
-    // todo: make this cleaner? maybe if orgs is null?
-    if ($rootScope.initPromise) $rootScope.initPromise.then(function(orgs) {
-        $rootScope.orgsLoaded = true;
-    });
+    Global.init();
 
     // init observations service
     Observations.init();
+    // init routes service
+    Routes.init();
+
+    // periodically check if new app version is available
+    // var newVersion = false;
+    // setInterval(function() {
+    //     $http.get('/assets/release.json')
+    //     .then(function(res){
+    //         // console.log("current release: " + window._releaseVersion);
+    //         // console.log("    new release: " + res.data.version);
+
+    //         if (window._releaseVersion != res.data.version) {
+    //             newVersion = true;
+    //             console.log("New version available! " + res.data.version);
+    //         }
+    //     });
+    // }, 5 * 60 * 1000);
+
+
+    $rootScope.$on("$locationChangeStart", function(event, newUrl, oldUrl) {
+
+        // console.log("LOCATION!");
+        // console.log(event);
+        // console.log(newUrl);
+        // console.log(oldUrl);
+        // console.log("newVersion? " + newVersion)
+
+    });
 
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+        // close any open modals before navigating to new state
+        $uibModalStack.dismissAll();
 
-        // close modals (todo: what is this from?)
-        $modalStack.dismissAll();
-
-        //console.log("loading state:")
         if (!toState) return;
         if (toState.name == fromState.name) return;
 
-        // if modal, ignore
-        // if (toState.data.modal) {
-        //     console.log("IS MODAL!");
-        //     return;
-        // }
-
-        // todo: kludgy way to get rid of tooltips. not ideal, but only solution for now
+        // todo: kludgy non-angular way to clear tooltips on state change. 
+        // not ideal, but best solution for now
         $(".tooltip").remove();
 
         // redirect from login page if already logged in
         if (toState.name == "login" && Global.user) {
-            console.log("already logged in...");
+            $log.debug("already logged in...");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});
             return;
         }
         // access control
         if (toState.data && toState.data.requireLogin && !Global.user) {
-            console.log("must be logged in");
+            $log.debug("must be logged in");
             event.preventDefault();
             Global.redirectUrl = $location.url();
             $state.transitionTo("login", null, {location:'replace'});
             return;
         }
         if (toState.data && toState.data.requireAdmin && !Global.user.admin) {
-            console.log("admin only");
+            $log.debug("admin only");
             event.preventDefault();
             $state.transitionTo("index", null, {location:'replace'});
             return;
@@ -202,8 +192,10 @@ angular.module('avatech').run(
     });
 
     // 3. after route change
-    //$rootScope.$on("$routeChangeSuccess", function(event, current, previous) {
     $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+        // resize map based on new layout
+        $rootScope.$broadcast('resizeMap');
+
         // add class to body for page-specific styling
         // todo: there's gotta be a more angular-y way to do this
         //        ^^ in fact there is, <body class='{{ bodyCssClass }}' $rootScope.bodyCssClass
@@ -212,7 +204,7 @@ angular.module('avatech').run(
 
 });
 
-
+// requestAnimationFrame
 (function() {
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;

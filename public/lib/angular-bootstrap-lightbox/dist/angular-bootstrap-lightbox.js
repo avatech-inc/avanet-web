@@ -1,22 +1,48 @@
+/**
+ * @namespace bootstrapLightbox
+ */
 angular.module('bootstrapLightbox', [
-  'ngTouch',
-  'ui.bootstrap',
-  'chieffancypants.loadingBar',
+  'ui.bootstrap'
 ]);
+
+// optional dependencies
+try {
+  angular.module('angular-loading-bar');
+  angular.module('bootstrapLightbox').requires.push('angular-loading-bar');
+} catch (e) {}
+
+try {
+  angular.module('ngTouch');
+  angular.module('bootstrapLightbox').requires.push('ngTouch');
+} catch (e) {}
+
+try {
+  angular.module('videosharing-embed');
+  angular.module('bootstrapLightbox').requires.push('videosharing-embed');
+} catch (e) {}
 angular.module('bootstrapLightbox').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('lightbox.html',
-    "<div class=modal-body ng-swipe-left=Lightbox.nextImage() ng-swipe-right=Lightbox.prevImage()><div class=lightbox-nav><button class=close aria-hidden=true ng-click=$dismiss()>×</button><div class=btn-group><a class=\"btn btn-xs btn-default\" ng-click=Lightbox.prevImage()>‹ Previous</a> <a ng-href={{Lightbox.imageUrl}} target=_blank class=\"btn btn-xs btn-default\" title=\"Open in new tab\">Open image in new tab</a> <a class=\"btn btn-xs btn-default\" ng-click=Lightbox.nextImage()>Next ›</a></div></div><div class=lightbox-image-container><div class=lightbox-image-caption><span>{{Lightbox.imageCaption}}</span></div><img lightbox-src={{Lightbox.imageUrl}} alt=\"\"></div></div>"
+    "<div class=modal-body ng-swipe-left=Lightbox.nextImage() ng-swipe-right=Lightbox.prevImage()><div class=lightbox-nav><button class=close aria-hidden=true ng-click=$dismiss()>×</button><div class=btn-group ng-if=\"Lightbox.images.length > 1\"><a class=\"btn btn-xs btn-default\" ng-click=Lightbox.prevImage()>‹ Previous</a> <a ng-href={{Lightbox.imageUrl}} target=_blank class=\"btn btn-xs btn-default\" title=\"Open in new tab\">Open image in new tab</a> <a class=\"btn btn-xs btn-default\" ng-click=Lightbox.nextImage()>Next ›</a></div></div><div class=lightbox-image-container><div class=lightbox-image-caption><span>{{Lightbox.imageCaption}}</span></div><img ng-if=!Lightbox.isVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}}><div ng-if=Lightbox.isVideo(Lightbox.image) class=\"embed-responsive embed-responsive-16by9\"><video ng-if=!Lightbox.isSharedVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}} controls autoplay></video><embed-video ng-if=Lightbox.isSharedVideo(Lightbox.image) lightbox-src={{Lightbox.imageUrl}} ng-href={{Lightbox.imageUrl}} iframe-id=lightbox-video class=embed-responsive-item><a ng-href={{Lightbox.imageUrl}}>Watch video</a></embed-video></div></div></div>"
   );
 
 }]);
-angular.module('bootstrapLightbox').service('ImageLoader', function ($q) {
+/**
+ * @class     ImageLoader
+ * @classdesc Service for loading an image.
+ * @memberOf  bootstrapLightbox
+ */
+angular.module('bootstrapLightbox').service('ImageLoader', ['$q',
+    function ($q) {
   /**
    * Load the image at the given URL.
-   * @param  {String}  url
-   * @return {Promise} A $q promise that resolves when the image has loaded
+   * @param    {String} url
+   * @return   {Promise} A $q promise that resolves when the image has loaded
    *   successfully.
+   * @type     {Function}
+   * @name     load
+   * @memberOf bootstrapLightbox.ImageLoader
    */
   this.load = function (url) {
     var deferred = $q.defer();
@@ -44,25 +70,46 @@ angular.module('bootstrapLightbox').service('ImageLoader', function ($q) {
 
     return deferred.promise;
   };
-});
+}]);
+/**
+ * @class     Lightbox
+ * @classdesc Lightbox service.
+ * @memberOf  bootstrapLightbox
+ */
 angular.module('bootstrapLightbox').provider('Lightbox', function () {
   /**
-   * Template URL passed into $modal.open().
-   * @type {String}
+   * Template URL passed into `$uibModal.open()`.
+   * @type     {String}
+   * @name     templateUrl
+   * @memberOf bootstrapLightbox.Lightbox
    */
   this.templateUrl = 'lightbox.html';
 
   /**
-   * @param  {*}      image An element in the array of images.
-   * @return {String}       The URL of the given image.
+   * Whether images should be scaled to the maximum possible dimensions.
+   * @type     {Boolean}
+   * @name     fullScreenMode
+   * @memberOf bootstrapLightbox.Lightbox
+   */
+  this.fullScreenMode = false;
+
+  /**
+   * @param    {*} image An element in the array of images.
+   * @return   {String} The URL of the given image.
+   * @type     {Function}
+   * @name     getImageUrl
+   * @memberOf bootstrapLightbox.Lightbox
    */
   this.getImageUrl = function (image) {
-    return image.url;
+    return typeof image === 'string' ? image : image.url;
   };
 
   /**
-   * @param  {*}      image An element in the array of images.
-   * @return {String}       The caption of the given image.
+   * @param    {*} image An element in the array of images.
+   * @return   {String} The caption of the given image.
+   * @type     {Function}
+   * @name     getImageCaption
+   * @memberOf bootstrapLightbox.Lightbox
    */
   this.getImageCaption = function (image) {
     return image.caption;
@@ -72,10 +119,13 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
    * Calculate the max and min limits to the width and height of the displayed
    *   image (all are optional). The max dimensions override the min
    *   dimensions if they conflict.
-   * @param  {Object} dimensions Contains the properties windowWidth,
-   *   windowHeight, imageWidth, imageHeight.
-   * @return {Object} May optionally contain the properties minWidth,
-   *   minHeight, maxWidth, maxHeight.
+   * @param    {Object} dimensions Contains the properties `windowWidth`,
+   *   `windowHeight`, `imageWidth`, and `imageHeight`.
+   * @return   {Object} May optionally contain the properties `minWidth`,
+   *   `minHeight`, `maxWidth`, and `maxHeight`.
+   * @type     {Function}
+   * @name     calculateImageDimensionLimits
+   * @memberOf bootstrapLightbox.Lightbox
    */
   this.calculateImageDimensionLimits = function (dimensions) {
     if (dimensions.windowWidth >= 768) {
@@ -107,9 +157,12 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
    * Calculate the width and height of the modal. This method gets called
    *   after the width and height of the image, as displayed inside the modal,
    *   are calculated.
-   * @param  {Object} dimensions Contains the properties windowWidth,
-   *   windowHeight, imageDisplayWidth, imageDisplayHeight.
-   * @return {Object} Must contain the properties width and height.
+   * @param    {Object} dimensions Contains the properties `windowWidth`,
+   *   `windowHeight`, `imageDisplayWidth`, and `imageDisplayHeight`.
+   * @return   {Object} Must contain the properties `width` and `height`.
+   * @type     {Function}
+   * @name     calculateModalDimensions
+   * @memberOf bootstrapLightbox.Lightbox
    */
   this.calculateModalDimensions = function (dimensions) {
     // 400px = arbitrary min width
@@ -141,68 +194,141 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
     };
   };
 
-  this.$get = function ($document, $modal, $timeout, cfpLoadingBar,
-      ImageLoader) {
-    // array of all images to be shown in the lightbox (not Image objects)
-    var images = [];
+  /**
+   * @param    {*} image An element in the array of images.
+   * @return   {Boolean} Whether the provided element is a video.
+   * @type     {Function}
+   * @name     isVideo
+   * @memberOf bootstrapLightbox.Lightbox
+   */
+  this.isVideo = function (image) {
+    if (typeof image === 'object' && image && image.type) {
+      return image.type === 'video';
+    }
 
-    // the index of the image currently shown (Lightbox.image)
-    var index = -1;
+    return false;
+  };
+
+  /**
+   * @param    {*} image An element in the array of images.
+   * @return   {Boolean} Whether the provided element is a video that is to be
+   *   embedded with an external service like YouTube. By default, this is
+   *   determined by the url not ending in `.mp4`, `.ogg`, or `.webm`.
+   * @type     {Function}
+   * @name     isSharedVideo
+   * @memberOf bootstrapLightbox.Lightbox
+   */
+  this.isSharedVideo = function (image) {
+    return this.isVideo(image) &&
+      !this.getImageUrl(image).match(/\.(mp4|ogg|webm)$/);
+  };
+
+  this.$get = ['$document', '$injector', '$uibModal', '$timeout', 'ImageLoader',
+      function ($document, $injector, $uibModal, $timeout, ImageLoader) {
+    // optional dependency
+    var cfpLoadingBar = $injector.has('cfpLoadingBar') ?
+      $injector.get('cfpLoadingBar'): null;
+
+    var Lightbox = {};
 
     /**
-     * The service object for the lightbox.
-     * @type {Object}
+     * Array of all images to be shown in the lightbox (not `Image` objects).
+     * @type     {Array}
+     * @name     images
+     * @memberOf bootstrapLightbox.Lightbox
      */
-    var Lightbox = {};
+    Lightbox.images = [];
+
+    /**
+     * The index in the `Lightbox.images` aray of the image that is currently
+     *   shown in the lightbox.
+     * @type     {Number}
+     * @name     index
+     * @memberOf bootstrapLightbox.Lightbox
+     */
+    Lightbox.index = -1;
 
     // set the configurable properties and methods, the defaults of which are
     // defined above
     Lightbox.templateUrl = this.templateUrl;
+    Lightbox.fullScreenMode = this.fullScreenMode;
     Lightbox.getImageUrl = this.getImageUrl;
     Lightbox.getImageCaption = this.getImageCaption;
     Lightbox.calculateImageDimensionLimits = this.calculateImageDimensionLimits;
     Lightbox.calculateModalDimensions = this.calculateModalDimensions;
+    Lightbox.isVideo = this.isVideo;
+    Lightbox.isSharedVideo = this.isSharedVideo;
 
     /**
      * Whether keyboard navigation is currently enabled for navigating through
      *   images in the lightbox.
-     * @type {Boolean}
+     * @type     {Boolean}
+     * @name     keyboardNavEnabled
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.keyboardNavEnabled = false;
 
     /**
-     * The current image.
-     * @type {*}
+     * The image currently shown in the lightbox.
+     * @type     {*}
+     * @name     image
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.image = {};
 
     /**
-     * The URL of the current image. This is a property of the service rather
-     *   than of Lightbox.image because Lightbox.image need not be an object,
-     *   and besides it would be poor practice to alter the given objects.
-     * @type {String}
+     * The UI Bootstrap modal instance. See {@link
+     *   http://angular-ui.github.io/bootstrap/#/modal}.
+     * @type     {Object}
+     * @name     modalInstance
+     * @memberOf bootstrapLightbox.Lightbox
      */
-    // Lightbox.imageUrl = '';
+    Lightbox.modalInstance = null;
 
     /**
-     * The caption of the current image. See the description of
-     *   Lightbox.imageUrl.
-     * @type {String}
+     * The URL of the current image. This is a property of the service rather
+     *   than of `Lightbox.image` because `Lightbox.image` need not be an
+     *   object, and besides it would be poor practice to alter the given
+     *   objects.
+     * @type     {String}
+     * @name     imageUrl
+     * @memberOf bootstrapLightbox.Lightbox
      */
-    // Lightbox.imageCaption = '';
+
+    /**
+     * The optional caption of the current image.
+     * @type     {String}
+     * @name     imageCaption
+     * @memberOf bootstrapLightbox.Lightbox
+     */
+
+    /**
+     * Whether an image is currently being loaded.
+     * @type     {Boolean}
+     * @name     loading
+     * @memberOf bootstrapLightbox.Lightbox
+     */
+    Lightbox.loading = false;
 
     /**
      * Open the lightbox modal.
-     * @param  {Array}  newImages An array of images. Each image may be of any
-     *   type.
-     * @param  {Number} newIndex  The index in newImages to set as the current
-     *   image.
+     * @param    {Array}  newImages An array of images. Each image may be of
+     *   any type.
+     * @param    {Number} newIndex  The index in `newImages` to set as the
+     *   current image.
+     * @param    {Object} modalParams  Custom params for the angular UI
+     *   bootstrap modal (in $uibModal.open()).
+     * @return   {Object} The created UI Bootstrap modal instance.
+     * @type     {Function}
+     * @name     openModal
+     * @memberOf bootstrapLightbox.Lightbox
      */
-    Lightbox.openModal = function (newImages, newIndex) {
-      images = newImages;
+    Lightbox.openModal = function (newImages, newIndex, modalParams) {
+      Lightbox.images = newImages;
       Lightbox.setImage(newIndex);
 
-      $modal.open({
+      // store the modal instance so we can close it manually if we need to
+      Lightbox.modalInstance = $uibModal.open(angular.extend({
         'templateUrl': Lightbox.templateUrl,
         'controller': ['$scope', function ($scope) {
           // $scope is the modal scope, a child of $rootScope
@@ -211,9 +337,14 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
           Lightbox.keyboardNavEnabled = true;
         }],
         'windowClass': 'lightbox-modal'
-      }).result.finally(function () { // close
+      }, modalParams || {}));
+
+      // modal close handler
+      Lightbox.modalInstance.result['finally'](function () {
         // prevent the lightbox from flickering from the old image when it gets
         // opened again
+        Lightbox.images = [];
+        Lightbox.index = 1;
         Lightbox.image = {};
         Lightbox.imageUrl = null;
         Lightbox.imageCaption = null;
@@ -221,53 +352,88 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
         Lightbox.keyboardNavEnabled = false;
 
         // complete any lingering loading bar progress
-        cfpLoadingBar.complete();
+        if (cfpLoadingBar) {
+          cfpLoadingBar.complete();
+        }
       });
+
+      return Lightbox.modalInstance;
+    };
+
+    /**
+     * Close the lightbox modal.
+     * @param    {*} result This argument can be useful if the modal promise
+     *   gets handler(s) attached to it.
+     * @type     {Function}
+     * @name     closeModal
+     * @memberOf bootstrapLightbox.Lightbox
+     */
+    Lightbox.closeModal = function (result) {
+      return Lightbox.modalInstance.close(result);
     };
 
     /**
      * This method can be used in all methods which navigate/change the
      *   current image.
-     * @param {Number} newIndex The index in the array of images to set as the
-     *   new current image.
+     * @param    {Number} newIndex The index in the array of images to set as
+     *   the new current image.
+     * @type     {Function}
+     * @name     setImage
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.setImage = function (newIndex) {
-      if (!(newIndex in images)) {
+      if (!(newIndex in Lightbox.images)) {
         throw 'Invalid image.';
       }
 
-      cfpLoadingBar.start();
+      // update the loading flag and start the loading bar
+      Lightbox.loading = true;
+      if (cfpLoadingBar) {
+        cfpLoadingBar.start();
+      }
 
-      var success = function () {
-        index = newIndex;
-        Lightbox.image = images[index];
+      var image = Lightbox.images[newIndex];
+      var imageUrl = Lightbox.getImageUrl(image);
 
-        cfpLoadingBar.complete();
+      var success = function (properties) {
+        // update service properties for the image
+        properties = properties || {};
+        Lightbox.index = properties.index || newIndex;
+        Lightbox.image = properties.image || image;
+        Lightbox.imageUrl = properties.imageUrl || imageUrl;
+        Lightbox.imageCaption = properties.imageCaption ||
+          Lightbox.getImageCaption(image);
+
+        // restore the loading flag and complete the loading bar
+        Lightbox.loading = false;
+        if (cfpLoadingBar) {
+          cfpLoadingBar.complete();
+        }
       };
 
-      var imageUrl = Lightbox.getImageUrl(images[newIndex]);
-
-      // load the image before setting it, so everything in the view is updated
-      // at the same time; otherwise, the previous image remains while the
-      // current image is loading
-      ImageLoader.load(imageUrl).then(function () {
+      if (!Lightbox.isVideo(image)) {
+        // load the image before setting it, so everything in the view is
+        // updated at the same time; otherwise, the previous image remains while
+        // the current image is loading
+        ImageLoader.load(imageUrl).then(function () {
+          success();
+        }, function () {
+          success({
+            'imageUrl': '//:0', // blank image
+            // use the caption to show the user an error
+            'imageCaption': 'Failed to load image'
+          });
+        });
+      } else {
         success();
-
-        // set the url and caption
-        Lightbox.imageUrl = imageUrl;
-        Lightbox.imageCaption = Lightbox.getImageCaption(Lightbox.image);
-      }, function () {
-        success();
-
-        // blank image
-        Lightbox.imageUrl = '//:0';
-        // use the caption to show the user an error
-        Lightbox.imageCaption = 'Failed to load image';
-      });
+      }
     };
 
     /**
      * Navigate to the first image.
+     * @type     {Function}
+     * @name     firstImage
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.firstImage = function () {
       Lightbox.setImage(0);
@@ -275,42 +441,54 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
 
     /**
      * Navigate to the previous image.
+     * @type     {Function}
+     * @name     prevImage
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.prevImage = function () {
-      Lightbox.setImage((index - 1 + images.length) % images.length);
+      Lightbox.setImage((Lightbox.index - 1 + Lightbox.images.length) %
+        Lightbox.images.length);
     };
 
     /**
      * Navigate to the next image.
+     * @type     {Function}
+     * @name     nextImage
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.nextImage = function () {
-      Lightbox.setImage((index + 1) % images.length);
+      Lightbox.setImage((Lightbox.index + 1) % Lightbox.images.length);
     };
 
     /**
      * Navigate to the last image.
+     * @type     {Function}
+     * @name     lastImage
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.lastImage = function () {
-      Lightbox.setImage(images.length - 1);
+      Lightbox.setImage(Lightbox.images.length - 1);
     };
 
     /**
      * Call this method to set both the array of images and the current image
      *   (based on the current index). A use case is when the image collection
-     *   gets changed dynamically in some way while the lightbox is still open.
+     *   gets changed dynamically in some way while the lightbox is still
+     *   open.
      * @param {Array} newImages The new array of images.
+     * @type     {Function}
+     * @name     setImages
+     * @memberOf bootstrapLightbox.Lightbox
      */
     Lightbox.setImages = function (newImages) {
-      images = newImages;
-      Lightbox.setImage(index);
+      Lightbox.images = newImages;
+      Lightbox.setImage(Lightbox.index);
     };
 
-    /**
-     * Bind the left and right arrow keys for image navigation. This event
-     *   handler never gets unbinded. Disable this using the
-     *   keyboardNavEnabled flag. It is automatically disabled when
-     *   the target is an input and or a textarea.
-     */
+    // Bind the left and right arrow keys for image navigation. This event
+    // handler never gets unbinded. Disable this using the `keyboardNavEnabled`
+    // flag. It is automatically disabled when the target is an input and or a
+    // textarea. TODO: Move this to a directive.
     $document.bind('keydown', function (event) {
       if (!Lightbox.keyboardNavEnabled) {
         return;
@@ -340,20 +518,20 @@ angular.module('bootstrapLightbox').provider('Lightbox', function () {
     });
 
     return Lightbox;
-  };
+  }];
 });
 /**
- * This attribute directive is used in an img element in the modal template in
- *   place of src. It handles resizing both the img element and its relevant
- *   parent elements within the modal.
+ * @class     lightboxSrc
+ * @classdesc This attribute directive is used in an `<img>` element in the
+ *   modal template in place of `src`. It handles resizing both the `<img>`
+ *   element and its relevant parent elements within the modal.
+ * @memberOf  bootstrapLightbox
  */
-angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window', 'ImageLoader', 'Lightbox',
-  function ($window, ImageLoader, Lightbox) {
-  /**
-   * Calculate the dimensions to display the image. The max dimensions
-   *   override the min dimensions if they conflict.
-   */
-  var calculateImageDisplayDimensions = function (dimensions) {
+angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window',
+    'ImageLoader', 'Lightbox', function ($window, ImageLoader, Lightbox) {
+  // Calculate the dimensions to display the image. The max dimensions override
+  // the min dimensions if they conflict.
+  var calculateImageDisplayDimensions = function (dimensions, fullScreenMode) {
     var w = dimensions.width;
     var h = dimensions.height;
     var minW = dimensions.minWidth;
@@ -364,52 +542,68 @@ angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window', 'ImageL
     var displayW = w;
     var displayH = h;
 
-    // resize the image if it is too small
-    if (w < minW && h < minH) {
-      // the image is both too thin and short, so compare the aspect ratios to
-      // determine whether to min the width or height
-      if (w / h > maxW / maxH) {
-        displayH = minH;
-        displayW = Math.round(w * minH / h);
-      } else {
+    if (!fullScreenMode) {
+      // resize the image if it is too small
+      if (w < minW && h < minH) {
+        // the image is both too thin and short, so compare the aspect ratios to
+        // determine whether to min the width or height
+        if (w / h > maxW / maxH) {
+          displayH = minH;
+          displayW = Math.round(w * minH / h);
+        } else {
+          displayW = minW;
+          displayH = Math.round(h * minW / w);
+        }
+      } else if (w < minW) {
+        // the image is too thin
         displayW = minW;
         displayH = Math.round(h * minW / w);
+      } else if (h < minH) {
+        // the image is too short
+        displayH = minH;
+        displayW = Math.round(w * minH / h);
       }
-    } else if (w < minW) {
-      // the image is too thin
-      displayW = minW;
-      displayH = Math.round(h * minW / w);
-    } else if (h < minH) {
-      // the image is too short
-      displayH = minH;
-      displayW = Math.round(w * minH / h);
-    }
 
-    // resize the image if it is too large
-    if (w > maxW && h > maxH) {
-      // the image is both too tall and wide, so compare the aspect ratios
-      // to determine whether to max the width or height
-      if (w / h > maxW / maxH) {
+      // resize the image if it is too large
+      if (w > maxW && h > maxH) {
+        // the image is both too tall and wide, so compare the aspect ratios
+        // to determine whether to max the width or height
+        if (w / h > maxW / maxH) {
+          displayW = maxW;
+          displayH = Math.round(h * maxW / w);
+        } else {
+          displayH = maxH;
+          displayW = Math.round(w * maxH / h);
+        }
+      } else if (w > maxW) {
+        // the image is too wide
         displayW = maxW;
         displayH = Math.round(h * maxW / w);
-      } else {
+      } else if (h > maxH) {
+        // the image is too tall
         displayH = maxH;
         displayW = Math.round(w * maxH / h);
       }
-    } else if (w > maxW) {
-      // the image is too wide
-      displayW = maxW;
-      displayH = Math.round(h * maxW / w);
-    } else if (h > maxH) {
-      // the image is too tall
-      displayH = maxH;
-      displayW = Math.round(w * maxH / h);
+    } else {
+      // full screen mode
+      var ratio = Math.min(maxW / w, maxH / h);
+
+      var zoomedW = Math.round(w * ratio);
+      var zoomedH = Math.round(h * ratio);
+
+      displayW = Math.max(minW, zoomedW);
+      displayH = Math.max(minH, zoomedH);
     }
 
     return {
       'width': displayW || 0,
       'height': displayH || 0 // NaN is possible when dimensions.width is 0
     };
+  };
+
+  // format the given dimension for passing into the `css()` method of `jqLite`
+  var formatDimension = function (dimension) {
+    return typeof dimension === 'number' ? dimension + 'px' : dimension;
   };
 
   // the dimensions of the image
@@ -441,7 +635,8 @@ angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window', 'ImageL
             'minHeight': 1,
             'maxWidth': 3000,
             'maxHeight': 3000,
-          }, imageDimensionLimits)
+          }, imageDimensionLimits),
+          Lightbox.fullScreenMode
         );
 
         // calculate the dimensions of the modal container
@@ -463,7 +658,7 @@ angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window', 'ImageL
         angular.element(
           document.querySelector('.lightbox-modal .modal-dialog')
         ).css({
-          'width': modalDimensions.width + 'px'
+          'width': formatDimension(modalDimensions.width)
         });
 
         // .modal-content has no width specified; if we set the width on
@@ -472,29 +667,48 @@ angular.module('bootstrapLightbox').directive('lightboxSrc', ['$window', 'ImageL
         angular.element(
           document.querySelector('.lightbox-modal .modal-content')
         ).css({
-          'height': modalDimensions.height + 'px'
+          'height': formatDimension(modalDimensions.height)
         });
       };
 
-      // load the new image whenever the attr changes
+      // load the new image and/or resize the video whenever the attr changes
       scope.$watch(function () {
         return attrs.lightboxSrc;
       }, function (src) {
-        // blank the image before resizing the element; see
-        // http://stackoverflow.com/questions/5775469/whats-the-valid-way-to-include-an-image-with-no-src
-        element[0].src = '//:0';
+        if (!Lightbox.isVideo(Lightbox.image)) { // image
+          // blank the image before resizing the element; see
+          // http://stackoverflow.com/questions/5775469
+          element[0].src = '//:0';
 
-        ImageLoader.load(src).then(function (image) {
-          // these variables must be set before resize(), as they are used in it
-          imageWidth = image.naturalWidth;
-          imageHeight = image.naturalHeight;
+          ImageLoader.load(src).then(function (image) {
+            // these variables must be set before resize(), as they are used in
+            // it
+            imageWidth = image.naturalWidth;
+            imageHeight = image.naturalHeight;
 
-          // resize the img element and the containing modal
+            // resize the img element and the containing modal
+            resize();
+
+            // show the image
+            element[0].src = src;
+          }, function () {
+            imageWidth = 0;
+            imageHeight = 0;
+
+            // resize the img element even if loading fails
+            resize();
+          });
+        } else { // video
+          // default dimensions
+          imageWidth = 1280;
+          imageHeight = 720;
+
+          // resize the video element and the containing modal
           resize();
 
-          // show the image
+          // the src attribute applies to `<video>` and not `<embed-video>`
           element[0].src = src;
-        });
+        }
       });
 
       // resize the image and modal whenever the window gets resized

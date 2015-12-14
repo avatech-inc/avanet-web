@@ -1,17 +1,17 @@
 <section ng-controller="SnowpitController" ng-init="init()">
 
-<div ng-show="loading || !settings.fontsLoaded || !orgsLoaded" class="loading-screen fadeIn">
+<div ng-show="loading" class="loading-screen fadeIn">
 	<i class="fa fa-circle-o-notch fa-spin"></i> <span>Loading</span>
 </div>
-<div ng-style="{ opacity: (!loading && settings.fontsLoaded && orgsLoaded ? '1' : '0') }">
+<div ng-style="{ opacity: (!loading ? '1' : '0') }">
 	<div class="leftPane">
 
 		<div class="pageHeader">
 
 			<button ng-click="publish()" class="headerButton" style="background:#4285f4;color:#fff;padding-left:12px;padding-right:9px;border-right:0;"><span style="font-weight:700;">Publish</span></button>
 			
-			<div class="btn-group" dropdown>
-		      <button type="button" class="dropdown-toggle headerButton">
+			<div class="btn-group" uib-dropdown>
+		      <button type="button" uib-dropdown-toggle class="headerButton">
 		        <i class="fa fa-download"></i><span>Download</span><!--<i class="fa fa-caret-down"></i>-->
 		      </button>
 		      <ul class="dropdown-menu" role="menu">
@@ -24,8 +24,8 @@
 		      	<!--<li ng-hide="_isNew"><a href="#" ng-click="delete()" close-dropdown-on-click><i class="fa fa-trash-o"></i>Delete</a></li>-->
 		    </div>
 
-			<div class="btn-group" dropdown>
-		      <button type="button" class="dropdown-toggle headerButton"><i class="ion-eye"></i><span>Views</span><!--<i class="fa fa-caret-down"></i>--></button>
+			<div class="btn-group" uib-dropdown>
+		      <button type="button" uib-dropdown-toggle class="headerButton"><i class="ion-eye"></i><span>Views</span><!--<i class="fa fa-caret-down"></i>--></button>
 		      <ul class="dropdown-menu" role="menu">
 		      	<li ng-repeat="view in views"><a ng-click="setView(view.id)" href="#" close-dropdown-on-click><i ng-style="{ opacity: settings.view == view.id ? 1 : 0 }" class="fa fa-check"></i>{{ view.name }}</a></li>
 		    </div>
@@ -37,15 +37,15 @@
 
 			<button class="headerButton" ng-class="{ 'open': settings.tempMode }" ng-click="toggleTempMode()"><i class="ion-thermometer"></i><span>Temperature</span></button>
 
-			<div class="pull-right">
-				<!--<button style="width:90px;" class="headerButton" ng-class="{ 'open': !settings.tempMode }" ng-click="settings.tempMode = false"><i class="fa fa-align-right"></i><span>Layers</span></button>-->
-			</div>
 			<div class="pull-right" ng-show="settings.tempMode">
-
-
 	    		<button class="headerButton" ng-show="settings.tempMode" ng-click="addTemp()"><i class="fa fa-plus"></i><span>Temp</span></button>
-
     		</div>
+			<div class="pull-right" ng-show="settings.tempMode" style="line-height:40px;padding-right:8px;">
+				<span style="text-transform:uppercase;font-size:12px;margin-right:6px;">Temp. Interval:</span>
+				<input class="form-control input-sm" style="width:43px;display:inline-block;padding-right:6px;" ng-model="settings.tempInterval" min="0" type="number"/>
+				<span style="color:#444;font-size:12px;margin-right:6px;">cm</span>
+			</div>
+
 			<div class="pull-right" ng-show="!settings.tempMode">
 
 	    		<button class="headerButton" ng-show="!settings.tempMode" ng-click="addLayer()"
@@ -53,8 +53,8 @@
 	    		><i class="fa fa-plus"></i><span>Layer</span></button>
 
 
-			    <div class="btn-group pull-right" dropdown>
-			      <button type="button" class="dropdown-toggle headerButton"><i class="fa fa-plus"></i><span>Density</span></button>
+			    <div class="btn-group pull-right" uib-dropdown>
+			      <button type="button" uib-dropdown-toggle class="headerButton"><i class="fa fa-plus"></i><span>Density</span></button>
 			      <ul class="dropdown-menu no-list" style="padding:5px;" role="menu"><li><a>
 			       	
 				       	<form class="form-inline">
@@ -71,18 +71,18 @@
 			        </a></li></ul>
 			    </div>
 
-			    <div class="btn-group pull-right" dropdown>
-			      <button type="button" class="dropdown-toggle headerButton"><i class="fa fa-plus"></i><span>Comment</span></button>
-			      <ul class="dropdown-menu no-list stability"><li><a>
+			    <div class="btn-group pull-right" uib-dropdown>
+			      <button type="button" uib-dropdown-toggle class="headerButton"><i class="fa fa-plus"></i><span>Comment</span></button>
+			      <ul class="dropdown-menu no-list stability" ng-click="$event.stopPropagation()"><li><a>
 
 				    	<div stability-test prof="profile" depth-descending="settings.depthDescending" test-type="'comment'"></div>
 
 			        </a></li></ul>
 			    </div>
 
-				<div class="btn-group pull-right" dropdown>
-			      <button type="button" class="dropdown-toggle headerButton"><i class="fa fa-plus"></i><span>Test Result</span></button>
-			      <ul class="dropdown-menu no-list stability"><li><a>
+				<div class="btn-group pull-right" uib-dropdown>
+			      <button type="button" uib-dropdown-toggle class="headerButton"><i class="fa fa-plus"></i><span>Test Result</span></button>
+			      <ul class="dropdown-menu no-list stability" ng-click="$event.stopPropagation()"><li><a>
 			       	
 				    	<div stability-test prof="profile" depth-descending="settings.depthDescending"></div>
 
@@ -108,12 +108,12 @@
 
 				<!-- stability tests + comments -->
 				<div style="margin-top:0px;float:left;position:relative;z-index:1003;float:left"  ng-style="{ height: snowpitHeight - 55, width: columns[0].width }" ng-class="{ 'no-click':settings.tempMode }">
-					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.notes" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;" 
+					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.tests" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;" 
 					ng-mouseover="hoverComment(note)"
 					ng-mouseout="hoverComment(null)"
-					dropdown>
+					uib-dropdown>
 
-						<span style="height:100%;display:inline-block;width:100%;opacity:0;cursor:pointer;" class="dropdown-toggle"></span>
+						<span style="height:100%;display:inline-block;width:100%;opacity:0;cursor:pointer;" uib-dropdown-toggle></span>
 				      	<ul class="dropdown-menu no-list stability" role="menu" style="margin-left:4px;"><li><a>
 
 		    				<div stability-test test="note" prof="profile" depth-descending="settings.depthDescending"></div>
@@ -125,9 +125,9 @@
 				<!-- density -->
 				<div style="margin-top:75px;float:left;position:relative;z-index:1002;"  ng-style="{ height: snowpitHeight - 95, width: columns[1].width }" ng-class="{ 'no-click':settings.tempMode }">
 
-					<div ng-repeat="density in profile.density" class="btn-group" style="text-align:center;width:100%;position:absolute;" ng-style="{ top: (snowpitHeight - 95) - (((profile.depth - density.depth) / profile.depth) * (snowpitHeight - 95)) - 12 }" dropdown>
+					<div ng-repeat="density in profile.density" class="btn-group" style="text-align:center;width:100%;position:absolute;" ng-style="{ top: (snowpitHeight - 95) - (((profile.depth - density.depth) / profile.depth) * (snowpitHeight - 95)) - 12 }" uib-dropdown>
 
-						<span class="dropdown-toggle densityButton" ng-click="newDensity = { density: density.density, depth: (settings.depthDescending ? profile.depth - density.depth : density.depth) }">{{ density.density }}</span>
+						<span uib-dropdown-toggle class="densityButton" ng-click="newDensity = { density: density.density, depth: (settings.depthDescending ? profile.depth - density.depth : density.depth) }">{{ density.density }}</span>
 				      	<ul class="dropdown-menu no-list" role="menu" style="margin-left:4px;min-width:50px;padding:5px;"><li><a>
 			      			<form class="form-inline" style="text-align:left;">
 
@@ -225,21 +225,56 @@
 
 					</div>
 
+					<style>
+						/* hide standard html5 range input */
+						input.temp[type=range] {
+						  	-webkit-appearance: none;
+					  		background: transparent;
+					    	outline: none !important;
+						}
+
+						input.temp[type=range]::-moz-range-track {
+					  		background: transparent;
+					    	outline: none !important;
+					    	border: none !important;
+						}
+						/*input.temp[type=range]::-webkit-slider-thumb {
+						  -webkit-appearance: none;
+						}*/
+						input[type=range]::-moz-focus-outer {
+					    	border: 0;
+					    }
+						input.temp[type=range]:focus {
+							outline: none !important;
+						}
+
+						input.temp {
+						    position: absolute;
+						    margin: 0;
+						    margin-right: -5px;
+						    z-index: 9999;
+						    width: 104%;
+						    left: -2%;
+						    bottom: 16px;
+						    height: 16px;
+						}
+					</style>
+
 					<!-- temperature profile -->
 					<div ng-class="{ 'newHide':!settings.tempMode }" ng-style="{ 'pointer-events': settings.tempMode ? 'all' : 'none' }" style="position:absolute;width:100%;height:100%;">
 				
 						<!-- temp sliders -->
-						<script type="text/ng-template" id="/_slider.html">
-							<slider ng-mouseover="selectTemp(temp)" class="temp" style="position:absolute;margin:0;right:1px;left:-9px;z-index:9999;width:auto;"  floor="-60" ceiling="0" step="1" precision="0" ng-model="temp.temp"></slider>
-				      	</script>
 						<div ng-repeat="temp in profile.temps" style="position:absolute;pointer-events:all;" ng-style="{ width: graphWidth, top: (temp.depth * ((snowpitHeight - 95) / profile.depth)) + 40 }">
-							<ng-include src="'/_slider.html'"></ng-include>
+							<input type="range" ng-mouseover="selectTemp(temp)" class="temp" 
+								min="-60" max="0" step="1" ng-model="temp.temp"
+								ng-if="settings.tempMode"></input>
 
 							<form style="opacity:0;transition:opacity 100ms;white-space:nowrap;border-radius:2px;padding:2px;background:rgba(255,255,255,.85);box-shadow:0px 0px 4px rgba(0,0,0,.5);position:relative;display:inline-block;margin-left: 12px;bottom:10px;font-size:10px;z-index:9999;text-shadow:0 0 1px white;cursor:default;font-weight:400;" ng-style="{ left: graphWidth - (-temp.temp * (graphWidth / 60)), opacity: selectedTemp == temp ? 1 : 0, 'pointer-events': selectedTemp == temp ? 'all' : 'none' }">
 
 								<span style="width:40px;margin:0px 4px;">{{ translateTemp(temp.temp) }}</span>
 
-								<input class="depth" style="width:40px;" type="number" ng-value="settings.depthDescending ? profile.depth - temp.depth : temp.depth"/>
+								<!--<input class="depth" style="width:40px;" type="number" ng-value="settings.depthDescending ? profile.depth - temp.depth : temp.depth"/>-->
+								| {{ settings.depthDescending ? profile.depth - temp.depth : temp.depth }}cm
 
 								<span style="cursor:pointer;margin:0 4px;" ng-click="deleteTemp(temp)"><i class="fa fa-times"></i></span>
 
@@ -252,14 +287,14 @@
 				</div>
 				<div class="interfaceButtons" ng-style="{ height: snowpitHeight }" ng-class="{ 'no-click':settings.tempMode }">
 
-					<div style="top:0px" class="btn-group" dropdown>
-				      <button type="button" class="dropdown-toggle interfaceButton">{{ settings.depthDescending ? profile.depth : 0 }} <span style='font-weight:100;'>SURFACE</span></button>
+					<div style="top:0px" class="btn-group" uib-dropdown>
+				      <button type="button" uib-dropdown-toggle class="interfaceButton">{{ settings.depthDescending ? profile.depth : 0 }} <span style='font-weight:100;'>SURFACE</span></button>
 				      <ul class="dropdown-menu" role="menu" style="margin-left:3px;">
 				      	<li ><a ng-click="addLayer(-1)" href="#" close-dropdown-on-click><i class="fa fa-plus"></i>Insert layer</a></li>
 				    </div>
 
-					<div ng-repeat="layer in profile.layers" ng-style="{ 'top': (clientLayers[$index].sideLayerDepthClient) }" class="btn-group" dropdown>
-				      <button type="button" class="dropdown-toggle interfaceButton">{{ settings.depthDescending ? layer.depth : profile.depth-layer.depth }}</button>
+					<div ng-repeat="layer in profile.layers" ng-style="{ 'top': (clientLayers[$index].sideLayerDepthClient) }" class="btn-group" uib-dropdown>
+				      <button type="button" uib-dropdown-toggle class="interfaceButton">{{ settings.depthDescending ? layer.depth : profile.depth-layer.depth }}</button>
 				      <ul class="dropdown-menu" role="menu" style="margin-left:3px;">
 				      	<li ><a ng-click="addLayer($index)" href="#" close-dropdown-on-click><i class="fa fa-plus"></i>Insert layer</a></li>
 				    </div>
@@ -301,7 +336,7 @@
 					<div class="param" style="padding-top:1px;">-->
 				   		<span class="lbl"  style="width:65px;">Snowpack</span>
 					    <div class="paramHolder" style="width:65px;">
-							<input class="form-control" ng-model="profile.metaData.snowpackHeight" number-only allow-decimal="false" allow-negative="false" />
+							<input class="form-control" ng-model="profile.snowpackHeight" number-only allow-decimal="false" allow-negative="false" />
 							<span class="info">cm</span>
 						</div>
 				   </div>
@@ -314,20 +349,15 @@
 
 					<div class="param">
 					   <span class="lbl">Date</span>
-					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="profile.date" id="datepicker" mo-date-input maxlength="10" />
+					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="profile.date" type="text" pikaday="pickerObject" max-date="{{ today }}" date-input maxlength="10" />
 
 					   <span class="lbl right" style="padding-left:14px;">Time</span>
 					  <input style="width:70px;padding-right:1px;" class="form-control" time="profile.time" maxlength="11" />
 					</div>
 
-					<!--<div class="param">
-					  <span class="lbl">Observer</span>
-					  <input class="form-control" ng-model="profile.metaData.observer" style="width:170px;" />
-					</div>-->
-
 					<div class="param">
 					   <span class="lbl">Location</span>
-					  <input class="form-control" ng-model="profile.metaData.location" style="width:200px;" />
+					  <input class="form-control" ng-model="profile.locationName" style="width:200px;" />
 					  <br/>
 					   <span class="lbl">Lat/Lng</span>
 					   <div class="paramHolder" style="width:98px;">
@@ -343,24 +373,18 @@
 					  <span class="lbl"></span>
 					  <button class="btn btn-primary btn-sm" ng-click="selectLocation()" type="button" style="width:200px;margin-top:1px;margin-bottom:2px;padding-left:0px;padding-right:0px;font-size:13px;"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Click to place on map</button>
 					</div>
-					<!--<div class="param">
-					   <span class="lbl">Lat. / Long.</span>
-					  <input class="form-control" ng-model="profile.metaData.lat" style="width:70px;" />
-					  <input class="form-control" ng-model="profile.metaData.long" style="width:70px;" />
-					</div>-->
-
 
 					<div class="param">
 					   <span class="lbl">Elevation</span>
 					    <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
+					  		<input class="form-control" ng-model="profile.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
 					  		<span class="info" ng-show="global.user.settings.elevation == 0">m</span>
 					  		<span class="info" ng-show="global.user.settings.elevation == 1">ft</span>
 				  		</div>
 
 					   <span class="lbl" style="width:64px;">Air Temp.</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
+					  		<input class="form-control" ng-model="profile.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 0">°C</span>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 1">°F</span>
 				  		</div>
@@ -369,37 +393,36 @@
 					<div class="param">
 					   <span class="lbl">Slope</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.metaData.slope" number-only allow-decimal="true" allow-negative="false" max-num="70" />
+					  		<input class="form-control" ng-model="profile.slope" number-only allow-decimal="true" allow-negative="false" max-num="70" />
 					  		<span class="info">°</span>
 				  		</div>
 
 					   <span class="lbl"  style="width:64px;">Aspect</span>
-				  		<input-direction input-class="form-control" ng-model="profile.metaData.aspect"></input-direction>
+				  		<input-direction input-class="form-control" ng-model="profile.aspect"></input-direction>
 					</div>
 
 					<div class="param"  style="border-bottom:none;">
 
 					    <span class="lbl" style="vertical-align:top;">Surface Grains</span>
 					    <div style="width:200px;display:inline-block;padding-top: 1px;">
-							<grain-select grain-type="profile.metaData.surfaceGrainType" placeholder="select primary type" class="small"></grain-select>
+							<grain-select ng-model="profile.surfaceGrainType" placeholder="select primary type" class="small"></grain-select>
 
-							<grain-select grain-type="profile.metaData.surfaceGrainType2" placeholder="select secondary type" ng-show="profile.metaData.surfaceGrainType" class="small" style="margin-top: 2px;margin-bottom: 3px;"></grain-select>
+							<grain-select ng-model="profile.surfaceGrainType2" placeholder="select secondary type" ng-show="profile.surfaceGrainType" class="small" style="margin-top: 2px;margin-bottom: 3px;"></grain-select>
 						</div>
 					</div>
 					<div class="param" style="padding-top:0px;">
 
 					    <span class="lbl">Grain Size</span>
 
-						<select class="form-control" style="width:56px;" ng-model="profile.metaData.surfaceGrainSize" ng-options="grainSize for grainSize in grainSizes"></select>
+						<select class="form-control" style="width:56px;" ng-model="profile.surfaceGrainSize" ng-options="grainSize for grainSize in grainSizes"></select>
 						-
-						<select class="form-control" style="width:56px;" ng-model="profile.metaData.surfaceGrainSize2" ng-options="grainSize for grainSize in grainSizes"></select>
+						<select class="form-control" style="width:56px;" ng-model="profile.surfaceGrainSize2" ng-options="grainSize for grainSize in grainSizes"></select>
 					</div>
 
 					<div class="param">
 					   <span class="lbl">Sky Condition</span>
-					   <!--<input class="form-control" ng-model="profile.metaData.sky" />-->
 
-						<select class="form-control" ng-model="profile.metaData.sky" style="width:101px;">
+						<select class="form-control" ng-model="profile.sky" style="width:101px;">
 							<option value=""></option>
 							<option value="CLR">Clear</option>
 							<option value="FEW">Few</option>
@@ -413,7 +436,7 @@
 					<div class="param">
 					   <span class="lbl">Wind Speed</span>
 						<!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 18) -->
-						<select class="form-control" ng-model="profile.metaData.windSpeed" style="width:101px;">
+						<select class="form-control" ng-model="profile.windSpeed" style="width:101px;">
 							<option value=""></option>
 							<option value="C">Calm</option>
 							<option value="L">Light</option>
@@ -423,12 +446,12 @@
 						</select>
 
 					   <span class="lbl right">Dir.</span>
-						<input-direction input-class="form-control" ng-model="profile.metaData.windDirection"></input-direction>
+						<input-direction input-class="form-control" ng-model="profile.windDirection"></input-direction>
 					</div>
 					<div class="param">
 					  <span class="lbl">Blowing Snow</span>
 					  <!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 19) -->
-						<select class="form-control" ng-model="profile.metaData.blowingSnow" style="width:101px;">
+						<select class="form-control" ng-model="profile.blowingSnow" style="width:101px;">
 							<option value=""></option>
 							<option value="None">None</option>
 							<option value="Prev">Previous</option>
@@ -438,12 +461,12 @@
 							<option value="U">Unkown</option>
 						</select>
 						<span class="lbl right">Dir.</span>
-						<input-direction input-class="form-control" ng-model="profile.metaData.blowingSnowDirection"></input-direction>
+						<input-direction input-class="form-control" ng-model="profile.blowingSnowDirection"></input-direction>
 					</div>
 					<div class="param">
 					  <span class="lbl">Precipitation</span>					  
 						<!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 7) -->
-						<select class="form-control" ng-model="profile.metaData.precipType" style="width:200px;">
+						<select class="form-control" ng-model="profile.precipType" style="width:200px;">
 							<option value=""></option>
 							<option value="NO">No Precipitation</option>
 
@@ -467,30 +490,24 @@
 							<option value="ZR">Freezing Rain</option>
 						</select>
 
-					  <!--<span class="lbl right">Rate</span>
-					  <input class="form-control" ng-model="profile.metaData.precipRate" />-->
 					</div>
 					<div class="param">
 					   <span class="lbl">Foot Pen.</span>
 					   <div class="paramHolder" style="width:65px;">
-						  <input class="form-control" ng-model="profile.metaData.PF" number-only allow-decimal="true" allow-negative="false" />
+						  <input class="form-control" ng-model="profile.PF" number-only allow-decimal="true" allow-negative="false" />
 						  <span class="info">cm</span>
 						</div>
 					    <span class="lbl" style="width:64px;">Ski Pen.</span>
 					    <div class="paramHolder" style="width:65px;">
-						  <input class="form-control" ng-model="profile.metaData.PS" number-only allow-decimal="true" allow-negative="false" />
+						  <input class="form-control" ng-model="profile.PS" number-only allow-decimal="true" allow-negative="false" />
 						  <span class="info">cm</span>
 					    </div>
 					</div>
 				</div>
-
-				<!--<textarea placeholder="Notes..." class="form-control" style="margin-left:2%;height:82px;width: 96%;resize: none;font-size:12px;" ng-model="profile.metaData.notes" />-->
-
-				<!--<button ng-hide="_isNew" ng-click="delete()" class="btn" style="position:absolute;bottom:8px;right:8px;"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;Delete Snowpit</button>-->
 		</div>
 
 		<div ng-show="rightPaneMode == 'notes'">
-			<textarea placeholder="Notes..." class="form-control" style="margin-top:8px;margin-left:2%;height:204px;width: 96%;resize: none;font-size:12px;" ng-model="profile.metaData.notes" />
+			<textarea placeholder="Notes..." class="form-control" style="margin-top:8px;margin-left:2%;height:204px;width: 96%;resize: none;font-size:12px;" ng-model="profile.notes" />
 		</div>
 
 		<div ng-show="rightPaneMode == 'layer'">
@@ -533,9 +550,9 @@
 						<span class="key">Grain type</span>
 						<span class="value">
 
-							<grain-select grain-type="settings.selectedLayer.grainType" placeholder="select primary type" style="margin-top:4px;"></grain-select>
+							<grain-select ng-model="settings.selectedLayer.grainType" placeholder="select primary type" style="margin-top:4px;"></grain-select>
 
-							<grain-select grain-type="settings.selectedLayer.grainType2" placeholder="select secondary type" ng-show="settings.selectedLayer.grainType" style="position:relative;bottom:5px;"></grain-select>
+							<grain-select ng-model="settings.selectedLayer.grainType2" placeholder="select secondary type" ng-show="settings.selectedLayer.grainType" style="position:relative;bottom:5px;"></grain-select>
 
 						</span>
 					</li>
@@ -573,9 +590,9 @@
 
 
 						    <div class="btn-group">
-						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" btn-radio="'T'" uncheckable>Top</label>
-						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" btn-radio="'B'" uncheckable>Bottom</label>
-						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" btn-radio="'L'" uncheckable>Layer</label>
+						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" uib-btn-radio="'T'" uncheckable>Top</label>
+						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" uib-btn-radio="'B'" uncheckable>Bottom</label>
+						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" uib-btn-radio="'L'" uncheckable>Layer</label>
 						    </div>
 						</span>
 					</li>	
@@ -604,17 +621,16 @@
 					{{ upload.name }}
 				</div>
 
-				<div ng-repeat="photo in profile.photos" class="photo-thumb" style="position:relative; vertical-align:top;height:145px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
+				<div ng-repeat="photo in profile.media" class="photo-thumb" style="position:relative; vertical-align:top;height:111px;display:inline-block;width:150px;padding:5px;border-radius:3px;background:#eee;margin-left:6px;margin-bottom:6px;text-align:center;">
 
-					<div thumbnail="photo"
-
+					<div ng-style="{ 'background-image': 'url(' + getThumbnailURL(photo) + ')' }"
 					style="cursor:pointer;margin-bottom:5px;height: 100px;background-size:contain;background-position: center;background-repeat: no-repeat;" ng-click="showPhoto($index)">
 
 						<!--<div ng-show="photo.uploading" style="padding-top:22px;font-size:40px;"><i class="fa fa-circle-o-notch fa-spin"></i></div>-->
 
 					</div>
 
-					<input ng-model="photo.caption" class="photo=caption form-control input-sm" />
+					<!--<input ng-model="photo.caption" class="photo=caption form-control input-sm" />-->
 
 					<button ng-click="deletePhoto($index)" class="photo-delete"><i class="fa fa-trash-o"></i></button>
 				</div>

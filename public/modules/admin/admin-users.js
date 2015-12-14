@@ -1,4 +1,4 @@
-angular.module('avatech.system').controller('AdminUsersController', ['$scope', '$location', '$http', 'Global', 'Users', function ($scope, $location, $http, Global, Users) {
+angular.module('avatech').controller('AdminUsersController', function ($scope, $log, $location, $http, Global, Restangular) {
     $scope.global = Global;
 
     // executes on 'page load'
@@ -81,7 +81,8 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
 "United Kingdom"];
 
     $scope.getUsers = function() {
-        Users.query({}, function(users) {
+        Restangular.all('users').getList()
+        .then(function(users) {
             $scope.users = users;
 
             var emails = {};
@@ -121,7 +122,7 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
                     emails[users[i].email] = 0;
 
                     //console.log(users[i].fullName + "," + users[i].created + "," + users[i].country + "," + users[i].org)
-                    console.log(users[i].created + "}" + users[i].city + "," + users[i].country + "}" + users[i].org);
+                    //console.log(users[i].created + "}" + users[i].city + "," + users[i].country + "}" + users[i].org);
 
                     if (users[i].country && europe.indexOf(users[i].country) > -1)
                         allOrgs.push({ 
@@ -199,21 +200,21 @@ angular.module('avatech.system').controller('AdminUsersController', ['$scope', '
     $scope.toggleDisabled = function(user) {
         user.disabled = !user.disabled;
         user.$update(function(data) {
-            console.log(data);
+            $log.debug(data);
         });
     }
 
     $scope.toggleTest = function(user) {
         user.test = !user.test;
         user.$update(function(data) {
-            console.log(data);
+            $log.debug(data);
         });
     }
 
     $scope.getStats = function(user) {
-        $http.get('/v1/users/' + user._id + '/stats').success(function(data){
-            console.log(data);
-        });
+        // $http.get('/v1/users/' + user._id + '/stats').success(function(data){
+        //     console.log(data);
+        // });
     }
 
-}]);
+});

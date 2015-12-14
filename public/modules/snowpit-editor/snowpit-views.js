@@ -19,9 +19,9 @@ function hasGrainTypeCategory(layer, cats) {
 
 // calculate
 
-var calculatePersistentGrains = function(scope) {
+var calculatePersistentGrains = function(profile) {
 
-    angular.forEach(scope.profile.layers,function(layer, index){
+    angular.forEach(profile.layers,function(layer, index){
 
         if (!layer.views) layer.views = {};
         layer.views.pgrains = { layer: [] };
@@ -31,7 +31,7 @@ var calculatePersistentGrains = function(scope) {
 
     });
 }
-var calculateFlags = function(scope) {
+var calculateFlags = function(profile) {
 
     // A: Average grain size > 1mm
     // B: Layer hardness < 1F
@@ -40,13 +40,13 @@ var calculateFlags = function(scope) {
     // E: Interface hardness difference > 1 step
     // F: Interface is 20-85cm deep
 
-    angular.forEach(scope.profile.layers,function(layer, index){
+    angular.forEach(profile.layers,function(layer, index){
 
         if (!layer.views) layer.views = {};
         layer.views.flags = { layer: [], interface: []};
 
-        var nextLayer = scope.profile.layers[index + 1];
-        var depth = scope.profile.depth - layer.depth;
+        var nextLayer = profile.layers[index + 1];
+        var depth = profile.depth - layer.depth;
 
         // RULE 1: average of grain sizes > 1mm
         if (grainSize > 1) layer.views.flags.layer.push({ rule: 'A' });
@@ -82,11 +82,11 @@ var calculateFlags = function(scope) {
         }
 
         // RULE 6: INTERFACE: 20-85cm deep
-        var depthDown = scope.profile.depth - layer.depth;
+        var depthDown = profile.depth - layer.depth;
         if (depthDown >= 20 && depthDown <= 85) layer.views.flags.interface.push({ rule: 'F' });
     });
 }
-var calculateLemons = function(scope) {
+var calculateLemons = function(profile) {
 
     // A: Layer depth ≤ 1m
     // B: Layer height ≤ 10 cm
@@ -94,16 +94,16 @@ var calculateLemons = function(scope) {
     // D: Interface hardness difference ≥ 1 step
     // E: Interface grain size difference ≥ 1 mm
 
-    angular.forEach(scope.profile.layers,function(layer, index){
+    angular.forEach(profile.layers,function(layer, index){
 
         if (!layer.views) layer.views = {};
         layer.views.lemons = { layer: [], interface: []};
 
-        var nextLayer = scope.profile.layers[index + 1];
-        var depth = scope.profile.depth - layer.depth;
+        var nextLayer = profile.layers[index + 1];
+        var depth = profile.depth - layer.depth;
 
         // RULE 1: layer depth ≤ 1m from surface
-        if ((scope.profile.depth - layer.depth) < 100) layer.views.lemons.layer.push({ rule: 'A' });
+        if ((profile.depth - layer.depth) < 100) layer.views.lemons.layer.push({ rule: 'A' });
 
         // RULE 2: Weak layer thickness ≤ 10 cm
         if (layer.height <= 10) layer.views.lemons.layer.push({ rule: 'B' });
@@ -135,9 +135,9 @@ var calculateLemons = function(scope) {
     });
 }
 
-var calculateICSSG = function(scope) {
+var calculateICSSG = function(profile) {
 
-    angular.forEach(scope.profile.layers,function(layer, index){
+    angular.forEach(profile.layers,function(layer, index){
 
         if (!layer.views) layer.views = {};
         layer.views.icssg = { layer: [] };

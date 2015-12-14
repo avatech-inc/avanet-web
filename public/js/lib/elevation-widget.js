@@ -26,6 +26,8 @@ window.ElevationWidget = function() {
     //     imperial: false
     // }
 
+    var _color = "#428bca"; //"#2080cc" // #6664bd;
+
     this.onRemove = function(map) {
         this._container = null;
     }
@@ -39,7 +41,7 @@ window.ElevationWidget = function() {
             position: "topright",
             theme: "lime-theme",
             width: 600,
-            height: 175,
+            height: 150,
             margins: {
                 top: 20,
                 right: 20,
@@ -64,31 +66,12 @@ window.ElevationWidget = function() {
         opts = this.options;
 
         var margin = opts.margins;
-        opts.xTicks = opts.xTicks || Math.round(this._width() / 75);
-        opts.yTicks = opts.yTicks || Math.round(this._height() / 30);
+        opts.xTicks = opts.xTicks || Math.round(this._width() / 70);
+        opts.yTicks = opts.yTicks || Math.round(this._height() / 22);
         opts.hoverNumber.formatter = opts.hoverNumber.formatter || this._formatter;
 
-        var x = this._x = d3.scale.linear()
-            .range([0, this._width()]);
-
-        var y = this._y = d3.scale.linear()
-            .range([this._height(), 0]);
-
-        //console.log(this._x);
-        var area = this._area = d3.svg.area()
-            //.interpolate(opts.interpolation)
-            //.interpolate("bundle").tension(.95)
-            .interpolate("basis")
-            .x(function(d) {
-                var xDiagCoord = x(d.dist);
-                d.xDiagCoord = xDiagCoord;
-                return xDiagCoord;
-            })
-            .y0(this._height())
-            .y1(function(d) {
-                //console.log(d.slope);
-                return y(d.elevation);
-            });
+        var x = this._x = d3.scale.linear().range([0, this._width()]);
+        var y = this._y = d3.scale.linear().range([this._height(), 0]);
 
         var container = this._container = L.DomUtil.create("div", "elevation");
 
@@ -114,33 +97,32 @@ window.ElevationWidget = function() {
 
         var g = d3.select(this._container).select("svg").select("g");
 
-        this._areapath = g.append("path")
-            .attr("class", "area")
-            //.attr("style", "fill:green;");
+        this._profileStroke = g.append("path")
+            .attr("style", "fill:" + _color + ";opacity:.4; pointer-events:none;");
+
+        this._profileFill = g.append("path")
+            .attr("style", "fill:none;stroke:" + _color + ";stroke-width:2px; pointer-events:none;");
 
         var background = this._background = g.append("rect")
             .attr("width", this._width())
             .attr("height", this._height())
             .style("fill", "none")
-            .style("stroke", "none")
             .style("pointer-events", "all");
 
-        if (L.Browser.touch) {
-
-            background.on("touchmove.drag", this._dragHandler.bind(this)).
-            on("touchstart.drag", this._dragStartHandler.bind(this)).
-            on("touchstart.focus", this._mousemoveHandler.bind(this));
-            L.DomEvent.on(this._container, 'touchend', this._dragEndHandler, this);
-
-        } else {
-
+        // if (L.Browser.touch) {
+        //     background.on("touchmove.drag", this._dragHandler.bind(this)).
+        //     on("touchstart.drag", this._dragStartHandler.bind(this)).
+        //     on("touchstart.focus", this._mousemoveHandler.bind(this));
+        //     L.DomEvent.on(this._container, 'touchend', this._dragEndHandler, this);
+        //} 
+        //else {
             background.on("mousemove.focus", this._mousemoveHandler.bind(this)).
             on("mouseout.focus", this._mouseoutHandler.bind(this)).
             on("mousedown.drag", this._dragStartHandler.bind(this)).
             on("mousemove.drag", this._dragHandler.bind(this));
             L.DomEvent.on(this._container, 'mouseup', this._dragEndHandler, this);
 
-        }
+        //}
 
         this._xaxisgraphicnode = g.append("g");
         this._yaxisgraphicnode = g.append("g");
@@ -190,7 +172,7 @@ window.ElevationWidget = function() {
         // disable drag-select
         return;
 
-        //we don´t want map events to occur here
+        //we don't want map events to occur here
         d3.event.preventDefault();
         d3.event.stopPropagation();
 
@@ -379,8 +361,6 @@ window.ElevationWidget = function() {
         return $(".bottom-pane").width();
     }
     this._width = function() {
-        //var opts = this.options;
-        //return opts.width - opts.margins.left - opts.margins.right;
         return ($(".bottom-pane").width() - opts.margins.left - opts.margins.right);
     }
 
@@ -411,63 +391,35 @@ window.ElevationWidget = function() {
     }
 
     this._appendYaxis = function(y) {
-        var opts = this.options;
+        y.attr("class", "y axis")
+        .call(d3.svg.axis()
+            .tickFormat(d3.format(",.0f"))
+            .scale(this._y)
+            .innerTickSize(-this._width())
+            .outerTickSize(0)
+            .ticks(4)
+            //.ticks(this.options.yTicks)
+            .orient("left"))
 
-        if(opts.imperial){
-            y.attr("class", "y axis")
-            .call(d3.svg.axis()
-                .scale(this._y)
-                .ticks(this.options.yTicks)
-                .orient("left"))
-            .append("text")
-            .attr("x", -35)
-            .attr("y", 3)
-            .style("text-anchor", "end")
-            .text("ft");
-        }
-        else{
-            y.attr("class", "y axis")
-            .call(d3.svg.axis()
-                .scale(this._y)
-                .ticks(this.options.yTicks)
-                .orient("left"))
-            .append("text")
-            .attr("x", -25)
-            .attr("y", 3)
-            .style("text-anchor", "end")
-            .text("m");
-        }
+        d3.selectAll('.y.axis g.tick')
+          .select('line')
+          .style('stroke', 'rgba(0,0,0,.1)')
+          .style('shape-rendering', 'crispEdges')
+          .style('pointer-events', 'none')
     }
 
     this._appendXaxis = function(x) {
         var opts = this.options;
-
-        if(opts.imperial){
-            x.attr("class", "x axis")
-            .attr("transform", "translate(0," + this._height() + ")")
-            .call(d3.svg.axis()
-                .scale(this._x)
-                .ticks(this.options.xTicks)
-                .orient("bottom"))
-            .append("text")
-            .attr("x", this._width() + 10)
-            .attr("y", 15)
-            .style("text-anchor", "end")
-            .text("mi");
-        }
-        else{
-            x.attr("class", "x axis")
-            .attr("transform", "translate(0," + this._height() + ")")
-            .call(d3.svg.axis()
-                .scale(this._x)
-                .ticks(this.options.xTicks)
-                .orient("bottom"))
-            .append("text")
-            .attr("x", this._width() + 20)
-            .attr("y", 15)
-            .style("text-anchor", "end")
-            .text("km");
-        }
+        x.attr("class", "x axis")
+        .attr("transform", "translate(0," + this._height() + ")")
+        .call(d3.svg.axis()
+            .tickFormat(function(num){
+                if (opts.imperial) return num + " mi";
+                else return num + " km";
+            })
+            .scale(this._x)
+            .ticks(this.options.xTicks)
+            .orient("bottom"))
     }
 
     this._updateAxis = function() {
@@ -482,9 +434,7 @@ window.ElevationWidget = function() {
     }
 
     this._mouseoutHandler = function() {
-
         this._hidePositionMarker();
-
     }
 
     /*
@@ -546,9 +496,10 @@ window.ElevationWidget = function() {
 
                 var pointG = this._pointG = heightG.append("g");
                 pointG.append("svg:circle")
-                    .attr("r", 6) // 6
+                    .attr("r", 8) // 6
                     .attr("cx", 0)
                     .attr("cy", 0)
+                    .attr("style", "fill:" + _color + ";z-index:10000;pointer-events:none;")
                     .attr("class", "height-focus circle-lower");
 
                 this._mouseHeightFocusLabel = heightG.append("svg:text")
@@ -761,7 +712,7 @@ window.ElevationWidget = function() {
             .attr('y1', 0)
             .attr('x2', xCoordinate)
             .attr('y2', this._height())
-            .attr("style","stroke:#00fffa;")
+            .attr("style","stroke:" + _color + "; pointer-events:none;")
             .classed('hidden', false);
 
         var alt = item.elevation,
@@ -851,17 +802,43 @@ window.ElevationWidget = function() {
         });
         var opts = this.options;
 
+        // add padding to bottom of the elevation profile
+        var padding = (ydomain[1] - ydomain[0]) / this._height();
+        ydomain[0] -= (padding * 7.5);
+
         if (opts.yAxisMin !== undefined && (opts.yAxisMin < ydomain[0] || opts.forceAxisBounds)) {
             ydomain[0] = opts.yAxisMin;
         }
         if (opts.yAxisMax !== undefined && (opts.yAxisMax > ydomain[1] || opts.forceAxisBounds)) {
             ydomain[1] = opts.yAxisMax;
         }
-
         this._x.domain(xdomain);
         this._y.domain(ydomain);
-        this._areapath.datum(this._data)
-            .attr("d", this._area);
+
+        var self = this;
+
+        var newLine = d3.svg.line()
+            .interpolate("basis")
+            .x(function(d) { return self._x(d.x); })
+            .y(function(d) { return self._y(d.y); });
+
+        var newArea = d3.svg.area()
+            .interpolate("basis")
+            .x(function(d) { return self._x(d.x); })
+            .y0(this._height())
+            .y1(function(d) { return self._y(d.y); });
+
+        var newPoints = [];
+        for (var i = 0; i < this._data.length; i++) {
+            // keep track of xDiagCoord for map path hover
+            this._data[i].xDiagCoord = this._x(this._data[i].dist);
+            // add points to temp array
+            newPoints.push({ x: this._data[i].dist, y: this._data[i].elevation })
+        }
+        var _newPoints = simplify(newPoints, .01, false);
+        this._profileFill.datum(_newPoints).attr("d", newLine);
+        this._profileStroke.datum(_newPoints).attr("d", newArea);
+
         this._updateAxis();
 
         this._fullExtent = this._calculateFullExtent(this._data);
@@ -885,14 +862,14 @@ window.ElevationWidget = function() {
         this._clearData();
         this.clearWaypoints();
 
-        if (!this._areapath) {
+        if (!this._profileStroke) {
             return;
         }
 
         // workaround for 'Error: Problem parsing d=""' in Webkit when empty data
         // https://groups.google.com/d/msg/d3-js/7rFxpXKXFhI/HzIO_NPeDuMJ
-        //this._areapath.datum(this._data).attr("d", this._area);
-        this._areapath.attr("d", "M0 0");
+        this._profileStroke.attr("d", "M0 0");
+        this._profileFill.attr("d", "M0 0");
 
         this._x.domain([0, 1]);
         this._y.domain([0, 1]);
@@ -935,13 +912,21 @@ window.ElevationWidget = function() {
                 //var opts = this.options;
 
                 //waypoint.style("visibility", "visible");
+
                 this.waypoints.append('svg:line')
-                    .attr('x1', item.xDiagCoord)
-                    .attr('y1', 0)
                     .attr('x2', item.xDiagCoord)
-                    .attr('y2', this._height())
+                    .attr('y2', this._y(item.elevation))
+                    .attr('x1', item.xDiagCoord)
+                    .attr('y1', this._height())
+                    .attr("style", "stroke: " + _color + ";stroke-width:1;pointer-events: none;")
+                    .classed('hidden', false);
+
+                this.waypoints.append('svg:circle')
+                    .attr('cx', item.xDiagCoord)
+                    .attr('cy', this._y(item.elevation) + 2)
+                    .attr('r','3')
                     .attr("class", "elevation-profile-waypoint")
-                    .attr("style", "stroke: yellow; pointer-events: none;")
+                    .attr("style", "fill: " + "yellow" + ";stroke:" + _color + ";stroke-width:1;pointer-events: none;")
                     .classed('hidden', false);
 
                         // pointG.append("svg:circle")
@@ -959,7 +944,3 @@ window.ElevationWidget = function() {
     }
 
 };
-
-// L.control.elevation = function(options) {
-//     return new L.Control.Elevation(options);
-// };

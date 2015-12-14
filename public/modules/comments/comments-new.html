@@ -189,31 +189,11 @@ mentio-menu { z-index: 2000 !important; }
 }
 </style>
 
-<!--<mentio-menu mentio-for="'theTextArea'" mentio-trigger-char="'@'" mentio-items="products" mentio-template-url="/product-mentions.tpl" mentio-search="searchProducts(term)" mentio-select="getProductTextRaw(item)" class="ng-isolate-scope" style="display: none;">
-        <ul class="list-group product-search demo-scrollable-menu">
-        </ul>
-</mentio-menu>-->
-
 <ul class="comments">
 	<li class="commentBox">
 		<div class="photo">
 			{{  }}
 		</div>
-		<!--<textarea mentio="" mentio-macros="macros" mentio-trigger-char="'@'" mentio-items="people" mentio-template-url="/people-mentions.tpl" mentio-search="searchPeople(term)" mentio-select="getPeopleTextRaw(item)" mentio-typed-term="typedTerm2" class="editor form-control ng-isolate-scope ng-pristine ng-valid" mentio-id="'theTextArea'" ng-model="theTextArea" ng-trim="false" rows="6" autocomplete="off">                        </textarea>-->
-
-		<!--<textarea 
-			onenter="saveComment()" 
-
-			test-autosize 
-			test-ng-change="adjustHeight()" 
-
-			class="comment" 
-			ng-disabled="saving" 
-			type="text" 
-			autocomplete="off"
-			ng-model="newComment" 
-			placeholder="Type your comment here, then press enter"
-		></textarea>-->
 
 	    <script type="text/ng-template" id="/people-mentions.tpl">
 	        <ul class="list-group user-search">
@@ -224,15 +204,6 @@ mentio-menu { z-index: 2000 !important; }
 	            </li>
 	        </ul>
 	    </script>
-
-		<!--<mentio-menu
-	        mentio-for="'htmlContent'"
-	        mentio-trigger-char="'@'"
-	        mentio-items="people"
-	        mentio-template-url="/people-mentions.tpl"
-	        mentio-search="searchPeople(term)"
-	        mentio-select="getPeopleText(item)"
-	        ></mentio-menu>-->
 
 		<textarea 
 			onenter="saveComment()" 
@@ -249,29 +220,6 @@ mentio-menu { z-index: 2000 !important; }
 	        style="height:42px;min-height:42px !important;overflow: hidden;margin-bottom:5px;"
 	        >
         </textarea>
-
-        <!--<div contenteditable
-
-			test-autosize
-			test-ng-change="adjustHeight()" 
-
-			ng-disabled="saving"
-			autocomplete="off"
-	        ng-model="newComment"
-	        placeholder="Type your comment here, then press enter"
-
-			mentio
-	        mentio-typed-term="typedTerm"
-	        test-mentio-macros="macros"
-	        mentio-require-leading-space="true"
-	        mentio-select-not-found="true"
-	        class="editor form-control"
-	        mentio-id="'htmlContent'"
-	        id="htmlContent"
-	        >
-        </div>-->
-
-        <!--<button ng-click="saveComment()">Submit</button>-->
 
 	</li>
 </ul>

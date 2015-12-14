@@ -1,7 +1,7 @@
 
 // file upload
 
-angular.module('avatech').directive('uploader', ['$http','$timeout', function($http, $timeout) {
+angular.module('avatech').directive('uploader', function($http, $timeout, $log) {
   return {
     restrict: 'E',
     scope: { 
@@ -19,7 +19,7 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
       function uploadFile (file) {
 
             var ext = file.name.substr(file.name.lastIndexOf(".") + 1).toLowerCase();
-            console.log(ext);
+            $log.debug(ext);
             if (['jpg','png','gif','bmp'].indexOf(ext) == -1) return;
 
             var fileObject = { 
@@ -74,7 +74,7 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
 
             // setTimeout(function(){
 
-            //   console.log(file);
+            //   $log.debug(file);
 
             //   // var fileObject = { name: file.name };
             //   // if (scope.onadd) scope.onadd({ file: fileObject });
@@ -166,8 +166,8 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
         //   // img.height = img.height / 4;
 
         //   // var newCanvas = resize_image(img,dst,"image/jpeg", 1);
-        //   // console.log(newCanvas.width + "," + newCanvas.height);
-        //   console.log(canvas.width + "," + canvas.height);
+        //   // $log.debug(newCanvas.width + "," + newCanvas.height);
+        //   $log.debug(canvas.width + "," + canvas.height);
         //   //return;
 
         //   // get data url of canvas
@@ -181,7 +181,7 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
         //   var b64 = dataUrl.slice(dataUrl.indexOf(',')+1);
         //   var arr = atob(b64).split('').map(function (e) {return e.charCodeAt(0);});
         //   var blob = new Blob([new Uint8Array(arr)],{ type: "image/jpeg"});
-        //   console.log(blob);
+        //   $log.debug(blob);
 
         //   //setTimeout(function(){
         //   fileObject.progress = 60; if (scope.onprogress) scope.onprogress({ file: fileObject });
@@ -192,9 +192,9 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
         //   // Update progress bar
         //   xhr.upload.addEventListener("progress", function (evt) {
         //     if (evt.lengthComputable) {
-        //       console.log((evt.loaded / evt.total) * 100 + "%"); 
+        //       $log.debug((evt.loaded / evt.total) * 100 + "%"); 
         //       var progress = (evt.loaded / evt.total) * 100;
-        //       console.log(progress + "," + fileObject.progress);
+        //       $log.debug(progress + "," + fileObject.progress);
         //       if (progress > fileObject.progress) fileObject.progress = progress;
         //       if (scope.onprogress) scope.onprogress({ file: fileObject });
         //     }
@@ -276,4 +276,4 @@ angular.module('avatech').directive('uploader', ['$http','$timeout', function($h
         }, false);
     }
   };
-}]);
+});

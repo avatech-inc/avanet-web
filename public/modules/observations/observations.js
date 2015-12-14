@@ -6,7 +6,6 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
         $scope.obType = $stateParams.obType;
 
-        $scope.snowpackTest = null;
 
     $scope.schemas['avalanche'] = {
         type: "object",

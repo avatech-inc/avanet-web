@@ -585,7 +585,22 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
     // -----------------------------------------------------
 
+    $scope.submit = function() {
+        // todo: not angular-y (Peter: if you ever see this, I have some 'splaining to do...)
+        $timeout(function() { $('[name="form_elements.obsForm"] input[type="submit"]').click(); });
+    }
+    $scope.onSubmit = function(form) {
+
+        if (!$scope.model.location) return alert("Please select a location.");
+
+        $scope.$broadcast('schemaFormValidate');
+
+        $log.debug("is valid? " + $scope.form_elements.obsForm.$valid);
+        $log.debug($scope.model);
+
+        if ($scope.form_elements.obsForm.$valid) {
         }
+    }
 
     $scope.close = function () {
         $uibModalInstance.dismiss();

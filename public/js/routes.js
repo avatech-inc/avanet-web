@@ -64,17 +64,6 @@ angular.module('avatech').config(function($stateProvider, $urlRouterProvider, $h
             // }
         })
 
-        // .state('index.obs', {
-        //     url: 'avalanches/:observationId',
-        //     views: { "content": { templateUrl: '/modules/avalanches/new.html' } },
-        //     data: { 
-        //         title: 'Avalanche Observation / Avanet',
-        //         requireLogin: true,
-        //         bodyCssClass: 'profiles',
-        //         fullScreen: true
-        //     }
-        // })
-
         // Snowpit Editor
         .state('index.profileEditor', {
             abstract: true,

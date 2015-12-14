@@ -1,10 +1,10 @@
 angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $log, $timeout, $uibModalInstance, initialLocation, Global) {
 
-        $scope.global = Global;
+    $scope.global = Global;
 
-        $scope.form_elements = {};
+    $scope.form_elements = {};
 
-        $scope.obType = $stateParams.obType;
+    $scope.selectedTab = 'ob';
 
 
     $scope.schemas['avalanche'] = {

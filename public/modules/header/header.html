@@ -29,17 +29,13 @@
         <li uib-dropdown ng-hide="isDemo">
           <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
+            <li><a ng-click="newOb('avalanche')">{{ 'avalanche' | translate }}</a></li>
+            <li><a ng-click="newOb('snowpack')">{{ 'snowpack' | translate }}</a></li>
+            <li><a ng-click="newOb('snowpack-test')">{{ 'snowpack-test' | translate }}</a></li>
             <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
-            <!--<li><a href="/avalanches/new">{{ 'avalanche' | translate }}</a></li>
-
-            <li><a href="/observations/weather/new">{{ 'weather' | translate }}</a></li>
-            <li><a href="/observations/snowpack/new">{{ 'snowpack' | translate }}</a></li>
-            <li><a href="/observations/snowpack-test/new">{{ 'snowpack-test' | translate }}</a></li>
-            <li><a href="/observations/snow-conditions/new">{{ 'snow-conditions' | translate }}</a></li>
-            <li><a href="/observations/wind/new">{{ 'wind' | translate }}</a></li>-->
-            
+            <li><a ng-click="newOb('weather')">{{ 'weather' | translate }}</a></li>
+            <li><a ng-click="newOb('wind')">{{ 'wind' | translate }}</a></li>
             <li class="divider"></li>
-
             <li><a href="#" ng-click="deviceUpload()">{{ 'usb_upload' | translate }}</a></li>
           </ul>
         </li>

@@ -182,41 +182,39 @@ angular.module('avatech').controller('NewObservationModalController', function (
     }, true);
 
 
+    $scope.schemas['wind'] = {
+        type: "object",
+        properties: {
             windLoading: {
                 title: "Wind Loading",
                 type: "string",
-                enum: ['Current','Previous'],
+                enum: ['CUR','PREV'],
                 //default: null
             },
             spatialExtent: {
                 title: "Spatial extent",
                 type: "string",
-                enum: ['Localized','Widespread'],
+                enum: ['LOC','WIDE'],
                 default: null
             },
-            windDirectionAverage: {
-                title: "Wind direction average",
+            windVariability: {
+                title: "Wind variability",
                 type: "string",
-                enum: ['Consistent','Variable'],
-                //enum: ['C','V'],
+                enum: ['CON','VAR'],
                 default: null
             },
-            ridgeLine: {
-                title: "Ridgeline",
-                type: "boolean"
-            },
-            windDirection: {
-                title: "Wind direction",
-                type: "number"
-            },
-            windSpeed: {
-                title: "Wind speed",
+            windSpeedMeasured: {
+                title: "Wind speed measured",
                 type: "number",
             },
-            windSpeedEstimation: {
-                title: "Wind speed estimation",
+            windSpeedEstimated: {
+                title: "Wind speed estimated",
                 type: "string",
-                enum: ['C','L','M','S','E']
+                enum: ['C','L','M','S','X'],
+            },
+            windDirectionEstimated: {
+                title: "Wind direction estimated",
+                type: "number"
             },
             blowingSnowExtent: {
                 title: "Blowing snow extent",
@@ -227,6 +225,8 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 title: "Blowing snow direction",
                 type: "number"
             }
+      }
+    };
 
           }
         };

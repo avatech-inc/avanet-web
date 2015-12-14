@@ -185,16 +185,6 @@ angular.module('avatech')
         // update current profile
         $scope.update = function() {
             var profile = $scope.getSanitizedProfileCopy();
-
-            // <nointernet>
-            // profile.$update(function() {
-            //     $log.debug("Saved!");
-            // });
-
-            // $http.put(window.apiBaseUrl + "observations/" + $stateParams.profileId, profile)
-            // .then(function(res) {
-            //     $log.debug("Saved!");
-            // });
             Observations.save($scope.getSanitizedProfileCopy());
         };
 

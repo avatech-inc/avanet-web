@@ -227,35 +227,55 @@ angular.module('avatech').controller('NewObservationModalController', function (
             }
       }
     };
+    $scope.forms['wind'] = [
+        { key: "windLoading", type: "radiobuttons-nullable",
+            titleMap: [
+              { "value": "CUR", "name": "Current" },
+              { "value": "PREV", "name": "Previous" },
+            ] 
+        },
+        { key: "spatialExtent", type: "radiobuttons-nullable", condition: "model.windLoading",
+            titleMap: [
+              { "value": "LOC", "name": "Localized" },
+              { "value": "WIDE", "name": "Widespread" },
+            ]
+        },
+        { 
+            key: "windVariability", type: "radiobuttons-nullable",
+            titleMap: [
+              { "value": "CON", "name": "Consistent" },
+              { "value": "VAR", "name": "Variable" },
+            ]
+        },
+        { key: "windSpeedMeasured", type:"number", units: "m/s" },
+        { 
+            key: "windSpeedEstimated",
+            titleMap: [
+              { "value": "C", "name": "Calm" },
+              { "value": "L", "name": "Light" },
+              { "value": "M", "name": "Moderate" },
+              { "value": "S", "name": "Strong" },
+              { "value": "X", "name": "Extreme" }
+            ]
+        },
+        { key: "windDirectionEstimated", type: "direction-select" },
+        { key: "blowingSnowExtent",
+            titleMap: [
+              { "value": "NONE", "name": "None" },
+              { "value": "PREV", "name": "Previous" },
+              { "value": "L", "name": "Light" },
+              { "value": "M", "name": "Moderate" },
+              { "value": "I", "name": "Intense" },
+              { "value": "U", "name": "Unkown" }
+            ]
+        },
+        { 
+            key: "blowingSnowDirection", 
+            type: "direction-select", 
+            condition: "['L', 'M', 'I', 'U'].indexOf(model.blowingSnowExtent) != -1"
+        }
+    ];
 
-          }
-        };
-        $scope.forms['wind'] = [
-            // { key: "currentWindLoading", type: "radiobuttons-nullable" },
-            // { key: "previousWindLoading", type: "radiobuttons-nullable" },
-            { key: "windLoading", type: "radiobuttons-nullable" },
-            { key: "spatialExtent", type: "radiobuttons-nullable", condition: "model.windLoading" },
-            { key: "windDirection", type: "direction-select" },
-            { key: "windDirectionAverage",  type: "radiobuttons-nullable" },
-            { key: "windSpeed" },
-            { 
-                key: "windSpeedEstimation",
-                titleMap: [
-                  { "value": "C", "name": "Calm" },
-                  { "value": "L", "name": "Light" },
-                  { "value": "M", "name": "Moderate" },
-                  { "value": "S", "name": "Strong" },
-                  { "value": "E", "name": "Extreme" }
-                ]
-            },
-            { key: "blowingSnowExtent",
-                // titleMap: [
-                //   { "value": "NONE", "name": "" },
-                //   { "value": "PREV", "name": "" },
-                //   { "value": "M", "name": "" },
-                //   { "value": "I", "name": "" },
-                //   { "value": "U", "name": "" }
-                // ]
             },
             { key: "blowingSnowDirection", type: "direction-select", condition: "['L', 'M', 'I', 'U'].indexOf(model.blowingSnowExtent) != -1"},
 

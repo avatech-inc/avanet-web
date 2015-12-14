@@ -214,7 +214,7 @@
               <button  type="button" uib-dropdown-toggle class="btn btn-default" ng-click="newSearch()">
                 <i class="fa fa-plus"></i> Add Organization
               </button>
-              <ul class="dropdown-menu" role="menu" style="width:260px;min-height:54px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+              <ul class="dropdown-menu" role="menu" style="width:260px;min-height:54px;" ng-click="$event.stopPropagation()" ><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
               
               <div ng-show="global.orgs && global.orgs.length > 0" class='subheader'>My Organizations
 

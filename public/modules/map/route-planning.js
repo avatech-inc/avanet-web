@@ -1,4 +1,6 @@
-angular.module('avatech').controller('RoutePlanningController', function($http, $q, $log, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport) {
+angular.module('avatech').controller('RoutePlanningController', function($http, $q, $log, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport, Confirm) {
+
+    $scope.global = Global;
 
     $scope.formatters = formatters = snowpitExport.formatters;
     $scope.loading = true;

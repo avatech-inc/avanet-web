@@ -72,6 +72,7 @@ angular.module('schemaForm').config(
       'avalanche-trigger-select',
       '/modules/forms/avalanche-trigger-select.html'
     );
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'number',
       '/modules/forms/number.html'
     );

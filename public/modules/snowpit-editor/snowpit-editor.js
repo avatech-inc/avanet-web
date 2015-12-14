@@ -603,9 +603,9 @@ angular.module('avatech')
                             // if metadata is null, initialize
                             if (!$scope.profile.metaData) $scope.profile.metaData = {};
 
-                            $scope.profile.locationName = name;
-                            //if (place.countryCode) $scope.profile.metaData.country = place.countryCode;
-
+                            if ($scope.profile.locationName == "" || !$scope.profile.locationName)
+                                $scope.profile.locationName = name;
+                           
                             $scope.$apply();
                         }
                     });

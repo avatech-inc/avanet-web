@@ -148,7 +148,6 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout, $
                 var uploaded = [];
 
                 angular.forEach(newHashes, function(hash) {
-
                     var file = _files[hash];
                     var reader = new FileReader();
                     reader.onload = function(e) {
@@ -173,8 +172,6 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout, $
                     }
                     reader.readAsArrayBuffer(file);
                 });
-                //}
-
               });
         }
 

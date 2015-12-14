@@ -67,6 +67,9 @@ angular.module('schemaForm').config(['schemaFormProvider', 'schemaFormDecorators
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'trend-select',
       '/js/forms/trend-select.html'
+    schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
+      'number',
+      '/modules/forms/number.html'
     );
 
   }

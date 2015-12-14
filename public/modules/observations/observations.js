@@ -555,7 +555,145 @@ angular.module('avatech').controller('NewObservationModalController', function (
         }
     };
 
-          angular.forEach($scope.forms,function(form) {
+        // when to show 'depth'
+        var depthScores = 
+         ['ECTPV','ECTP','ECTN',
+         'CTV','CT',
+         'RB1','RB2','RB3','RB4','RB5','RB6',
+         'SBV','SB10','SB20','SB30','SB40','SB50','SB60','SB70',
+         'STC','STV','STE','STM','STH',
+         'DTV','DT',
+         'End','SF','Arr'];
+         $scope.showDepth = function(model) {
+            if (model.name == 'HTE' || model.name == 'SVT') return true;
+            if (depthScores.indexOf(model.score) > -1) return true
+            return false;
+         }
+
+        // when to show 'shear' and 'fracture character'
+        var shearScores = 
+        ['ECTPV','ECTP',
+         'CTV','CT',
+         'RB1','RB2','RB3','RB4','RB5','RB6',
+         'SBV','SB10','SB20','SB30','SB40','SB50','SB60','SB70',
+         'STC','STV','STE','STM','STH',
+         'DTV','DT'];
+         $scope.showShear = function(model) {
+            if (model.name == 'HTE' || model.name == 'SVT') return true;
+            if (shearScores.indexOf(model.score) > -1) return true
+            return false;
+         }
+
+         // when to show '# of taps'
+         $scope.tapScores = ['ECTP','ECTN','CT','DT'] 
+
+    $scope.forms['snowpack-test'] = [
+        { key: "name",
+            titleMap: [
+              { "value": "ECT", "name": "Extended Column" },
+              { "value": "CT", "name": "Compression" },
+              { "value": "RB", "name": "Rutschblock" },
+              { "value": "SB", "name": "Stuffblock" },
+              { "value": "STE", "name": "Shovel Shear" },
+              { "value": "DPT", "name": "Deep Tap" },
+              { "value": "PST", "name": "Propgation Saw" },
+              { "value": "HTE", "name": "Hand Shear" },
+              { "value": "SVT", "name": "Shovel Tilt" }
+            ]
+        },
+
+        //-----------
+
+        { key: "score", condition: "model.name == 'ECT'", titleMap: [
+              { "value": "ECTPV", "name": "ECTPV" },
+              { "value": "ECTP", "name": "ECTP" },
+              { "value": "ECTN", "name": "ECTN" },
+              { "value": "ECTX", "name": "ECTX" },
+            ]
+        },
+        { key: "score", condition: "model.name == 'CT'", titleMap: [
+              { "value": "CTV", "name": "CTV" },
+              { "value": "CT", "name": "CT" },
+              { "value": "CTN", "name": "CTN" },
+            ]
+        },
+        { key: "score", condition: "model.name == 'RB'", titleMap: [
+              { "value": "RB1", "name": "RB1" },
+              { "value": "RB2", "name": "RB2" },
+              { "value": "RB3", "name": "RB3" },
+              { "value": "RB4", "name": "RB4" },
+              { "value": "RB5", "name": "RB5" },
+              { "value": "RB6", "name": "RB6" },
+              { "value": "RB7", "name": "RB7" }
+            ]
+        },
+        { key: "score", condition: "model.name == 'SB'", titleMap: [
+              { "value": "SBV", "name": "SBV" },
+              { "value": "SB10", "name": "SB10" },
+              { "value": "SB20", "name": "SB20" },
+              { "value": "SB30", "name": "SB30" },
+              { "value": "SB40", "name": "SB40" },
+              { "value": "SB50", "name": "SB50" },
+              { "value": "SB60", "name": "SB60" },
+              { "value": "SB70", "name": "SB70" },
+              { "value": "SBN", "name": "SBN" }
+            ]
+        },
+        { key: "score", condition: "model.name == 'STE'", titleMap: [
+              { "value": "STC", "name": "STC" },
+              { "value": "STV", "name": "STV" },
+              { "value": "STE", "name": "STE" },
+              { "value": "STM", "name": "STM" },
+              { "value": "STH", "name": "STH" },
+              { "value": "STN", "name": "STN" },
+            ]
+        },
+        { key: "score", condition: "model.name == 'DPT'", titleMap: [
+              { "value": "DTV", "name": "DTV" },
+              { "value": "DT", "name": "DT" },
+              { "value": "DTN", "name": "DTN" },
+            ]
+        },
+        { key: "score", title: "Result", condition: "model.name == 'PST'", titleMap: [
+              { "value": "End", "name": "End" },
+              { "value": "SF", "name": "SF" },
+              { "value": "Arr", "name": "Arr" },
+            ]
+        },
+        { key: "result", condition: "model.name == 'HTE' || model.name == 'SVT'", titleMap: [
+              { "value": "E", "name": "Easy" },
+              { "value": "M", "name": "Moderate" },
+              { "value": "H", "name": "Hard" },
+            ]
+        },
+
+        //-----------
+
+        { key: "weakLayerDepth", type:"number", units: "cm", condition: "showDepth(model)" },
+        { key: "nbTaps", condition: "tapScores.indexOf(model.score) > -1" },
+
+        { key: "shear", type: "radiobuttons-nullable", condition: "model.name != 'PST'", condition: "showShear(model)" },
+        { key: "fractureCharacter", condition: "model.name != 'PST'", condition: "showShear(model)",
+            titleMap: [
+              { "value": "SP", "name": "SP - Sudden Planar" },
+              { "value": "SC", "name": "SC - Sudden Collapse" },
+              { "value": "PC", "name": "PC - Progressive Compression" },
+              { "value": "RP", "name": "RP - Resistent Planar" },
+              { "value": "BRK", "name": "BRK - Non-planar Break" },
+            ]
+        },
+        { key: "sawCutLength", type:"number", units: "cm", condition: "model.name == 'PST'" },
+        { key: "isolatedColumnLength", type:"number", units: "cm", condition: "model.name == 'PST'" },
+
+        { key: "criticalGrainForm", type: "grainTypeSelect", condition: "showDepth(model)" },
+        { key: "criticalGrainSizeMin", type:"number", units: "mm", condition: "showDepth(model)" },
+        { key: "criticalGrainSizeMax", type:"number", units: "mm", condition: "showDepth(model)" },
+    ];
+
+    $scope.$watch('model.name',function(oldVal, newVal) {
+        $scope.model.score = null;
+    }, true);
+
 
             form.unshift(
             {

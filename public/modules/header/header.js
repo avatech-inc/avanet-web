@@ -12,5 +12,19 @@ angular.module('avatech').controller('HeaderController', function ($scope, $loca
     $scope.isActive = function (viewLocation) { 
         return viewLocation === $location.path();
     };
+
+    $scope.newOb = function(type) {
+        $uibModal.open({
+            templateUrl: "/modules/observations/new.html",
+            controller: "NewObservationModalController",
+            backdrop: 'static',
+            windowClass: 'width-480',
+            resolve: {
+              ob: function() { return { type: type }; }
+            }
+        }).result.finally(function() {
+            
+        });
+    }
     
 });

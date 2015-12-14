@@ -38,12 +38,64 @@ angular.module('avatech').directive('map', function($timeout, $q, $rootScope, $t
         // get map holder DOM element
         var mapElement = element[0].querySelector('.map-holder');
 
+        function newOb(type, latlng) {
+            // lng/lat array
+            var location = [
+                parseFloat(latlng.lng.toFixed(7)),
+                parseFloat(latlng.lat.toFixed(7))
+            ];
+            // for snowpit, go to snowpit editor
+            if (type == "snowpit") {
+                $state.go('index.profileEditor.details', { profileId: "new", location: location })
+                return;
+            }
+            // for everything else, show edit modal
+            $uibModal.open({
+                templateUrl: "/modules/observations/new.html",
+                controller: "NewObservationModalController",
+                backdrop: 'static',
+                windowClass: 'width-480',
+                resolve: {
+                  ob: function() { return { type: type, location: location }; }
+                }
+            });
+        }
+
          // init leaflet map
         scope.map = L.map(mapElement, {
             zoomControl: false,
             minZoom: 3,
             maxZoom: 18, // 19
-            worldCopyJump: true
+            worldCopyJump: true,
+            // context menu
+            contextmenu: true,
+            contextmenuWidth: 140,
+            contextmenuItems: [
+            {
+                text: 'Avalanche',
+                callback: function(e) { newOb('avalanche', e.latlng); }
+            },
+            {
+                text: 'Snowpack',
+                callback: function(e) { newOb('snowpack', e.latlng); }
+            }, 
+            {
+                text: 'Snowpack Test',
+                callback: function(e) { newOb('snowpack-test', e.latlng); }
+            }, 
+            {
+                text: 'Snowpit',
+                callback: function(e) { newOb('snowpit', e.latlng); }
+            }, 
+            {
+                text: 'Weather',
+                callback: function(e) { newOb('weather', e.latlng); }
+            },
+            {
+                text: 'Wind',
+                callback: function(e) { newOb('wind', e.latlng); }
+            }
+            ]
         });
 
         // disable scroll wheel zoom

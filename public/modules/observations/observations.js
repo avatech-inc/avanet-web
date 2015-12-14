@@ -587,6 +587,12 @@ angular.module('avatech').controller('NewObservationModalController', function (
 
         }
 
+    $scope.close = function () {
+        $uibModalInstance.dismiss();
+    };
+    // $scope.select = function () {
+    //     $uibModalInstance.close();
+    // };
 
     // media
 

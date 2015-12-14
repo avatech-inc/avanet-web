@@ -583,93 +583,10 @@ angular.module('avatech').controller('NewObservationModalController', function (
         }
     });
 
-            $scope.$broadcast('schemaFormValidate');
+    // -----------------------------------------------------
 
-            $log.debug("is valid? " + $scope.form_elements.obsForm.$valid);
-
-            $log.debug($scope.model);
-
-            // Then we check if the form is valid
-            // if (form.$valid) {
-            //   // ... do whatever you need to do with your data.
-            // }
         }
 
-        // console.log("MAP:");
-        // console.log($scope.map);
 
-        // $scope.map = null;
-
-        // $scope.form = {};
-
-        // // $uibModalInstance.opened.then(function(){ });
-
-        // $scope.loadMap = function(){
-        //     // mapbox uses lat/lng, DB uses lng/lat
-        //     if (initialLocation) initialLocation = [ initialLocation[1], initialLocation[0]];
-        //     else if (!initialLocation) {
-        //         // set to either park city or user's location
-        //         if (!$scope.global.user.location) initialLocation = [40.633052,-111.7111795]
-        //         else initialLocation = [$scope.global.user.location[1],$scope.global.user.location[0]];
-        //     }
-
-        //     setTimeout(function(){
-        //         $scope.map = L.mapbox.map('map','andrewsohn.ihk2g12l', {
-        //             zoomControl: false,
-        //             tileLayer: {
-        //                 //continuousWorld: false,
-        //                 //noWrap: true
-        //             }
-        //         });
-
-        //         $scope.map.on('move',function(){
-        //             if ($scope.marker) $scope.marker.setLatLng($scope.map.getCenter());
-        //             //$scope.form.location = [ m.lng, m.lat ];
-        //             $scope.$apply();
-        //         });
-        //         $scope.map.on('moveend',function(){
-        //             var m = $scope.map.getCenter().wrap();
-        //             $scope.form.location = [ m.lng, m.lat ];
-        //             $scope.$apply();
-        //         });
-
-        //         // add zoom control
-        //         new L.Control.Zoom({ position: 'bottomright' }).addTo($scope.map);
-
-        //         // set starting location and zoom
-        //         $scope.map.setView(initialLocation, 10);
-        //         $scope.map.invalidateSize();
-
-        //         // add selection marker
-        //         // $scope.marker = L.marker(initialLocation, {
-        //         //     icon: L.mapbox.marker.icon({
-        //         //       'marker-color': '#ffcc00'
-        //         //     }), draggable: false
-        //         // }).addTo($scope.map);
-        //         // marker2.on('dragend', ondragend);
-        //         // ondragend();
-        //         // function ondragend() {
-        //         //     var m = marker2.getLatLng();
-        //         //     $scope.form.location = [ m.lng, m.lat ];
-        //         //     $scope.$apply();
-        //         // }
-
-        //         $scope.$apply();
-        //     },100);
-        // }
-
-        $scope.close = function () {
-            $uibModalInstance.dismiss();
-        };
-        $scope.select = function () {
-            $uibModalInstance.close($scope.form.location);
-        };
-
-        // on map search select
-        // $scope.mapSearchSelect = function(location) {
-        //     //if (location.lat && location.lng)
-        //     //    $scope.map.setView([location.lat,location.lng], 12,{ animate: true});
-        // }
 
     }
-);

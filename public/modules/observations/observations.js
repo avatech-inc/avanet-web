@@ -797,13 +797,57 @@ angular.module('avatech').controller('NewObservationModalController', function (
             //created: new Date()
           };
 
-        $scope.submit = function() {
-            // todo: not angular-y (Peter: if you ever see this, I have some 'splaining to do...)
-            $timeout(function() { $('[name="form_elements.obsForm"] input[type="submit"]').click(); });
+    // add global fields
+
+    angular.forEach($scope.schemas, function(schema) {
+        schema.properties.date = {
+            type: "string",
+            format: "date",
+            title: "Date & Time Observed",
+            required: true,
+        };
+        schema.properties.slope = {
+            title: "Slope",
+            type: "number"
+        };
+        schema.properties.aspect = {
+            title: "Aspect",
+            type: "number"
         }
-        $scope.onSubmit = function(form) {
-            // console.log("SUBMIT!");
-            // console.log($scope.model);
+        schema.properties.elevation = {
+            title: "Elevation",
+            type: "number"
+        }
+        schema.properties.location = {
+            title: "Location",
+            type: "object"
+        }
+        schema.properties.locationName = {
+            title: "Location name",
+            type: "string"
+        }
+    });
+
+    angular.forEach($scope.forms, function(form) {
+
+        form.unshift(
+            { key: "date", type: "datepicker" }, 
+            { key: "location", type: "location-select" },
+            { key: "locationName" },
+            { key: "slope", type: "number", units: "°" }, 
+            { key: "aspect", type: "direction-select" }, 
+            { key: "elevation", type: "number", units: "m" }
+        );
+
+        // add subit button
+        form.push({ type: "submit", title: "Submit" });
+
+        // set global form fields
+        for (var i = 0; i < form.length; i++) {
+            //form[i].fieldHtmlClass = "input-sm";
+            form[i].disableSuccessState = true;
+        }
+    });
 
             $scope.$broadcast('schemaFormValidate');
 

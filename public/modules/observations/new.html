@@ -142,6 +142,8 @@
             <span ng-click="selectedTab='notes'" ng-class="{ selected: selectedTab=='notes' }">Notes</span>
             <span ng-click="selectedTab='media'" ng-class="{ selected: selectedTab=='media' }">Media</span>
         </div>
+        <div ng-show="selectedTab=='ob'">
+            <form name="form_elements.obsForm" ng-submit="onSubmit()" class="obs-form" sf-schema="schemas[model.type]" sf-form="forms[model.type]" sf-model="model"></form>
         </div>
         <div class="modal-body" style="padding:0px;">
     		

@@ -459,16 +459,7 @@ angular.module('avatech').controller('ObservationPreviewController',
                 $scope.table = $scope.getTable(ob);
 
                 if ($scope.observation == "snowpit") {
-
-                    var _ob = angular.copy(ob);
-
-                    // normalize temps
-                    angular.forEach(_ob.temps, function(temp) { 
-                        var num = parseFloat(temp.temp);
-                        if (!isNaN(num)) temp.temp = num * 2;
-                    });
-
-                    $scope.observation = angular.copy(_ob);
+                    $scope.observation = angular.copy(ob);
                     $scope.$apply();
                 }
                 // all other observation types

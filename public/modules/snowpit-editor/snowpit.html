@@ -12,16 +12,13 @@
 			
 			<div class="btn-group" uib-dropdown>
 		      <button type="button" uib-dropdown-toggle class="headerButton">
-		        <i class="fa fa-download"></i><span>Download</span><!--<i class="fa fa-caret-down"></i>-->
+		        <i class="fa fa-download"></i><span>Download</span>
 		      </button>
 		      <ul class="dropdown-menu" role="menu">
 
 		      	<li ng-class="{ disabled: _isNew }"><a href="#" ng-click="exportPDF()" close-dropdown-on-click><i class="fa fa-file-pdf-o"></i>Download PDF</a></li>
 		      	<li ng-class="{ disabled: _isNew }"><a href="#" ng-click="exportJPEG()" close-dropdown-on-click><i class="fa fa-file-image-o"></i>Download JPEG</a></li>
 		      	<li ng-class="{ disabled: _isNew }"><a href="#" ng-click="exportCSV()" close-dropdown-on-click><i class="fa fa-file-excel-o"></i>Download CSV</a></li>
-		      	<!--<li ng-hide="_isNew"><a href="#" ng-click="" close-dropdown-on-click><i class="fa fa-file-o"></i>Export CAAML</a></li>-->
-
-		      	<!--<li ng-hide="_isNew"><a href="#" ng-click="delete()" close-dropdown-on-click><i class="fa fa-trash-o"></i>Delete</a></li>-->
 		    </div>
 
 			<div class="btn-group" uib-dropdown>
@@ -231,14 +228,13 @@
 						<!-- temp sliders -->
 						<div ng-repeat="temp in profile.temps" style="position:absolute;pointer-events:all;" ng-style="{ width: graphWidth, top: (temp.depth * ((snowpitHeight - 95) / profile.depth)) + 40 }">
 							<input type="range" ng-mouseover="selectTemp(temp)" class="temp" 
-								min="-60" max="0" step="1" ng-model="temp.temp"
+								min="-30" max="0" step=".5" ng-model="temp.temp"
 								ng-if="settings.tempMode"></input>
 
-							<form style="opacity:0;transition:opacity 100ms;white-space:nowrap;border-radius:2px;padding:2px;background:rgba(255,255,255,.85);box-shadow:0px 0px 4px rgba(0,0,0,.5);position:relative;display:inline-block;margin-left: 12px;bottom:10px;font-size:10px;z-index:9999;text-shadow:0 0 1px white;cursor:default;font-weight:400;" ng-style="{ left: graphWidth - (-temp.temp * (graphWidth / 60)), opacity: selectedTemp == temp ? 1 : 0, 'pointer-events': selectedTemp == temp ? 'all' : 'none' }">
+							<form style="opacity:0;transition:opacity 100ms;white-space:nowrap;border-radius:2px;padding:2px;background:rgba(255,255,255,.85);box-shadow:0px 0px 4px rgba(0,0,0,.5);position:relative;display:inline-block;margin-left: 12px;bottom:10px;font-size:10px;z-index:9999;text-shadow:0 0 1px white;cursor:default;font-weight:400;" ng-style="{ left: graphWidth - (-temp.temp * (graphWidth / 30)), opacity: selectedTemp == temp ? 1 : 0, 'pointer-events': selectedTemp == temp ? 'all' : 'none' }">
 
 								<span style="width:40px;margin:0px 4px;">{{ translateTemp(temp.temp) }}</span>
 
-								<!--<input class="depth" style="width:40px;" type="number" ng-value="settings.depthDescending ? profile.depth - temp.depth : temp.depth"/>-->
 								| {{ settings.depthDescending ? profile.depth - temp.depth : temp.depth }}cm
 
 								<span style="cursor:pointer;margin:0 4px;" ng-click="deleteTemp(temp)"><i class="fa fa-times"></i></span>

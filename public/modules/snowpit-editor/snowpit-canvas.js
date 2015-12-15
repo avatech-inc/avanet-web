@@ -1,4 +1,3 @@
-
 angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstants', function($timeout, snowpitConstants) {
   return {
     restrict: 'A',
@@ -727,7 +726,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
 
                 // plot temps
                 var surfaceTemp;
-                var maxTemp = 60;
+                var maxTemp = 30;
                 var _width = column.width - 2;
                 context.moveTo(_width, paddingTop);
                 if (scope.profile.temps && scope.profile.temps.length > 0) {
@@ -754,7 +753,7 @@ angular.module('avatech').directive('profileEditor', ['$timeout','snowpitConstan
                     && scope.profile.temps && scope.profile.temps.length > 0) {
 
                     var surfaceTemp = (maxTemp - Math.abs(surfaceTemp)) * (_width / maxTemp) + 1; 
-                    var airTemp = (maxTemp - Math.abs(scope.profile.airTemp * 2)) * (_width / maxTemp) + 1;
+                    var airTemp = (maxTemp - Math.abs(scope.profile.airTemp)) * (_width / maxTemp) + 1;
                     context.setLineDash([5,5]);
                     context.beginPath();
                     context.moveTo(surfaceTemp, paddingTop);

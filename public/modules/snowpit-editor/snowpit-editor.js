@@ -125,23 +125,14 @@ angular.module('avatech')
 
         $scope.findOne = function() {
             $http.get(window.apiBaseUrl + "observations/" + $stateParams.profileId)
-            //Profiles.get({ profileId: $stateParams.profileId }, 
             .then(function(res) {
-
                 if (res.status != 200) return;
 
                 var profile = res.data;
 
-                // normalize temps
-                angular.forEach(profile.temps, function(temp) { 
-                    var num = parseFloat(temp.temp);
-                    if (!isNaN(num)) temp.temp = num * 2;
-                });
-
                 // convert populated org to org _id
                 if (profile.organization) profile.organization = profile.organization._id;
 
-                //angular.copy(profile, $scope.profile);
                 $scope.profile = angular.copy(profile);
                 $timeout(function(){
                     $scope.loading = false;
@@ -188,16 +179,9 @@ angular.module('avatech')
             Observations.save($scope.getSanitizedProfileCopy());
         };
 
-        // copy and normalize temps
         $scope.getSanitizedProfileCopy = function() {
             // make temp copy of profile
             var profile = angular.copy($scope.profile);
-
-            // normalize temps (support for .5 increments)
-            angular.forEach(profile.temps, function(temp) { 
-                var num = parseFloat(temp.temp);
-                if (!isNaN(num)) temp.temp = num / 2;
-            });
 
             // make sure observation type is always set
             profile.type = 'snowpit';
@@ -355,14 +339,13 @@ angular.module('avatech')
             }
             
         }
-        $scope.translateTemp = function(value) {
-            var temp = (value / 2);
-            if (Global.user.settings.tempUnits == 1){
-                var newTemp = (temp*1.8+32).toFixed(1);
+        $scope.translateTemp = function(temp) {
+            temp = parseFloat(temp);
+            if (Global.user.settings.tempUnits == 1) {
+                var newTemp = (temp * 1.8 + 32).toFixed(1);
                 return (Math.round(newTemp * 1) / 1).toFixed(0) + "°F";
             }
-            else
-                return temp.toFixed(1) + "°C";
+            else return temp.toFixed(1) + "°C";
         }
         $scope.selectTemp = function(temp){
             $scope.selectedTemp = temp;
@@ -687,8 +670,8 @@ angular.module('avatech')
                 initialSharing: angular.copy($scope.profile)
             })
             .then(function (sharing) {
-                $scope.profile.published = true;
                 angular.extend($scope.profile, sharing);
+                $scope.profile.published = true;
                 $scope.update();
                 $location.path('/obs/' + $scope.profile._id);
             });

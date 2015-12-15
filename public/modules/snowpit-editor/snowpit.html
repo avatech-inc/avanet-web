@@ -226,21 +226,57 @@
 					</div>
 
 					<style>
-						/* hide standard html5 range input */
+
+						input.temp {
+						    position: absolute;
+						    margin: 0;
+						    padding: 0;
+						    z-index: 9999;
+						    width: 102.6%;
+							left: -4px;
+						    bottom: 12px;
+						    height: 16px;
+						}
+
+						input[type=range]::-webkit-slider-thumb {
+						    -webkit-appearance: none;
+						    border: none;
+						    height: 10px; width: 10px;
+						    border-radius: 50%;
+						    background: red;
+						    cursor: ew-resize;
+						}
+						input.temp[type=range]::-moz-range-thumb {
+						    border: none;
+						    height: 10px; width: 10px;
+						    border-radius: 50%;
+						    background: red;
+						    position: relative;
+						    margin-top: 10px;
+						    cursor: ew-resize;
+						}
+						input.temp[type=range]::-ms-thumb {
+						    border: none;
+						    height: 10px; width: 10px;
+						    border-radius: 50%;
+						    background: red;
+						    cursor: ew-resize;
+						}
+
+
+						/* clear styles - webkit */
 						input.temp[type=range] {
 						  	-webkit-appearance: none;
 					  		background: transparent;
 					    	outline: none !important;
 						}
 
+						/* clear styles - mozilla */
 						input.temp[type=range]::-moz-range-track {
 					  		background: transparent;
 					    	outline: none !important;
 					    	border: none !important;
 						}
-						/*input.temp[type=range]::-webkit-slider-thumb {
-						  -webkit-appearance: none;
-						}*/
 						input[type=range]::-moz-focus-outer {
 					    	border: 0;
 					    }
@@ -248,15 +284,23 @@
 							outline: none !important;
 						}
 
-						input.temp {
-						    position: absolute;
-						    margin: 0;
-						    margin-right: -5px;
-						    z-index: 9999;
-						    width: 104%;
-						    left: -2%;
-						    bottom: 16px;
-						    height: 16px;
+						/* clear styles - IE */
+						input.temp[type=range]::-ms-track {
+						    background: transparent;
+						    border-color: transparent;
+						    color: transparent;
+						}
+						input.temp[type=range]::-ms-fill-lower {
+						    background: transparent;
+						}
+						input.temp[type=range]::-ms-fill-upper {
+						    background: transparent;
+						}
+						input.temp[type=range]:focus::-ms-fill-lower {
+						    background: transparent;
+						}
+						input.temp[type=range]:focus::-ms-fill-upper {
+						    background: transparent;
 						}
 					</style>
 

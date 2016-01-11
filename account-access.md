@@ -7,6 +7,8 @@ Who has access to what? Anyone with admin access can add new users. Let Andrew k
   - Olivier is account owner
 - **AWS** - S3, CloudFront
  - Peter, Olivier and Jim have admin access
+- **Cloudinary** - Media hosting (photo, video, audio)
+ - Olivier has admin access
 - **Sentry** - Error tracking
  - Peter has admin access
 - **Mapbox** - Map provider

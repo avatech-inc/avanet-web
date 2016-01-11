@@ -8,11 +8,11 @@ Who has access to what? Anyone with admin access can add new users. Let Andrew k
 - **AWS** - S3, CloudFront
  - Peter, Olivier and Jim have admin access
 - **Cloudinary** - Media hosting (photo, video, audio)
- - Olivier has admin access
+ - Olivier is account admin
 - **Mandrill** - Transactional email
- - Peter has admin access
+ - Peter is account admin
 - **Sentry** - Error tracking
- - Peter has admin access
+ - Peter is account admin
 - **Mapbox** - Map provider
  - Peter is account admin
 - **Mixpanel** - Analytics

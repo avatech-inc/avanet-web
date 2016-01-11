@@ -28,3 +28,6 @@ Install and login to the [Heroku CLI](https://devcenter.heroku.com/articles/hero
 - To combine build and deploy into a single step, run  `gulp build-deploy` (with `--app` arg as above)
 - **IMPORTANT:** The gulp script does not set any default app settings. Please make sure all app variables (such as API URL etc.) are properly set before deploying. 
 
+## Cloud Services
+
+[Click here](https://github.com/avatech-inc/avanet-web/blob/master/account-access.md) for a list of cloud providers and 3rd party services/APIs used by Avanet, along with who has admin/owner access.

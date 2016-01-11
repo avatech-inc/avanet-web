@@ -9,6 +9,8 @@ Who has access to what? Anyone with admin access can add new users. Let Andrew k
  - Peter, Olivier and Jim have admin access
 - **Cloudinary** - Media hosting (photo, video, audio)
  - Olivier has admin access
+- **Mandrill** - Transactional email
+ - Peter has admin access
 - **Sentry** - Error tracking
  - Peter has admin access
 - **Mapbox** - Map provider

@@ -3,6 +3,13 @@ angular.module('avatech').controller('MapController', function ($scope, $state, 
 
     mixpanel.track("home");
 
+    var firstTime = true;
+
+    $scope.loadMap = false;
+    $scope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+        if (toState.name.indexOf("index") === 0 && firstTime) init();
+    });
+
     $scope.map;
     $scope.terrainLayer;
     $scope.obSearch;
@@ -117,19 +124,25 @@ angular.module('avatech').controller('MapController', function ($scope, $state, 
         $scope.selectedList = 'my_unpublished';
     });
 
-    // when an observation preview is loaded, go to location on map
-    $scope.$on('observationLoaded', function(e, ob) {
-        if (!ob || !ob.location) return;
-        $timeout(function() {
-            var point = new L.LatLng(ob.location[1], ob.location[0]);
-            // close any open popups
-            var closebtn = $(".leaflet-popup-close-button");
-            if (closebtn.length) closebtn[0].click();
+    function init() {
+        firstTime = false;
 
-            // if location is outside current map, pan to location
-            if ($scope.map && !$scope.map.getBounds().contains(point)) {
-                $scope.map.setView(point, 13, { animate: false });
-            }
+        // when an observation preview is loaded, go to location on map
+        $scope.$on('observationLoaded', function(e, ob) {
+            if (!ob || !ob.location) return;
+            $timeout(function() {
+                var point = new L.LatLng(ob.location[1], ob.location[0]);
+                // close any open popups
+                var closebtn = $(".leaflet-popup-close-button");
+                if (closebtn.length) closebtn[0].click();
+
+                // if location is outside current map, pan to location
+                if ($scope.map && !$scope.map.getBounds().contains(point)) {
+                    $scope.map.setView(point, 13, { animate: false });
+                }
+            });
         });
 
+        $scope.loadMap = true;
+    }
 });

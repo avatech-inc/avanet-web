@@ -362,7 +362,6 @@ gulp.task('deploy', function(done){
 	    var remotes = {
         "avanet": "git@heroku.com:avanet.git",
         "avanet-demo": "git@heroku.com:avanet-demo.git",
-        "avanet-demo2": "git@heroku.com:avanet-demo2.git"
       } 
       //var remote = "production"; var app = "avanet";
       var app = "avanet";

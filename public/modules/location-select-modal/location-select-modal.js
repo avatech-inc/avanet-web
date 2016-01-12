@@ -50,7 +50,7 @@ angular.module('avatech').controller('LocationSelectModalController',
                 $scope.invalidLng = false;
                 $scope.invalidE = false;
                 $scope.invalidN = false;
-                $scope.$apply();
+                //$scope.$apply();
             }, 50);
         }
 

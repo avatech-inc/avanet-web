@@ -1,4 +1,4 @@
-// define app
+// define app and dependencies
 angular.module('avatech', [
     'ngRaven',
     'ngRoute', 'ngTouch',

@@ -131,18 +131,5 @@ angular.module('avatech').controller('MapController', function ($scope, $state, 
                 $scope.map.setView(point, 13, { animate: false });
             }
         });
-    });
-
-    // show routes on map
-    // var paths = [];
-    // $scope.$watch('myRoutes',function() {
-    //     angular.forEach(paths,function(path) {
-    //         path.removeFrom($scope.map);
-    //     });
-
-    //     angular.forEach($scope.myRoutes,function(route) {
-    //         paths.push(L.geoJson(route.path).addTo($scope.map));
-    //     });
-    // }, true);
 
 });

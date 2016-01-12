@@ -348,43 +348,30 @@ gulp.task('remove-git', function() {
   });
 });
 
-gulp.task('deploy', function(done){
-	fs.exists("_dist",function(exists){
-
+gulp.task('deploy', function(done) {
+	fs.exists("_dist",function(exists) {
 		if (!exists) {
 			gutil.error(gutil.colors.red("dist folder does not exist. run 'gulp build' first."));
     		done();
     		return;
 		}
-		
-	    process.chdir('_dist');
-
-	    var remotes = {
-        "avanet": "git@heroku.com:avanet.git",
-        "avanet-demo": "git@heroku.com:avanet-demo.git",
-      } 
-      //var remote = "production"; var app = "avanet";
-      var app = "avanet";
-      
-      if (argv.to) app = argv.to;
-
-	    exec("git remote rm " + app, {cwd: process.cwd }, function(err, stdout, stderr){
-			exec("git remote add " + app + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr){
-	       		//console.log(stdout);
-	   			gutil.log("git remote added");
-
-					exec("heroku config:set NODE_ENV=production -app " + app, {cwd: process.cwd }, function(err, stdout, stderr){
-
-		       		console.log(stdout);
-		       		gutil.log("Pushing to '" + app + "'")
-              console.log();
-
-					var heroku = spawn("git",["push" , app, "master", "-f"], { cwd: process.cwd })
-
-					heroku.stdout.on('data', function (data) { 
+    process.chdir('_dist');
+    var remotes = {
+      "avanet": "git@heroku.com:avanet.git",
+      "avanet-demo": "git@heroku.com:avanet-demo.git",
+    } 
+    var app = "avanet";
+    if (argv.to) app = argv.to;
+    exec("git remote rm " + app, {cwd: process.cwd }, function(err, stdout, stderr) {
+		  exec("git remote add " + app + " " + remotes[app], {cwd: process.cwd }, function(err, stdout, stderr) {
+     		gutil.log("git remote added");
+				exec("heroku config:set NODE_ENV=production -app " + app, {cwd: process.cwd }, function(err, stdout, stderr) {
+       		gutil.log("Pushing to '" + app + "'");
+  				var heroku = spawn("git",["push" , app, "master", "-f"], { cwd: process.cwd });
+  				heroku.stdout.on('data', function (data) { 
             console.log("" + data);
           });
-					heroku.stderr.on('data', function (data) { 
+  				heroku.stderr.on('data', function (data) { 
             console.log("" + data); 
             if ((data + "").indexOf("master -> master ") != -1) {
               console.log(); console.log();
@@ -392,11 +379,10 @@ gulp.task('deploy', function(done){
               console.log(); console.log();
             }
           });
-
-					heroku.on('exit', function (code) { done(); });
-				});
-			});
-		});
+  				heroku.on('exit', function (code) { done(); });
+			 });
+		  });
+	  });
 	});
 });
 

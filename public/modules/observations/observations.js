@@ -603,8 +603,8 @@ angular.module('avatech').controller('NewObservationModalController', function (
                 initialSharing: angular.copy($scope.model)
             })
             .then(function (sharing) {
-                $scope.model.published = true;
                 angular.extend($scope.model, sharing);
+                $scope.model.published = true;
                 Observations.save(angular.copy($scope.model), function(ob) {
                    
                     var redirectUrl = '/obs/' + ob._id;

@@ -46,35 +46,6 @@ module.exports = function(app) {
         res.sendFile(path.join(__dirname, './views', 'download-app.html'));
     });
 
-    var s3_2 = knox.createClient({
-        key: 'AKIAIQFLR4EQC63ZZTNQ'
-      , secret: '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'
-      , bucket: 'sp1manual'
-    });
-
-    var getManual = function(req,res) {
-        s3_2.list({ }, function(err, data) {
-            var manual_en = "";
-            var manual_fr = "";
-            if (data.Contents && data.Contents.length > 0) {
-                for (var i = 0; i < data.Contents.length; i++) {
-                    if (data.Contents[i].Key.toLowerCase().indexOf("english") > -1) manual_en = data.Contents[i].Key;
-                    else if (data.Contents[i].Key.toLowerCase().indexOf("french") > -1) manual_fr = data.Contents[i].Key;
-                }
-                if (!req.query.l|| (manual_en != "" && req.query.l.toLowerCase() == "en")) {
-                    return res.redirect("https://s3.amazonaws.com/sp1manual/" + manual_en);
-                }
-                else if (manual_fr != "" && req.query.l.toLowerCase() == "fr") {
-                    return res.redirect("https://s3.amazonaws.com/sp1manual/" + manual_fr);
-                }
-            }
-            return res.json({});
-        });
-    };
-    app.get('/SP1manual', getManual);
-    app.get('/sp1manual', getManual);
-    app.get('/manual', getManual);
-
     // wildcard
     app.get('*', function(req,res) { 
         res.sendFile(path.join(__dirname, './views', 'main.html'));

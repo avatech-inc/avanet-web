@@ -23,10 +23,11 @@ Install and login to the [Heroku CLI](https://devcenter.heroku.com/articles/hero
 
 #### Deploy
 
-- Deploy to prod: `gulp deploy --app=avanet`
-- Deploy to demo: `gulp deploy --app=avanet-demo`
+- Deploy to [prod](https://avanet.avatech.com/): `gulp deploy --app=avanet`
+- Deploy to [demo](https://avanet-demo.avatech.com/): `gulp deploy --app=avanet-demo` 
 - To combine build and deploy into a single step, run  `gulp build-deploy` (with `--app` arg as above)
-- **IMPORTANT:** The gulp script does not set any default app settings. Please make sure all app variables (such as API URL etc.) are properly set before deploying. 
+- **IMPORTANT:** The gulp script does not set any default app settings. Please make sure all app variables (such as API URL etc.) are properly set before deploying.
+- To add new apps for deployment, simply add its heroku remote in `gulpfile.js`
 
 ## Cloud Services
 

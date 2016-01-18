@@ -4,7 +4,6 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var favicon = require('serve-favicon');
 var compression = require('compression')
-var raven = require('raven');
 var path = require('path');
 var root = path.normalize(__dirname + '/..');
 
@@ -49,28 +48,12 @@ module.exports = function(app) {
     // register routes
     require('./routes')(app);
 
-    // error handling
-    var ravenClient = new raven.Client('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540');
-    var parsers = raven.parsers;
-    //app.use(raven.middleware.express('https://5097e04eae554a3f93095b66a6b783a8:dc1da163702549ac87dc3d064d3a2619@app.getsentry.com/41540'));
-    //client.captureError(error, {extra:{user: { id: 'foobar' }}});
-
     app.use(function(err, req, res, next) {
-
-      var ravenOptions = parsers.parseRequest(req);
-      if (req.user) {
-          ravenOptions.user = { 
-            id: req.user._id,
-            email: req.user.email,
-            name: req.user.fullName
-        };
-      }
-      ravenClient.captureError(err, ravenOptions);
       console.error(err);
+
       if (req.xhr) {
         res.status(500).send({ error: '500 Error' });
       } else {
-        //next(err);
         res.status(500).sendFile(path.join(__dirname, './views', '500.html'));
       }
     });

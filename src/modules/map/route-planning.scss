@@ -1,0 +1,209 @@
+$routeColor: #428bca; //#2080cc; //#6664bd
+
+.elevation-widget .background {
+    background-color: transparent;
+    font-size: 12px;
+}
+.elevation-widget .axis line,
+.elevation-widget .axis path {
+    fill: none;
+    stroke: #333;
+    stroke-width: 1
+}
+.elevation-widget .area {
+    fill: #999;
+}
+.elevation-widget .mouse-focus-line {
+    pointer-events: none;
+    stroke-width: 1;
+    stroke: #0d1821
+}
+.elevation-widget .elevation-toggle {
+    cursor: pointer;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, .4);
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    width: 36px;
+    height: 36px;
+}
+.elevation-widget-collapsed .background {
+    display: none
+}
+.elevation-widget-collapsed .elevation-toggle {
+    display: block
+}
+.elevation-widget .mouse-drag {
+    fill: rgba(23, 74, 117, .4)
+}
+.elevation-widget .tick text {
+    font-size: 11px;
+}
+
+
+        /* drawing */
+
+.leaflet-draw-tooltip {
+    display: none;
+}
+
+.leaflet-editing-icon {
+    border-radius: 999px !important;
+    width: 10px !important;
+    height: 10px !important;
+    margin-left: -5px !important;
+    margin-top: -5px !important;
+    //border-color: rgba(0,0,255,.6) !important;
+    border-color: $routeColor !important;
+    opacity: 1;
+    background: lighten($routeColor,30) !important;
+    transition: opacity 150ms !important;
+    //transform: translate3d(0px, 0px, 0px);
+}
+.leaflet-editing-icon:not(.waypoint-icon):not(.start-icon):not(.end-icon):hover {
+    opacity: 1;
+    //border-color: rgba(0,0,255,1) !important;
+    background: lighten($routeColor,50) !important;
+}
+
+.leaflet-editing-icon[style*="opacity: 0.6"] {
+    // display: none !important;
+    // pointer-events: none !important;
+    opacity: .4 !important;
+    &:hover {
+     opacity: .7 !important;
+    }
+}
+
+.leaflet-editing-icon.highlight {
+    box-shadow: 0px 0px 0px 4px rgba(255,255,255,.7);
+}
+.leaflet-editing-icon._hide {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.waypoint-icon {
+    width: 14px !important;
+    height: 14px !important;
+    //border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+    // background: yellow  !important;
+    // border-width: 2px !important;
+    opacity: 1 !important;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="yellow"/></g></svg>') !important;
+    border: none !important;
+    background-size: 100% !important;
+}
+.start-icon {
+    //background: #76FF7A  !important;
+
+    width: 14px !important;
+    height: 14px !important;
+    //border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+    //border-width: 2px !important;
+    opacity: 1 !important;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="#76FF7A"/></g></svg>') !important;
+    border: none !important;
+    background-size: 100% !important;
+    // width: 16px !important;
+    // height: 16px !important;
+    // border-radius: 999px !important;
+    // margin-top: -8px !important;
+    // margin-left: -8px !important;
+    //border-width: 2px !important;
+}
+.end-icon {
+    //background: #FF91A4  !important;
+
+    width: 14px !important;
+    height: 14px !important;
+    //border-radius: 999px !important;
+    margin-top: -7px !important;
+    margin-left: -7px !important;
+    //border-width: 2px !important;
+    opacity: 1 !important;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 28 28"><g><ellipse ry="12" rx="12" cy="14" cx="14" stroke-width="4" stroke="#{$routeColor}" fill="#FF91A4"/></g></svg>') !important;
+    border: none !important;
+    background-size: 100% !important;
+    // width: 16px !important;
+    // height: 16px !important;
+    // border-radius: 999px !important;
+    // margin-top: -8px !important;
+    // margin-left: -8px !important;
+    //border-width: 2px !important;
+}
+
+
+.route-box {
+    width:290px; 
+    position:absolute;
+    left:0px;top:0px;bottom:0px;right:0px;
+    overflow:scroll; 
+}
+.route-box label {
+    font-weight: 700;
+    margin-bottom: 6px;
+    margin-left: 6px;
+    margin-right: 5px;
+    text-transform: uppercase;
+}
+.route-list {
+    border-top: 1px solid #ddd;
+}
+.route-item {
+    border-bottom: 1px solid #ddd;
+    padding: 6px 8px;
+    position: relative;
+    //background: rgba(255,255,255,.9);
+    transition: background 150ms;
+}
+.route-item.highlight,
+.route-item:hover {
+    background:rgba(0,0,255,.05);
+}
+
+.route-waypoint-icon {
+    background: yellow;
+    border: 3px solid $routeColor;
+    border-radius: 999px;
+    display:inline-block;
+    width: 20px;
+    height: 20px;
+    z-index: 101;
+    position: relative;
+    vertical-align: top;
+    margin-right: 4px;
+}
+.side-line {
+    content: '';
+    width: 4px;
+    background: $routeColor;
+    position: absolute;
+    left: 16px;
+    top: -1px;
+    bottom: -1px;
+    z-index: 100;
+}
+.side-line.start { top: 10px; }
+.side-line.end { bottom: 10px; }
+
+.route-waypoint-icon.start {
+    background: #76FF7A;
+}
+.route-waypoint-icon.end {
+    background: #FF91A4;
+}
+
+.instruct {
+    font-size: 20px;
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+    font-weight: 100;
+}

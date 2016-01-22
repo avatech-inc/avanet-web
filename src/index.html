@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Avanet</title>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+	<meta name="keywords" content="">
+	<meta name="description" content="Avanet is a mountain safety platform for professional and recreational backcountry travelers">
+
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="/assets/avanet.css">
+
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
+    <script src="https://checkout.stripe.com/checkout.js"></script>
+  </head>
+  <body window-resize ng-cloak>
+		<div ng-include="'/modules/header/header.html'"></div>
+		<section class="content" ui-view></section>
+		
+    	<!-- API error -->
+		<div id="api-error" style="display:none;">
+			<h1>Oops!</h1>
+			<h2>Our servers are experiencing exceptionally high traffic.<br/><br/>Please try again shortly.</h2>
+			<img src="/img/light_logo.png"/>
+		</div>
+
+        <script src="/assets/vendor.js"></script>
+		<script src="/assets/avanet.js"></script>
+  </body>
+</html>

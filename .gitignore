@@ -19,3 +19,6 @@ public/tiles2
 .csr
 .ssl
 .key
+
+# webpack build
+build/

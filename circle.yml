@@ -1,0 +1,14 @@
+machine:
+  node:
+    version: 5.4.1
+
+test:
+  pre:
+    - npm install -g jasmine-node
+    - npm run build
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - ./deploy_prod.sh

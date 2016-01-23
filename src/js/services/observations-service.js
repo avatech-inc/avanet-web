@@ -1,4 +1,5 @@
-angular.module('avatech').service('Observations', 
+angular.module('avatech').service('Observations', [
+    '$q', '$rootScope', '$timeout', '$interval', 'Global', '$http',
     function($q, $rootScope, $timeout, $interval, Global, $http) {
 
 	var self=this;
@@ -103,5 +104,5 @@ angular.module('avatech').service('Observations',
         // mark as removed on server
         $http.delete(window.apiBaseUrl + "observations/" + observation._id);
 	};
-});
+}]);
 

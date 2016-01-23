@@ -1,4 +1,4 @@
-angular.module('avatech').directive('grainSelect', function(snowpitConstants) {    
+angular.module('avatech').directive('grainSelect', ['snowpitConstants', function(snowpitConstants) {    
 
     var template = "";
     template += '<div class="btn-group grainTypeSelect" uib-dropdown>';
@@ -54,4 +54,4 @@ angular.module('avatech').directive('grainSelect', function(snowpitConstants) {
             }; 
         }
     };        
-});
+}]);

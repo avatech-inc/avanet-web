@@ -1,5 +1,6 @@
 angular.module('avatech').controller('LoginController',
-function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
+    ['$scope', '$rootScope', '$timeout', '$location', '$http', 'Global', 'Restangular',
+    function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
     
     $scope.busy = false;
 
@@ -29,4 +30,4 @@ function ($scope, $rootScope, $timeout, $location, $http, Global, Restangular) {
             },1000);
         });
     };
-});
+}]);

@@ -1,4 +1,6 @@
-angular.module('avatech').controller('RoutePlanningController', function($http, $q, $log, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport, Confirm) {
+angular.module('avatech').controller('RoutePlanningController', 
+    ['$http', '$q', '$log', '$location', '$state', '$scope', '$stateParams', '$rootScope', '$timeout', '$filter', 'Global', 'Routes', 'snowpitExport', 'Confirm',
+    function($http, $q, $log, $location, $state, $scope, $stateParams, $rootScope, $timeout, $filter, Global, Routes, snowpitExport, Confirm) {
 
     $scope.global = Global;
 
@@ -1414,4 +1416,4 @@ angular.module('avatech').controller('RoutePlanningController', function($http, 
             return deg;
         }
     }
-});
+}]);

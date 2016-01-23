@@ -1,4 +1,6 @@
-angular.module('avatech').factory('snowpitExport', function ($q, snowpitConstants,$compile,$rootScope, Global) { 
+angular.module('avatech').factory('snowpitExport', 
+    ['$q', 'snowpitConstants', '$compile', '$rootScope', 'Global',
+    function ($q, snowpitConstants,$compile,$rootScope, Global) { 
 
 var getGrainType = function(icssg) {
     for (var i = 0; i < snowpitConstants.grainTypes.length;i++){
@@ -689,4 +691,4 @@ return {
             });
         }, 300);
     }
-}});
+}}]);

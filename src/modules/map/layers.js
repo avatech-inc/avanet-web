@@ -1,4 +1,4 @@
-angular.module('avatech').factory('mapLayers', function ($q, Restangular, Global) { 
+angular.module('avatech').factory('mapLayers', ['$q', 'Restangular', 'Global', function ($q, Restangular, Global) { 
 
 var layers = Restangular.one("users", Global.user._id).one("maps").get();
 
@@ -27,4 +27,4 @@ return {
     },
     baseLayers: layers.$object,
   };
-});
+}]);

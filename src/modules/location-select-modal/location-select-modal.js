@@ -1,4 +1,4 @@
-angular.module('avatech').factory('LocationSelectModal', function ($uibModal) {
+angular.module('avatech').factory('LocationSelectModal', ['$uibModal', function ($uibModal) {
     return { open: function(options) {
         var modalInstance = $uibModal.open({
             templateUrl: '/modules/location-select-modal/location-select-modal.html',
@@ -14,9 +14,10 @@ angular.module('avatech').factory('LocationSelectModal', function ($uibModal) {
         return modalInstance.result;
     }
 }
-});
+}]);
 
 angular.module('avatech').controller('LocationSelectModalController',
+    ['$scope', '$timeout', '$uibModalInstance', 'initialLocation', 'Global',
     function ($scope, $timeout, $uibModalInstance, initialLocation, Global) {
 
         $scope.global = Global;
@@ -165,5 +166,4 @@ angular.module('avatech').controller('LocationSelectModalController',
             }, 100);
         }, true);
 
-    }
-);
+}]);

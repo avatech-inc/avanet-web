@@ -1,4 +1,6 @@
-angular.module('avatech').controller('NewObservationModalController', function ($scope, $stateParams, $location, $log, $timeout, $uibModalInstance, ob, Global, PublishModal, Observations) {
+angular.module('avatech').controller('NewObservationModalController', 
+  ['$scope', '$stateParams', '$location', '$log', '$timeout', '$uibModalInstance', 'ob', 'Global', 'PublishModal', 'Observations',
+  function ($scope, $stateParams, $location, $log, $timeout, $uibModalInstance, ob, Global, PublishModal, Observations) {
 
     $scope.global = Global;
 
@@ -654,4 +656,4 @@ angular.module('avatech').controller('NewObservationModalController', function (
        // Lightbox.openModal($scope.model.media, index);
     }
 
-});
+}]);

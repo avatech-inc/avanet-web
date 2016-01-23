@@ -35,12 +35,14 @@ if (__PROD__) {
 angular.module('avatech', DEPS);
 
 // configure console debug
-angular.module('avatech').config(function($logProvider){
-  $logProvider.debugEnabled(false);
-});
+angular.module('avatech').config(['$logProvider', function($logProvider) {
+    if (__PROD__) {
+        $logProvider.debugEnabled(false);
+    }
+}]);
 
 // configure lightbox
-angular.module('avatech').config(function (LightboxProvider) {
+angular.module('avatech').config(['LightboxProvider', function (LightboxProvider) {
   LightboxProvider.getImageUrl = function (media) {
     // if video, replace .mov with .mp4 so we can play with native HTML5 (for Cloudinary)
     if (media.type == "video" && media.URL.indexOf(".mov") == media.URL.length - 4) {
@@ -51,11 +53,12 @@ angular.module('avatech').config(function (LightboxProvider) {
   LightboxProvider.getImageCaption = function (media) {
     return null;
   };
-});
+}]);
 
 // configure angular schema forms
 angular.module('schemaForm').config(
-  function(schemaFormProvider, schemaFormDecoratorsProvider, sfPathProvider) {
+    ['schemaFormProvider', 'schemaFormDecoratorsProvider', 'sfPathProvider',
+    function(schemaFormProvider, schemaFormDecoratorsProvider, sfPathProvider) {
 
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator',
       'direction-select',
@@ -89,24 +92,24 @@ angular.module('schemaForm').config(
       'number',
       '/modules/forms/number.html'
     );
-});
+}]);
 
 // configure Restangular
-angular.module('avatech').config(function(RestangularProvider) {
+angular.module('avatech').config(['RestangularProvider', function(RestangularProvider) {
     // set API base url
     RestangularProvider.setBaseUrl(window.apiBaseUrl);
     // support mongodb "_id" format
     RestangularProvider.setRestangularFields({ id: "_id" });
-});
+}]);
 
 // enable html5 pushstate
-angular.module('avatech').config(function($locationProvider) {
+angular.module('avatech').config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
-});
+}]);
 
 // define additional triggers on Tooltip and Popover 
 // (show this be in this file? doesn't feel totally right to have it here)
-angular.module('avatech').config(function($tooltipProvider){
+angular.module('avatech').config(['$tooltipProvider', function($tooltipProvider){
     $tooltipProvider.setTriggers({
         mouseenter: 'mouseleave',
         click: 'click',
@@ -114,10 +117,11 @@ angular.module('avatech').config(function($tooltipProvider){
         never: 'mouseleave',
         show: 'hide',
     });
-});
+}]);
 
 // configure translation
-angular.module('avatech').config(function($translateProvider, $translatePartialLoaderProvider) {
+angular.module('avatech').config(['$translateProvider', '$translatePartialLoaderProvider',
+    function($translateProvider, $translatePartialLoaderProvider) {
     $translatePartialLoaderProvider.addPart('test');
     $translateProvider.useLoader('$translatePartialLoader', {
       urlTemplate: '/translate/{lang}/{part}.json'
@@ -126,10 +130,11 @@ angular.module('avatech').config(function($translateProvider, $translatePartialL
     $translateProvider.preferredLanguage('en');
     // enable proper escaping of translation content
     $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
-});
+}]);
 
 // the first thing that gets run
 angular.module('avatech').run(
+ ['$rootScope', '$location', '$state', '$stateParams', '$log', '$document', '$http', '$uibModalStack', 'Observations', 'Routes', 'Global',
  function($rootScope, $location, $state, $stateParams, $log, $document, $http, $uibModalStack, Observations, Routes, Global) {
 
     $rootScope.todaysDate = new Date();
@@ -219,7 +224,7 @@ angular.module('avatech').run(
         $document[0].body.className = (toState.data && toState.data.bodyCssClass ? toState.data.bodyCssClass : "");
     });
 
-});
+}]);
 
 // requestAnimationFrame
 (function() {

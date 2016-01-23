@@ -1,4 +1,4 @@
-angular.module('avatech').directive('roseGraph', function($timeout) {
+angular.module('avatech').directive('roseGraph', ['$timeout', function($timeout) {
   return {
     restrict: 'A',
     scope: false,
@@ -155,4 +155,4 @@ angular.module('avatech').directive('roseGraph', function($timeout) {
         }
     }
   };
-});
+}]);

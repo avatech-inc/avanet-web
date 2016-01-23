@@ -1,4 +1,6 @@
-angular.module('avatech').controller('AdminUsersController', function ($scope, $log, $location, $http, Global, Restangular) {
+angular.module('avatech').controller('AdminUsersController',
+    ['$scope', '$log', '$location', '$http', 'Global', 'Restangular',
+    function ($scope, $log, $location, $http, Global, Restangular) {
     $scope.global = Global;
 
     // executes on 'page load'
@@ -217,4 +219,4 @@ angular.module('avatech').controller('AdminUsersController', function ($scope, $
         // });
     }
 
-});
+}]);

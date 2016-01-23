@@ -1,4 +1,4 @@
-angular.module('avatech').factory('DeviceUploadModal', function ($uibModal) {
+angular.module('avatech').factory('DeviceUploadModal', ['$uibModal', function ($uibModal) {
     return { open: function(options) {
         var modalInstance = $uibModal.open({
             templateUrl: '/modules/sp-profile-upload/modal.html',
@@ -8,9 +8,10 @@ angular.module('avatech').factory('DeviceUploadModal', function ($uibModal) {
         });
         return modalInstance.result;
     }
-}});
+}}]);
 
 angular.module('avatech').controller('DeviceUploadModalController',
+    ['$scope', '$location', '$rootScope', '$uibModalInstance', '$log', '$timeout', '$http', 'Global', 'Observations',
     function ($scope, $location, $rootScope, $uibModalInstance, $log, $timeout, $http, Global, Observations) {
 
         $scope.global = Global;
@@ -77,12 +78,14 @@ angular.module('avatech').controller('DeviceUploadModalController',
             $timeout(function() { $scope.$apply(); });
         }
     }
-);
+]);
 
 
 // upload button directive
 
-angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout, $log) {
+angular.module('avatech').directive('sp1Upload', 
+  ['$q', '$http', '$timeout', '$log',
+  function($q, $http, $timeout, $log) {
   return {
     restrict: 'E',
     scope: { 
@@ -274,4 +277,4 @@ angular.module('avatech').directive('sp1Upload', function($q, $http, $timeout, $
         }, false);
     }
   };
-});
+}]);

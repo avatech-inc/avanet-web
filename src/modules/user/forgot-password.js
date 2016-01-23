@@ -1,4 +1,5 @@
 angular.module('avatech').controller('ForgotPasswordController', 
+    ['$scope', '$http', 'Global', 'Restangular',
     function ($scope, $http, Global, Restangular) {
 
     $scope.send = function() {
@@ -34,4 +35,4 @@ angular.module('avatech').controller('ForgotPasswordController',
 
         });
     };
-});
+}]);

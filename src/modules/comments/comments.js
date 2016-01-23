@@ -1,4 +1,6 @@
-angular.module('avatech').directive('commentsNew', function($http, $log, $timeout, $sce, Restangular) {
+angular.module('avatech').directive('commentsNew', 
+  ['$http', '$log', '$timeout', '$sce', 'Restangular',
+  function($http, $log, $timeout, $sce, Restangular) {
   return {
     restrict: 'E',
     scope: { 
@@ -125,7 +127,7 @@ angular.module('avatech').directive('commentsNew', function($http, $log, $timeou
 
     }]
   }
-});
+}]);
 
 // angular.module('avatech').directive('comments', function($http, $timeout) {
 //   return {

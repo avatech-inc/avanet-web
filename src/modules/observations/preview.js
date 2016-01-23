@@ -1,4 +1,5 @@
 angular.module('avatech').controller('ObservationPreviewController',
+    ['$scope', '$rootScope', '$location', '$uibModal', '$state', '$log', '$stateParams', 'snowpitExport', 'snowpitViews', 'Global', '$http', 'Lightbox', 'ngAudio', 'Confirm', 'Observations',
     function ($scope, $rootScope, $location, $uibModal, $state, $log, $stateParams, snowpitExport, snowpitViews, Global, $http, Lightbox, ngAudio, Confirm, Observations) {
 
         $rootScope.$broadcast('resizeMap');
@@ -469,5 +470,4 @@ angular.module('avatech').controller('ObservationPreviewController',
 
             });
         }
-    }
-);
+    }]);

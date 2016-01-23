@@ -1,4 +1,6 @@
-angular.module('avatech').controller('MapController', function ($scope, $state, $location, $timeout, Observations, Routes, Global, PublishModal) {
+angular.module('avatech').controller('MapController', 
+    ['$scope', '$state', '$location', '$timeout', 'Observations', 'Routes', 'Global', 'PublishModal',
+    function ($scope, $state, $location, $timeout, Observations, Routes, Global, PublishModal) {
     $scope.global = Global;
 
     if (__PROD__) {
@@ -147,4 +149,4 @@ angular.module('avatech').controller('MapController', function ($scope, $state, 
 
         $scope.loadMap = true;
     }
-});
+}]);

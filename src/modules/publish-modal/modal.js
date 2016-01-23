@@ -1,4 +1,4 @@
-angular.module('avatech').factory('PublishModal', function ($uibModal) {
+angular.module('avatech').factory('PublishModal', ['$uibModal', function ($uibModal) {
     return { open: function(options) {
 
         if (!options.initialSharing) options.initialSharing = null;
@@ -19,9 +19,10 @@ angular.module('avatech').factory('PublishModal', function ($uibModal) {
 
     }
 }
-});
+}]);
 
-angular.module('avatech').controller('PublishModalController', [ '$scope','$uibModalInstance', 'initialSharing', '$timeout', 'Global', 'Restangular', 
+angular.module('avatech').controller('PublishModalController',
+    ['$scope', '$uibModalInstance', 'initialSharing', '$timeout', 'Global', 'Restangular', 
     function ($scope, $uibModalInstance, initialSharing, $timeout, Global, Restangular) {
 
         $scope.global = Global;

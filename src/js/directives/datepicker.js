@@ -1,4 +1,4 @@
-angular.module('avatech').directive('datetimepicker', function ($window, $log) {
+angular.module('avatech').directive('datetimepicker', ['$window', '$log', function ($window, $log) {
     return {
         require:'^ngModel',
         restrict:'E',
@@ -37,9 +37,9 @@ angular.module('avatech').directive('datetimepicker', function ($window, $log) {
 
         }
       };
-    });
+    }]);
 
-angular.module('avatech').directive('moDateInput', function ($window) {
+angular.module('avatech').directive('moDateInput', ['$window', function ($window) {
     return {
         require:'^ngModel',
         restrict:'A',
@@ -87,10 +87,10 @@ angular.module('avatech').directive('moDateInput', function ($window) {
             });
         }
     };
-});
+}]);
 
 
-angular.module('avatech').directive('dateInput', function ($window) {
+angular.module('avatech').directive('dateInput', ['$window', function ($window) {
     return {
         require:'^ngModel',
         restrict:'A',
@@ -120,4 +120,4 @@ angular.module('avatech').directive('dateInput', function ($window) {
             });
         }
     };
-});
+}]);

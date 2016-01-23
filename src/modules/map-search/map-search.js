@@ -1,4 +1,4 @@
-angular.module('avatech').directive('mapSearch', function($timeout, $log, $http, $q) {
+angular.module('avatech').directive('mapSearch', ['$timeout', '$log', '$http', '$q', function($timeout, $log, $http, $q) {
   return {
     restrict: 'E',
     scope: {
@@ -313,4 +313,4 @@ angular.module('avatech').directive('mapSearch', function($timeout, $log, $http,
         }
     }
   }
-});
+}]);

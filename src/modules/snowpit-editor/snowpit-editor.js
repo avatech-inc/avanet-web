@@ -1,5 +1,6 @@
 angular.module('avatech')
 .controller('SnowpitController', 
+    ['$scope', '$state', '$stateParams', '$location', '$log', '$http', '$timeout', 'snowpitConstants', 'snowpitViews', 'snowpitExport', 'Global', 'Confirm', 'LocationSelectModal', 'Lightbox', 'PublishModal', 'Observations',
     function ($scope, $state, $stateParams, $location, $log, $http, $timeout, snowpitConstants, snowpitViews, snowpitExport, Global, Confirm, LocationSelectModal, Lightbox, PublishModal, Observations) {
 
         $scope.global = Global;
@@ -733,9 +734,9 @@ angular.module('avatech')
         //         picker.setMoment(moment(document.getElementById('datepicker').value));
         //     },500);
         // },1);
-    })
+    }])
 
-.directive('draggable', function($document, $timeout, $log) {
+.directive('draggable', ['$document', '$timeout', '$log', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggable' },
@@ -786,9 +787,9 @@ angular.module('avatech')
         }
       }
     };
-  })
+  }])
 
-.directive('draggableHardness', function($document, $timeout, $log) {
+.directive('draggableHardness', ['$document', '$timeout', '$log', function($document, $timeout, $log) {
     return {
       restrict: 'A',
       scope: { layer: '=draggableHardness' },
@@ -888,4 +889,4 @@ angular.module('avatech')
         }
       }
     };
-  });
+  }]);

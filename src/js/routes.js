@@ -1,4 +1,4 @@
-angular.module('avatech').config(function($stateProvider) {
+angular.module('avatech').config(['$stateProvider', function($stateProvider) {
   $stateProvider
 
     .state('index', {
@@ -175,4 +175,4 @@ angular.module('avatech').config(function($stateProvider) {
         url: '/*path',
         templateUrl: '/modules/404/404.html'
     });
-});
+}]);

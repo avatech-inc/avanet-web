@@ -1,4 +1,4 @@
-angular.module('avatech').directive('time', function($compile) {
+angular.module('avatech').directive('time', ['$compile', function($compile) {
   return {
     restrict: 'A', //attribute or element
     scope: {
@@ -120,4 +120,4 @@ angular.module('avatech').directive('time', function($compile) {
       }
     }
   };
-});
+}]);

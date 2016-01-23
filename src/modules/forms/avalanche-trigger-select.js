@@ -1,4 +1,6 @@
-angular.module('avatech').directive('avalancheTriggerSelect', function($http, $timeout, $log) {
+angular.module('avatech').directive('avalancheTriggerSelect',
+    ['$http', '$timeout, $log',
+    function($http, $timeout, $log) {
   return {
     restrict: 'E',
     scope: { 
@@ -122,4 +124,4 @@ angular.module('avatech').directive('avalancheTriggerSelect', function($http, $t
     ];
 }
 }
-});
+}]);

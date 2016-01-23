@@ -1,7 +1,7 @@
 
 // file upload
 
-angular.module('avatech').directive('uploader', function($http, $timeout, $log) {
+angular.module('avatech').directive('uploader', ['$http', '$timeout', '$log', function($http, $timeout, $log) {
   return {
     restrict: 'E',
     scope: { 
@@ -276,4 +276,4 @@ angular.module('avatech').directive('uploader', function($http, $timeout, $log) 
         }, false);
     }
   };
-});
+}]);

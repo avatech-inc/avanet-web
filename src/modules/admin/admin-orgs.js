@@ -1,4 +1,6 @@
-angular.module('avatech').controller('AdminOrgsController', function ($scope, $location, $http, Global, Restangular) {
+angular.module('avatech').controller('AdminOrgsController', 
+    ['$scope', '$location', '$http', 'Global', 'Restangular',
+    function ($scope, $location, $http, Global, Restangular) {
     $scope.global = Global;
 
     $scope.init = function() {
@@ -11,4 +13,4 @@ angular.module('avatech').controller('AdminOrgsController', function ($scope, $l
             $scope.orgs = orgs;
         });
     }
-});
+}]);

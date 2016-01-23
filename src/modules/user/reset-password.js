@@ -1,4 +1,5 @@
 angular.module('avatech').controller('ResetPasswordController', 
+    ['$scope', '$http', '$stateParams', 'Global', 'Restangular',
 	function ($scope, $http, $stateParams, Global, Restangular) {
 
 	$scope.forgotPasswordToken = $stateParams.forgotPasswordToken;
@@ -42,4 +43,4 @@ angular.module('avatech').controller('ResetPasswordController',
             $scope.error = "There was an error updating your password. Please try again or contact support for assistance."
         });
     };
-});
+}]);

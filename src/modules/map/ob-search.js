@@ -1,4 +1,6 @@
-angular.module('avatech').directive('obSearch', function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, Restangular, ObSearch) {
+angular.module('avatech').directive('obSearch',
+	['$timeout', '$q', '$rootScope', '$templateRequest', '$compile', 'snowpitExport', 'snowpitConstants', 'Global', 'mapLayers', 'Restangular', 'ObSearch',
+	function($timeout, $q, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, Restangular, ObSearch) {
   return {
     restrict: 'A',
     templateUrl: "/modules/map/ob-search.html",
@@ -38,9 +40,9 @@ angular.module('avatech').directive('obSearch', function($timeout, $q, $rootScop
 
     }
 }
-});
+}]);
 
-angular.module('avatech').factory('ObSearch', function (Global) { 
+angular.module('avatech').factory('ObSearch', ['Global', function (Global) { 
 
 	return function() {
 
@@ -347,4 +349,4 @@ angular.module('avatech').factory('ObSearch', function (Global) {
 	    this.setDefaultType();
 
 	}
-});
+}]);

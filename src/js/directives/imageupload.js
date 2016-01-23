@@ -1,5 +1,5 @@
 
-angular.module('avatech').directive('imageUpload', function($http, $timeout, $log) {
+angular.module('avatech').directive('imageUpload', ['$http', '$timeout', '$log', function($http, $timeout, $log) {
   return {
     restrict: 'A',
     scope: { 
@@ -198,4 +198,4 @@ angular.module('avatech').directive('imageUpload', function($http, $timeout, $lo
         // }, false);
     }
   };
-});
+}]);

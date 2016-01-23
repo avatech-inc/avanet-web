@@ -1,4 +1,4 @@
-angular.module('avatech').factory('Confirm', function ($uibModal) {
+angular.module('avatech').factory('Confirm', ['$uibModal', function ($uibModal) {
     return { open: function(message) {
         var modalInstance = $uibModal.open({
             templateUrl: '/modules/confirm/confirm.html',
@@ -12,8 +12,8 @@ angular.module('avatech').factory('Confirm', function ($uibModal) {
         return modalInstance.result;
     }
 }
-});
-angular.module('avatech').controller('ConfirmController', function ($scope, $uibModalInstance,message) {
+}]);
+angular.module('avatech').controller('ConfirmController', ['$scope', '$uibModalInstance,message', function ($scope, $uibModalInstance,message) {
 	$scope.message = message;
     $scope.no = function () {
         $uibModalInstance.dismiss();
@@ -21,4 +21,4 @@ angular.module('avatech').controller('ConfirmController', function ($scope, $uib
     $scope.yes = function () {
         $uibModalInstance.close();
     };
-});
+}]);

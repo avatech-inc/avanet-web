@@ -146,6 +146,11 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+        sourceMap: false,
+        mangle: false
+    }),
+
     /**
      * Extract the completed CSS to a single file.
      */

@@ -21,4 +21,4 @@ public/tiles2
 .key
 
 # webpack build
-build/
+/build/

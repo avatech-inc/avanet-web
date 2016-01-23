@@ -1,7 +1,9 @@
 
 var AvatechTerrainLayer = require('./terrain-layer')
 
-angular.module('avatech').directive('map', function($timeout, $q, $state, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, $log, terrainVisualization, $uibModal) {
+angular.module('avatech').directive('map',
+    ['$timeout', '$q', '$state', '$rootScope', '$templateRequest', '$compile', 'snowpitExport', 'snowpitConstants', 'Global', 'mapLayers', '$http', '$log', 'terrainVisualization', '$uibModal',
+    function($timeout, $q, $state, $rootScope, $templateRequest, $compile, snowpitExport, snowpitConstants, Global, mapLayers, $http, $log, terrainVisualization, $uibModal) {
   return {
     restrict: 'A',
     templateUrl: "/modules/map/map-directive.html",
@@ -703,4 +705,4 @@ angular.module('avatech').directive('map', function($timeout, $q, $state, $rootS
         }
     }
   };
-});
+}]);

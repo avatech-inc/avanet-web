@@ -1,4 +1,5 @@
-angular.module('avatech').service('Routes', 
+angular.module('avatech').service('Routes', [
+    '$q', '$rootScope', '$timeout', '$interval', 'Global', '$http',
     function($q, $rootScope, $timeout, $interval, Global, $http) {
 
 	var self=this;
@@ -95,5 +96,4 @@ angular.module('avatech').service('Routes',
         $http.delete(window.apiBaseUrl + "routes/" + observation._id);
   //       }
 	};
-});
-
+}]);

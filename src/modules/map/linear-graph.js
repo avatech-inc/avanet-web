@@ -1,4 +1,4 @@
-angular.module('avatech').directive('linearGraph', function($timeout, $q, $parse) {
+angular.module('avatech').directive('linearGraph', ['$timeout', '$q', '$parse', function($timeout, $q, $parse) {
   return {
     restrict: 'A',
     scope: false,
@@ -135,4 +135,4 @@ angular.module('avatech').directive('linearGraph', function($timeout, $q, $parse
         }
     }
   };
-});
+}]);

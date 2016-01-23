@@ -1,4 +1,5 @@
 angular.module('avatech').controller('RegisterController', 
+  ['$scope', '$rootScope', '$timeout', '$http', '$stateParams', '$location', 'Global', 'Restangular',
   function ($scope, $rootScope, $timeout, $http, $stateParams, $location, Global, Restangular) {
 
     $scope.reg = {};
@@ -285,4 +286,4 @@ angular.module('avatech').controller('RegisterController',
         }
     };
 
-});
+}]);

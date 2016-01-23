@@ -1,5 +1,6 @@
 
 angular.module('avatech').factory("Global",
+    ['$location', '$http', '$state', '$stateParams', '$interval', 'localStorageService', 'Restangular',
     function($location,$http,$state,$stateParams,$interval,localStorageService, Restangular) {
 
         var _this = this;
@@ -229,5 +230,4 @@ angular.module('avatech').factory("Global",
         };
 
         return _this._data;
-    }
-);
+}]);

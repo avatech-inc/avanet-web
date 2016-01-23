@@ -1,4 +1,4 @@
-angular.module('avatech').factory('RegisterDeviceModal', function ($uibModal) {
+angular.module('avatech').factory('RegisterDeviceModal', ['$uibModal', function ($uibModal) {
         return { open: function(options) {
 
             var modalInstance = $uibModal.open({
@@ -12,9 +12,10 @@ angular.module('avatech').factory('RegisterDeviceModal', function ($uibModal) {
 
         }
     }
-});
+}]);
 
 angular.module('avatech').controller('RegisterDeviceModalController',
+    ['$scope', '$uibModalInstance', '$timeout', '$http', 'Global', 'Restangular',
     function ($scope, $uibModalInstance, $timeout, $http, Global, Restangular) {
 
         $scope.global = Global;
@@ -61,5 +62,4 @@ angular.module('avatech').controller('RegisterDeviceModalController',
                 $scope.checking = false;
             });
         };
-    }
-);
+    }]);

@@ -1,4 +1,4 @@
-angular.module('avatech').directive('locationSelectButton', function(LocationSelectModal) {    
+angular.module('avatech').directive('locationSelectButton', ['LocationSelectModal', function(LocationSelectModal) {    
     return {
         restrict: 'A',
         scope: {
@@ -27,7 +27,7 @@ angular.module('avatech').directive('locationSelectButton', function(LocationSel
             });
         }
     };        
-});
+}]);
 
 angular.module('avatech').directive('accordionNew', function () {
     return {
@@ -64,7 +64,7 @@ angular.module('avatech').directive('onenter', function() {
   };
 });
 
-angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($timeout, $parse) {
+angular.module('avatech').directive('focusOn', ['$timeout', '$parse', function($timeout, $parse) {
   return {
     link: function(scope, element, attrs) {
       var model = $parse(attrs.focusOn);
@@ -80,6 +80,7 @@ angular.module('avatech').directive('focusOn', ['$timeout', '$parse',function($t
     }
   };
 }]);
+
 angular.module('avatech').directive('autoFocus', function() {
     return {
         restrict: 'AC',
@@ -120,7 +121,7 @@ angular.module('avatech').directive('onChange', function() {
     };        
 });
 
-angular.module('avatech').directive('metersOrFeet', ['$window','$parse', function ($window, $parse) {
+angular.module('avatech').directive('metersOrFeet', ['$window', '$parse', function ($window, $parse) {
     return {
         require:'^ngModel',
         restrict:'A',
@@ -152,7 +153,7 @@ angular.module('avatech').directive('metersOrFeet', ['$window','$parse', functio
     };
 }]);
 
-angular.module('avatech').directive('cmOrIn', ['$window','$parse', function ($window, $parse) {
+angular.module('avatech').directive('cmOrIn', ['$window', '$parse', function ($window, $parse) {
     return {
         require:'^ngModel',
         restrict:'A',
@@ -182,7 +183,7 @@ angular.module('avatech').directive('cmOrIn', ['$window','$parse', function ($wi
     };
 }]);
 
-angular.module('avatech').directive('tempUnits', ['$window','$parse', function ($window, $parse) {
+angular.module('avatech').directive('tempUnits', ['$window', '$parse', function ($window, $parse) {
     return {
         require:'^ngModel',
         restrict:'A',

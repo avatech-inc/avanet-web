@@ -122,3 +122,5 @@ function DrawDeclinationCanvas(declination, gridNorth) {
 
     return arrow_canvas;
 }
+
+module.exports = DrawDeclinationCanvas;

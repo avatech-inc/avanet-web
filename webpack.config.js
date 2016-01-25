@@ -120,7 +120,10 @@ var plugins = [
         turf: "turf",
         simplify: "simplify-js",
         graticule: "graticule",
-        Arc: "greatCircle"
+        Arc: "greatCircle",
+        DrawDeclinationCanvas: "DrawDeclinationCanvas",
+        WorldMagneticModel: "WorldMagneticModel",
+        leafletImage: "leaflet-image"
     }),
 
     /**

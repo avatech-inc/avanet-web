@@ -130,8 +130,8 @@ angular.module('avatech').controller('LocationSelectModalController',
                 // conver to lat/lng
                 var latlng = UTM.UTMXYToLatLon($scope.coords.utm.e, $scope.coords.utm.n, $scope.coords.utm.zone, $scope.coords.utm.hemisphere === "S");
                 
-                var lat = RadToDeg(latlng.lat);
-                var lng = RadToDeg(latlng.lng);
+                var lat = UTM.RadToDeg(latlng.lat);
+                var lng = UTM.RadToDeg(latlng.lng);
 
                 $scope.invalidLat = false;
                 $scope.invalidLng = false;

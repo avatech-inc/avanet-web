@@ -344,7 +344,7 @@ angular.module('avatech').controller('RoutePlanningController',
             // get bearing between center point and top point
             var bearing = turf.bearing(
                 turf.point([ center.lng, center.lat ]),
-                turf.point([ RadToDeg(top.lng), RadToDeg(top.lat) ])
+                turf.point([ UTM.RadToDeg(top.lng), UTM.RadToDeg(top.lat) ])
             );
             return bearing;
         },

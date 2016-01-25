@@ -249,10 +249,10 @@ ul.nav>li.active>a:hover, .nav>li.active>a:focus {
 /* snow symbols font */
 @font-face {
     font-family: 'snowsymbols';
-    src: url('/fonts/snowsymbolsiacs-webfont.eot');
-    src: url('/fonts/snowsymbolsiacs-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/fonts/snowsymbolsiacs-webfont.woff') format('woff'),
-         url('/fonts/snowsymbolsiacs-webfont.ttf') format('truetype');
+    src: url('../fonts/snowsymbolsiacs-webfont.eot');
+    src: url('../fonts/snowsymbolsiacs-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/snowsymbolsiacs-webfont.woff') format('woff'),
+         url('../fonts/snowsymbolsiacs-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 

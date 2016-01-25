@@ -1337,7 +1337,9 @@ angular.module('avatech').controller('RoutePlanningController',
             angular.element(link)
                 .attr('href', gpxData)
                 .attr('download', 'avanet-route.gpx');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
 
         // UTILS

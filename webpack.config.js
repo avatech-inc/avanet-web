@@ -4,8 +4,10 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = {
-  entry: {
+var DEV = process.env.NODE_ENV === "development";
+var PROD = process.env.NODE_ENV === "production";
+
+var entry = {
     js: ["./src/index.js"],
     css: ["./src/sass.js"],
 
@@ -80,7 +82,79 @@ module.exports = {
         "./src/vendor/FileSaver.js",
         "./src/vendor/canvas-toBlob.js"
     ]
-  },
+}
+
+var plugins = [
+    /**
+     * Extract the completed CSS to a single file.
+     */
+    new ExtractTextPlugin("avanet.css"),
+
+    /**
+     * Vendor bundle. Passing Infinity makes CommonsChunkPlugin include all
+     * of the files in the vendor entry.
+     */
+    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity),
+
+    /**
+     * __DEV__ and __PROD__ are two feature flags used in the codebase to
+     * enable/disable features like analytics and debugging.
+     */
+    new webpack.DefinePlugin({
+        __DEV__: (DEV),
+        __PROD__: (PROD)
+    }),
+
+    /**
+     * A list of globals sprinkled through the codebase. These resolve to
+     * require() in webpack and make transitioning to require() much easier.
+     */
+    new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery",
+        _: "underscore",
+        moment: "moment",
+        PruneCluster: "PruneCluster",
+        L: "leaflet",
+        UTM: "utm",
+        turf: "turf",
+        simplify: "simplify-js",
+        graticule: "graticule",
+        Arc: "greatCircle"
+    }),
+
+    /**
+     * A couple static files that aren't require()'d in the codebase, but still
+     * need to be copied to build. For the webpack-dev-server, webpack has to
+     * be run first to copy these to the build directory (CopyWebpackPlugin files
+     * are not available in the in-memory server).
+     *
+     * The views/ HTML files are copied for now. The 500 and 503 files won't be
+     * needed once the static files are off Heroku. The download-app file
+     * will be moved to an Angular view.
+     */ 
+    new CopyWebpackPlugin([
+        { from: "./src/img", to: "../img" },
+        { from: "./src/translate", to: "../translate" },
+        { from: "./src/views", to: "../views" },
+        { from: "./src/index.html", to: "../index.html" }
+    ])
+];
+
+if (PROD) {
+    /**
+     * Only run Uglify in prod. TODO: Only mangle the codebase, and not the
+     * vendor libs.
+     */
+    var uglify = new webpack.optimize.UglifyJsPlugin({
+        mangle: false
+    });
+
+    plugins.unshift(uglify);
+}
+
+module.exports = {
+  entry: entry,
   module: {
     loaders: [
       /**
@@ -121,6 +195,7 @@ module.exports = {
         /moment\/moment.js/
     ]
   },
+  plugins: plugins,
   output: {
     path: path.resolve(__dirname, "build", "assets"),
     publicPath: "/assets/",
@@ -144,68 +219,6 @@ module.exports = {
     sourceMap: true,
     sourceMapContents: true
   },
-
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-        sourceMap: false,
-        mangle: false
-    }),
-
-    /**
-     * Extract the completed CSS to a single file.
-     */
-    new ExtractTextPlugin("avanet.css"),
-
-    /**
-     * Vendor bundle. Passing Infinity makes CommonsChunkPlugin include all
-     * of the files in the vendor entry.
-     */
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity),
-
-    /**
-     * __DEV__ and __PROD__ are two feature flags used in the codebase to
-     * enable/disable features like analytics and debugging.
-     */
-    new webpack.DefinePlugin({
-        __DEV__: (process.env.NODE_ENV === "development"),
-        __PROD__: (process.env.NODE_ENV === "production")
-    }),
-
-    /**
-     * A list of globals sprinkled through the codebase. These resolve to
-     * require() in webpack and make transitioning to require() much easier.
-     */
-    new webpack.ProvidePlugin({
-        $: "jquery",
-        jQuery: "jquery",
-        _: "underscore",
-        moment: "moment",
-        PruneCluster: "PruneCluster",
-        L: "leaflet",
-        UTM: "utm",
-        turf: "turf",
-        simplify: "simplify-js",
-        graticule: "graticule",
-        Arc: "greatCircle"
-    }),
-
-    /**
-     * A couple static files that aren't require()'d in the codebase, but still
-     * need to be copied to build. For the webpack-dev-server, webpack has to
-     * be run first to copy these to the build directory (CopyWebpackPlugin files
-     * are not available in the in-memory server).
-     *
-     * The views/ HTML files are copied for now. The 500 and 503 files won't be
-     * needed once the static files are off Heroku. The download-app file
-     * will be moved to an Angular view.
-     */ 
-    new CopyWebpackPlugin([
-        { from: "./src/img", to: "../img" },
-        { from: "./src/translate", to: "../translate" },
-        { from: "./src/views", to: "../views" },
-        { from: "./src/index.html", to: "../index.html" }
-    ])
-  ],
 
   /**
    * Not sure what this is used for. It was in the CSS source map example.

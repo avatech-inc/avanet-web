@@ -61,9 +61,7 @@
 
         <li uib-dropdown>
 	        <a href="#" uib-dropdown-toggle>
-            <div class="headshot" ng-style="{ 'background-image':'url(' + (observation.user.profilePhotoURL ? global.user.profilePhotoURL : '/img/nophoto.jpg' ) + ')' }"></div>
-
-          {{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>
+            <div class="headshot" ng-style="{ 'background-image':'url(' + (observation.user.profilePhotoURL ? global.user.profilePhotoURL : '/img/nophoto.jpg' ) + ')' }"></div>&nbsp;{{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>
 	        <ul class="dropdown-menu">
 
             <li><a href="/settings">{{ 'user_settings' | translate }}</a></li>

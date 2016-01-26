@@ -263,7 +263,7 @@ scrollable always-visible="true">
 		<tr>
 			<td>Sky</td>
 			<td>{{ formatters.formatSky(profile.metaData.sky) }}
-				<img ng-show="profile.metaData.sky" src="{{ formatters.getSkyIcon(profile.metaData.sky) }}" style="height:12px;width:12px;position:relative;bottom: 2px;left: 4px;"/>
+				<img ng-show="profile.metaData.sky" ng-src="{{ formatters.getSkyIcon(profile.metaData.sky) }}" style="height:12px;width:12px;position:relative;bottom: 2px;left: 4px;"/>
 			</td>
 		</tr>
 		<tr>
@@ -312,7 +312,7 @@ scrollable always-visible="true">
 		<div class="photos" style="height: 145px; overflow-y: scroll; white-space: nowrap;padding-left:7px;">
 			<div ng-repeat="photo in profile.photos" style="vertical-align:top;display:inline-block;" ng-click="showPhoto($index)">
 				<div class="image-container">
-					<img src="{{ photo.url }}"/>
+					<img ng-src="{{ photo.url }}"/>
 				</div>
 
 				<!--<span style='font-size:11px;'>{{ photo.caption }}</span>-->

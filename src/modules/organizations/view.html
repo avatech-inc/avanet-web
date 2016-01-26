@@ -215,7 +215,7 @@ ul.results li:hover .arrow{
 
 			      <div uib-dropdown-toggle class="dropdown-toggle">
 			      	
-		      		<img src="{{ org.logoUrl }}"/>
+		      		<img ng-src="{{ org.logoUrl }}"/>
 
 		      		<div class="editLogo">Change</div>
 
@@ -231,7 +231,7 @@ ul.results li:hover .arrow{
 
 			<div class="logoView" ng-if="org.logoUrl && !userIsAdmin()">
 				<div>
-	      			<img src="{{ org.logoUrl }}"/>
+	      			<img ng-src="{{ org.logoUrl }}"/>
 	      		</div>
 		    </div>
 

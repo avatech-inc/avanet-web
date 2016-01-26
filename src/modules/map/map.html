@@ -97,7 +97,7 @@
 
 						<div bo-if="profile.type!='snowpit' && profile.type!='sp-profile'" class="thumb"
 						 ng-class="{ redFlag: profile.redFlag }">
-							<img src="/img/markers/{{ profile.type }}-icon.png"/>
+							<img ng-src="/img/markers/{{ profile.type }}-icon.png"/>
 						</div>
 
 						<div class='lineItem'><i class="fa fa-user"></i>{{ ::profile.user.fullName}} 

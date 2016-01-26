@@ -24,6 +24,10 @@ if (__DEV__) {
     window.apiBaseUrl = 'http://localhost:10010/v2/';
 }
 
+if (__STAGE__) {
+    window.apiBaseUrl = 'https://avanet-api-dev.herokuapp.com/v2/';
+}
+
 if (__PROD__) {
     window._releaseVersion = '@@release';
     window.apiBaseUrl = 'https://api.avatech.com/v2/';

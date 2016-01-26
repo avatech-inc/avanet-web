@@ -22,3 +22,7 @@ public/tiles2
 
 # webpack build
 /build/
+
+# npm log
+npm-debug.log
+

@@ -116,7 +116,8 @@ angular.module('avatech').factory("Global",
                         // tracking
                         var tracking_user ={
                             name: user.fullName,
-                            email: user.email
+                            email: user.email,
+                            createdAt: user.created
                         };
 
                         if (__STAGE__ || __PROD__) {

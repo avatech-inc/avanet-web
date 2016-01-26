@@ -5,10 +5,15 @@ machine:
 test:
   pre:
     - npm install -g jasmine-node
-    - npm run build
 
 deployment:
   master:
     branch: master
     commands:
-      - ./deploy_prod.sh
+      - npm run build
+      - scp -r ./build/* ubuntu@52.91.103.60:~/prod
+  develop:
+    branch: develop
+    commands:
+      - npm run build:develop
+      - scp -r ./build/* ubuntu@52.91.103.60:~/develop

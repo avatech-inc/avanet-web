@@ -5,6 +5,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var DEV = process.env.NODE_ENV === "development";
+var STAGE = process.env.NODE_ENV === "stage";
 var PROD = process.env.NODE_ENV === "production";
 
 var entry = {
@@ -101,6 +102,7 @@ var plugins = [
      */
     new webpack.DefinePlugin({
         __DEV__: (DEV),
+        __STAGE__: (STAGE),
         __PROD__: (PROD)
     }),
 

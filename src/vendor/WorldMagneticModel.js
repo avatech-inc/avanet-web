@@ -466,8 +466,6 @@ return maxErr * 100 / maxExp;//max % error
 
 }
 
-module.exports = WorldMagneticModel
-
 /*
 C***********************************************************************
 C

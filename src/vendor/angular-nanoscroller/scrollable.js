@@ -6,8 +6,6 @@
   }
   //jQuery must be used, cause angular method 'find' has different behavior
   if (angular.element !== $) {
-    console.log(angular.element)
-    console.log($)
     throw new Error("Angular must use jQuery not jqLite");
   }
 

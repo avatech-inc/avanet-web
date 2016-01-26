@@ -222,7 +222,3 @@ GreatCircle.prototype.Arc = function(npoints,options) {
     }
     return arc;
 };
-
-exports.Coord = Coord;
-exports.Arc = Arc;
-exports.GreatCircle = GreatCircle;

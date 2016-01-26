@@ -919,6 +919,3 @@ var PruneClusterLeafletSpiderfier = (L.Layer ? L.Layer : L.Class).extend({
         map.off('zoomend', this.Unspiderfy, this);
     }
 });
-
-exports.PruneCluster = PruneCluster
-exports.PruneClusterForLeaflet = PruneClusterForLeaflet

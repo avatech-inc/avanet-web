@@ -481,8 +481,3 @@ function UTMXYToLatLon(x, y, zone, southhemi, latlon)
         lng: latlon[1]
     };
 }
-
-exports.LatLonToUTMXY = LatLonToUTMXY
-exports.UTMXYToLatLon = UTMXYToLatLon
-exports.DegToRad = DegToRad
-exports.RadToDeg = RadToDeg

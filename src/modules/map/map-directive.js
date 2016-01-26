@@ -667,7 +667,7 @@ angular.module('avatech').directive('map',
                     gridOverlayLayer = null;
                 }
                 if (newOverlay == 'utm') {
-                    gridOverlayLayer = new graticule.UTMGridLayer();
+                    gridOverlayLayer = new UTMGridLayer();
                 }
                 else if (newOverlay == 'dd') {
                     //gridOverlayLayer = new LatLngGridLayer();

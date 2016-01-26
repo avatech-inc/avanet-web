@@ -342,5 +342,3 @@ var AvatechTerrainLayer = function (options) {
     }
     return terrainLayer;
 };
-
-module.exports = AvatechTerrainLayer;

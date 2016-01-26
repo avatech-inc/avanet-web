@@ -17,7 +17,6 @@ var entry = {
      */
     vendor: [
         "jquery",
-        "./src/js/bindJQueryShim.js", // needed for AngularJS
         "underscore",
         "angular",
         "d3",
@@ -112,6 +111,7 @@ var plugins = [
     new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery",
+        "window.jQuery": "jquery",
         _: "underscore",
         moment: "moment",
         PruneCluster: "PruneCluster",
@@ -119,8 +119,9 @@ var plugins = [
         UTM: "utm",
         turf: "turf",
         simplify: "simplify-js",
-        graticule: "graticule",
+        UTMGridLayer: "graticule",
         Arc: "greatCircle",
+        AvatechTerrainLayer: "AvatechTerrainLayer",
         DrawDeclinationCanvas: "DrawDeclinationCanvas",
         WorldMagneticModel: "WorldMagneticModel",
         leafletImage: "leaflet-image"
@@ -185,7 +186,23 @@ module.exports = {
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)/,
         loader: "url-loader?limit=1"
-      }
+      },
+
+      /**
+       * jsPDF uses RequireJS. God help us. Including it raw.
+       */
+      { test: /jspdf/, loader: "script-loader" },
+
+      /**
+       * Several "vendor" libraries expect to use the global namespace.
+       */
+      { test: /terrain-layer/, loader: "exports-loader?AvatechTerrainLayer" },
+      { test: /WorldMagneticModel/, loader: "exports-loader?WorldMagneticModel" },
+      { test: /DrawDeclinationCanvas/, loader: "exports-loader?DrawDeclinationCanvas" },
+      { test: /greatCircle/, loader: "exports-loader?Coord,Arc,GreatCircle"},
+      { test: /graticule/, loader: "exports-loader?UTMGridLayer" },
+      { test: /utm.js/, loader: "exports-loader?LatLonToUTMXY,UTMXYToLatLon,DegToRad,RadToDeg" },
+      { test: /PruneCluster/, loader: "exports-loader?PruneCluster,PruneClusterForLeaflet" },
     ],
 
     /**

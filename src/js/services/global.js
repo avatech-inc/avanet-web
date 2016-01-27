@@ -116,18 +116,27 @@ angular.module('avatech').factory("Global",
                         // tracking
                         var tracking_user ={
                             name: user.fullName,
-                            username: user.fullName,
                             email: user.email,
-                            id: user._id
+                            createdAt: user.created
                         };
 
+                        if (__STAGE__ || __PROD__) {
+                            analytics.identify(user._id, tracking_user)
+                        }
+
                         if (__PROD__) {
+                            tracking_user.username = user.fullName;
+                            tracking_user.id = user._id;
+
                             Raven.setUserContext(tracking_user);
                             heap.identify(tracking_user);
                             mixpanel.identify(user._id);
+
                             tracking_user.$email = tracking_user.email; // for mixpanel
+
                             mixpanel.people.set(tracking_user);
                         }
+
        //              },
        //              // error
        //              function() {

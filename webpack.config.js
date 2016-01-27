@@ -8,6 +8,17 @@ var DEV = process.env.NODE_ENV === "development";
 var STAGE = process.env.NODE_ENV === "stage";
 var PROD = process.env.NODE_ENV === "production";
 
+
+/*
+ * Source maps are available automatically on dev and stage. Source maps are
+ * uploaded to Sentry on prod.
+ */
+var SOURCE_PATH = "[file].map";
+
+if (PROD) {
+  SOURCE_PATH = "../../[file].map";
+}
+
 var entry = {
     js: ["./src/index.js"],
     css: ["./src/sass.js"],
@@ -226,7 +237,9 @@ module.exports = {
      * Currently only two entries use the output, js and css.
      * TODO: refactor the entries and not use the entry name as file extension.
      */
-    filename: "avanet.[name]"
+    filename: "avanet.[name]",
+
+    sourceMapFilename: SOURCE_PATH
   },
 
   /**

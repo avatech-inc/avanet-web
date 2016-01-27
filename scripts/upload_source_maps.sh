@@ -14,8 +14,4 @@ curl https://app.getsentry.com/api/0/projects/avatech/web-client/releases/$COMMI
   -F file=@avanet.js.map \
   -F name="https://avanet.avatech.com/avanet.js.map"
 
-curl https://app.getsentry.com/api/0/projects/avatech/web-client/releases/$COMMIT/files/ \
-  -u c8d2219c66e54cb1bfe5142927bbc116: \
-  -X POST \
-  -F file=@vendor.js.map \
-  -F name="https://avanet.avatech.com/vendor.js.map"
+mv vendor.js.map ./build/assets/

@@ -11,8 +11,8 @@ deployment:
     branch: master
     commands:
       - npm run build
-      - scp -r ./build/* ubuntu@52.91.103.60:~/prod
       - ./scripts/upload_source_maps.sh
+      - scp -r ./build/* ubuntu@52.91.103.60:~/prod
   develop:
     branch: develop
     commands:

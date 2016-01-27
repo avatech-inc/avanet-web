@@ -16,7 +16,7 @@ angular.module('avatech').controller('ForgotPasswordController',
         .then(function(data) {
 
             if (__PROD__) {
-                mixpanel.track("forgot password", { email: $scope.email });
+                analytics.track("forgot password", { email: $scope.email });
             }
 
             $scope.resetSuccess = true;

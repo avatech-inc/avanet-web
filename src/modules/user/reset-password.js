@@ -35,7 +35,7 @@ angular.module('avatech').controller('ResetPasswordController',
             $scope.successfulReset = true;
 
             if (__PROD__) {
-                mixpanel.track("password reset");
+                analytics.track("password reset");
             }
         }, 
         // token not found

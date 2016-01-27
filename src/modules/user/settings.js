@@ -69,7 +69,7 @@ angular.module('avatech').controller('SettingsController',
             $scope.user.save();
 
             if (__PROD__) {
-                mixpanel.track("changed home location");
+                analytics.track("changed home location");
             }
 
             $scope.global.setUser($scope.user);
@@ -130,7 +130,7 @@ angular.module('avatech').controller('SettingsController',
                 $scope.scrollToErrorPassword();
 
                 if (__PROD__) {
-                    mixpanel.track("changed password");
+                    analytics.track("changed password");
                 }
             },
             // error

@@ -300,7 +300,7 @@ angular.module('avatech').directive('map',
             scope.setBaseLayer = function(layer, clicked) {
 
                 if (__PROD__) {
-                    if (clicked) mixpanel.track("set base layer", { alias: layer.alias, name: layer.name });
+                    if (clicked) analytics.track("set base layer", { alias: layer.alias, name: layer.name });
                 }
 
                 scope.selectedBaseLayer = layer;
@@ -403,7 +403,7 @@ angular.module('avatech').directive('map',
 
                 // track zoom on mixpanel (to see which zoom levels are most popular)
                 if (__PROD__) {
-                    mixpanel.track("zoom", zoom);
+                    analytics.track("zoom", {zoom: zoom});
                 }
             });
 

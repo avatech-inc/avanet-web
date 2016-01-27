@@ -89,7 +89,7 @@ angular.module('avatech').controller('RegisterController',
               // success
               .then(function (data) {
                   if (__PROD__) {
-                    mixpanel.track("registered");
+                    analytics.track("registered");
                   }
 
                   Global.login(data.email, newUser.password);
@@ -148,7 +148,7 @@ angular.module('avatech').controller('RegisterController',
                   // success
                   .then(function (data) {
                       if (__PROD__) {
-                        mixpanel.track("registered");
+                        analytics.track("registered");
                       }
 
                       Global.login(data.email, newUser.password);
@@ -227,7 +227,7 @@ angular.module('avatech').controller('RegisterController',
                   // success
                   .then(function (data) {
                       if (__PROD__) {
-                        mixpanel.track("registered");
+                        analytics.track("registered");
                       }
 
                       Global.login(data.email, newUser.password);

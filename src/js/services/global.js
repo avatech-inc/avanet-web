@@ -77,8 +77,7 @@ angular.module('avatech').factory("Global",
                 if (__PROD__) {
                     Raven.setUserContext();
                     heap.identify();
-                    mixpanel.track('logout');
-                    mixpanel.identify();
+                    analytics.track('logout');
                 }
 
                 window.location.href = "/login";
@@ -93,7 +92,6 @@ angular.module('avatech').factory("Global",
                 if (__PROD__) {
                     Raven.setUserContext();
                     heap.identify();
-                    mixpanel.identify();
                 }
 
                 delete $http.defaults.headers.common['Auth-Token'];
@@ -130,11 +128,6 @@ angular.module('avatech').factory("Global",
 
                             Raven.setUserContext(tracking_user);
                             heap.identify(tracking_user);
-                            mixpanel.identify(user._id);
-
-                            tracking_user.$email = tracking_user.email; // for mixpanel
-
-                            mixpanel.people.set(tracking_user);
                         }
 
        //              },

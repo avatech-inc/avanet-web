@@ -3,10 +3,6 @@ angular.module('avatech').controller('MapController',
     function ($scope, $state, $location, $timeout, Observations, Routes, Global, PublishModal) {
     $scope.global = Global;
 
-    if (__PROD__) {
-        mixpanel.track("home");
-    }
-
     var firstTime = true;
 
     $scope.loadMap = false;

@@ -8,6 +8,7 @@ var DEV = process.env.NODE_ENV === "development";
 var STAGE = process.env.NODE_ENV === "stage";
 var PROD = process.env.NODE_ENV === "production";
 
+var VERSION = "dev";
 
 /*
  * Source maps are available automatically on dev and stage. Source maps are
@@ -17,6 +18,7 @@ var SOURCE_PATH = "[file].map";
 
 if (PROD) {
   SOURCE_PATH = "../../[file].map";
+  VERSION = process.env.VERSION;
 }
 
 var entry = {
@@ -114,7 +116,8 @@ var plugins = [
     new webpack.DefinePlugin({
         __DEV__: (DEV),
         __STAGE__: (STAGE),
-        __PROD__: (PROD)
+        __PROD__: (PROD),
+        __VERSION__: JSON.stringify(VERSION)
     }),
 
     /**

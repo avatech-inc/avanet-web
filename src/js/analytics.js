@@ -14,13 +14,7 @@ if (__PROD__) {
     // Sentry
     Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {
         maxMessageLength: 200,
-        release: window._releaseVersion,
-        shouldSendCallback: function(data) {
-            if (data.release.indexOf("@@") == 0) return false;
-            else if (data.message.indexOf("source height is 0.") > -1) return false;
-            else if (data.request.url.indexOf("logout") > -1) return false;
-            return true;
-        }
+        release: __VERSION__,
     }).install();
 }
 

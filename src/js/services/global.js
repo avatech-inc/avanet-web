@@ -76,7 +76,6 @@ angular.module('avatech').factory("Global",
 
                 if (__PROD__) {
                     Raven.setUserContext();
-                    heap.identify();
                     analytics.track('logout');
                 }
 
@@ -91,7 +90,6 @@ angular.module('avatech').factory("Global",
 
                 if (__PROD__) {
                     Raven.setUserContext();
-                    heap.identify();
                 }
 
                 delete $http.defaults.headers.common['Auth-Token'];
@@ -127,7 +125,6 @@ angular.module('avatech').factory("Global",
                             tracking_user.id = user._id;
 
                             Raven.setUserContext(tracking_user);
-                            heap.identify(tracking_user);
                         }
 
        //              },

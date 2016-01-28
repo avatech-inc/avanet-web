@@ -1,4 +1,6 @@
 
+/* eslint-disable */
+
 if (__PROD__) {
     // Sentry
     Raven.config('https://183df1e7cf1143478da65dbac2850021@app.getsentry.com/22018', {

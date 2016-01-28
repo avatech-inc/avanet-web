@@ -135,7 +135,7 @@
 </div>
 
 
-<div class="mapCoords" ng-show="mapCursorLocation && showCoords">
+<div class="mapCoords" ng-show="mapCursorLocation">
     {{ formatters.formatLatLng(mapCursorLocation) }}
     <span style="opacity: .5;font-size: 1.1em;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
     <span class="utm" ng-bind-html="formatters.formatLatLngAsUTM(mapCursorLocation, true)"></span>

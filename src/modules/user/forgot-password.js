@@ -1,38 +1,40 @@
-angular.module('avatech').controller('ForgotPasswordController', 
-    ['$scope', '$http', 'Global', 'Restangular',
-    function ($scope, $http, Global, Restangular) {
 
-    $scope.send = function() {
-    	// validation
-        // todo: validate email!
- 		if (!$scope.email || $scope.email == "") {
- 			$scope.validationError = "Please enter a valid email"; return;
- 		}
+angular.module('avatech').controller('ForgotPasswordController', [
+    '$scope',
+    'Restangular',
 
-        Restangular.all('users/forgot-password').post({ 
-            email: $scope.email
-        })
-        // user found
-        .then(function(data) {
+    ($scope, Restangular) => {
+        $scope.send = () => {
+            // validation
+            // todo: validate email!
+            if (!$scope.email || $scope.email === '') {
+                $scope.validationError = 'Please enter a valid email'
 
-            if (__PROD__) {
-                analytics.track("forgot password", { email: $scope.email });
+                return
             }
 
-            $scope.resetSuccess = true;
-            $scope.validationError = null;
+            Restangular
+                .all('users/forgot-password')
+                .post({
+                    email: $scope.email
+                })
+                // user found
+                .then(data => {
+                    if (__PROD__) {
+                        analytics.track('forgot password', { email: $scope.email });
+                    }
 
-        }, 
-        // user not found
-        function(response) {
-
-            if (response.status == 404) {
-                $scope.validationError =  "Oops! We couldn't find a user with that email."
-            }
-            else {
-                $scope.validationError = "Server Error. Please try again";
-            }
-
-        });
-    };
-}]);
+                    $scope.resetSuccess = true
+                    $scope.validationError = null
+                },
+                // user not found
+                response => {
+                    if (response.status === 404) {
+                        $scope.validationError = "Oops! We couldn't find a user with that email."
+                    } else {
+                        $scope.validationError = 'Server Error. Please try again'
+                    }
+                })
+        }
+    }
+])

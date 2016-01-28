@@ -1,123 +1,121 @@
-angular.module('avatech').directive('datetimepicker', ['$window', '$log', function ($window, $log) {
-    return {
-        require:'^ngModel',
-        restrict:'E',
-        scope: { 
-          theDate: '=ngModel'
-        },
-        template: '<input class="form-control" ng-model="dateInput" schema-validate="form" style="width:100px;display:inline-block;vertical-align:bottom;margin-right:6px;"/><timepicker style="display:inline-block;vertical-align:bottom;height:34px;" class="timepicker" ng-model="timeInput" hour-step="1" minute-step="1" show-meridian="true" mousewheel="false" show-spinners="false"></timepicker>',
-        link:function (scope, elm, attrs, ctrl) {
 
-          scope.$watch('theDate',function(){
-            if (!scope.theDate) scope.theDate = new Date();
-            
-            scope.internalDate = new Date(scope.theDate);
+angular.module('avatech').directive('datetimepicker', ['$log', $log => ({
+    require: '^ngModel',
+    restrict: 'E',
+    scope: {
+        theDate: '=ngModel'
+    },
+    templateUrl: '/js/directives/datepicker.html',
+    link: (scope, elm, attrs, ctrl) => {
+        scope.$watch('theDate', () => {
+            if (!scope.theDate) {
+                scope.theDate = new Date()
+            }
 
-            scope.dateInput = angular.copy(scope.internalDate);
-            scope.timeInput = angular.copy(scope.internalDate);
-          }, true);
+            scope.internalDate = new Date(scope.theDate)
 
-          scope.$watch('dateInput',function() {
-            $log.debug(scope.dateInput);
-            if (!scope.dateInput) return $log.debug("BAD DATE!");
+            scope.dateInput = angular.copy(scope.internalDate)
+            scope.timeInput = angular.copy(scope.internalDate)
+        }, true)
 
-            //$log.debug("    DATE: " + scope.dateInput.toISOString());
-            scope.internalDate.setDate(scope.dateInput.getDate());
-            scope.internalDate.setMonth(scope.dateInput.getMonth());
-            scope.internalDate.setFullYear(scope.dateInput.getFullYear());
-          }, true);
+        scope.$watch('dateInput', () => {
+            $log.debug(scope.dateInput)
 
-          scope.$watch('timeInput',function(){
-            if (!scope.timeInput) return $log.debug("BAD TIME!");
+            if (!scope.dateInput) return $log.debug('BAD DATE!')
 
-            //$log.debug("    TIME: " + scope.timeInput.toISOString());
-            scope.internalDate.setMinutes(scope.timeInput.getMinutes());
-            scope.internalDate.setHours(scope.timeInput.getHours());
-          }, true);
+            // $log.debug("    DATE: " + scope.dateInput.toISOString());
 
-        }
-      };
-    }]);
+            scope.internalDate.setDate(scope.dateInput.getDate())
+            scope.internalDate.setMonth(scope.dateInput.getMonth())
+            scope.internalDate.setFullYear(scope.dateInput.getFullYear())
+        }, true)
 
-angular.module('avatech').directive('moDateInput', ['$window', function ($window) {
-    return {
-        require:'^ngModel',
-        restrict:'A',
-        link:function (scope, elm, attrs, ctrl) {
+        scope.$watch('timeInput', () => {
+            if (!scope.timeInput) return $log.debug('BAD TIME!')
 
-          elm = $(elm)[0];
+            // $log.debug("    TIME: " + scope.timeInput.toISOString());
 
-            setTimeout(function(){
-                  var picker = new Pikaday({
-                      field: elm,
-                      // todo: make this configurable
-                      // can't select date greater than today
-                      maxDate: new Date(),
-                      //, format: 'YYYY-MM-DD'
-                      onSelect: function() {
-                          //$log.debug(picker.toString());
-                          //$log.debug(this.getMoment().format('Do MMMM YYYY'));
-                      }
-                  });
-                  // todo:find a more elegant way to make sure the picker loads the date
-                  setTimeout(function(){
-                      picker.setMoment(moment(elm.value));
-                  },400);
-            },1);
+            scope.internalDate.setMinutes(scope.timeInput.getMinutes())
+            scope.internalDate.setHours(scope.timeInput.getHours())
+        }, true)
+    }
+})])
 
-            var dateFormat = attrs.moMediumDate;
-            
-            dateFormat = "YYYY-MM-DD";
+angular.module('avatech').directive('moDateInput', [() => ({
+    require: '^ngModel',
+    restrict: 'A',
+    link: (scope, elm, attrs, ctrl) => {
+        setTimeout(() => {
+            let picker = new Pikaday({
+                field: $(elm)[0],
 
-            attrs.$observe('moDateInput', function (newValue) {
-                if (dateFormat == newValue || !ctrl.$modelValue) return;
-                dateFormat = newValue;
-                ctrl.$modelValue = new Date(ctrl.$setViewValue);
-            });
+                // todo: make this configurable
+                // can't select date greater than today
 
-            ctrl.$formatters.unshift(function (modelValue) {
-                if (!dateFormat || !modelValue) return "";
-                var retVal = moment(modelValue).format(dateFormat);
-                return retVal;
-            });
+                maxDate: new Date(),
 
-            ctrl.$parsers.unshift(function (viewValue) {
-                var date = moment(viewValue,["YYYY-MM-DD","MM/DD/YY"]);
-                return (date && date.isValid() && date.year() > 1950 ) ? date.toDate() : "";
-            });
-        }
-    };
-}]);
+                // format: 'YYYY-MM-DD'
 
+                onSelect: () => {
+                    // $log.debug(picker.toString());
+                    // $log.debug(this.getMoment().format('Do MMMM YYYY'));
+                }
+            })
 
-angular.module('avatech').directive('dateInput', ['$window', function ($window) {
-    return {
-        require:'^ngModel',
-        restrict:'A',
-        link:function (scope, elm, attrs, ctrl) {
+            // todo:find a more elegant way to make sure the picker loads the date
+            setTimeout(() => {
+                picker.setMoment(moment($(elm)[0].value))
+            }, 400)
+        }, 1)
 
-          elm = $(elm)[0];
+        let dateFormat = attrs.moMediumDate
+        dateFormat = 'YYYY-MM-DD'
 
-            var dateFormat = attrs.moMediumDate;
-            
-            dateFormat = "YYYY-MM-DD";
+        attrs.$observe('moDateInput', newValue => {
+            if (dateFormat === newValue || !ctrl.$modelValue) return
 
-            // attrs.$observe('dateInput', function (newValue) {
-            //     if (dateFormat == newValue || !ctrl.$modelValue) return;
-            //     dateFormat = newValue;
-            //     ctrl.$modelValue = new Date(ctrl.$setViewValue);
-            // });
+            dateFormat = newValue
 
-            ctrl.$formatters.unshift(function (modelValue) {
-                if (!dateFormat || !modelValue) return "";
-                var retVal = moment(modelValue).format(dateFormat);
-                return retVal;
-            });
+            ctrl.$modelValue = new Date(ctrl.$setViewValue)
+        })
 
-            ctrl.$parsers.unshift(function (viewValue) {
-                var date = moment(viewValue,["YYYY-MM-DD","MM/DD/YY"]);
-                return (date && date.isValid() && date.year() > 1950 ) ? date.toDate() : "";
-            });
-        }
-    };
-}]);
+        ctrl.$formatters.unshift(modelValue => {
+            if (!dateFormat || !modelValue) return ''
+
+            return moment(modelValue).format(dateFormat)
+        })
+
+        ctrl.$parsers.unshift(viewValue => {
+            let date = moment(viewValue, ['YYYY-MM-DD', 'MM/DD/YY'])
+
+            return (date && date.isValid() && date.year() > 1950) ? date.toDate() : ''
+        })
+    }
+})])
+
+angular.module('avatech').directive('dateInput', [() => ({
+    require: '^ngModel',
+    restrict: 'A',
+    link: (scope, elm, attrs, ctrl) => {
+        let dateFormat = attrs.moMediumDate
+        dateFormat = 'YYYY-MM-DD'
+
+        // attrs.$observe('dateInput', function (newValue) {
+        //     if (dateFormat == newValue || !ctrl.$modelValue) return;
+        //     dateFormat = newValue;
+        //     ctrl.$modelValue = new Date(ctrl.$setViewValue);
+        // });
+
+        ctrl.$formatters.unshift(modelValue => {
+            if (!dateFormat || !modelValue) return ''
+
+            return moment(modelValue).format(dateFormat)
+        })
+
+        ctrl.$parsers.unshift(viewValue => {
+            let date = moment(viewValue, ['YYYY-MM-DD', 'MM/DD/YY'])
+
+            return (date && date.isValid() && date.year() > 1950) ? date.toDate() : ''
+        })
+    }
+})])

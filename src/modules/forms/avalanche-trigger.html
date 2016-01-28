@@ -1,0 +1,53 @@
+
+<div class="btn-group userSelect" uib-dropdown ng-show="trigger == \'N\'">
+    <button  type="button" uib-dropdown-toggle class="btn btn-default">
+        <i class="fa fa-plus"></i> Add Secondary Natural Trigger
+    </button>
+
+    <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="width:300px;min-height:100px;">
+        <li>
+            <a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+                <ul class="results">
+                    <li ng-repeat="type in naturalTriggers" ng-click="addTrigger(type)" ng-class="{ isMember: hasTrigger(type) }" close-dropdown-on-click>
+                        {{ type.name }}<span class="arrow"><i class="fa fa-plus"></i></span>
+                    </li>
+                </ul>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="btn-group userSelect" uib-dropdown ng-show="trigger == \'A\'">
+    <button  type="button" uib-dropdown-toggle class="btn btn-default">
+        <i class="fa fa-plus"></i> Add Secondary Artificial Trigger
+    </button>
+
+    <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="width:300px;min-height:100px;">
+        <li>
+            <a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
+                <div ng-repeat="cat in [\'Explosive\',\'Vehicle\',\'Human\',\'Miscellaneous\']">
+                    <div class="subheader" ng-class="{ \'first\': $index == 0 }">
+                        {{ cat }}
+                    </div>
+                    <ul class="results">
+                        <li ng-repeat="type in artificialTriggers[cat]" ng-click="addTrigger(type)" ng-class="{ isMember: hasTrigger(type) }" close-dropdown-on-click>
+                            {{ type.name }}
+                            <span class="arrow">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<ul style="margin-bottom:0px;margin-top:8px;padding-left:22px;" ng-show="triggers && triggers.length">
+    <li ng-repeat="trigger in triggers">
+        {{ getTriggerName(trigger) }}
+        <span ng-click="removeTrigger(trigger)" style="margin-left:6px;">
+            <i class="fa fa-times"></i>
+        </span>
+    </li>
+</ul>

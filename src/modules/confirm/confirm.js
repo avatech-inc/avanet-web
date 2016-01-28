@@ -1,24 +1,33 @@
-angular.module('avatech').factory('Confirm', ['$uibModal', function ($uibModal) {
-    return { open: function(message) {
-        var modalInstance = $uibModal.open({
+
+angular.module('avatech').factory('Confirm', ['$uibModal', $uibModal => ({
+    open: message => {
+        let modalInstance = $uibModal.open({
             templateUrl: '/modules/confirm/confirm.html',
             controller: 'ConfirmController',
             backdrop: 'static',
             windowClass: 'width-400',
             resolve: {
-                message: function() { return message; }
+                message: () => message
             }
-        });
-        return modalInstance.result;
+        })
+
+        return modalInstance.result
     }
-}
-}]);
-angular.module('avatech').controller('ConfirmController', ['$scope', '$uibModalInstance,message', function ($scope, $uibModalInstance,message) {
-	$scope.message = message;
-    $scope.no = function () {
-        $uibModalInstance.dismiss();
-    };
-    $scope.yes = function () {
-        $uibModalInstance.close();
-    };
-}]);
+})])
+
+angular.module('avatech').controller('ConfirmController', [
+    '$scope',
+    '$uibModalInstance',
+    'message',
+
+    (
+        $scope,
+        $uibModalInstance,
+        message
+    ) => {
+        $scope.message = message
+
+        $scope.no = () => $uibModalInstance.dismiss()
+        $scope.yes = () => $uibModalInstance.close()
+    }
+])

@@ -58,10 +58,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
                 var n = horizontal ? _x : _y;
 
                 // convert back to lat lng
-                var latlng = UTM.UTMXYToLatLon(e, n, zone, southernHemi);
+                var latlng = UTM.utmXYToLatLon(e, n, zone, southernHemi);
 
                 // get container point
-                var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.RadToDeg(latlng.lat), UTM.RadToDeg(latlng.lng)));
+                var canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.radToDeg(latlng.lat), UTM.radToDeg(latlng.lng)));
 
                 if (!previousPoint) this.ctx.moveTo(canvasPoint.x, canvasPoint.y);
                 else {
@@ -145,10 +145,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
         for (var _x = _x_min; _x <= _x_max; _x += this.div) {
             // northing
             if (horizontal) {
-                var _UTM_SW = UTM.LatLonToUTMXY(UTM.DegToRad(this.latBottom), UTM.DegToRad(this.lngLeft));
-                var _latlng = UTM.UTMXYToLatLon(_UTM_SW.x, _x, zone, southernHemi);
+                var _UTM_SW = UTM.latLonToUTMXY(UTM.degToRad(this.latBottom), UTM.degToRad(this.lngLeft));
+                var _latlng = UTM.utmXYToLatLon(_UTM_SW.x, _x, zone, southernHemi);
                
-                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.RadToDeg(_latlng.lat), UTM.RadToDeg(_latlng.lng)));
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.radToDeg(_latlng.lat), UTM.radToDeg(_latlng.lng)));
                 
                 // is outside map bounds?
                 var outside = (_canvasPoint.y - 36 < 0 || // '-36' prevents collision with top easting labels
@@ -160,10 +160,10 @@ var UTMGridLayer = L.CanvasLayer.extend({
             }
             // easting
             else  {
-                var _UTM_NE = UTM.LatLonToUTMXY(UTM.DegToRad(this.latTop), UTM.DegToRad(this.lngRight));
-                var _latlng = UTM.UTMXYToLatLon(_x, _UTM_NE.y, zone, southernHemi);
+                var _UTM_NE = UTM.latLonToUTMXY(UTM.degToRad(this.latTop), UTM.degToRad(this.lngRight));
+                var _latlng = UTM.utmXYToLatLon(_x, _UTM_NE.y, zone, southernHemi);
 
-                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.RadToDeg(_latlng.lat), UTM.RadToDeg(_latlng.lng)));
+                var _canvasPoint = this._map.latLngToContainerPoint(new L.LatLng(UTM.radToDeg(_latlng.lat), UTM.radToDeg(_latlng.lng)));
                 
                 // is outside zone and map bounds?
                 var rightPoint = _canvasPoint.x + this.ctx.measureText(_x).width + 10;
@@ -297,8 +297,8 @@ var UTMGridLayer = L.CanvasLayer.extend({
         else if (zoom == 17) this.div = 100000 / 400;
             
         // calcualte top and bottom utm
-        var UTM_NE  = UTM.LatLonToUTMXY(UTM.DegToRad(this.latTop), UTM.DegToRad(this._map.getBounds()._northEast.lng));
-        var UTM_SW =  UTM.LatLonToUTMXY(UTM.DegToRad(this.latBottom), UTM.DegToRad(this._map.getBounds()._southWest.lng));
+        var UTM_NE  = UTM.latLonToUTMXY(UTM.degToRad(this.latTop), UTM.degToRad(this._map.getBounds()._northEast.lng));
+        var UTM_SW =  UTM.latLonToUTMXY(UTM.degToRad(this.latBottom), UTM.degToRad(this._map.getBounds()._southWest.lng));
        
         this.utmTop    = (parseInt(UTM_NE.y / this.div) * this.div) + this.div;
         this.utmBottom = (parseInt(UTM_SW.y / this.div) * this.div) - this.div;

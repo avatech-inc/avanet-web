@@ -187,6 +187,15 @@ module.exports = {
         loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
       },
 
+      {
+        test: /\.(js|jsx)$/,
+        loader: "babel-loader",
+        include: [
+          path.resolve(__dirname, "src", "js"),
+          path.resolve(__dirname, "src", "modules")
+        ]
+      },
+
       /**
         * Add Angular HTML templates to JS template cache.
         */

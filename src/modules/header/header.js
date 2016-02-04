@@ -1,32 +1,32 @@
-angular.module('avatech').controller('HeaderController', 
-    ['$scope', '$location', '$route', 'RegisterDeviceModal', 'DeviceUploadModal', 'Global', '$uibModal',
-    function ($scope, $location, $route, RegisterDeviceModal, DeviceUploadModal, Global, $uibModal) {
-    $scope.global = Global;
 
-    $scope.registerSP1 = function() {
-        RegisterDeviceModal.open();
-    };
+angular.module('avatech').controller('HeaderController', [
+    '$scope',
+    '$location',
+    'RegisterDeviceModal',
+    'DeviceUploadModal',
+    'Global',
+    '$uibModal',
 
-    $scope.deviceUpload = function() {
-        DeviceUploadModal.open();
-    };
+    (
+        $scope,
+        $location,
+        RegisterDeviceModal,
+        DeviceUploadModal,
+        Global,
+        $uibModal
+    ) => {
+        $scope.global = Global
 
-    $scope.isActive = function (viewLocation) { 
-        return viewLocation === $location.path();
-    };
+        $scope.registerSP1 = () => RegisterDeviceModal.open()
+        $scope.deviceUpload = () => DeviceUploadModal.open()
+        $scope.isActive = viewLocation => (viewLocation === $location.path())
 
-    $scope.newOb = function(type) {
-        $uibModal.open({
-            templateUrl: "/modules/observations/new.html",
-            controller: "NewObservationModalController",
+        $scope.newOb = type => $uibModal.open({
+            templateUrl: '/modules/observations/new.html',
+            controller: 'NewObservationModalController',
             backdrop: 'static',
             windowClass: 'width-480',
-            resolve: {
-              ob: function() { return { type: type }; }
-            }
-        }).result.finally(function() {
-            
-        });
+            resolve: { ob: () => ({ type: type }) }
+        }).result.finally(() => {})
     }
-    
-}]);
+])

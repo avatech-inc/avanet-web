@@ -1,147 +1,150 @@
 
-angular.module('avatech').directive('profile', ['$timeout','snowpitConstants', function($timeout, snowpitConstants) {
-  return {
-    restrict: 'A',
-    //scope: { profile: '=profile' },
-    link: function(scope, element, attrs) {
+angular.module('avatech').directive('profile', [
+    'snowpitConstants',
 
-        //return;
-        var profile = scope.$eval(attrs.profile);
-        if (!profile) return;
+    snowpitConstants => ({
+        restrict: 'A',
+        // scope: { profile: '=profile' },
+        link: (scope, element, attrs) => {
+            let profile = scope.$eval(attrs.profile)
 
-        // using '$watch' allows the canvas to be redrawn
-        //scope.$watch('profile', function(profile) {
+            if (!profile) return
 
-            var canvas = element[0];
-            var context = element[0].getContext('2d');
+            // using '$watch' allows the canvas to be redrawn
+            // scope.$watch('profile', function(profile) {
+
+            let canvas = element[0]
+            let context = element[0].getContext('2d')
 
             // clear canvas
-            //context.clearRect(0, 0, canvas.width, canvas.height);
+            // context.clearRect(0, 0, canvas.width, canvas.height);
 
+            context.lineWidth = 1
+            context.strokeStyle = '#444'
+            context.fillStyle = '#444'
 
-            context.lineWidth = 1;
-            context.strokeStyle = "#444";
-            context.fillStyle = '#444';
-
-            var hardness = snowpitConstants.hardness;
-
-            var runningHeight = 0;
+            let hardness = snowpitConstants.hardness
+            let runningHeight = 0
 
             if (profile.layers) {
-                for (var i = 0; i < profile.layers.length; i++) {
+                for (let i = 0; i < profile.layers.length; i++) {
+                    let layer = profile.layers[i]
+                    let _height = layer.height * (canvas.height / profile.depth)
+                    let _width = Math.round(hardness[layer.hardness].width * canvas.width)
+                    let _width2 = _width
 
-                    var layer = profile.layers[i];
+                    if (layer.hardness2) {
+                        _width2 = Math.round(hardness[layer.hardness2].width * canvas.width)
+                    }
 
-                    var _height = layer.height  * (canvas.height / profile.depth);
-                    var _width = Math.round(hardness[layer.hardness].width * canvas.width);
-                    var _width2 = _width;
-                    if (layer.hardness2)
-                        _width2 = Math.round(hardness[layer.hardness2].width * canvas.width);
+                    context.beginPath()
+                    context.moveTo(canvas.width, runningHeight)
+                    context.lineTo(canvas.width - _width, runningHeight)
+                    context.lineTo(canvas.width - _width2, runningHeight + _height)
+                    context.lineTo(canvas.width, runningHeight + _height)
 
-                    context.beginPath();
+                    context.closePath()
+                    context.fill()
+                    context.stroke()
 
-                    context.moveTo(canvas.width,runningHeight);
-                    context.lineTo(canvas.width - _width, runningHeight);
-                    context.lineTo(canvas.width - _width2, runningHeight + _height);
-                    context.lineTo(canvas.width, runningHeight + _height);
-
-                    context.closePath();
-                    context.fill();
-                    context.stroke();
-
-                    runningHeight += _height;
+                    runningHeight += _height
                 }
             }
-        //});
-    }
-  };
-}]);
+            // });
+        }
+    })
+])
 
-angular.module('avatech').directive('profileBig', ['$timeout', 'snowpitConstants', function($timeout, snowpitConstants) {
-  return {
-    restrict: 'A',
-    scope: { profile: '=profileBig' },
-    link: function(scope, element) {
+angular.module('avatech').directive('profileBig', [
+    '$timeout',
+    'snowpitConstants',
 
-        // using '$watch' allows the canvas to be redrawn
-        scope.$watch('profile', function(profile) {
+    ($timeout, snowpitConstants) => ({
+        restrict: 'A',
+        scope: { profile: '=profileBig' },
+        link: (scope, element) => {
+            // using '$watch' allows the canvas to be redrawn
+            scope.$watch('profile', profile => {
+                let canvas = element[0]
+                let context = element[0].getContext('2d')
 
-            var canvas = element[0];
-            var context = element[0].getContext('2d');
+                // clear canvas
+                context.clearRect(0, 0, canvas.width, canvas.height)
 
-            // clear canvas
-            context.clearRect(0, 0, canvas.width, canvas.height);
+                // background
+                context.fillStyle = '#fff'
+                context.fillRect(0, 0, canvas.width, canvas.height)
+                context.fill()
 
-            // background 
-            context.fillStyle = "#fff";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            context.fill();
+                if (!profile) return
 
-            if (!profile) return;
+                context.lineWidth = 1.2
+                context.strokeStyle = '#000'
+                context.fillStyle = '#bbb'
 
-            context.lineWidth = 1.2;
-            context.strokeStyle = "#000";
-            context.fillStyle = '#bbb';
+                let hardness = snowpitConstants.hardness
+                let runningHeight = 0
 
-            var hardness = snowpitConstants.hardness;
+                for (let i = 0; i < scope.profile.layers.length; i++) {
+                    let layer = scope.profile.layers[i]
 
-            var runningHeight = 0;
+                    let _height = layer.height * (canvas.height / scope.profile.depth)
+                    let _width = Math.round(hardness[layer.hardness].width * canvas.width)
+                    let _width2 = _width
+                    if (layer.hardness2) {
+                        _width2 = Math.round(hardness[layer.hardness2].width * canvas.width)
+                    }
 
-            for (var i = 0; i < scope.profile.layers.length; i++) {
+                    context.beginPath()
 
-                var layer = scope.profile.layers[i];
+                    context.moveTo(canvas.width, runningHeight)
+                    context.lineTo(canvas.width - _width, runningHeight)
+                    context.lineTo(canvas.width - _width2, runningHeight + _height)
+                    context.lineTo(canvas.width, runningHeight + _height)
 
-                var _height = layer.height  * (canvas.height / scope.profile.depth);
-                var _width = Math.round(hardness[layer.hardness].width * canvas.width);
-                var _width2 = _width;
-                if (layer.hardness2)
-                    _width2 = Math.round(hardness[layer.hardness2].width * canvas.width);
+                    context.closePath()
+                    context.fill()
+                    context.stroke()
 
-                context.beginPath();
-
-                context.moveTo(canvas.width,runningHeight);
-                context.lineTo(canvas.width - _width, runningHeight);
-                context.lineTo(canvas.width - _width2, runningHeight + _height);
-                context.lineTo(canvas.width, runningHeight + _height);
-
-                context.closePath();
-                context.fill();
-                context.stroke();
-
-                runningHeight += _height;
-            }
-            // plot temps
-
-            // todo: sort temps by depth
-
-            if (profile.temps.length > 0) {
-                context.beginPath();
-                for (var i = 0; i < profile.temps.length; i++){
-                    var plotTemp = (60 - Math.abs(profile.temps[i].temp)) * (canvas.width / 60);
-                    context.lineTo(
-                        plotTemp, 
-                        (profile.depth - profile.temps[i].depth) * (canvas.height / profile.depth)
-                    );
+                    runningHeight += _height
                 }
 
-                context.lineWidth = 3;
-                context.strokeStyle = 'red';
-                context.stroke();
-            }
+                // plot temps
 
-            // canvas border
+                // todo: sort temps by depth
 
-            context.strokeStyle = 'black';
-            context.lineWidth = 2;
-            context.beginPath();
+                if (profile.temps.length > 0) {
+                    context.beginPath()
 
-            context.moveTo(0,0);
-            context.lineTo(canvas.width, 0);
-            context.lineTo(canvas.width, canvas.height);
-            context.lineTo(0, canvas.height);
-            context.closePath();
-            context.stroke();
-        });
-    }
-  };
-}]);
+                    for (let i = 0; i < profile.temps.length; i++) {
+                        let plotTemp = (60 - Math.abs(profile.temps[i].temp)) * (canvas.width / 60)
+
+                        context.lineTo(
+                            plotTemp,
+                            (
+                                (profile.depth - profile.temps[i].depth) *
+                                (canvas.height / profile.depth)
+                            )
+                        )
+                    }
+
+                    context.lineWidth = 3
+                    context.strokeStyle = 'red'
+                    context.stroke()
+                }
+
+                // canvas border
+                context.strokeStyle = 'black'
+                context.lineWidth = 2
+                context.beginPath()
+
+                context.moveTo(0, 0)
+                context.lineTo(canvas.width, 0)
+                context.lineTo(canvas.width, canvas.height)
+                context.lineTo(0, canvas.height)
+                context.closePath()
+                context.stroke()
+            })
+        }
+    })
+])

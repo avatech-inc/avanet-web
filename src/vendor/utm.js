@@ -17,7 +17,7 @@ var UTMScaleFactor = 0.9996;
 * Converts degrees to radians.
 *
 */
-function DegToRad (deg)
+function degToRad (deg)
 {
     return (deg / 180.0 * pi)
 }
@@ -31,7 +31,7 @@ function DegToRad (deg)
 * Converts radians to degrees.
 *
 */
-function RadToDeg (rad)
+function radToDeg (rad)
 {
     return (rad / pi * 180.0)
 }
@@ -116,7 +116,7 @@ function UTMCentralMeridian (zone)
 {
     var cmeridian;
 
-    cmeridian = DegToRad (-183.0 + (zone * 6.0));
+    cmeridian = degToRad (-183.0 + (zone * 6.0));
 
     return cmeridian;
 }
@@ -394,12 +394,12 @@ function MapXYToLatLon (x, y, lambda0, philambda)
 *          will determine the appropriate zone from the value of lon.
 *
 */
-function LatLonToUTMXY(lat, lon, zone, xy)
+function latLonToUTMXY(lat, lon, zone, xy)
 {
     if (!xy) xy = new Array(2);
 
-    var _lat = RadToDeg(lat);
-    var _lng = RadToDeg(lon);
+    var _lat = radToDeg(lat);
+    var _lng = radToDeg(lon);
 
     // get lat band
     var band = (-80<=_lat&&_lat<=84) ? "CDEFGHJKLMNPQRSTUVWXX".charAt(Math.floor((_lat+80)/8)) : "";
@@ -458,7 +458,7 @@ function LatLonToUTMXY(lat, lon, zone, xy)
 *               false otherwise.
 *
 */
-function UTMXYToLatLon(x, y, zone, southhemi, latlon)
+function utmXYToLatLon(x, y, zone, southhemi, latlon)
 {
     if (!latlon) latlon = new Array(2);
 

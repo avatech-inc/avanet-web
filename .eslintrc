@@ -12,6 +12,8 @@
     // Too much refactor for now
     "vars-on-top": 0,
     "no-unused-vars": 0,
+    "no-alert": 0,
+    "no-console": 0
   },
   "globals": {
     "__DEV__": false,
@@ -25,16 +27,25 @@
     "angular": false,
     "moment": false,
     "PruneCluster": false,
+    "PNG": false,
+    "jsPDF": false,
     "L": false,
     "UTM": false,
     "turf": false,
     "simplify": false,
     "UTMGridLayer": false,
     "Arc": false,
-    "AvatechTerrainLayer": false,
+    "Raven": false,
+    "Pikaday": false,
+    "avatechTerrainLayer": false,
     "DrawDeclinationCanvas": false,
     "WorldMagneticModel": false,
     "leafletImage": false,
-    "analytics": false
+    "analytics": false,
+    "pdfMake": false,
+    "google": false,
+    "md5": false,
+    "DrawDeclinationCanvas": false,
+    "ElevationWidget": false
   }
 }

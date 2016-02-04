@@ -1,16 +1,21 @@
-angular.module('avatech').controller('AdminOrgsController', 
-    ['$scope', '$location', '$http', 'Global', 'Restangular',
-    function ($scope, $location, $http, Global, Restangular) {
-    $scope.global = Global;
 
-    $scope.init = function() {
-        $scope.getOrgs();
-    }
-    $scope.getOrgs = function() {
+angular.module('avatech').controller('AdminOrgsController', [
+    '$scope',
+    'Global',
+    'Restangular',
 
-        Restangular.all('orgs').getList()
-        .then(function(orgs) {
-            $scope.orgs = orgs;
-        });
+    (
+        $scope,
+        Global,
+        Restangular
+    ) => {
+        $scope.global = Global
+
+        $scope.init = () => $scope.getOrgs()
+
+        $scope.getOrgs = () => Restangular
+            .all('orgs')
+            .getList()
+            .then(orgs => $scope.orgs = orgs)
     }
-}]);
+])

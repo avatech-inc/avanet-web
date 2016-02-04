@@ -1,30 +1,45 @@
-angular.module('avatech').factory('mapLayers', ['$q', 'Restangular', 'Global', function ($q, Restangular, Global) { 
 
-var layers = Restangular.one("users", Global.user._id).one("maps").get();
+angular.module('avatech').factory('mapLayers', [
+    'Restangular',
+    'Global',
 
-return {
+    (
+        Restangular,
+        Global
+    ) => {
+        let service = {}
 
-   loaded: layers,
+        service.loaded = Restangular
+            .one('users', Global.user._id)
+            .one('maps')
+            .get()
 
-   getLayerByAlias: function(alias) {
-      var _this = this;
-      if (!_this.baseLayers) return null;
+        service.getLayerByAlias = alias => {
+            if (!service.baseLayers) return null
 
-      var layer;
-      if (_this.baseLayers.terrain) {
-         for (var i = 0; i < _this.baseLayers.terrain.length; i++) {
-            var l = _this.baseLayers.terrain[i];
-            if (l.alias == alias) layer = l;
-         }
-      }
-      if (_this.baseLayers.aerial) {
-         for (var i = 0; i < _this.baseLayers.aerial.length; i++) {
-            var l = _this.baseLayers.aerial[i];
-            if (l.alias == alias) layer = l;
-         }
-      }
-      return layer;
-    },
-    baseLayers: layers.$object,
-  };
-}]);
+            let layer
+
+            if (service.baseLayers.terrain) {
+                for (let terrainLayer of service.baseLayers.terrain) {
+                    if (terrainLayer.alias === alias) {
+                        layer = terrainLayer
+                    }
+                }
+            }
+
+            if (service.baseLayers.aerial) {
+                for (let aerialLayer of service.baseLayers.aerial) {
+                    if (aerialLayer.alias === alias) {
+                        layer = aerialLayer
+                    }
+                }
+            }
+
+            return layer
+        }
+
+        service.baseLayers = service.loaded.$object
+
+        return service
+    }
+])

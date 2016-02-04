@@ -1,181 +1,253 @@
-angular.module('avatech').controller('OrganizationsController',
-    ['$scope', '$q', '$log', '$stateParams', '$location', '$timeout', 'Global', 'Restangular',
-    function ($scope, $q, $log, $stateParams, $location, $timeout, Global, Restangular) {
-    $scope.global = Global;
 
-    $scope.newOrg = {};
+const validateEmail = email => {
+    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/  // eslint-disable-line max-len
+    return re.test(email)
+}
 
-    $scope.selectedTab = null;
+angular.module('avatech').controller('OrganizationsController', [
+    '$scope',
+    '$q',
+    '$log',
+    '$stateParams',
+    '$location',
+    '$timeout',
+    'Global',
+    'Restangular',
 
-    $scope.userIsAdmin = function() {
-        var isAdmin = false;
+    (
+        $scope,
+        $q,
+        $log,
+        $stateParams,
+        $location,
+        $timeout,
+        Global,
+        Restangular
+    ) => {
+        $scope.global = Global
+        $scope.newOrg = {}
+        $scope.selectedTab = null
 
-        // if user is Avanet admin, also can admin group
-        if ($scope.global.user.admin) return true;
+        $scope.userIsAdmin = () => {
+            let isAdmin = false
 
-        angular.forEach($scope.members, function(member) {
-            if (member.admin && member.user._id == $scope.global.user._id) {
-                isAdmin = true; return;
-            }
-        });
-        return isAdmin;
-    }
-    $scope.userIsMember = function() {
-        var isMember = false;
+            // if user is Avanet admin, also can admin group
+            if ($scope.global.user.admin) return true
 
-        angular.forEach($scope.members, function(member) {
-            if (member.user._id == $scope.global.user._id) {
-                isMember = true; return;
-            }
-        });
-        return isMember;
-    }
-
-    $scope.create = function() {
-        $log.debug($scope.newOrgForm.$valid);
-        if (!$scope.newOrgForm.$valid) return;
-        $log.debug($scope.newOrgForm);
-
-        Restangular.all('orgs').post($scope.newOrg).then(function(newOrg) {
-            $location.path('orgs/' + newOrg._id);
-            if (!Global.orgs.length) Global.orgs = [];
-            Global.orgs.push({ name: newOrg.name, _id: newOrg._id });
-        }, 
-        // error
-        function(response) {
-            alert(response.data.message);
-        });
-    }
-    $scope.members = [];
-    $scope.students = [];
-
-    $scope.loadOrg = function() { 
-        var RestObject = Restangular.one('orgs', $stateParams.orgId);
-        RestObject.get().then(function (org) {
-            $scope.org = org;
-
-            //org.name += " Test";
-            //org.save();
-        });
-
-        RestObject.getList('members').then(function (members) {
-            $scope.members = [];
-            $scope.students = [];
-            angular.forEach(members, function(member) {
-                if (member.student) $scope.students.push(member);
-                else $scope.members.push(member);
-            });
-        });
-    };
-
-    $scope.setMemberAdmin = function(member, admin) {
-        //var RestObject = Restangular.one('orgs', $stateParams.orgId).one('members');
-        member.admin = admin;
-        member.save();
-    }
-    $scope.removeMember = function(member, index) {
-        member.remove();
-        $scope.members.splice(index, 1);
-    }
-    $scope.removeStudent = function(member, index) {
-        member.remove();
-        $scope.students.splice(index, 1);
-    }
-    function addMember(userIdOrEmail) {
-        Restangular.one('orgs', $stateParams.orgId).all('members')
-        .post({ userIdOrEmail: userIdOrEmail })
-        // success
-        .then(function (member) {
-            // add new member to  collection
-            $scope.members.push(member);
-            //$scope.$apply();
-        }
-        // error
-        , function(){
-            $log.debug(member);
-        });
-    }
-    $scope.addMember = function(user) {
-        if (user.isMember) return;
-        addMember(user._id);
-    }
-    $scope.inviteEmail = function() {
-        if (!$scope.search.email) return;
-        addMember($scope.search.email);
-    }
-
-    $scope.allowMemberRemove = function(member) {
-        if (member.admin && member.user._id == $scope.global.user._id) return false;
-        else return true;
-    }
-    $scope.isOnlyAdmin = function(member) {
-        var adminCount = 0;
-        angular.forEach($scope.members,function(m){ if (m.admin) adminCount++; });
-        return (adminCount == 1 && member.admin);
-    }
-
-    // user search
-
-    $scope.newSearch = function() {
-        $scope.search = { query: "" };
-        //$scope.focus('focusSearch');
-    }
-    $scope.doSearch = function() {
-        $timeout.cancel($scope.search.timer);
-        $scope.abortSearch = false;
-        if ($scope.search.query == "" || $scope.search.query.length < 3) {
-            $scope.search.results = null;
-            $scope.abortSearch = true;
-            return;
-        }
-        $scope.search.timer = $timeout(function(){
-            $scope.search.searching = true;
-
-            Restangular.all("users").getList({ query: $scope.search.query }).then(function(users) {
-                $scope.search.searching = false;
-
-                if (users.length == 0) {
-                    if ($scope.search.query.indexOf('@') > -1 && validateEmail($scope.search.query)) $scope.search.email =  $scope.search.query;
-                    else $scope.search.email = null;
+            angular.forEach($scope.members, member => {
+                if (member.admin && member.user._id === $scope.global.user._id) {
+                    isAdmin = true
                 }
+            })
 
-                // detect if already members
-                for (var r = 0; r < users.length; r++) {
-                    var user = users[r];
-                    for (var i = 0; i < $scope.members.length; i ++) {
-                        if ($scope.members[i].user._id == user._id) {
-                            user.isMember = true;
-                            break;
-                        }
+            return isAdmin
+        }
+
+        $scope.userIsMember = () => {
+            let isMember = false
+
+            angular.forEach($scope.members, member => {
+                if (member.user._id === $scope.global.user._id) {
+                    isMember = true
+                }
+            })
+
+            return isMember
+        }
+
+        $scope.create = () => {
+            $log.debug($scope.newOrgForm.$valid)
+
+            if (!$scope.newOrgForm.$valid) return
+
+            $log.debug($scope.newOrgForm)
+
+            Restangular
+                .all('orgs')
+                .post($scope.newOrg)
+                .then(newOrg => {
+                    $location.path('orgs/' + newOrg._id)
+
+                    if (!Global.orgs.length) {
+                        Global.orgs = []
                     }
-                    if (user.isMember == null) user.isMember = false;
+
+                    Global.orgs.push({ name: newOrg.name, _id: newOrg._id })
+                },
+                // error
+                response => alert(response.data.message))
+        }
+
+        $scope.members = []
+        $scope.students = []
+
+        $scope.loadOrg = () => {
+            let restObject = Restangular.one('orgs', $stateParams.orgId)
+
+            restObject
+                .get()
+                .then(org => {
+                    $scope.org = org
+                    // org.name += " Test";
+                    // org.save();
+                })
+
+            restObject
+                .getList('members')
+                .then(members => {
+                    $scope.members = []
+                    $scope.students = []
+
+                    angular.forEach(members, member => {
+                        if (member.student) {
+                            $scope.students.push(member)
+                        } else {
+                            $scope.members.push(member)
+                        }
+                    })
+                })
+        }
+
+        $scope.setMemberAdmin = (member, admin) => {
+            // var RestObject = Restangular.one('orgs', $stateParams.orgId).one('members');
+            member.admin = admin
+            member.save()
+        }
+
+        $scope.removeMember = (member, index) => {
+            member.remove()
+            $scope.members.splice(index, 1)
+        }
+
+        $scope.removeStudent = (member, index) => {
+            member.remove()
+            $scope.students.splice(index, 1)
+        }
+
+        let addMember = userIdOrEmail => {
+            Restangular
+                .one('orgs', $stateParams.orgId)
+                .all('members')
+                .post({ userIdOrEmail: userIdOrEmail })
+                // success
+                .then(member => {
+                    // add new member to  collection
+                    $scope.members.push(member)
+                    // $scope.$apply();
+                },
+                // error
+                () => $log.debug(userIdOrEmail)
+            )
+        }
+
+        $scope.addMember = user => {
+            if (user.isMember) return
+
+            addMember(user._id)
+        }
+
+        $scope.inviteEmail = () => {
+            if (!$scope.search.email) return
+
+            addMember($scope.search.email)
+        }
+
+        $scope.allowMemberRemove = member => {
+            return (!(
+                member.admin &&
+                member.user._id === $scope.global.user._id
+            ))
+        }
+
+        $scope.isOnlyAdmin = member => {
+            let adminCount = 0
+
+            angular.forEach($scope.members, m => {
+                if (m.admin) adminCount++
+            })
+
+            return (adminCount === 1 && member.admin)
+        }
+
+        // user search
+
+        $scope.newSearch = () => {
+            $scope.search = { query: '' }
+
+            // $scope.focus('focusSearch');
+        }
+
+        $scope.doSearch = () => {
+            $timeout.cancel($scope.search.timer)
+
+            $scope.abortSearch = false
+
+            if ($scope.search.query === '' || $scope.search.query.length < 3) {
+                $scope.search.results = null
+                $scope.abortSearch = true
+
+                return
+            }
+
+            $scope.search.timer = $timeout(() => {
+                $scope.search.searching = true
+
+                Restangular
+                    .all('users')
+                    .getList({ query: $scope.search.query })
+                    .then(users => {
+                        $scope.search.searching = false
+
+                        if (users.length === 0) {
+                            if (
+                                $scope.search.query.indexOf('@') > -1 &&
+                                validateEmail($scope.search.query)
+                            ) {
+                                $scope.search.email = $scope.search.query
+                            } else {
+                                $scope.search.email = null
+                            }
+                        }
+
+                        // detect if already members
+                        for (let r = 0; r < users.length; r++) {
+                            let user = users[r]
+
+                            for (let i = 0; i < $scope.members.length; i ++) {
+                                if ($scope.members[i].user._id === user._id) {
+                                    user.isMember = true
+                                    break
+                                }
+                            }
+
+                            if (user.isMember === null) {
+                                user.isMember = false
+                            }
+                        }
+
+                        if (!$scope.abortSearch) $scope.search.results = users
+                    })
+            }, 400)
+        }
+
+        $scope.onLogoUpload = file => {
+            $scope.org.logoUrl = file.url
+            $scope.org.save()
+            $scope.refreshOrg()
+        }
+
+        $scope.removeLogo = file => {
+            $scope.org.logoUrl = null
+            $scope.org.save()
+            $scope.refreshOrg()
+        }
+
+        $scope.refreshOrg = () => {
+            for (let i = 0; i < $scope.global.orgs.length; i++) {
+                if ($scope.global.orgs[i]._id === $scope.org._id) {
+                    $scope.global.orgs[i] = $scope.org
                 }
-
-                if (!$scope.abortSearch) $scope.search.results = users;
-            });            
-
-        },400);
-    }
-    function validateEmail(email) { 
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    } 
-
-    $scope.onLogoUpload = function(file) {
-        $scope.org.logoUrl = file.url;
-        $scope.org.save();
-        $scope.refreshOrg();
-    }
-    $scope.removeLogo = function(file) {
-        $scope.org.logoUrl = null;
-        $scope.org.save();
-        $scope.refreshOrg();
-    }
-
-    $scope.refreshOrg = function() {
-        for(var i = 0; i < $scope.global.orgs.length; i++) {
-            if ($scope.global.orgs[i]._id == $scope.org._id) $scope.global.orgs[i] = $scope.org;
+            }
         }
     }
-
-}]);
+])

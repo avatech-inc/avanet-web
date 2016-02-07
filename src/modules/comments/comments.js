@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('commentsNew', [
+import './comments-new.html'
+
+const CommentsNew = [
     '$log',
     '$timeout',
     '$sce',
@@ -125,4 +127,6 @@ angular.module('avatech').directive('commentsNew', [
             }
         ]
     })
-])
+]
+
+export default CommentsNew

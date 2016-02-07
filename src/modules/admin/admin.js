@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('AdminController', ['$scope', $scope => {
+import './admin.html'
+
+const AdminController = ['$scope', $scope => {
     $scope.pages = [{
         title: 'Users',
         template: '/modules/admin/users.html'
@@ -14,4 +16,6 @@ angular.module('avatech').controller('AdminController', ['$scope', $scope => {
     $scope.selectPage = page => {
         $scope.selectedPage = page
     }
-}])
+}]
+
+export default AdminController

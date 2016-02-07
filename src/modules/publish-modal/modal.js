@@ -1,5 +1,7 @@
 
-angular.module('avatech').factory('PublishModal', ['$uibModal', $uibModal => ({
+import './modal.html'
+
+export const Publish = ['$uibModal', $uibModal => ({
     open: options => {
         if (!options.initialSharing) options.initialSharing = null
 
@@ -15,9 +17,9 @@ angular.module('avatech').factory('PublishModal', ['$uibModal', $uibModal => ({
 
         return modalInstance.result
     }
-})])
+})]
 
-angular.module('avatech').controller('PublishModalController', [
+export const PublishController = [
     '$scope',
     '$uibModalInstance',
     'initialSharing',
@@ -166,4 +168,4 @@ angular.module('avatech').controller('PublishModalController', [
             $scope.sharing.sharedOrganizations.splice(index, 1)
         }
     }
-])
+]

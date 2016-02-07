@@ -1,5 +1,5 @@
 
-angular.module('avatech').controller('SnowpitController', [
+export const SnowpitEditor = [
     '$scope',
     '$state',
     '$stateParams',
@@ -1004,9 +1004,9 @@ angular.module('avatech').controller('SnowpitController', [
         //     },500);
         // },1);
     }
-])
+]
 
-angular.module('avatech').directive('draggable', [
+export const Draggable = [
     '$document',
     '$timeout',
     '$log',
@@ -1079,9 +1079,9 @@ angular.module('avatech').directive('draggable', [
             })
         }
     })
-])
+]
 
-angular.module('avatech').directive('draggableHardness', [
+export const DraggableHardness = [
     '$document',
     '$timeout',
     '$log',
@@ -1212,4 +1212,4 @@ angular.module('avatech').directive('draggableHardness', [
             })
         }
     })
-])
+]

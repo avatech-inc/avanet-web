@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('grainSelect', ['snowpitConstants', snowpitConstants => {
+import './grain-select.html'
+
+const GrainSelect = ['snowpitConstants', snowpitConstants => {
     return {
         restrict: 'E',
         scope: {
@@ -40,4 +42,6 @@ angular.module('avatech').directive('grainSelect', ['snowpitConstants', snowpitC
             }
         }
     }
-}])
+}]
+
+export default GrainSelect

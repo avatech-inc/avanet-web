@@ -1,5 +1,5 @@
 
-angular.module('avatech').controller('ResetPasswordController', [
+const ResetPassword = [
     '$scope',
     '$stateParams',
     'Restangular',
@@ -66,4 +66,6 @@ angular.module('avatech').controller('ResetPasswordController', [
                 })
         }
     }
-])
+]
+
+export default ResetPassword

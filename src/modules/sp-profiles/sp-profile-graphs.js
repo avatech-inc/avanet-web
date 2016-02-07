@@ -48,7 +48,7 @@ const getRelativeCoords = e => {
     ]
 }
 
-angular.module('avatech').directive('graphBig', () => ({
+export const GraphBig = () => ({
     restrict: 'A',
     scope: {
         rows: '=graphBig',
@@ -314,9 +314,9 @@ angular.module('avatech').directive('graphBig', () => ({
             render()
         })
     }
-}))
+})
 
-angular.module('avatech').directive('graph', () => ({
+export const Graph = () => ({
     restrict: 'A',
     link: (scope, element, attrs) => {
         // expand compressed ascii string
@@ -428,4 +428,4 @@ angular.module('avatech').directive('graph', () => ({
 
         context.closePath()
     }
-}))
+})

@@ -1,5 +1,5 @@
 
-angular.module('avatech').factory('snowpitConstants', [() => {
+const SnowpitConstants = () => {
     let begin = 0.08
     let end = 0.999
     let inc = (1 - ((1 - end) + begin)) / 15
@@ -127,4 +127,6 @@ angular.module('avatech').factory('snowpitConstants', [() => {
         ]
         /* eslint-enable max-len */
     }
-}])
+}
+
+export default SnowpitConstants

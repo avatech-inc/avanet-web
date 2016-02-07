@@ -118,7 +118,7 @@ const parseTime = text => {
     }
 }
 
-angular.module('avatech').directive('time', () => ({
+const TimeInput = () => ({
     restrict: 'A', // attribute or element
     scope: {
         model: '=time',
@@ -170,4 +170,6 @@ angular.module('avatech').directive('time', () => ({
             }
         })
     }
-}))
+})
+
+export default TimeInput

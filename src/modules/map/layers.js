@@ -1,5 +1,5 @@
 
-angular.module('avatech').factory('mapLayers', [
+const Layers = [
     'Restangular',
     'Global',
 
@@ -42,4 +42,6 @@ angular.module('avatech').factory('mapLayers', [
 
         return service
     }
-])
+]
+
+export default Layers

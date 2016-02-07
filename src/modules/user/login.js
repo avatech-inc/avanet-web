@@ -1,5 +1,5 @@
 
-angular.module('avatech').controller('LoginController', [
+const Login = [
     '$scope',
     '$timeout',
     'Global',
@@ -44,4 +44,6 @@ angular.module('avatech').controller('LoginController', [
             )
         }
     }
-])
+]
+
+export default Login

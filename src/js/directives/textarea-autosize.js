@@ -1,6 +1,6 @@
 
 // textarea autosize (relies on jquery.autosize.js)
-angular.module('avatech').directive('autosize', () => ({
+const Autosize = () => ({
     restrict: 'A',
     link: (scope, elem, attr, ctrl) => {
         $(elem).on('focus', e => $(e.target).autosize())
@@ -19,4 +19,6 @@ angular.module('avatech').directive('autosize', () => ({
             }
         })
     }
-}))
+})
+
+export default Autosize

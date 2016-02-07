@@ -1,5 +1,5 @@
 
-angular.module('avatech').controller('ForgotPasswordController', [
+const ForgotPassword = [
     '$scope',
     'Restangular',
 
@@ -37,4 +37,6 @@ angular.module('avatech').controller('ForgotPasswordController', [
                 })
         }
     }
-])
+]
+
+export default ForgotPassword

@@ -1,15 +1,39 @@
 
+const _ = {}
+
+import remove from 'lodash.remove'
+import findIndex from 'lodash.findindex'
+
+_.remove = remove
+_.findIndex = findIndex
+
+
 class RoutesService {
     constructor(
         $interval,
         Global,
         $http
     ) {
-        this.observations = []
+        this.routes = []
 
         this.$interval = $interval
         this.Global = Global
         this.$http = $http
+    }
+
+    _update(route) {
+        let index = _.findIndex(this.routes, _route => _route._id === route._id)
+
+        // doesn't exist, add
+        if (index === -1) {
+            this.routes.push(route)
+
+        // if route already exists, replace
+        } else {
+            this.routes[index] = route
+        }
+
+        // todo: removed
     }
 
     init() {
@@ -38,10 +62,8 @@ class RoutesService {
             }
         })
         .then(res => {
-            let obs = res.data
-
-            for (let i = 0; i < obs.length; i++) {
-                this.addOrReplace(obs[i])
+            for (let route of res.data) {
+                this._update(route)
             }
 
             // keep track of last sync
@@ -52,61 +74,16 @@ class RoutesService {
         })
     }
 
-    replaceObservation(observation) {
-        for (let i = 0; i < this.observations.length; i++) {
-            let _observation = this.observations[i]
-
-            if (_observation._id === observation._id) {
-                this.observations[i] = observation
-
-                return true
-            }
-        }
-
-        return false
+    add(route) {
+        this._update(route)
     }
 
-    addOrReplace(observation) {
-        // if observation already exists, replace
-        if (this.replaceObservation(observation)) return
-
-        // doesn't exist, add
-        this.observations.push(observation)
-
-        // todo: removed
-    }
-
-    save(observation) {
-        this.replaceObservation(observation)
-
-        // update on server
-        // todo: update!
-        // if (observation.type == 'test') {
-        //  $http.post("/v1/tests", observation);
-        // }
-    }
-
-    add(observation) {
-        this.addOrReplace(observation)
-    }
-
-    remove(observation) {
+    remove(route) {
         // remove from local cache
-        let index = -1
-
-        for (let i = 0; i < this.observations.length; i++) {
-            let _observation = this.observations[i]
-
-            if (_observation._id === observation._id) {
-                index = i
-                break
-            }
-        }
-
-        if (index > -1) this.observations.splice(index, 1)
+        _.remove(this.routes, _route => _route._id === route._id)
 
         // mark as removed on server
-        this.$http.delete(window.apiBaseUrl + 'routes/' + observation._id)
+        this.$http.delete(window.apiBaseUrl + 'routes/' + route._id)
     }
 }
 
@@ -116,4 +93,4 @@ RoutesService.$inject = [
     '$http'
 ]
 
-angular.module('avatech').service('Routes', RoutesService)
+export default RoutesService

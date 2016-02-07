@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('datetimepicker', ['$log', $log => ({
+import './datepicker.html'
+
+export const DatePicker = ['$log', $log => ({
     require: '^ngModel',
     restrict: 'E',
     scope: {
@@ -39,9 +41,9 @@ angular.module('avatech').directive('datetimepicker', ['$log', $log => ({
             scope.internalDate.setHours(scope.timeInput.getHours())
         }, true)
     }
-})])
+})]
 
-angular.module('avatech').directive('moDateInput', [() => ({
+export const MoDateInput = () => ({
     require: '^ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
@@ -91,9 +93,9 @@ angular.module('avatech').directive('moDateInput', [() => ({
             return (date && date.isValid() && date.year() > 1950) ? date.toDate() : ''
         })
     }
-})])
+})
 
-angular.module('avatech').directive('dateInput', [() => ({
+export const DateInput = () => ({
     require: '^ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
@@ -118,4 +120,4 @@ angular.module('avatech').directive('dateInput', [() => ({
             return (date && date.isValid() && date.year() > 1950) ? date.toDate() : ''
         })
     }
-})])
+})

@@ -1,5 +1,5 @@
 
-angular.module('avatech').factory('snowpitViews', [
+const SnowpitViews = [
     '$q',
     'snowpitConstants',
 
@@ -231,4 +231,6 @@ angular.module('avatech').factory('snowpitViews', [
             { name: 'ICSSG Grain Coloring', id: 'icssg', func: calculateICSSG }
         ];
     }
-])
+]
+
+export default SnowpitViews

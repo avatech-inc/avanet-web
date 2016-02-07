@@ -1,5 +1,7 @@
 
-angular.module('avatech').factory('Confirm', ['$uibModal', $uibModal => ({
+import './confirm.html'
+
+export const Confirm = ['$uibModal', $uibModal => ({
     open: message => {
         let modalInstance = $uibModal.open({
             templateUrl: '/modules/confirm/confirm.html',
@@ -13,9 +15,9 @@ angular.module('avatech').factory('Confirm', ['$uibModal', $uibModal => ({
 
         return modalInstance.result
     }
-})])
+})]
 
-angular.module('avatech').controller('ConfirmController', [
+export const ConfirmController = [
     '$scope',
     '$uibModalInstance',
     'message',
@@ -30,4 +32,4 @@ angular.module('avatech').controller('ConfirmController', [
         $scope.no = () => $uibModalInstance.dismiss()
         $scope.yes = () => $uibModalInstance.close()
     }
-])
+]

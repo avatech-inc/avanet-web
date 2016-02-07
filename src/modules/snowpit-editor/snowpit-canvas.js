@@ -158,7 +158,7 @@ const centerText = (context, text, width, x, y) => {
     context.fillText(text, x + ((width - w) / 2), y)
 }
 
-angular.module('avatech').directive('profileEditor', [
+const ProfileEditor = [
     '$timeout',
     'snowpitConstants',
 
@@ -1626,4 +1626,6 @@ angular.module('avatech').directive('profileEditor', [
             }
         }
     })
-])
+]
+
+export default ProfileEditor

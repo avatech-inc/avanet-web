@@ -1,6 +1,7 @@
 
-// UTILS
+import './route-planning.html'
 
+// UTILS
 const getAverage = (list, property) => {
     let sum = 0
 
@@ -224,7 +225,7 @@ const interpolate = _points => {
     return newPoints
 }
 
-angular.module('avatech').controller('RoutePlanningController', [
+const RoutePlanning = [
     '$http',
     '$log',
     '$state',
@@ -1748,4 +1749,6 @@ angular.module('avatech').controller('RoutePlanningController', [
             }
         })
     }
-])
+]
+
+export default RoutePlanning

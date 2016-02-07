@@ -1,5 +1,7 @@
 
-angular.module('avatech').factory('RegisterDeviceModal', ['$uibModal', $uibModal => ({
+import './modal.html'
+
+export const RegisterDevice = ['$uibModal', $uibModal => ({
     open: options => {
         let modalInstance = $uibModal.open({
             templateUrl: '/modules/register-device-modal/modal.html',
@@ -10,9 +12,9 @@ angular.module('avatech').factory('RegisterDeviceModal', ['$uibModal', $uibModal
 
         return modalInstance.result
     }
-})])
+})]
 
-angular.module('avatech').controller('RegisterDeviceModalController', [
+export const RegisterDeviceController = [
     '$scope',
     '$uibModalInstance',
     '$timeout',
@@ -69,4 +71,4 @@ angular.module('avatech').controller('RegisterDeviceModalController', [
                 .finally(() => $scope.checking = false)
         }
     }
-])
+]

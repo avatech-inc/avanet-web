@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('avalancheTriggerSelect', () => ({
+import './avalanche-trigger.html'
+
+const AvalancheTriggerSelect = () => ({
     restrict: 'E',
     scope: {
         triggers: '=ngModel',
@@ -111,4 +113,6 @@ angular.module('avatech').directive('avalancheTriggerSelect', () => ({
             { code: 'NO', name: 'Unclassified natural trigger' } // specify
         ]
     }
-}))
+})
+
+export default AvalancheTriggerSelect

@@ -1,7 +1,10 @@
 
-let AvatechTerrainLayer = require('./terrain-layer')
+import AvatechTerrainLayer from './terrain-layer'
 
-angular.module('avatech').directive('map', [
+import './map-directive.html'
+import './observation-map-popup.html'
+
+const Map = [
     '$timeout',
     '$q',
     '$state',
@@ -871,4 +874,6 @@ angular.module('avatech').directive('map', [
             })
         }
     })
-])
+]
+
+export default Map

@@ -26,7 +26,7 @@ const dataURItoBlob = dataURI => {
 
 const isNorU = val => (val === null || val === undefined)
 
-angular.module('avatech').factory('snowpitExport', [
+const SnowpitExport = [
     '$q',
     'snowpitConstants',
     '$compile',
@@ -837,4 +837,6 @@ angular.module('avatech').factory('snowpitExport', [
             PDForJPEG: pdfOrJPEG
         }
     }
-])
+]
+
+export default SnowpitExport

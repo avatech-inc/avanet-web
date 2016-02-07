@@ -1,5 +1,5 @@
 
-angular.module('avatech').directive('locationSelectButton', [
+export const LocationSelectButton = [
     'LocationSelectModal',
 
     LocationSelectModal => ({
@@ -30,9 +30,9 @@ angular.module('avatech').directive('locationSelectButton', [
             })
         }
     })
-])
+]
 
-angular.module('avatech').directive('accordionNew', () => ({
+export const AccordionNew = () => ({
     restrict: 'E',
     link: (scope, elem) => {
         $(elem).find('.header').click(() => {
@@ -44,10 +44,10 @@ angular.module('avatech').directive('accordionNew', () => ({
             }
         })
     }
-}))
+})
 
 // on enter
-angular.module('avatech').directive('onenter', () => ({
+export const OnEnter = () => ({
     restrict: 'A',
     scope: {
         onenter: '&'
@@ -60,9 +60,9 @@ angular.module('avatech').directive('onenter', () => ({
             }
         })
     }
-}))
+})
 
-angular.module('avatech').directive('focusOn', [
+export const FocusOn = [
     '$timeout',
     '$parse',
 
@@ -83,16 +83,16 @@ angular.module('avatech').directive('focusOn', [
             })
         }
     })
-])
+]
 
-angular.module('avatech').directive('autoFocus', () => ({
+export const AutoFocus = () => ({
     restrict: 'AC',
     link: (_scope, _element) => {
         _element[0].focus()
     }
-}))
+})
 
-angular.module('avatech').directive('windowResize', ['$window', $window => {
+export const WindowResize = ['$window', $window => {
     return $scope => {
         $scope._getWindowSize = () => {
             $scope.windowHeight = $window.innerHeight
@@ -105,9 +105,9 @@ angular.module('avatech').directive('windowResize', ['$window', $window => {
 
         $scope._getWindowSize()
     }
-}])
+}]
 
-angular.module('avatech').directive('onChange', () => ({
+export const OnChange = () => ({
     restrict: 'A',
     scope: {
         onChange: '='
@@ -123,9 +123,9 @@ angular.module('avatech').directive('onChange', () => ({
             }
         })
     }
-}))
+})
 
-angular.module('avatech').directive('metersOrFeet', [() => ({
+export const MetersOrFeet = () => ({
     require: '^ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
@@ -157,9 +157,9 @@ angular.module('avatech').directive('metersOrFeet', [() => ({
             return (viewValue * 1)
         })
     }
-})])
+})
 
-angular.module('avatech').directive('cmOrIn', [
+export const CmOrIn = [
     '$window',
     '$parse',
 
@@ -196,9 +196,9 @@ angular.module('avatech').directive('cmOrIn', [
             })
         }
     })
-])
+]
 
-angular.module('avatech').directive('tempUnits', [
+export const TempUnits = [
     '$window',
     '$parse',
 
@@ -238,9 +238,9 @@ angular.module('avatech').directive('tempUnits', [
             });
         }
     })
-])
+]
 
-angular.module('avatech').directive('numberOnly', () => ({
+export const NumberOnly = () => ({
     restrict: 'EA',
     require: '?ngModel',
     scope: {
@@ -294,10 +294,10 @@ angular.module('avatech').directive('numberOnly', () => ({
             return digits
         })
     }
-}))
+})
 
 // closes a bootstrap dropdown when clicked (can be anywhere within the dropdown)
-angular.module('avatech').directive('closeDropdownOnClick', () => ({
+export const CloseDropdown = () => ({
     restrict: 'A',
     link: (scope, el) => {
         el.bind('click', $event => {
@@ -314,9 +314,9 @@ angular.module('avatech').directive('closeDropdownOnClick', () => ({
             scope.$apply()
         })
     }
-}))
+})
 
-angular.module('avatech').directive('tooltipHideOnClick', () => ({
+export const TooltipHide = () => ({
     restrict: 'A',
     link: (scope, el) => {
         el.bind('click', $event => {
@@ -329,13 +329,13 @@ angular.module('avatech').directive('tooltipHideOnClick', () => ({
             // console.log(el.data().$scope.tt_isOpen);
         })
     }
-}))
+})
 
-angular.module('avatech').directive('selectOnClick', () => ({
+export const SelectOnClick = () => ({
     restrict: 'A',
     link: (scope, element) => {
         element.on('click', () => {
             this.select()
         })
     }
-}))
+})

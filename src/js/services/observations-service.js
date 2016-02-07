@@ -1,4 +1,13 @@
 
+const _ = {}
+
+import remove from 'lodash.remove'
+import findIndex from 'lodash.findindex'
+
+_.remove = remove
+_.findIndex = findIndex
+
+
 class ObservationsService {
     constructor(
         $interval,
@@ -10,6 +19,21 @@ class ObservationsService {
         this.$interval = $interval
         this.Global = Global
         this.$http = $http
+    }
+
+    _update(observation) {
+        let index = _.findIndex(this.observations, _ob => _ob._id === observation._id)
+
+        // doesn't exist, add
+        if (index === -1) {
+            this.observations.push(observation)
+
+        // if route already exists, replace
+        } else {
+            this.observations[index] = observation
+        }
+
+        // todo: removed
     }
 
     init() {
@@ -38,10 +62,8 @@ class ObservationsService {
             }
         })
         .then(res => {
-            let obs = res.data
-
-            for (let i = 0; i < obs.length; i++) {
-                this.addOrReplace(obs[i])
+            for (let ob of res.data) {
+                this._update(ob)
             }
 
             // keep track of last sync
@@ -52,31 +74,8 @@ class ObservationsService {
         })
     }
 
-    replaceObservation(observation) {
-        for (let i = 0; i < this.observations.length; i++) {
-            let _observation = this.observations[i]
-
-            if (_observation._id === observation._id) {
-                this.observations[i] = observation
-                return true
-            }
-        }
-
-        return false
-    }
-
-    addOrReplace(observation) {
-        // if observation already exists, replace
-        if (this.replaceObservation(observation)) return
-
-        // doesn't exist, add
-        this.observations.push(observation)
-
-        // todo: removed
-    }
-
     save(observation, callback) {
-        this.replaceObservation(observation)
+        this._update(observation)
 
         // update
         if (observation._id) {
@@ -84,7 +83,7 @@ class ObservationsService {
                 .put(window.apiBaseUrl + 'observations/' + observation._id, observation)
                 .then(res => {
                     angular.extend(observation, res.data)
-                    this.replaceObservation(observation)
+                    this._update(observation)
 
                     if (callback) callback(observation)
                 })
@@ -95,7 +94,7 @@ class ObservationsService {
                 .post(window.apiBaseUrl + 'observations', observation)
                 .then(res => {
                     angular.extend(observation, res.data)
-                    this.replaceObservation(observation)
+                    this._update(observation)
 
                     if (callback) callback(observation)
                 })
@@ -104,20 +103,7 @@ class ObservationsService {
 
     remove(observation) {
         // remove from local cache
-        let index = -1
-
-        for (let i = 0; i < this.observations.length; i++) {
-            let _observation = this.observations[i]
-
-            if (_observation._id === observation._id) {
-                index = i
-                break
-            }
-        }
-
-        if (index > -1) {
-            this.observations.splice(index, 1)
-        }
+        _.remove(this.observations, _ob => _ob._id === observation._id)
 
         // mark as removed on server
         this.$http.delete(window.apiBaseUrl + 'observations/' + observation._id)
@@ -130,4 +116,4 @@ ObservationsService.$inject = [
     '$http'
 ]
 
-angular.module('avatech').service('Observations', ObservationsService)
+export default ObservationsService

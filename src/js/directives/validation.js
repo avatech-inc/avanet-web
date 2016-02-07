@@ -1,6 +1,6 @@
 
 // bootstrap form validation
-angular.module('avatech').directive('validate', () => ({
+const Validate = () => ({
     restrict: 'A',
     compile: (elem, attr) => {
         let formName = attr.name
@@ -124,4 +124,6 @@ angular.module('avatech').directive('validate', () => ({
             })
         }
     }
-}))
+})
+
+export default Validate

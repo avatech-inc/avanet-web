@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('AdminUsersController', [
+import './users.html'
+
+const AdminUsersController = [
     '$scope',
     '$log',
     '$http',
@@ -184,4 +186,6 @@ angular.module('avatech').controller('AdminUsersController', [
         // });
         }
     }
-])
+]
+
+export default AdminUsersController

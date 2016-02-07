@@ -1,5 +1,5 @@
 
-angular.module('avatech').directive('profile', [
+export const SnowpitProfile = [
     'snowpitConstants',
 
     snowpitConstants => ({
@@ -53,9 +53,9 @@ angular.module('avatech').directive('profile', [
             // });
         }
     })
-])
+]
 
-angular.module('avatech').directive('profileBig', [
+export const SnowpitProfileBig = [
     '$timeout',
     'snowpitConstants',
 
@@ -147,4 +147,4 @@ angular.module('avatech').directive('profileBig', [
             })
         }
     })
-])
+]

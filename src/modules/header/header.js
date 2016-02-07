@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('HeaderController', [
+import './header.html'
+
+const HeaderController = [
     '$scope',
     '$location',
     'RegisterDeviceModal',
@@ -29,4 +31,6 @@ angular.module('avatech').controller('HeaderController', [
             resolve: { ob: () => ({ type: type }) }
         }).result.finally(() => {})
     }
-])
+]
+
+export default HeaderController

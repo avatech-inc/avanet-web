@@ -1,5 +1,8 @@
 
-angular.module('avatech').directive('inputDirectionRange', () => ({
+import './input-direction-range.html'
+import './input-direction.html'
+
+export const InputDirectionRange = () => ({
     restrict: 'E',
     scope: {
         model: '=ngModel',
@@ -176,9 +179,9 @@ angular.module('avatech').directive('inputDirectionRange', () => ({
             draw: context => {}
         })
     }
-}))
+})
 
-angular.module('avatech').directive('inputDirection', () => ({
+export const InputDirection = () => ({
     restrict: 'E',
     scope: {
         model: '=ngModel'
@@ -369,4 +372,4 @@ angular.module('avatech').directive('inputDirection', () => ({
             $event.stopPropagation()
         })
     }
-}))
+})

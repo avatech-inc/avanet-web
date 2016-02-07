@@ -48,7 +48,7 @@ const getColorMap = steps => {
     return colorMap
 }
 
-angular.module('avatech').directive('linearGraph', [
+const LinearGraph = [
     '$q',
     '$parse',
 
@@ -154,4 +154,6 @@ angular.module('avatech').directive('linearGraph', [
             })
         }
     })
-])
+]
+
+export default LinearGraph

@@ -1,4 +1,109 @@
 
+// config
+import Routes from './config/routes'
+import Lightbox from './config/lightbox'
+import Schema from './config/schema'
+import RestAngular from './config/restangular'
+import PushState from './config/pushstate'
+import Tooltip from './config/tooltip'
+import Translate from './config/translate'
+
+// services
+import Global from './services/global'
+import RoutesService from './services/routes-service'
+import ObservationsService from './services/observations-service'
+
+// directives
+import { DatePicker, MoDateInput, DateInput } from './directives/datepicker'
+import { InputDirectionRange, InputDirection } from './directives/input-direction'
+import Uploader from './directives/fileupload'
+import GrainSelect from './directives/grain-select'
+import Autosize from './directives/textarea-autosize'
+import TimeInput from './directives/timeinput'
+import Validate from './directives/validation'
+
+// admin
+import AdminController from '../modules/admin/admin'
+import AdminUsersController from '../modules/admin/admin-users'
+import AdminOrgsController from '../modules/admin/admin-orgs'
+
+// comments
+import CommentsNew from '../modules/comments/comments'
+
+// misc
+import {
+    LocationSelectButton,
+    AccordionNew,
+    OnEnter,
+    FocusOn,
+    AutoFocus,
+    WindowResize,
+    OnChange,
+    MetersOrFeet,
+    CmOrIn,
+    TempUnits,
+    NumberOnly,
+    CloseDropdown,
+    TooltipHide,
+    SelectOnClick
+} from './directives/misc'
+
+// header
+import HeaderController from '../modules/header/header'
+
+// map
+import Layers from '../modules/map/layers'
+import LinearGraph from '../modules/map/linear-graph'
+import Map from '../modules/map/map-directive'
+import MapController from '../modules/map/map'
+import { ObSearch, ObSearchFactory } from '../modules/map/ob-search'
+import RoseGraph from '../modules/map/rose-graph'
+import RoutePlanning from '../modules/map/route-planning'
+
+// map search
+import MapSearch from '../modules/map-search/map-search'
+
+// observations
+import NewObservation from '../modules/observations/observations'
+import ObservationPreview from '../modules/observations/preview'
+import OrganizationsController from '../modules/organizations/organizations'
+
+// dialogs
+import { Confirm, ConfirmController } from '../modules/confirm/confirm'
+import { Publish, PublishController } from '../modules/publish-modal/modal'
+import {
+    LocationSelect,
+    LocationSelectController
+} from '../modules/location-select-modal/location-select-modal'
+
+// snowpit editor
+import AvalancheTriggerSelect from '../modules/forms/avalanche-trigger-select'
+import ProfileEditor from '../modules/snowpit-editor/snowpit-canvas'
+import SnowpitConstants from '../modules/snowpit-editor/snowpit-constants'
+import {
+    SnowpitEditor,
+    Draggable,
+    DraggableHardness
+} from '../modules/snowpit-editor/snowpit-editor'
+import SnowpitExport from '../modules/snowpit-editor/snowpit-export'
+import { SnowpitProfile, SnowpitProfileBig } from '../modules/snowpit-editor/snowpit-graphs'
+import SnowpitStability from '../modules/snowpit-editor/snowpit-stability'
+import SnowpitViews from '../modules/snowpit-editor/snowpit-views'
+import { GraphBig, Graph } from '../modules/sp-profiles/sp-profile-graphs'
+
+// devices
+import { RegisterDevice, RegisterDeviceController } from '../modules/register-device-modal/modal'
+import { DeviceUpload, DeviceUploadController, SP1Upload } from '../modules/sp-profile-upload/modal'
+
+// user
+import ForgotPassword from '../modules/user/forgot-password'
+import Login from '../modules/user/login'
+import Register from '../modules/user/register'
+import ResetPassword from '../modules/user/reset-password'
+import Settings from '../modules/user/settings'
+
+import Terrain from '../modules/map/terrain-visualization'
+
 let DEPS = [
     'ngRoute',
     'ngTouch',
@@ -37,8 +142,102 @@ if (__PROD__) {
     DEPS.unshift('ngRaven')
 }
 
+angular.module('schemaForm').config(Schema)
+angular.module('terrain', []).factory('terrainVisualization', Terrain)
+
 // define app and dependencies
 angular.module('avatech', DEPS)
+
+    // config
+    .config(Routes)
+    .config(Lightbox)
+    .config(RestAngular)
+    .config(PushState)
+    .config(Tooltip)
+    .config(Translate)
+
+    // services
+    .service('Routes', RoutesService)
+    .service('Observations', ObservationsService)
+
+    // factories
+    .factory('Global', Global)
+    .factory('Confirm', Confirm)
+    .factory('LocationSelectModal', LocationSelect)
+    .factory('mapLayers', Layers)
+    .factory('ObSearch', ObSearchFactory)
+    .factory('PublishModal', Publish)
+    .factory('RegisterDeviceModal', RegisterDevice)
+    .factory('snowpitConstants', SnowpitConstants)
+    .factory('snowpitExport', SnowpitExport)
+    .factory('snowpitViews', SnowpitViews)
+    .factory('DeviceUploadModal', DeviceUpload)
+
+    // directives
+    .directive('map', Map)
+    .directive('datetimepicker', DatePicker)
+    .directive('moDateInput', MoDateInput)
+    .directive('dateInput', DateInput)
+    .directive('uploader', Uploader)
+    .directive('grainSelect', GrainSelect)
+    .directive('inputDirectionRange', InputDirectionRange)
+    .directive('inputDirection', InputDirection)
+    .directive('autosize', Autosize)
+    .directive('time', TimeInput)
+    .directive('validate', Validate)
+    .directive('commentsNew', CommentsNew)
+    .directive('avalancheTriggerSelect', AvalancheTriggerSelect)
+    .directive('linearGraph', LinearGraph)
+    .directive('obSearch', ObSearch)
+    .directive('roseGraph', RoseGraph)
+    .directive('mapSearch', MapSearch)
+    .directive('profileEditor', ProfileEditor)
+    .directive('draggable', Draggable)
+    .directive('draggableHardness', DraggableHardness)
+    .directive('profile', SnowpitProfile)
+    .directive('profileBig', SnowpitProfileBig)
+    .directive('stabilityTest', SnowpitStability)
+    .directive('sp1Upload', SP1Upload)
+    .directive('graphBig', GraphBig)
+    .directive('graph', Graph)
+
+    // misc
+    .directive('locationSelectButton', LocationSelectButton)
+    .directive('accordionNew', AccordionNew)
+    .directive('onenter', OnEnter)
+    .directive('focusOn', FocusOn)
+    .directive('autoFocus', AutoFocus)
+    .directive('windowResize', WindowResize)
+    .directive('onChange', OnChange)
+    .directive('metersOrFeet', MetersOrFeet)
+    .directive('cmOrIn', CmOrIn)
+    .directive('tempUnits', TempUnits)
+    .directive('numberOnly', NumberOnly)
+    .directive('closeDropdownOnClick', CloseDropdown)
+    .directive('tooltipHideOnClick', TooltipHide)
+    .directive('selectOnClick', SelectOnClick)
+
+    // controllers
+    .controller('MapController', MapController)
+    .controller('AdminController', AdminController)
+    .controller('AdminUsersController', AdminUsersController)
+    .controller('AdminOrgsController', AdminOrgsController)
+    .controller('ConfirmController', ConfirmController)
+    .controller('HeaderController', HeaderController)
+    .controller('LocationSelectModalController', LocationSelectController)
+    .controller('RoutePlanningController', RoutePlanning)
+    .controller('NewObservationModalController', NewObservation)
+    .controller('ObservationPreviewController', ObservationPreview)
+    .controller('OrganizationsController', OrganizationsController)
+    .controller('PublishModalController', PublishController)
+    .controller('RegisterDeviceModalController', RegisterDeviceController)
+    .controller('SnowpitController', SnowpitEditor)
+    .controller('DeviceUploadModalController', DeviceUploadController)
+    .controller('ForgotPasswordController', ForgotPassword)
+    .controller('LoginController', Login)
+    .controller('RegisterController', Register)
+    .controller('ResetPasswordController', ResetPassword)
+    .controller('SettingsController', Settings)
 
 // configure console debug
 if (__PROD__) {
@@ -47,136 +246,6 @@ if (__PROD__) {
         $logProvider => $logProvider.debugEnabled(false)
     ])
 }
-
-// configure lightbox
-angular.module('avatech').config([
-    'LightboxProvider',
-
-    LightboxProvider => {
-        LightboxProvider.getImageUrl = media => {
-            // if video, replace .mov with .mp4 so we can play with native HTML5 (for Cloudinary)
-            if (media.type === 'video' && media.URL.indexOf('.mov') === media.URL.length - 4) {
-                media.URL = media.URL.substring(0, media.URL.length - 4) + '.mp4'
-            }
-
-            return media.URL
-        }
-
-        LightboxProvider.getImageCaption = media => null
-    }
-])
-
-// configure angular schema forms
-angular.module('schemaForm').config([
-    'schemaFormDecoratorsProvider',
-
-    schemaFormDecoratorsProvider => {
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'direction-select',
-            '/modules/forms/direction-select.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'radiobuttons-nullable',
-            '/modules/forms/radiobuttons-nullable.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'datepicker',
-            '/modules/forms/datepicker.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'grainTypeSelect',
-            '/modules/forms/grain-type-select.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'trend-select',
-            '/modules/forms/trend-select.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'location-select',
-            '/modules/forms/location-select.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'avalanche-trigger-select',
-            '/modules/forms/avalanche-trigger-select.html'
-        )
-
-        schemaFormDecoratorsProvider.addMapping(
-            'bootstrapDecorator',
-            'number',
-            '/modules/forms/number.html'
-        )
-    }
-])
-
-// configure Restangular
-angular.module('avatech').config([
-    'RestangularProvider',
-
-    RestangularProvider => {
-        // set API base url
-        RestangularProvider.setBaseUrl(window.apiBaseUrl)
-
-        // support mongodb '_id' format
-        RestangularProvider.setRestangularFields({ id: '_id' })
-    }
-])
-
-// enable html5 pushstate
-angular.module('avatech').config([
-    '$locationProvider',
-
-    $locationProvider => $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
-    })
-])
-
-// define additional triggers on Tooltip and Popover
-// (show this be in this file? doesn't feel totally right to have it here)
-angular.module('avatech').config([
-    '$tooltipProvider',
-
-    $tooltipProvider => $tooltipProvider.setTriggers({
-        mouseenter: 'mouseleave',
-        click: 'click',
-        focus: 'blur',
-        never: 'mouseleave',
-        show: 'hide'
-    })
-])
-
-// configure translation
-angular.module('avatech').config([
-    '$translateProvider',
-    '$translatePartialLoaderProvider',
-
-    ($translateProvider,
-     $translatePartialLoaderProvider) => {
-        $translatePartialLoaderProvider.addPart('test')
-        $translateProvider.useLoader('$translatePartialLoader', {
-            urlTemplate: '/translate/{lang}/{part}.json'
-        })
-
-        // set language
-        $translateProvider.preferredLanguage('en')
-
-        // enable proper escaping of translation content
-        $translateProvider.useSanitizeValueStrategy('sanitizeParameters')
-    }
-])
 
 // the first thing that gets run
 angular.module('avatech').run([
@@ -190,15 +259,17 @@ angular.module('avatech').run([
     'Routes',
     'Global',
 
-    ($rootScope,
-     $location,
-     $state,
-     $log,
-     $document,
-     $uibModalStack,
-     Observations,
-     Routes,
-     Global) => {
+    (
+        $rootScope,
+        $location,
+        $state,
+        $log,
+        $document,
+        $uibModalStack,
+        Observations,
+        Routes,
+        Global
+    ) => {
         $rootScope.todaysDate = new Date()
 
         // init global service
@@ -278,10 +349,3 @@ angular.module('avatech').run([
         })
     }
 ])
-
-let requestAnimationFrame = window.requestAnimationFrame ||
-                            window.mozRequestAnimationFrame ||
-                            window.webkitRequestAnimationFrame ||
-                            window.msRequestAnimationFrame
-
-window.requestAnimationFrame = requestAnimationFrame

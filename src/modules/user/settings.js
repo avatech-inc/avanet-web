@@ -4,7 +4,11 @@ const validateEmail = email => {
     return re.test(email)
 }
 
-angular.module('avatech').controller('SettingsController', [
+const defaultSettings = {
+    depth: 0
+}
+
+const Settings = [
     '$scope',
     'Global',
     'Restangular',
@@ -176,4 +180,6 @@ angular.module('avatech').controller('SettingsController', [
                 })
         }
     }
-])
+]
+
+export default Settings

@@ -1,5 +1,24 @@
 
-angular.module('avatech').config([
+import '../../modules/map/map.html'
+import '../../modules/map/route-planning.html'
+import '../../modules/observations/preview.html'
+import '../../modules/snowpit-editor/snowpit.html'
+import '../../modules/organizations/new.html'
+import '../../modules/organizations/view.html'
+import '../../modules/admin/admin.html'
+import '../../modules/user/settings.html'
+import '../../modules/firmware-update/SP1update.html'
+import '../../modules/support/support.html'
+
+import '../../modules/user/login.html'
+import '../../modules/user/forgot-password.html'
+import '../../modules/user/reset-password.html'
+import '../../modules/user/register-new.html'
+
+import '../../modules/404/404.html'
+
+
+const Routes = [
     '$stateProvider',
 
     $stateProvider => $stateProvider
@@ -206,4 +225,6 @@ angular.module('avatech').config([
             url: '/*path',
             templateUrl: '/modules/404/404.html'
         })
-])
+]
+
+export default Routes

@@ -1,6 +1,7 @@
 
-// file upload
-angular.module('avatech').directive('uploader', [
+import './fileupload.html'
+
+const Uploader = [
     '$http',
     '$timeout',
     '$log',
@@ -302,4 +303,6 @@ angular.module('avatech').directive('uploader', [
             }, false)
         }
     })
-])
+]
+
+export default Uploader

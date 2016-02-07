@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('NewObservationModalController', [
+import './new.html'
+
+const NewObservation = [
     '$scope',
     '$stateParams',
     '$location',
@@ -704,4 +706,6 @@ angular.module('avatech').controller('NewObservationModalController', [
            // Lightbox.openModal($scope.model.media, index);
         }
     }
-])
+]
+
+export default NewObservation

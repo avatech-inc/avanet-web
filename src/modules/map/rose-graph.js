@@ -48,7 +48,7 @@ const getColorMap = steps => {
     return colorMap
 }
 
-angular.module('avatech').directive('roseGraph', [
+const RoseGraph = [
     '$timeout',
 
     ($timeout) => ({
@@ -174,4 +174,6 @@ angular.module('avatech').directive('roseGraph', [
             })
         }
     })
-])
+]
+
+export default RoseGraph

@@ -1,5 +1,5 @@
 
-angular.module('avatech').factory('Global', [
+const Global = [
     '$location',
     '$http',
     '$state',
@@ -268,4 +268,6 @@ angular.module('avatech').factory('Global', [
 
         return service
     }
-])
+]
+
+export default Global

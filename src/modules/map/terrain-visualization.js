@@ -46,10 +46,7 @@ const getColorMap = steps => {
     return colorMap
 }
 
-// register module
-angular.module('terrain', [])
-
-angular.module('terrain').factory('terrainVisualization', () => {
+const Terrain = () => {
     let colorMaps = {
         elevation: [
             { color: 'fd4bfb', val: 0 },
@@ -332,4 +329,6 @@ angular.module('terrain').factory('terrainVisualization', () => {
             return newPixels
         }
     }
-})
+}
+
+export default Terrain

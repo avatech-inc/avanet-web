@@ -1,5 +1,8 @@
 
-angular.module('avatech').factory('DeviceUploadModal', [
+import './modal.html'
+import './button.html'
+
+export const DeviceUpload = [
     '$uibModal',
 
     $uibModal => ({
@@ -14,9 +17,9 @@ angular.module('avatech').factory('DeviceUploadModal', [
             return modalInstance.result
         }
     })
-])
+]
 
-angular.module('avatech').controller('DeviceUploadModalController', [
+export const DeviceUploadController = [
     '$scope',
     '$rootScope',
     '$uibModalInstance',
@@ -107,11 +110,11 @@ angular.module('avatech').controller('DeviceUploadModalController', [
             $timeout(() => $scope.$apply())
         }
     }
-])
+]
 
 // upload button directive
 
-angular.module('avatech').directive('sp1Upload', [
+export const SP1Upload = [
     '$q',
     '$http',
     '$timeout',
@@ -317,4 +320,4 @@ angular.module('avatech').directive('sp1Upload', [
             filesUpload.addEventListener('change', () => traverseFiles(this.files), false)
         }
     })
-])
+]

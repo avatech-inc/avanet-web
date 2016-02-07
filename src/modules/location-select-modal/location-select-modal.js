@@ -1,5 +1,7 @@
 
-angular.module('avatech').factory('LocationSelectModal', ['$uibModal', $uibModal => ({
+import './location-select-modal.html'
+
+export const LocationSelect = ['$uibModal', $uibModal => ({
     open: options => {
         let modalInstance = $uibModal.open({
             templateUrl: '/modules/location-select-modal/location-select-modal.html',
@@ -13,9 +15,9 @@ angular.module('avatech').factory('LocationSelectModal', ['$uibModal', $uibModal
 
         return modalInstance.result
     }
-})])
+})]
 
-angular.module('avatech').controller('LocationSelectModalController', [
+export const LocationSelectController = [
     '$scope',
     '$timeout',
     '$uibModalInstance',
@@ -248,4 +250,4 @@ angular.module('avatech').controller('LocationSelectModalController', [
             }, 100)
         }, true)
     }
-])
+]

@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('mapSearch', [
+import './map-search.html'
+
+const MapSearch = [
     '$timeout',
     '$log',
 
@@ -382,4 +384,6 @@ angular.module('avatech').directive('mapSearch', [
             }
         }
     })
-])
+]
+
+export default MapSearch

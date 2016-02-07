@@ -1,10 +1,13 @@
 
+import './new.html'
+import './view.html'
+
 const validateEmail = email => {
     let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/  // eslint-disable-line max-len
     return re.test(email)
 }
 
-angular.module('avatech').controller('OrganizationsController', [
+const OrganizationsController = [
     '$scope',
     '$q',
     '$log',
@@ -250,4 +253,6 @@ angular.module('avatech').controller('OrganizationsController', [
             }
         }
     }
-])
+]
+
+export default OrganizationsController

@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('stabilityTest', [
+import './snowpit-stability.html'
+
+const SnowpitStability = [
     '$http',
     'Global',
 
@@ -151,4 +153,6 @@ angular.module('avatech').directive('stabilityTest', [
 
         }
     })
-])
+]
+
+export default SnowpitStability

@@ -1,5 +1,5 @@
 
-angular.module('avatech').controller('RegisterController', [
+const Register = [
     '$scope',
     '$timeout',
     '$stateParams',
@@ -304,4 +304,6 @@ angular.module('avatech').controller('RegisterController', [
             }
         }
     }
-])
+]
+
+export default Register

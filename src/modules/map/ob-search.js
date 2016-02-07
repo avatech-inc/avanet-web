@@ -1,5 +1,7 @@
 
-angular.module('avatech').directive('obSearch', [
+import './ob-search.html'
+
+export const ObSearch = [
     'Global',
     'ObSearch',
 
@@ -60,9 +62,9 @@ angular.module('avatech').directive('obSearch', [
             scope.formatDegSlider = val => val + '°'
         }
     })
-])
+]
 
-angular.module('avatech').factory('ObSearch', [
+export const ObSearchFactory = [
     'Global',
 
     Global => {
@@ -519,4 +521,4 @@ angular.module('avatech').factory('ObSearch', [
 
         return service
     }
-])
+]

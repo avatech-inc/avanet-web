@@ -426,4 +426,4 @@ const AvatechTerrainLayer = L.GridLayer.extend({
     }
 })
 
-module.exports = AvatechTerrainLayer
+export default AvatechTerrainLayer

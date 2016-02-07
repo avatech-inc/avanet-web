@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('ObservationPreviewController', [
+import './preview.html'
+
+const ObservationPreview = [
     '$scope',
     '$rootScope',
     '$location',
@@ -564,4 +566,6 @@ angular.module('avatech').controller('ObservationPreviewController', [
                 })
         }
     }
-])
+]
+
+export default ObservationPreview

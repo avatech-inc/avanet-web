@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('MapController', [
+import './map.html'
+
+const MapController = [
     '$scope',
     '$state',
     '$timeout',
@@ -33,7 +35,7 @@ angular.module('avatech').controller('MapController', [
         $scope.loadingProfiles = true
 
         $scope.myProfiles = Observations.observations
-        $scope.myRoutes = Routes.observations
+        $scope.myRoutes = Routes.routes
 
         $scope.showPreviewPane = () => $state.current.data.showPreviewPane
         $scope.isFullScreen = () => $state.current.data.fullScreen
@@ -184,4 +186,6 @@ angular.module('avatech').controller('MapController', [
             $scope.loadMap = true
         }
     }
-])
+]
+
+export default MapController

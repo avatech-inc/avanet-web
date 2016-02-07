@@ -1,5 +1,7 @@
 
-angular.module('avatech').controller('AdminOrgsController', [
+import './orgs.html'
+
+const AdminOrgsController = [
     '$scope',
     'Global',
     'Restangular',
@@ -18,4 +20,6 @@ angular.module('avatech').controller('AdminOrgsController', [
             .getList()
             .then(orgs => $scope.orgs = orgs)
     }
-])
+]
+
+export default AdminOrgsController

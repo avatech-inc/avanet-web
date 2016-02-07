@@ -428,8 +428,13 @@ angular.module('avatech').factory('snowpitExport', [
             }
 
             if (_settings) {
-                if (_settings.view) settings.view = _settings.view
-                if (_settings.depthDescending) settings.depthDescending = _settings.depthDescending
+                if (_settings.view !== undefined) {
+                    settings.view = _settings.view
+                }
+
+                if (_settings.depthDescending !== undefined) {
+                    settings.depthDescending = _settings.depthDescending
+                }
             }
 
             // compile canvas

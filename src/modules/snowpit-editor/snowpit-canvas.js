@@ -1418,7 +1418,7 @@ angular.module('avatech').directive('profileEditor', [
                         if (options.showDepth) {
                             let depthText = layer.depth
 
-                            if (scope.settings.depthDescending) {
+                            if (!scope.settings.depthDescending) {
                                 depthText = scope.profile.depth - layer.depth
                             }
 

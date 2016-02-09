@@ -380,7 +380,7 @@ const SnowpitExport = [
             },
 
             formatGrainType: icssg => {
-                let grainType = formatters.getGrainType(icssg)
+                let grainType = getGrainType(icssg)
 
                 if (grainType) {
                     return icssg + ' - ' + grainType.desc

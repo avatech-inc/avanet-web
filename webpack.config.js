@@ -188,6 +188,11 @@ module.exports = {
             },
 
             {
+                test: /\.ts$/,
+                loader: 'ts-loader'
+            },
+
+            {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
                 include: [
@@ -269,7 +274,7 @@ module.exports = {
     /**
      * Not sure what this is used for. It was in the CSS source map example.
      */
-    devtool: 'source-map',
+    devtool: 'eval-cheap-module-source-map',
 
     /**
      * historyApiFallback lets Angular routing kick in when the URLs are not
@@ -303,7 +308,7 @@ module.exports = {
      * src/vendor.
      */
     resolve: {
-        extensions: ['', '.js', '.css', '.scss', '.html'],
+        extensions: ['', '.js', '.ts', '.css', '.scss', '.html'],
         modulesDirectories: ['src', 'node_modules', 'src/vendor'],
         alias: {
             schemaForm: 'angular-schema-form/dist/schema-form'

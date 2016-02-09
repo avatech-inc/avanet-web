@@ -35,12 +35,12 @@ export const LocationSelectButton = [
 export const AccordionNew = () => ({
     restrict: 'E',
     link: (scope, elem) => {
-        $(elem).find('.header').click(() => {
-            if ($(this).parent().hasClass('open')) {
-                $(this).parent().removeClass('open')
+        $(elem).find('.header').click(e => {
+            if ($(e.target).parent().hasClass('open')) {
+                $(e.target).parent().removeClass('open')
             } else {
                 $(elem).find('.accordion-item').removeClass('open')
-                $(this).parent().addClass('open')
+                $(e.target).parent().addClass('open')
             }
         })
     }

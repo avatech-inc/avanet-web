@@ -1,86 +1,21 @@
 
+const _ = {}
+
+import lodashmap from 'lodash.map'
+import minBy from 'lodash.minby'
+import maxBy from 'lodash.maxby'
+import sumBy from 'lodash.sumby'
+import sum from 'lodash.sum'
+
+_.map = lodashmap
+_.minBy = minBy
+_.maxBy = maxBy
+_.sumBy = sumBy
+_.sum = sum
+
 import './route-planning.html'
 
 // UTILS
-const getAverage = (list, property) => {
-    let sum = 0
-
-    for (let item of list) {
-        let val
-
-        if (!property) {
-            val = item
-        } else {
-            val = item[property]
-        }
-
-        if (val !== null) {
-            sum += val
-        }
-    }
-
-    return sum / list.length
-}
-
-const getMin = (list, property) => {
-    let min = Infinity
-
-    for (let item of list) {
-        let val
-
-        if (!property) {
-            val = item
-        } else {
-            val = item[property]
-        }
-
-        if (val !== null) {
-            min = Math.min(min, val)
-        }
-    }
-
-    return min
-}
-
-const getMax = (list, property) => {
-    let max = 0
-
-    for (let item of list) {
-        let val
-
-        if (!property) {
-            val = item
-        } else {
-            val = item[property]
-        }
-
-        if (val !== null) {
-            max = Math.max(max, val)
-        }
-    }
-
-    return max
-}
-
-const getSum = (list, property) => {
-    let sum = 0
-
-    for (let item of list) {
-        let val
-
-        if (!property) {
-            val = item
-        } else {
-            val = item[property]
-        }
-
-        if (val !== null) {
-            sum += val
-        }
-    }
-
-    return sum
-}
 
 // for aspect only
 const getAverageAspect = aspects => {
@@ -89,19 +24,18 @@ const getAverageAspect = aspects => {
 
     // get sines and cosines
     for (let aspect of aspects) {
-        if (aspect !== null) {
+        if (aspect !== null && aspect !== undefined) {
             aspect = parseInt(aspect, 10)
 
             // convert aspect degrees to radians
-            aspect *= (Math.PI / 180)
-            sines.push(Math.sin(aspect))
-            cosines.push(Math.cos(aspect))
+            sines.push(Math.sin(aspect * (Math.PI / 180)))
+            cosines.push(Math.cos(aspect * (Math.PI / 180)))
         }
     }
 
     // calculate mean of sines and cosines
-    let meanSine = getAverage(sines)
-    let meanCosine = getAverage(cosines)
+    let meanSine = _.sum(sines) / sines.length
+    let meanCosine = _.sum(cosines) / cosines.length
 
     // calculate aspect in radians
     let averageAspectRadians = Math.atan2(meanSine, meanCosine)
@@ -143,19 +77,19 @@ const calculateLineSegmentStats = points => {
         distance: endPoint.totalDistance - startPoint.totalDistance,
 
         elevationChange: endPoint.elevation - startPoint.elevation,
-        elevationMin: getMin(points, 'elevation'),
-        elevationMax: getMax(points, 'elevation'),
+        elevationMin: _.minBy(points, 'elevation').elevation,
+        elevationMax: _.maxBy(points, 'elevation').elevation,
 
-        slopeMin: getMin(points, 'slope'),
-        slopeMax: getMax(points, 'slope'),
-        slopeAverage: getAverage(points, 'slope'),
+        slopeMin: _.minBy(points, 'slope').slope,
+        slopeMax: _.maxBy(points, 'slope').slope,
+        slopeAverage: _.sumBy(points, 'slope') / points.length,
 
-        verticalUp: getSum(points, 'verticalUp'),
-        verticalDown: getSum(points, 'verticalDown'),
+        verticalUp: _.sumBy(points, 'verticalUp'),
+        verticalDown: _.sumBy(points, 'verticalDown'),
 
-        aspectMin: getMin(points, 'aspect'),
-        aspectMax: getMax(points, 'aspect'),
-        aspectAverage: getAverageAspect(points, 'aspect'),
+        aspectMin: _.minBy(points, 'aspect').aspect,
+        aspectMax: _.maxBy(points, 'aspect').aspect,
+        aspectAverage: getAverageAspect(_.map(points, 'aspect')),
 
         bearing: bearing
     }

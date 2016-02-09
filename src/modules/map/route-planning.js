@@ -294,24 +294,6 @@ const RoutePlanning = [
             down: 10
         }
 
-        let _line
-        let preventEdit = false
-
-        // the feature group holder for the route
-        let lineGroup = L.featureGroup().addTo($scope.map)
-
-        // keep track of line segments (point-to-point line segments, not route segments)
-        let lineSegmentGroup = L.featureGroup().addTo($scope.map)
-
-        // Leaflet.Draw edit handler for custom edit/draw functionality
-        let editHandler = new L.EditToolbar.Edit($scope.map, {
-            featureGroup: lineGroup,
-            selectedPathOptions: {
-                color: '#2080cc',
-                opacity: 1
-            }
-        })
-
         // $scope.$watchCollection('_line.editing._markers',function(){
         //     $log.debug("markers editing!!!!!!!!")
         //     if (_line && _line.editing && _line.editing._markers)
@@ -323,6 +305,24 @@ const RoutePlanning = [
             let lastLine
             let elevationWidget
             let saveLineTimeout
+
+            let _line
+            let preventEdit = false
+
+            // the feature group holder for the route
+            let lineGroup = L.featureGroup().addTo($scope.map)
+
+            // keep track of line segments (point-to-point line segments, not route segments)
+            let lineSegmentGroup = L.featureGroup().addTo($scope.map)
+
+            // Leaflet.Draw edit handler for custom edit/draw functionality
+            let editHandler = new L.EditToolbar.Edit($scope.map, {
+                featureGroup: lineGroup,
+                selectedPathOptions: {
+                    color: '#2080cc',
+                    opacity: 1
+                }
+            })
 
             let saveLinePoints = () => {
                 $timeout.cancel(saveLineTimeout)

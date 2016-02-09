@@ -1028,8 +1028,7 @@ const RoutePlanning = [
                     // not new midpoints)
                     } else if (
                         $scope.routeControl.autoWaypoint &&
-                        index === _index &&
-                        index === _line.editing._poly._latlngs.length - 1
+                        _index === _line.editing._poly._latlngs.length - 1
                     ) {
                         makeWaypoint(marker)
 

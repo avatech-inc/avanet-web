@@ -617,7 +617,7 @@ export const SnowpitEditor = [
             }
 
             // if index is specified, insert, otherwise, add at bottom
-            if (index === null) {
+            if (typeof index === 'undefined') {
                 $scope.profile.layers.push(newLayer)
             } else {
                 $scope.profile.layers.splice(index + 1, 0, newLayer)

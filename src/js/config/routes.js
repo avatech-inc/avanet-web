@@ -10,6 +10,7 @@ import '../../modules/user/settings.html'
 import '../../modules/firmware-update/SP1update.html'
 import '../../modules/support/support.html'
 
+import '../../modules/user/billing.html'
 import '../../modules/user/login.html'
 import '../../modules/user/forgot-password.html'
 import '../../modules/user/reset-password.html'
@@ -101,6 +102,17 @@ const Routes = [
             views: { content: { templateUrl: '/modules/user/settings.html' } },
             data: {
                 title: 'Settings / Avanet',
+                requireLogin: true,
+                bodyCssClass: 'profiles',
+                fullScreen: true
+            }
+        })
+
+        .state('index.billing', {
+            url: 'billing',
+            views: { content: { templateUrl: '/modules/user/billing.html' } },
+            data: {
+                title: 'Billing / Avanet',
                 requireLogin: true,
                 bodyCssClass: 'profiles',
                 fullScreen: true

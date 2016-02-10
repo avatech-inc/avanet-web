@@ -10,6 +10,8 @@ angular.element(document).ready(() => {
     let $http = injector.get('$http')
     let auth = localStorageService.get('auth')
 
+    Stripe.setPublishableKey('pk_test_4aIRSupmfOGOAWL0wsM4NYZA')
+
     if (auth) {
         $http.defaults.headers.common['Auth-Token'] = auth.authToken
         $http

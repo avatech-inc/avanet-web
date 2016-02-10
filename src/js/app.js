@@ -1,4 +1,7 @@
 
+// libraries
+import uiMask from 'angular-ui-mask'
+
 // config
 import Routes from './config/routes'
 import Lightbox from './config/lightbox'
@@ -101,6 +104,7 @@ import Login from '../modules/user/login'
 import Register from '../modules/user/register'
 import ResetPassword from '../modules/user/reset-password'
 import Settings from '../modules/user/settings'
+import { Billing } from '../modules/user/billing'
 
 import Terrain from '../modules/map/terrain-visualization'
 
@@ -125,19 +129,23 @@ let DEPS = [
     'pikaday',
     'ngjsColorPicker',
     'ngAudio',
-    'terrain'
+    'terrain',
+    'ui.mask'
 ]
 
 if (__DEV__) {
     window.apiBaseUrl = 'http://localhost:10010/v2/'
+    window.payBaseUrl = 'http://localhost:5000/'
 }
 
 if (__STAGE__) {
     window.apiBaseUrl = 'https://avanet-api-dev.herokuapp.com/v2/'
+    window.payBaseUrl = 'http://payments-demo.avatech.com/'
 }
 
 if (__PROD__) {
     window.apiBaseUrl = 'https://api.avatech.com/v2/'
+    window.payBaseUrl = 'http://payments.avatech.com/'
 
     DEPS.unshift('ngRaven')
 }
@@ -238,6 +246,7 @@ angular.module('avatech', DEPS)
     .controller('RegisterController', Register)
     .controller('ResetPasswordController', ResetPassword)
     .controller('SettingsController', Settings)
+    .controller('Billing', Billing)
 
 // configure console debug
 if (__PROD__) {

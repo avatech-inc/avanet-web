@@ -14,13 +14,8 @@ var VERSION = 'dev'
  * Source maps are available automatically on dev and stage. Source maps are
  * uploaded to Sentry on prod.
  */
-var SOURCE_PATH = '[file].map'
-var DEVTOOL = 'source-map'
-
 if (PROD) {
-    SOURCE_PATH = '../../[file].map'
     VERSION = process.env.VERSION
-    DEVTOOL = 'source-map'
 }
 
 var entry = {
@@ -257,7 +252,7 @@ module.exports = {
          */
         filename: 'avanet.[name]',
 
-        sourceMapFilename: SOURCE_PATH,
+        sourceMapFilename: '[file].map',
 
         devtoolLineToLine: {
             test: '/\/vendor\//',
@@ -281,7 +276,7 @@ module.exports = {
     /**
      * Set the source map
      */
-    devtool: DEVTOOL,
+    devtool: 'source-map',
 
     /**
      * historyApiFallback lets Angular routing kick in when the URLs are not

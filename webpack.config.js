@@ -203,7 +203,7 @@ module.exports = {
               */
             {
                 test: /\.html$/,
-                loader: 'ngtemplate?relativeTo=' + (path.resolve(__dirname, './src')) + '!html'
+                loader: 'ngtemplate?relativeTo=' + (path.resolve(__dirname, './src')) + '!raw'
             },
 
             /**

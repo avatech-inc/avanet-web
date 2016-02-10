@@ -15,10 +15,12 @@ var VERSION = 'dev'
  * uploaded to Sentry on prod.
  */
 var SOURCE_PATH = '[file].map'
+var DEVTOOL = 'source-map'
 
 if (PROD) {
     SOURCE_PATH = '../../[file].map'
     VERSION = process.env.VERSION
+    DEVTOOL = 'hidden-source-map'
 }
 
 var entry = {
@@ -255,7 +257,12 @@ module.exports = {
          */
         filename: 'avanet.[name]',
 
-        sourceMapFilename: SOURCE_PATH
+        sourceMapFilename: SOURCE_PATH,
+
+        devtoolLineToLine: {
+            test: '/\/vendor\//',
+            include: false
+        }
     },
 
     /**
@@ -272,9 +279,9 @@ module.exports = {
     },
 
     /**
-     * Not sure what this is used for. It was in the CSS source map example.
+     * Set the source map
      */
-    devtool: 'hidden-source-map',
+    devtool: DEVTOOL,
 
     /**
      * historyApiFallback lets Angular routing kick in when the URLs are not

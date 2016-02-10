@@ -243,12 +243,12 @@ const ProfileEditor = [
                 if (!options.labelColor) options.labelColor = '#000'
                 if (!options.commentLineColor) options.commentLineColor = '#666'
                 if (!options.dashedLineColor) options.dashedLineColor = '#ddd'
-                if (options.print === null) options.print = false
-                if (options.showDepth === null) options.showDepth = true
-                if (options.showDensity === null) options.showDensity = true
-                if (options.drawGrainSize === null) options.drawGrainSize = true
-                if (options.drawWaterContent === null) options.drawWaterContent = true
-                if (options.drawSurfaceLabel === null) options.drawSurfaceLabel = true
+                if (typeof options.print === 'undefined') options.print = false
+                if (typeof options.showDepth === 'undefined') options.showDepth = true
+                if (typeof options.showDensity === 'undefined') options.showDensity = true
+                if (typeof options.drawGrainSize === 'undefined') options.drawGrainSize = true
+                if (typeof options.drawWaterContent === 'undefined') options.drawWaterContent = true
+                if (typeof options.drawSurfaceLabel === 'undefined') options.drawSurfaceLabel = true
 
                 // only call once
                 if (options.scale) scale = options.scale // 4
@@ -361,7 +361,7 @@ const ProfileEditor = [
 
                 angular.forEach(allComments, comment => {
                     if (comment) {
-                        if (comment.depth === null) comment.depth = -1
+                        if (typeof comment.depth === 'undefined') comment.depth = -1
 
                         let obj = commentsObj[comment.depth + '']
 
@@ -664,7 +664,7 @@ const ProfileEditor = [
                             angular.forEach(scope.clientComments, comment => {
                                 if (
                                     comment &&
-                                    comment.depth !== null &&
+                                    typeof comment.depth !== 'undefined' &&
                                     comment.index === _comment.index
                                 ) {
                                     comment.clientDepth = depth
@@ -868,7 +868,7 @@ const ProfileEditor = [
                         if (view && view.layer.length > 0) {
                             context.fillStyle = 'rgba(255,204,0,1)'
 
-                            if (view.layer[0].color !== null) {
+                            if (typeof view.layer[0].color !== 'undefined') {
                                 context.fillStyle = view.layer[0].color
                             }
                         }
@@ -1023,10 +1023,11 @@ const ProfileEditor = [
 
                     // plot surface temp to air temp
                     if (
-                        surfaceTemp !== null &&
-                        scope.profile.airTemp !== null
-                        && scope.profile.airTemp <= 0
-                        && scope.profile.temps && scope.profile.temps.length > 0
+                        typeof surfaceTemp !== 'undefined' &&
+                        typeof scope.profile.airTemp !== 'undefined' &&
+                        scope.profile.airTemp <= 0 &&
+                        scope.profile.temps &&
+                        scope.profile.temps.length > 0
                     ) {
                         let airTemp = (
                             (maxTemp - Math.abs(scope.profile.airTemp)) *
@@ -1263,13 +1264,13 @@ const ProfileEditor = [
                         if (layer.grainType && layer.grainType2) {
                             let scale = scope.getGrainType(layer.grainType).scale
 
-                            if (scale !== null) {
+                            if (typeof scale !== 'undefined') {
                                 context.font = (fontSize * scale) + 'px snowsymbols'
                             }
 
                             let offsetTop = scope.getGrainType(layer.grainType).offsetTop
 
-                            if (offsetTop === null) {
+                            if (typeof offsetTop === 'undefined') {
                                 offsetTop = 0
                             }
 
@@ -1287,13 +1288,13 @@ const ProfileEditor = [
 
                             let scale2 = scope.getGrainType(layer.grainType2).scale
 
-                            if (scale2 !== null) {
+                            if (typeof scale2 !== 'undefined') {
                                 context.font = (fontSize * scale2) + 'px snowsymbols'
                             }
 
                             let offsetTop2 = scope.getGrainType(layer.grainType2).offsetTop
 
-                            if (offsetTop2 === null) {
+                            if (typeof offsetTop2 === 'undefined') {
                                 offsetTop2 = 0
                             }
 
@@ -1324,13 +1325,13 @@ const ProfileEditor = [
                             if (_grainType) {
                                 let scale = _grainType.scale
 
-                                if (scale !== null) {
+                                if (typeof scale !== 'undefined') {
                                     context.font = (fontSize * scale) + 'px snowsymbols'
                                 }
 
                                 let offsetTop = scope.getGrainType(layer.grainType).offsetTop
 
-                                if (offsetTop === null) offsetTop = 0
+                                if (typeof offsetTop === 'undefined') offsetTop = 0
 
                                 centerText(
                                     context,

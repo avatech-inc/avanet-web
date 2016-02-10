@@ -37,6 +37,7 @@ export const DeviceUploadController = [
     ) => {
         $scope.global = Global
         $scope.isMac = window.navigator.platform.toLowerCase().indexOf('mac') > -1
+        $scope.isChrome = window.navigator.userAgent.toLowerCase().indexOf('chrome') > -1
 
         $scope.close = () => {
             $scope.cancelled = true

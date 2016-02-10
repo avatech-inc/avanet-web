@@ -1017,7 +1017,7 @@ export const Draggable = [
         $log
     ) => ({
         restrict: 'A',
-        scope: { layer: '=draggable' },
+        scope: { layer: '=draggableLayer' },
         link: (scope, elm, attrs) => {
             let startY
             let initialMouseY

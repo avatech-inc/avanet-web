@@ -122,7 +122,7 @@ export const SnowpitEditor = [
 
                     filename = filename.substring(filename.indexOf('/') + 1, filename.indexOf('.'))
 
-                    url = 'http://res.cloudinary.com/avatech/image/upload/w_300/' + filename + '.jpg'
+                    url = 'https://res.cloudinary.com/avatech/image/upload/w_300/' + filename + '.jpg'
                 }
 
                 return url

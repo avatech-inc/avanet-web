@@ -1,4 +1,6 @@
 
+require('babel-polyfill')
+
 require('./js/app')
 require('./js/init')
 

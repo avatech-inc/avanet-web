@@ -14,4 +14,4 @@ curl https://app.getsentry.com/api/0/projects/avatech/web-client/releases/$COMMI
   -F file=@./build/assets/avanet.js.map \
   -F name="https://avanet.avatech.com/assets/avanet.js.map"
 
-rm ./build/assets/avanet.js.map
+# rm ./build/assets/avanet.js.map

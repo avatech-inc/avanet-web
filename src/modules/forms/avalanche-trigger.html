@@ -1,5 +1,5 @@
 
-<div class="btn-group userSelect" uib-dropdown ng-show="trigger == \'N\'">
+<div class="btn-group userSelect" uib-dropdown ng-show="trigger == 'N'">
     <button  type="button" uib-dropdown-toggle class="btn btn-default">
         <i class="fa fa-plus"></i> Add Secondary Natural Trigger
     </button>
@@ -17,7 +17,7 @@
     </ul>
 </div>
 
-<div class="btn-group userSelect" uib-dropdown ng-show="trigger == \'A\'">
+<div class="btn-group userSelect" uib-dropdown ng-show="trigger == 'A'">
     <button  type="button" uib-dropdown-toggle class="btn btn-default">
         <i class="fa fa-plus"></i> Add Secondary Artificial Trigger
     </button>
@@ -25,8 +25,8 @@
     <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="width:300px;min-height:100px;">
         <li>
             <a style="white-space:normal !important;background:transparent !important;padding:0 !important;">
-                <div ng-repeat="cat in [\'Explosive\',\'Vehicle\',\'Human\',\'Miscellaneous\']">
-                    <div class="subheader" ng-class="{ \'first\': $index == 0 }">
+                <div ng-repeat="cat in ['Explosive', 'Vehicle', 'Human', 'Miscellaneous']">
+                    <div class="subheader" ng-class="{'first': $index == 0 }">
                         {{ cat }}
                     </div>
                     <ul class="results">

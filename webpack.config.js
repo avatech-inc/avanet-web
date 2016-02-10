@@ -274,7 +274,7 @@ module.exports = {
     /**
      * Not sure what this is used for. It was in the CSS source map example.
      */
-    devtool: 'eval-cheap-module-source-map',
+    devtool: 'hidden-source-map',
 
     /**
      * historyApiFallback lets Angular routing kick in when the URLs are not

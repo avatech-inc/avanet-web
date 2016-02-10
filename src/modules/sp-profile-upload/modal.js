@@ -318,7 +318,7 @@ export const SP1Upload = [
                 // document.body.onfocus = function () { setTimeout(checkInput, 200); };
             })
 
-            filesUpload.addEventListener('change', () => traverseFiles(this.files), false)
+            filesUpload.addEventListener('change', e => traverseFiles(e.target.files), false)
         }
     })
 ]

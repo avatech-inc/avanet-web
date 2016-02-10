@@ -29,6 +29,7 @@ const SnowpitConstants = () => {
         grainSizes: [
             '',
             '.1',
+            '.25',
             '.3',
             '.5',
             '1',

@@ -479,12 +479,12 @@ export const SnowpitEditor = [
             let _temp = parseFloat(temp)
 
             if (Global.user.settings.tempUnits === 1) {
-                let newTemp = (temp * 1.8 + 32).toFixed(1)
+                let newTemp = (_temp * 1.8 + 32).toFixed(1)
 
                 return (Math.round(newTemp * 1) / 1).toFixed(0) + '°F'
             }
 
-            return temp.toFixed(1) + '°C'
+            return _temp.toFixed(1) + '°C'
         }
 
         $scope.selectTemp = temp => {

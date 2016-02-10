@@ -212,7 +212,7 @@ const Map = [
                                 })
 
                                 scope.$apply()
-                                this.openPopup()
+                                e.target.openPopup()
                             }
                         })
 

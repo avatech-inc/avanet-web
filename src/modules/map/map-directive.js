@@ -37,6 +37,7 @@ const Map = [
         scope: {
             map: '=map',
             terrainLayer: '=terrainLayer',
+            showObs: '=showObs',
             profiles: '=obs',
             detailMode: '=detailMode',
             loadingNew: '=loadingNew',
@@ -55,7 +56,8 @@ const Map = [
             scope.colorMaps = terrainVisualization.colorMaps
 
             // defaults
-            if (scope.showTerrain === undefined) scope.showTerrain = true
+            if (typeof scope.showTerrain === 'undefined') scope.showTerrain = true
+            if (typeof scope.showObs === 'undefined') scope.showObs = true
 
             let loaded = false
             let loadMap = () => {
@@ -642,19 +644,24 @@ const Map = [
 
                 // handle loading of observations
                 let initLoad = () => {
-                    scope.loadingProfiles = true
-                    scope.loadProfiles(false)
+                    if (scope.showObs) {
+                        scope.loadingProfiles = true
+                        scope.loadProfiles(false)
 
-                    setTimeout(() => {
-                        setInterval(() => {
-                            scope.loadProfiles(false)
+                        setTimeout(() => {
+                            setInterval(() => {
+                                scope.loadProfiles(false)
+                            }, 60000)
                         }, 60000)
-                    }, 60000)
+                    }
                 }
 
                 let terrainLoad = () => {
                     scope.terrainLayer.off('load', terrainLoad)
-                    scope.loadProfiles()
+
+                    if (scope.showObs) {
+                        scope.loadProfiles()
+                    }
                 }
 
                 let moveTimer
@@ -676,7 +683,9 @@ const Map = [
                             }
                         }, 200)
                     } else {
-                        scope.loadProfiles()
+                        if (scope.showObs) {
+                            scope.loadProfiles()
+                        }
                     }
                 })
 

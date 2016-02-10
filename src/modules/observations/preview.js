@@ -108,7 +108,7 @@ const ObservationPreview = [
                     let filename = media.URL.substr(media.URL.indexOf('upload/') + 7)
 
                     filename = filename.substring(filename.indexOf('/') + 1, filename.indexOf('.'))
-                    url = 'http://res.cloudinary.com/avatech/image/upload/w_300/' + filename + '.jpg'
+                    url = 'https://res.cloudinary.com/avatech/image/upload/w_300/' + filename + '.jpg'
                 }
 
                 return url
@@ -117,7 +117,7 @@ const ObservationPreview = [
             } else if (media.type === 'video') {
                 let filename = media.URL.substr(media.URL.indexOf('upload/') + 7)
                 filename = filename.substring(filename.indexOf('/') + 1, filename.indexOf('.'))
-                let url = 'http://res.cloudinary.com/avatech/video/upload/so_50p/' + filename + '.jpg'
+                let url = 'https://res.cloudinary.com/avatech/video/upload/so_50p/' + filename + '.jpg'
 
                 return url
             }

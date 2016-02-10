@@ -266,6 +266,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
             offsetY = panePos.y % cellSize,
             i, len, p, cell, x, y, j, len2, k;
 
+        if (size.y === 0) return
+
         // console.time('process');
         for (i = 0, len = this._latlngs.length; i < len; i++) {
             p = this._map.latLngToContainerPoint(this._latlngs[i]);

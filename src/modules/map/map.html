@@ -19,6 +19,7 @@
 
 		<div id="map-container" ng-style="{ right: (showPreviewPane() ? 480 : (showRoutePane() ? 290 : 0) ), bottom: (showBottomPane() ? 170 : 0), left: (isDemo ? 0 : 280), top: (isDemo ? 46 : 90)  }">
 			<div map="map" 
+				show-obs="true"
 				obs="profiles"
 				hover-ob="hoverOb"
 				search="obSearch"

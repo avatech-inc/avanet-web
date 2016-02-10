@@ -20,7 +20,7 @@ var DEVTOOL = 'source-map'
 if (PROD) {
     SOURCE_PATH = '../../[file].map'
     VERSION = process.env.VERSION
-    DEVTOOL = 'hidden-source-map'
+    DEVTOOL = 'source-map'
 }
 
 var entry = {

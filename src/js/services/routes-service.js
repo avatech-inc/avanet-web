@@ -1,99 +1,96 @@
-angular.module('avatech').service('Routes', [
-    '$q', '$rootScope', '$timeout', '$interval', 'Global', '$http',
-    function($q, $rootScope, $timeout, $interval, Global, $http) {
 
-	var self=this;
+const _ = {}
 
-	var lastSync;
+import remove from 'lodash.remove'
+import findIndex from 'lodash.findindex'
 
-	this.observations = [];
+_.remove = remove
+_.findIndex = findIndex
 
-	this.init = function() {
-		self.sync();
-    $interval(function() { self.sync() }, 60000);
-	};
 
-	this.sync = function(callback) {
+class RoutesService {
+    constructor(
+        $interval,
+        Global,
+        $http
+    ) {
+        this.routes = []
+
+        this.$interval = $interval
+        this.Global = Global
+        this.$http = $http
+    }
+
+    _update(route) {
+        let index = _.findIndex(this.routes, _route => _route._id === route._id)
+
+        // doesn't exist, add
+        if (index === -1) {
+            this.routes.push(route)
+
+        // if route already exists, replace
+        } else {
+            this.routes[index] = route
+        }
+
+        // todo: removed
+    }
+
+    init() {
+        this.sync()
+
+        this.$interval(() => this.sync(), 60000)
+    }
+
+    sync(callback) {
         // if user not available, don't sync
-        if (!Global.user || !Global.user._id) return;
-        
+        if (!this.Global.user || !this.Global.user._id) return
+
         // Restangular.all("users/" + Global.user._id + "/routes")
         // .getList({
         //     verbose: false,
         //     //since: lastSync.toISOString()
         // })
         // .then(function(obs) {
-        $http({
+
+        this.$http({
             method: 'GET',
-            url: window.apiBaseUrl + "users/" + Global.user._id + "/routes",
-            responseType: "json",
+            url: window.apiBaseUrl + 'users/' + this.Global.user._id + '/routes',
+            responseType: 'json',
             params: {
                 verbose: false
             }
         })
-        .then(function(res) {
-          var obs = res.data;
-
-            for (var i = 0; i < obs.length; i++) {
-                addOrReplace(obs[i]);
+        .then(res => {
+            for (let route of res.data) {
+                this._update(route)
             }
+
             // keep track of last sync
-            lastSync = new Date();
+            this.lastSync = new Date()
+
             // callback
-            if (callback) callback();
-        });
-	};
+            if (callback) callback()
+        })
+    }
 
-	function replaceObservation(observation) {
-        for (var i = 0; i < self.observations.length; i++) {
-        	var _observation = self.observations[i];
-        	if (_observation._id == observation._id) {
-        		self.observations[i] = observation;
-        		return true;
-        	}
-        }
-        return false;
-	}
+    add(route) {
+        this._update(route)
+    }
 
-	function addOrReplace(observation) {
-
-    	// if observation already exists, replace
-    	if (replaceObservation(observation)) return;
-
-    	// doesn't exist, add
-		  self.observations.push(observation);
-
-    	// todo: removed
-	}
-
-	this.save = function(observation) {
-		replaceObservation(observation);
-
-        // update on server
-        // todo: update!
-        // if (observation.type == 'test') {
-        // 	$http.post("/v1/tests", observation);
-        // }
-	};
-
-  this.add = function(observation) {
-    addOrReplace(observation);
-  }
-
-	this.remove = function(observation) {
-     // remove from local cache
-        var index = -1;
-        for (var i = 0; i < self.observations.length; i++) {
-          var _observation = self.observations[i];
-          if (_observation._id == observation._id) {
-            index = i;
-            break;
-          }
-        }
-        if (index > -1) self.observations.splice(index, 1);
+    remove(route) {
+        // remove from local cache
+        _.remove(this.routes, _route => _route._id === route._id)
 
         // mark as removed on server
-        $http.delete(window.apiBaseUrl + "routes/" + observation._id);
-  //       }
-	};
-}]);
+        this.$http.delete(window.apiBaseUrl + 'routes/' + route._id)
+    }
+}
+
+RoutesService.$inject = [
+    '$interval',
+    'Global',
+    '$http'
+]
+
+export default RoutesService

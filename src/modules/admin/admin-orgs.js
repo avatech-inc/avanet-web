@@ -1,16 +1,25 @@
-angular.module('avatech').controller('AdminOrgsController', 
-    ['$scope', '$location', '$http', 'Global', 'Restangular',
-    function ($scope, $location, $http, Global, Restangular) {
-    $scope.global = Global;
 
-    $scope.init = function() {
-        $scope.getOrgs();
-    }
-    $scope.getOrgs = function() {
+import './orgs.html'
 
-        Restangular.all('orgs').getList()
-        .then(function(orgs) {
-            $scope.orgs = orgs;
-        });
+const AdminOrgsController = [
+    '$scope',
+    'Global',
+    'Restangular',
+
+    (
+        $scope,
+        Global,
+        Restangular
+    ) => {
+        $scope.global = Global
+
+        $scope.init = () => $scope.getOrgs()
+
+        $scope.getOrgs = () => Restangular
+            .all('orgs')
+            .getList()
+            .then(orgs => $scope.orgs = orgs)
     }
-}]);
+]
+
+export default AdminOrgsController

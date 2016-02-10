@@ -11,10 +11,10 @@ deployment:
     branch: master
     commands:
       - npm run build
-      - scp -r ./build/* ubuntu@52.91.103.60:~/prod
       - ./scripts/upload_source_maps.sh
+      - rsync -avze ssh --delete ./build/ ubuntu@52.91.103.60:~/prod/
   develop:
     branch: develop
     commands:
       - npm run build:develop
-      - scp -r ./build/* ubuntu@52.91.103.60:~/develop
+      - rsync -avze ssh --delete ./build/ ubuntu@52.91.103.60:~/develop/

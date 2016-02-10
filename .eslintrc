@@ -1,0 +1,51 @@
+{
+  "extends": "airbnb/legacy",
+  "parser": "babel-eslint",
+  "rules": {
+    "indent": [2, 4],
+    "semi": 0,
+    "no-param-reassign": [2, {"props": false}],
+    "comma-dangle": 0,
+    "no-shadow": 0,
+    // until all of our libraries are ES6, we need this
+    "func-names": 0,
+    // Too much refactor for now
+    "vars-on-top": 0,
+    "no-unused-vars": 0,
+    "no-alert": 0,
+    "no-console": 0
+  },
+  "globals": {
+    "__DEV__": false,
+    "__STAGE__": false,
+    "__PROD__": false,
+    "__VERSION__": false,
+    "window": false,
+    "$": false,
+    "jQuery": false,
+    "_": false,
+    "angular": false,
+    "moment": false,
+    "PruneCluster": false,
+    "PNG": false,
+    "jsPDF": false,
+    "L": false,
+    "UTM": false,
+    "turf": false,
+    "simplify": false,
+    "UTMGridLayer": false,
+    "Arc": false,
+    "Raven": false,
+    "Pikaday": false,
+    "avatechTerrainLayer": false,
+    "DrawDeclinationCanvas": false,
+    "WorldMagneticModel": false,
+    "leafletImage": false,
+    "analytics": false,
+    "pdfMake": false,
+    "google": false,
+    "md5": false,
+    "DrawDeclinationCanvas": false,
+    "ElevationWidget": false
+  }
+}

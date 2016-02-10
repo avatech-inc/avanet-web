@@ -1,306 +1,341 @@
-angular.module('avatech').directive('locationSelectButton', ['LocationSelectModal', function(LocationSelectModal) {    
-    return {
+
+export const LocationSelectButton = [
+    'LocationSelectModal',
+
+    LocationSelectModal => ({
         restrict: 'A',
         scope: {
-          model: '=ngModel'
+            model: '=ngModel'
         },
-        link: function(scope, el, attrs) {    
+        link: (scope, el) => {
             // el.bind('click', function($event) {
             //   var el = $($event.target).closest(".open");
-            //   if (el && el.data() && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
+            //   if (el && el.data() && el.data().$uibDropdownController)
+            // el.data().$uibDropdownController.toggle();
             //   scope.$apply();
             // });
-            el.bind('click', function($event) {
 
+            el.bind('click', $event => {
                 LocationSelectModal.open({
                     initialLocation: scope.model
-                }).then(function (location) {
-                    if (location && location.length == 2) {
-                        location[0] = parseFloat(location[0].toFixed(7)); 
-                        location[1] = parseFloat(location[1].toFixed(7)); 
-                        scope.model = location;
+                }).then(location => {
+                    if (location && location.length === 2) {
+                        location[0] = parseFloat(location[0].toFixed(7))
+                        location[1] = parseFloat(location[1].toFixed(7))
+                        scope.model = location
                     }
-                }, function () {
+                }, () => {
                     // on dismiss
-                });
-
-            });
+                })
+            })
         }
-    };        
-}]);
+    })
+]
 
-angular.module('avatech').directive('accordionNew', function () {
-    return {
-        restrict: 'E',
-        link: function (scope, elem, attrs, ctrl) {
-            $(elem).find(".header").click(function() {
-                if ($(this).parent().hasClass("open")) {
-                    $(this).parent().removeClass("open");
-                }
-                else {
-                    $(elem).find(".accordion-item").removeClass("open");
-                    $(this).parent().addClass("open");
-                }
-            });
-        }
+export const AccordionNew = () => ({
+    restrict: 'E',
+    link: (scope, elem) => {
+        $(elem).find('.header').click(e => {
+            if ($(e.target).parent().hasClass('open')) {
+                $(e.target).parent().removeClass('open')
+            } else {
+                $(elem).find('.accordion-item').removeClass('open')
+                $(e.target).parent().addClass('open')
+            }
+        })
     }
-});
+})
 
 // on enter
-angular.module('avatech').directive('onenter', function() {
-  return {
+export const OnEnter = () => ({
     restrict: 'A',
     scope: {
-      onenter: '&'
+        onenter: '&'
     },
-    link: function(scope, elem, attr, ctrl) {
-      $(elem).keydown(function(event) {
-         if (event.keyCode == 13) {
-            scope.onenter();
-            return false;
-         }
-      });
+    link: (scope, elem) => {
+        $(elem).keydown(e => {
+            if (e.keyCode === 13) {
+                scope.onenter()
+                return false
+            }
+        })
     }
-  };
-});
+})
 
-angular.module('avatech').directive('focusOn', ['$timeout', '$parse', function($timeout, $parse) {
-  return {
-    link: function(scope, element, attrs) {
-      var model = $parse(attrs.focusOn);
-      scope.focus = function(modelName) {
-        if (!scope[modelName]) scope[modelName] = 0;
-        scope[modelName]++;
-      };
-      scope.$watch(model, function(value) {
-        $timeout(function() {
-          element[0].focus(); 
-        });
-      });
-    }
-  };
-}]);
+export const FocusOn = [
+    '$timeout',
+    '$parse',
 
-angular.module('avatech').directive('autoFocus', function() {
-    return {
-        restrict: 'AC',
-        link: function(_scope, _element) {
-            _element[0].focus();
+    ($timeout, $parse) => ({
+        link: (scope, element, attrs) => {
+            let model = $parse(attrs.focusOn)
+
+            scope.focus = modelName => {
+                if (!scope[modelName]) {
+                    scope[modelName] = 0
+                }
+
+                scope[modelName]++
+            }
+
+            scope.$watch(model, value => {
+                $timeout(() => element[0].focus())
+            })
         }
-    };
-});
+    })
+]
 
-angular.module('avatech').directive('windowResize', ['$window', function($window) {
-  return function($scope) {
-    $scope._getWindowSize = function() {
-      $scope.windowHeight = $window.innerHeight;
-      $scope.windowWidth  = $window.innerWidth;
-    };
-    angular.element($window).bind("resize", function() {
-      $scope._getWindowSize();
-    });
-    $scope._getWindowSize();
-  };
-}]);
+export const AutoFocus = () => ({
+    restrict: 'AC',
+    link: (_scope, _element) => {
+        _element[0].focus()
+    }
+})
 
-angular.module('avatech').directive('onChange', function() {    
-    return {
+export const WindowResize = ['$window', $window => {
+    return $scope => {
+        $scope._getWindowSize = () => {
+            $scope.windowHeight = $window.innerHeight
+            $scope.windowWidth = $window.innerWidth
+        }
+
+        angular.element($window).bind('resize', () => {
+            $scope._getWindowSize()
+        })
+
+        $scope._getWindowSize()
+    }
+}]
+
+export const OnChange = () => ({
+    restrict: 'A',
+    scope: {
+        onChange: '='
+    },
+    link: (scope, elm) => {
+        scope.$watch('onChange', nVal => elm.val(nVal))
+
+        elm.bind('blur', () => {
+            let currentValue = elm.val()
+
+            if (scope.onChange !== currentValue) {
+                scope.$apply(() => scope.onChange = currentValue)
+            }
+        })
+    }
+})
+
+export const MetersOrFeet = () => ({
+    require: '^ngModel',
+    restrict: 'A',
+    link: (scope, elm, attrs, ctrl) => {
+        let metersOrFeet = attrs.metersOrFeet
+
+        attrs.$observe('metersOrFeet', newValue => {
+            if (newValue === null) return
+            metersOrFeet = newValue
+        })
+
+        ctrl.$formatters.unshift(modelValue => {
+            if (modelValue === null) return undefined
+
+            // if feet
+            if (metersOrFeet === 1) {
+                return Math.round(modelValue * 3.28084)
+            }
+
+            return Math.round(modelValue)
+        })
+
+        ctrl.$parsers.unshift(viewValue => {
+            // if feet
+            if (metersOrFeet === 1) {
+                return (viewValue * 0.3048)
+            }
+
+            // if meters (multiply by 1 to screen out non-numbers)
+            return (viewValue * 1)
+        })
+    }
+})
+
+export const CmOrIn = [
+    '$window',
+    '$parse',
+
+    ($window, $parse) => ({
+        require: '^ngModel',
         restrict: 'A',
-        scope:{'onChange':'=' },
-        link: function(scope, elm, attrs) {
-            scope.$watch('onChange', function(nVal) { elm.val(nVal); });            
-            elm.bind('blur', function() {
-                var currentValue = elm.val();
-                if( scope.onChange !== currentValue ) {
-                    scope.$apply(function() {
-                        scope.onChange = currentValue;
-                    });
+        link: (scope, elm, attrs, ctrl) => {
+            let cmOrIn = attrs.cmOrIn
+
+            attrs.$observe('cmOrIn', newValue => {
+                if (newValue === null) return
+
+                cmOrIn = newValue
+            })
+
+            ctrl.$formatters.unshift(modelValue => {
+                if (modelValue === null) return undefined
+
+                if (cmOrIn === 1) {
+                    return Math.round(modelValue * 0.393701)
                 }
-            });
-        }
-    };        
-});
 
-angular.module('avatech').directive('metersOrFeet', ['$window', '$parse', function ($window, $parse) {
-    return {
-        require:'^ngModel',
-        restrict:'A',
-        link:function (scope, elm, attrs, ctrl) {
-            var metersOrFeet = attrs.metersOrFeet;
+                return Math.round(modelValue)
+            })
 
-            attrs.$observe('metersOrFeet', function (newValue) {
-                if (newValue === null) return;
-                metersOrFeet = newValue;
-            });
-
-            ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue === null) return;
-
-                // if feet
-                if (metersOrFeet == 1) return Math.round(modelValue * 3.28084);
-                else return Math.round(modelValue);
-            });
-
-            ctrl.$parsers.unshift(function (viewValue) {
-                // if feet
-                if (metersOrFeet == 1) {
-                    return (viewValue * 0.3048);
-                }
-                // if meters (multiply by 1 to screen out non-numbers)
-                else return (viewValue * 1);
-            });
-        }
-    };
-}]);
-
-angular.module('avatech').directive('cmOrIn', ['$window', '$parse', function ($window, $parse) {
-    return {
-        require:'^ngModel',
-        restrict:'A',
-        link:function (scope, elm, attrs, ctrl) {
-            var cmOrIn = attrs.cmOrIn;
-
-            attrs.$observe('cmOrIn', function (newValue) {
-                if (newValue === null) return;
-                cmOrIn = newValue;
-            });
-
-            ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue === null) return;
-                if (cmOrIn == 1) return Math.round(modelValue * 0.393701); 
-                else return Math.round(modelValue);
-            });
-
-            ctrl.$parsers.unshift(function (viewValue) {
+            ctrl.$parsers.unshift(viewValue => {
                 // if inches
-                if (cmOrIn == 1) {
-                    return (viewValue * 2.54);
+                if (cmOrIn === 1) {
+                    return (viewValue * 2.54)
                 }
+
                 // if cm (multiply by 1 to screen out non-numbers)
-                else return (viewValue * 1);
-            });
+                return (viewValue * 1)
+            })
         }
-    };
-}]);
+    })
+]
 
-angular.module('avatech').directive('tempUnits', ['$window', '$parse', function ($window, $parse) {
-    return {
-        require:'^ngModel',
-        restrict:'A',
-        link:function (scope, elm, attrs, ctrl) {
-            var tempUnits = attrs.tempUnits;
+export const TempUnits = [
+    '$window',
+    '$parse',
 
-            attrs.$observe('tempUnits', function (newValue) {
-                if (newValue === null) return;
-                tempUnits = newValue;
-            });
+    ($window, $parse) => ({
+        require: '^ngModel',
+        restrict: 'A',
+        link: (scope, elm, attrs, ctrl) => {
+            let tempUnits = attrs.tempUnits
 
-            ctrl.$formatters.unshift(function (modelValue) {
-                if (modelValue === null) return;
+            attrs.$observe('tempUnits', newValue => {
+                if (newValue === null) return
+
+                tempUnits = newValue
+            })
+
+            ctrl.$formatters.unshift(modelValue => {
+                if (modelValue === null) return undefined
+
                 // if fahrenheit
-                if (tempUnits == 'F') return ((modelValue*(9/5))+32);
-                else return Math.round(modelValue).toFixed(1);
-            });
-
-            ctrl.$parsers.unshift(function (viewValue) {
-                // if fahrenheit
-                if (viewValue == "-") return "-";
-                if (tempUnits == 'F') {
-                    return (viewValue - 32) * (5/9);
+                if (tempUnits === 'F') {
+                    return ((modelValue * (9 / 5)) + 32)
                 }
+
+                return Math.round(modelValue).toFixed(1)
+            })
+
+            ctrl.$parsers.unshift(viewValue => {
+                // if fahrenheit
+                if (viewValue === '-') return '-'
+
+                if (tempUnits === 'F') {
+                    return (viewValue - 32) * (5 / 9)
+                }
+
                 // if celsius (multiply by 1 to screen out non-numbers)
-                else return (viewValue * 1);
+                return (viewValue * 1)
             });
         }
-    };
-}]);
+    })
+]
 
-angular.module('avatech').directive('numberOnly', function () {
-    return {
-        restrict: 'EA',
-        require: '?ngModel',
-        scope:{
-            allowDecimal: '@',
-            allowNegative: '@',
-            minNum: '@',
-            maxNum: '@'
-        },
+export const NumberOnly = () => ({
+    restrict: 'EA',
+    require: '?ngModel',
+    scope: {
+        allowDecimal: '@',
+        allowNegative: '@',
+        minNum: '@',
+        maxNum: '@'
+    },
 
-        link: function (scope, element, attrs, ctrl) {
-            if (!ctrl) return;
-            ctrl.$parsers.unshift(function (inputValue) {
-                var decimalFound = false;
-                var digits = inputValue.split('').filter(function (s,i)
-                {
-                    var b = (!isNaN(s) && s != ' ');
-                    if (!b && attrs.allowDecimal && attrs.allowDecimal == "true")
-                    {
-                        if (s == "." && decimalFound === false)
-                        {
-                            decimalFound = true;
-                            b = true;
-                        }
+    link: (scope, element, attrs, ctrl) => {
+        if (!ctrl) return
+
+        ctrl.$parsers.unshift(inputValue => {
+            let decimalFound = false
+            let digits = inputValue.split('').filter((s, i) => {
+                let b = (!isNaN(s) && s !== ' ')
+
+                if (!b && attrs.allowDecimal && attrs.allowDecimal === 'true') {
+                    if (s === '.' && decimalFound === false) {
+                        decimalFound = true
+                        b = true
                     }
-                    if (!b && attrs.allowNegative && attrs.allowNegative == "true")
-                    {
-                        b = (s == '-' && i === 0);
-                    }
-
-                    return b;
-                }).join('');
-                if (attrs.maxNum && !isNaN(attrs.maxNum) && parseFloat(digits) > parseFloat(attrs.maxNum))
-                {
-                    digits = attrs.maxNum;
                 }
-                if (attrs.minNum && !isNaN(attrs.minNum) && parseFloat(digits) < parseFloat(attrs.minNum))
-                {
-                    digits = attrs.minNum;
-                }
-                ctrl.$viewValue = digits;
-                ctrl.$render();
 
-                return digits;
-            });
-        }
-    };
-});
+                if (!b && attrs.allowNegative && attrs.allowNegative === 'true') {
+                    b = (s === '-' && i === 0)
+                }
+
+                return b
+            }).join('')
+
+            if (
+                attrs.maxNum &&
+                !isNaN(attrs.maxNum) &&
+                parseFloat(digits) > parseFloat(attrs.maxNum)
+            ) {
+                digits = attrs.maxNum
+            }
+
+            if (
+                attrs.minNum &&
+                !isNaN(attrs.minNum) &&
+                parseFloat(digits) < parseFloat(attrs.minNum)
+            ) {
+                digits = attrs.minNum
+            }
+
+            ctrl.$viewValue = digits
+            ctrl.$render()
+
+            return digits
+        })
+    }
+})
 
 // closes a bootstrap dropdown when clicked (can be anywhere within the dropdown)
-angular.module('avatech').directive('closeDropdownOnClick', function() {    
-    return {
-        restrict: 'A',
-        link: function(scope, el, attrs) {    
-            el.bind('click', function($event) {
-              var el = $($event.target).closest(".open");
-              if (el && el.data() && el.data().$uibDropdownController) el.data().$uibDropdownController.toggle();
-              scope.$apply();
-            });
-        }
-    };        
-});
+export const CloseDropdown = () => ({
+    restrict: 'A',
+    link: (scope, el) => {
+        el.bind('click', $event => {
+            let el = $($event.target).closest('.open')
 
-angular.module('avatech').directive('tooltipHideOnClick', function() {    
-    return {
-        restrict: 'A',
-        link: function(scope, el, attrs) {    
-            el.bind('click', function($event) {
-              // var el = $($event.target).closest(".open");
-              // if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
-              // scope.$apply();
-              el.data().$scope.tt_isOpen = false;
-              //console.log(el.data().$scope.tt_isOpen);
-            });
-        }
-    };        
-});
+            if (
+                el &&
+                el.data() &&
+                el.data().$uibDropdownController
+            ) {
+                el.data().$uibDropdownController.toggle()
+            }
 
-angular.module('avatech').directive('selectOnClick', function () {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            element.on('click', function () {
-                this.select();
-            });
-        }
-    };
-});
+            scope.$apply()
+        })
+    }
+})
+
+export const TooltipHide = () => ({
+    restrict: 'A',
+    link: (scope, el) => {
+        el.bind('click', $event => {
+            // var el = $($event.target).closest(".open");
+            // if (el && el.data().$dropdownController) el.data().$dropdownController.toggle();
+            // scope.$apply();
+
+            el.data().$scope.tt_isOpen = false
+
+            // console.log(el.data().$scope.tt_isOpen);
+        })
+    }
+})
+
+export const SelectOnClick = () => ({
+    restrict: 'A',
+    link: (scope, element) => {
+        element.on('click', () => {
+            this.select()
+        })
+    }
+})

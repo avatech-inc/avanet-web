@@ -1,218 +1,273 @@
+
 // By Andrew Sohn
 // (C) 2015 Avatech, Inc.
 
-var AvatechTerrainLayer = function (options) {
+const AvatechTerrainLayer = L.GridLayer.extend({
+    initialize: function (options) {
+        let injector = angular.injector(['ng', 'terrain'])
 
-    // get angular module dependencies
-    var injector = angular.injector(["ng","terrain"]);
-    var $q = injector.get("$q");
-    var terrainVisualization = injector.get("terrainVisualization");
+        this.$q = injector.get('$q')
+        this.terrainVisualization = injector.get('terrainVisualization')
 
-    options.underzoom = true;
-    options.updateWhenIdle = true;
-    options.maxNativeZoom = 13;
+        options.underzoom = true
+        options.updateWhenIdle = true
+        options.maxNativeZoom = 13
 
-    // base terrain layer on leaflet GridLayer
-    var terrainLayer = new L.GridLayer(options);
+        this.redrawQueue = []
+        this.needsRedraw = false
+        this.redraw.call(this)
 
-    terrainLayer.redrawQueue = [];
-    terrainLayer.needsRedraw = false;
-    terrainLayer.overlayType;
+        this.options = L.setOptions(this, options)
+    },
 
-    terrainLayer.createTile = function(tilePoint, tileLoaded) {
+    createTile: function (tilePoint, tileLoaded) {
         // create tile canvas element
-        var tile = L.DomUtil.create('canvas', 'leaflet-tile always-show');
+        let tile = L.DomUtil.create('canvas', 'leaflet-tile always-show')
 
         // setup tile width and height according to the options
-        var size = this.getTileSize();
-        tile.width = size.x;
-        tile.height = size.y;
+        let size = this.getTileSize()
+
+        tile.width = size.x
+        tile.height = size.y
 
         // attach tileLoaded callback to element for easier access down the chain
-        tile._tileLoaded = tileLoaded;
+        tile._tileLoaded = tileLoaded
 
-        tile._terrainLoaded = $q.defer();
+        tile._terrainLoaded = this.$q.defer()
 
         // if tileLoaded not specified, call dummy function
-        if (!tile._tileLoaded) tile._tileLoaded = function() { };
-        // draw tile
-        this.drawTile(tile, tilePoint);
-        // return tile so Leaflet knows to expect tileLoaded callback later
-        return tile;
-    }
+        if (!tile._tileLoaded) tile._tileLoaded = () => {}
 
-    terrainLayer.getTileSize = function () {
-        var map = this._map,
-            tileSize = L.GridLayer.prototype.getTileSize.call(this),
-            zoom = this._tileZoom,
-            zoomN = this.options.maxNativeZoom;
+        // draw tile
+        this.drawTile.call(this, tile, tilePoint)
+
+        // return tile so Leaflet knows to expect tileLoaded callback later
+        return tile
+    },
+
+    getTileSize: function () {
+        let map = this._map
+        let tileSize = L.GridLayer.prototype.getTileSize.call(this)
+        let zoom = this._tileZoom
+        let zoomN = this.options.maxNativeZoom
 
         // increase tile size for zoom level 12 (scale up from 11)
-        if (options.underzoom && parseInt(zoom) == 12) tileSize = new L.Point(512, 512); // 128
+        if (this.options.underzoom && parseInt(zoom, 10) === 12) {
+            tileSize = new L.Point(512, 512); // 128
 
         // increase tile size when overzooming (scalw down from 13)
-        else tileSize = zoomN !== null && zoom > zoomN ?
-            tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize;
+        } else {
+            tileSize = (
+                zoomN !== null &&
+                zoom > zoomN
+            ) ? tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize
+        }
 
-        return tileSize;
-    }
+        return tileSize
+    },
 
-    terrainLayer.updateTile = function(ctx, pixels) {
+    updateTile: function (ctx, pixels) {
         // get tile size
-        var tileSize = ctx.canvas.width;
+        let tileSize = ctx.canvas.width
 
         // clear canvas
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
         // get new pixels from worker thread response
-        var pixels = new Uint8ClampedArray(pixels);
+        let _pixels = new Uint8ClampedArray(pixels)
 
         // regular size tile
-        if (tileSize == 256) {
-            var imgData = ctx.createImageData(256, 256);
-            imgData.data.set(pixels);
-            ctx.putImageData(imgData, 0, 0);
-        }
+        if (tileSize === 256) {
+            let imgData = ctx.createImageData(256, 256)
+
+            imgData.data.set(_pixels)
+            ctx.putImageData(imgData, 0, 0)
+
         // scale for overzoom and underzoom
-        else {
-            var temp_canvas = document.createElement('canvas');
-            temp_canvas.width = temp_canvas.height = 256;
-            var temp_context = temp_canvas.getContext('2d');
+        } else {
+            let tempCanvas = document.createElement('canvas')
 
-            var imgData = temp_context.createImageData(256, 256);
-            imgData.data.set(pixels);
-            temp_context.putImageData(imgData, 0, 0);
+            tempCanvas.width = 256
+            tempCanvas.height = 256
 
-            ctx.drawImage(temp_canvas, 0, 0, 256, 256, 0, 0, tileSize, tileSize);
+            let tempContext = tempCanvas.getContext('2d')
+            let imgData = tempContext.createImageData(256, 256)
+
+            imgData.data.set(_pixels)
+            tempContext.putImageData(imgData, 0, 0)
+
+            ctx.drawImage(tempCanvas, 0, 0, 256, 256, 0, 0, tileSize, tileSize)
         }
-    }
+    },
 
-    terrainLayer.drawTile = function(canvas, tilePoint) {
-        var context = canvas.getContext('2d');
-        //context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    drawTile: function (canvas, tilePoint) {
+        let context = canvas.getContext('2d')
+        // context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-        function redraw() {
+        let redraw = () => {
             // if no terrain overlay specified, clear canvas
-            if (!terrainLayer.overlayType) {
-                context.clearRect (0, 0, canvas.width, canvas.height);
-                return;
+            if (!this.overlayType) {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                return
             }
+
             // get pixels
-            var pixels;
-            if (terrainLayer.overlayType == "hillshade") pixels = terrainVisualization.hillshade(canvas._terrainData)
-            else pixels = terrainVisualization.render(canvas._terrainData, terrainLayer.overlayType, terrainLayer.customParams); 
+            let pixels
+
+            if (this.overlayType === 'hillshade') {
+                pixels = this.terrainVisualization.hillshade(canvas._terrainData)
+            } else {
+                pixels = this.terrainVisualization.render(
+                    canvas._terrainData,
+                    this.overlayType,
+                    this.customParams
+                )
+            }
+
             // draw canvas
-            terrainLayer.updateTile(context, pixels.buffer);
+            this.updateTile(context, pixels.buffer);
         }
-        
+
         // adjust zoom point for overzoom
         // overzoom
-        if (tilePoint.z > this.options.maxNativeZoom) tilePoint.z = this.options.maxNativeZoom;
+        if (tilePoint.z > this.options.maxNativeZoom) {
+            tilePoint.z = this.options.maxNativeZoom
+        }
+
         // make zoom level 12 overzoomed from 11
-        if (this.options.underzoom && parseInt(tilePoint.z) == 12) tilePoint.z = 11;
+        if (this.options.underzoom && parseInt(tilePoint.z, 10) === 12) {
+            tilePoint.z = 11
+        }
 
         // elevation tile URL
-        var url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
+        let url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
             // use multiple subdomains to parallelize requests
             //   cycle through using same implementation as Leaflet TileLayer.
             //   makes sure to return same subdomain each time a URL is fetched
             //   to prevent duplicate browser caching.
-            s: function (argument) {
-                var subdomains = "abc";
-                return subdomains[Math.abs(tilePoint.x + tilePoint.y) % subdomains.length];
+            s: () => {
+                let subdomains = 'abc'
+                return subdomains[Math.abs(tilePoint.x + tilePoint.y) % subdomains.length]
             }
-        }));
+        }))
 
-        // get tile as raw Array Buffer so we can process PNG on our own 
+        // get tile as raw Array Buffer so we can process PNG on our own
         // to avoid bogus data from native browser alpha premultiplication
-        var xhr = new XMLHttpRequest;
-        xhr.open("GET", url, true);
-        xhr.responseType = "arraybuffer";
-        xhr.onload = function() {
+        let xhr = new XMLHttpRequest
+
+        xhr.open('GET', url, true)
+        xhr.responseType = 'arraybuffer'
+
+        xhr.onload = () => {
             // if anything other than a 200 status code is recieved, fire loaded callback
-            if (xhr.status != 200) return canvas._tileLoaded(null, canvas);
+            if (xhr.status !== 200) {
+                return canvas._tileLoaded(null, canvas)
+            }
+
             // get PNG data from response
-            var data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
+            let data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer)
+
             // decode PNG
-            var png = new PNG(data);
+            let png = new PNG(data)
+
             // if PNG was succesfully decoded
             if (png) {
-                var pixels = png.decodePixels();
-                canvas._terrainData = new Uint32Array(new Uint8ClampedArray(pixels).buffer);
+                let pixels = png.decodePixels()
 
-                canvas._terrainLoaded.resolve();
+                canvas._terrainData = new Uint32Array(new Uint8ClampedArray(pixels).buffer)
+                canvas._terrainLoaded.resolve()
 
                 // fire tileLoaded callback
                 if (canvas._tileLoaded) {
-                    //console.log("loaded!");
-                    canvas._tileLoaded(null, canvas);
+                    // console.log("loaded!")
+                    canvas._tileLoaded(null, canvas)
+
                     // remove the function so it can't be called twice
-                    canvas._tileLoaded = null;
+                    canvas._tileLoaded = null
                 }
 
-                redraw();
-                terrainLayer.redrawQueue.push(redraw);
+                redraw()
 
-                pixels = null;
-                png = null;
-            }
+                this.redrawQueue.push(redraw)
+
+                pixels = null
+                png = null
+
             // error decoding PNG
-            else if (canvas._tileLoaded) canvas._tileLoaded(null, canvas);
-        };
-        // if network error, fire loaded callback 
-        xhr.onerror = function() {
-            if (canvas._tileLoaded) canvas._tileLoaded(null, canvas);
+            } else if (canvas._tileLoaded) {
+                canvas._tileLoaded(null, canvas)
+            }
         }
-        xhr.send(null);
-    }
 
-    terrainLayer.redraw = function() {
-        if (terrainLayer.needsRedraw) {
-            terrainLayer.redrawQueue.forEach(function(redraw) { redraw(); });
+        // if network error, fire loaded callback
+        xhr.onerror = () => {
+            if (canvas._tileLoaded) {
+                canvas._tileLoaded(null, canvas)
+            }
         }
-        terrainLayer.needsRedraw = false;
-        L.Util.requestAnimFrame(terrainLayer.redraw);
-    }
-    terrainLayer.redraw();
 
-    terrainLayer.setOverlayType = function(overlayType) {
-        terrainLayer.options.updateWhenIdle = (!overlayType);
-        //console.log("updateWhenIdle: " + terrainLayer.options.updateWhenIdle);
-        terrainLayer.overlayType = overlayType;
-        terrainLayer.needsRedraw = true;
-    }
-    terrainLayer.setCustomParams = function(customParams) {
-        terrainLayer.customParams = customParams;
-        terrainLayer.needsRedraw = true;
-    }
+        xhr.send(null)
+    },
 
-    // ----- Terrain data querying ------
+    redraw: function () {
+        if (this.needsRedraw) {
+            this.redrawQueue.forEach(redraw => redraw.call(this))
+        }
 
-    function convertInt(_int) {
+        this.needsRedraw = false
+
+        L.Util.requestAnimFrame(this.redraw.bind(this))
+    },
+
+    setOverlayType: function (overlayType) {
+        this.options.updateWhenIdle = (!overlayType)
+
+        // console.log("updateWhenIdle: " + terrainLayer.options.updateWhenIdle);
+
+        this.overlayType = overlayType
+        this.needsRedraw = true
+    },
+
+    setCustomParams: function (customParams) {
+        this.customParams = customParams
+        this.needsRedraw = true
+    },
+
+    _convertInt: function (_int) {
         return [
             (0xFFFE0000 & _int) >> 17, // elevation
             (0x1FC00 & _int) >> 10, // slope
             (0x1FF & _int) // aspect
-        ];
-    }
+        ]
+    },
 
-    function latLngToTilePoint(lat, lng, zoom) {
-        lat *= (Math.PI/180);
+    _latLngToTilePoint: function (lat, lng, zoom) {
+        let _lat = lat * (Math.PI / 180)
+
         return {
-            x: parseInt(Math.floor( (lng + 180) / 360 * (1<<zoom) )),
-            y: parseInt(Math.floor( (1 - Math.log(Math.tan(lat) + 1 / Math.cos(lat)) / Math.PI) / 2 * (1<<zoom) )),
+            x: parseInt(Math.floor(
+                (lng + 180) /
+                360 *
+                (1 << zoom)
+            ), 10),
+            y: parseInt(Math.floor(
+                (1 - Math.log(Math.tan(_lat) + 1 / Math.cos(_lat)) / Math.PI) /
+                2 *
+                (1 << zoom)
+            ), 10),
             z: zoom
         }
-    }
-    function tilePointToLatLng(x, y, zoom) {
-        var n = Math.PI-2*Math.PI*y/Math.pow(2,zoom);
-        return {
-            lng: (x/Math.pow(2,zoom)*360-180),
-            lat: (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))))
-        }
-    }
+    },
 
-    terrainLayer.getTerrainData = function(lat, lng, index, original) {
+    _tilePointToLatLng: function (x, y, zoom) {
+        let n = Math.PI - 2 * Math.PI * y / Math.pow(2, zoom)
+        return {
+            lng: (x / Math.pow(2, zoom) * 360 - 180),
+            lat: (180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))))
+        }
+    },
+
+    getTerrainData: function (lat, lng, index, original) {
         // round down lat/lng for fewer lookups
         // 4 decimal places = 11.132 m percision
         // https://en.wikipedia.org/wiki/Decimal_degrees
@@ -220,35 +275,48 @@ var AvatechTerrainLayer = function (options) {
         // lng = Math.round(lng * 1e4) / 1e4;
 
         // adjust zoom level for overzoom
-        var zoom = Math.min(terrainLayer.options.maxNativeZoom, terrainLayer._map.getZoom());
-        if (terrainLayer.options.underzoom) { if (parseInt(zoom) == 12) zoom = 11; } // 13
+        let zoom = Math.min(this.options.maxNativeZoom, this._map.getZoom())
+
+        if (this.options.underzoom) {
+            if (parseInt(zoom, 10) === 12) {
+                zoom = 11 // 13
+            }
+        }
+
         // get xyz of clicked tile based on clicked lat/lng
-        var tilePoint = latLngToTilePoint(lat, lng, zoom);
+        let tilePoint = this._latLngToTilePoint(lat, lng, zoom)
+
         // get nw lat/lng of tile
-        var backToLatLng = tilePointToLatLng(tilePoint.x, tilePoint.y, zoom);
+        let backToLatLng = this._tilePointToLatLng(tilePoint.x, tilePoint.y, zoom)
+
         // get nw container point of tile
-        var nwContainerPoint = terrainLayer._map.latLngToContainerPoint(backToLatLng);
+        let nwContainerPoint = this._map.latLngToContainerPoint(backToLatLng)
+
         // get container point of original lat lng
-        var containerPoint = terrainLayer._map.latLngToContainerPoint(L.latLng(lat,lng));
+        let containerPoint = this._map.latLngToContainerPoint(L.latLng(lat, lng))
 
         // subtract queried point from nw container point to get point within tile
-        var pointInTile = {
+        let pointInTile = {
             x: containerPoint.x - nwContainerPoint.x,
             y: containerPoint.y - nwContainerPoint.y
         }
+
         // adjust points for overzoom
-        if (terrainLayer._map.getZoom() > terrainLayer.options.maxNativeZoom) {
-            var zoomDifference = terrainLayer._map.getZoom() - terrainLayer.options.maxNativeZoom;
-            var zoomDivide = Math.pow(2, zoomDifference)
-            pointInTile.x = Math.floor(pointInTile.x / zoomDivide);
-            pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
-        }
+        if (this._map.getZoom() > this.options.maxNativeZoom) {
+            let zoomDifference = this._map.getZoom() - this.options.maxNativeZoom
+            let zoomDivide = Math.pow(2, zoomDifference)
+
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
+
         // adjust points for underzoom
-        else if (terrainLayer.options.underzoom && parseInt(terrainLayer._map.getZoom()) == 12) {
-            var zoomDifference = terrainLayer._map.getZoom() - 11;
-            var zoomDivide = Math.pow(2, zoomDifference)
-            pointInTile.x = Math.floor(pointInTile.x / zoomDivide);
-            pointInTile.y = Math.floor(pointInTile.y / zoomDivide);
+        } else if (this.options.underzoom && parseInt(this._map.getZoom(), 10) === 12) {
+            let zoomDifference = this._map.getZoom() - 11
+            let zoomDivide = Math.pow(2, zoomDifference)
+
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
+
             // previous underzoom code
             // var zoomDifference = 1;
             // var zoomDivide = Math.pow(2, zoomDifference)
@@ -257,41 +325,42 @@ var AvatechTerrainLayer = function (options) {
         }
 
         // make sure point is within 256x256 bounds
-        if (pointInTile.x > 255) pointInTile.x = 255;
-        if (pointInTile.y > 255) pointInTile.y = 255;
-        if (pointInTile.x < 0) pointInTile.x = 0;
-        if (pointInTile.y < 0) pointInTile.y = 0;
-        
-        // promise
-        var promise = $q.defer();
+        if (pointInTile.x > 255) pointInTile.x = 255
+        if (pointInTile.y > 255) pointInTile.y = 255
+        if (pointInTile.x < 0) pointInTile.x = 0
+        if (pointInTile.y < 0) pointInTile.y = 0
 
-        var tile_id = tilePoint.x + ":" + tilePoint.y + ":" + parseInt(terrainLayer._map.getZoom());
-        var tile = terrainLayer._tiles[tile_id]
+        // promise
+        let promise = this.$q.defer()
+
+        let tileId = tilePoint.x + ':' + tilePoint.y + ':' + parseInt(this._map.getZoom(), 10)
+        let tile = this._tiles[tileId]
+
         if (!tile) {
-            //promise.resolve(null);
-            return promise.promise;
+            // promise.resolve(null);
+            return promise.promise
         }
 
-        var canvas = tile.el;
+        let canvas = tile.el
 
         // wait for tile to load
-        canvas._terrainLoaded.promise.then(function() {
+        canvas._terrainLoaded.promise.then(() => {
             // make sure terrain is loaded
-            if (!canvas._terrainData) return;
+            if (!canvas._terrainData) return
 
             // make sure coords are with bounds
-            if (pointInTile.x > 255) pointInTile.x = 255;
-            if (pointInTile.y > 255) pointInTile.y = 255;
-            if (pointInTile.x < 0) pointInTile.x = 0;
-            if (pointInTile.y < 0) pointInTile.y = 0;
+            if (pointInTile.x > 255) pointInTile.x = 255
+            if (pointInTile.y > 255) pointInTile.y = 255
+            if (pointInTile.x < 0) pointInTile.x = 0
+            if (pointInTile.y < 0) pointInTile.y = 0
 
             // convert xy coord to 2d array index
-            var arrayIndex = (pointInTile.y * 256 + pointInTile.x);
+            let arrayIndex = (pointInTile.y * 256 + pointInTile.x)
 
             // get terrain data
-            var _terrainData = convertInt(canvas._terrainData[arrayIndex]);
+            let _terrainData = this._convertInt(canvas._terrainData[arrayIndex])
 
-            var terrainData = { 
+            let terrainData = {
                 lat: lat,
                 lng: lng,
 
@@ -302,43 +371,59 @@ var AvatechTerrainLayer = function (options) {
                 elevation: _terrainData[0],
                 slope: _terrainData[1],
                 aspect: _terrainData[2]
-            };
+            }
 
             // if empty values, make null
-            if (terrainData && terrainData.elevation == 127 && terrainData.slope == 127 && terrainData.aspect == 511) {
-                terrainData.elevation = null;
-                terrainData.slope = null;
-                terrainData.aspect = null;
+            if (
+                terrainData &&
+                terrainData.elevation === 127 &&
+                terrainData.slope === 127 &&
+                terrainData.aspect === 511
+            ) {
+                terrainData.elevation = null
+                terrainData.slope = null
+                terrainData.aspect = null
             }
-            promise.resolve(terrainData);
-        });
-        return promise.promise;
-    }
 
-    // since 'getTerrainDataBulk' is using terrain tile worker threads, the data 
+            promise.resolve(terrainData)
+        })
+
+        return promise.promise
+    },
+
+    // since 'getTerrainDataBulk' is using terrain tile worker threads, the data
     // callback will only return after all tiles have loaded, so we don't have
     // to worry about checking if terrain tiles have been loaded before querying.
-    terrainLayer.getTerrainDataBulk = function(points, callback) {
-        //console.log("getTerrainDataBulk!");
-        var promises = [];
+    getTerrainDataBulk: function (points, callback) {
+        // console.log("getTerrainDataBulk!");
+        let promises = []
+
         // call 'getTerrainData' for each point
-        for (var i = 0; i < points.length; i++) {
-            var promise = terrainLayer.getTerrainData(points[i].lat, points[i].lng, 
-            i, // index
-            points[i].original // original
-            );
-            promises.push(promise);
+        for (let i = 0; i < points.length; i++) {
+            let promise = this.getTerrainData(
+                points[i].lat,
+                points[i].lng,
+                i, // index
+                points[i].original // original
+            )
+
+            promises.push(promise)
         }
+
         // keep track of recieved data in original order
-        var receivedPoints = [];
-        $q.all(promises).then(function(results) {
-            //console.log("everything resolved!");
-            for (var i = 0; i < results.length; i++) {
-                var terrainData = results[i];
-                receivedPoints[terrainData.index] = terrainData;
+        let receivedPoints = []
+
+        this.$q.all(promises).then(results => {
+            // console.log("everything resolved!");
+
+            for (let i = 0; i < results.length; i++) {
+                let terrainData = results[i]
+                receivedPoints[terrainData.index] = terrainData
             }
-            callback(receivedPoints);
-        });
+
+            callback(receivedPoints)
+        })
     }
-    return terrainLayer;
-};
+})
+
+export default AvatechTerrainLayer

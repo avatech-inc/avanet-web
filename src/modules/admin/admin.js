@@ -1,22 +1,21 @@
-angular.module('avatech').controller('AdminController',
-    ['$scope', '$location', '$http', 'Global',
-    function ($scope, $location, $http, Global) {
-    
+
+import './admin.html'
+
+const AdminController = ['$scope', $scope => {
     $scope.pages = [{
-    	title: 'Users',
-    	template: '/modules/admin/users.html'
-    },
-    {
+        title: 'Users',
+        template: '/modules/admin/users.html'
+    }, {
         title: 'Organizations',
         template: '/modules/admin/orgs.html'
-    }
-    ];
+    }]
 
     // select first page
-    $scope.selectedPage = $scope.pages[0];
+    $scope.selectedPage = $scope.pages[0]
 
-    $scope.selectPage = function(page) {
-		$scope.selectedPage = page;
+    $scope.selectPage = page => {
+        $scope.selectedPage = page
     }
+}]
 
-}]);
+export default AdminController

@@ -949,7 +949,7 @@ export const SnowpitEditor = [
         }
 
         $scope.onFileAdd = file => {
-            if ($scope.uploading === null) {
+            if (typeof $scope.uploading === 'undefined') {
                 $scope.uploading = []
             }
 

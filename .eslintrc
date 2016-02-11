@@ -44,7 +44,6 @@
     "analytics": false,
     "pdfMake": false,
     "google": false,
-    "md5": false,
     "DrawDeclinationCanvas": false,
     "ElevationWidget": false
   }

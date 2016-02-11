@@ -275,7 +275,7 @@ export const SP1Upload = [
                         uploadFiles(files)
                     }
 
-                    for (let file in files) {
+                    for (let file of files) {
                         if (file.name.toLowerCase() === 'serial.txt') {
                             // get serial number
                             let reader = new FileReader()

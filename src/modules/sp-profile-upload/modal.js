@@ -275,13 +275,13 @@ export const SP1Upload = [
                         uploadFiles(files)
                     }
 
-                    for (let file of files) {
-                        if (file.name.toLowerCase() === 'serial.txt') {
+                    for (let i = 0; i < files.length; i++) {
+                        if (files[i].name.toLowerCase() === 'serial.txt') {
                             // get serial number
                             let reader = new FileReader()
 
                             reader.onload = uploadFile
-                            reader.readAsText(file)
+                            reader.readAsText(files[i])
 
                             isSP1 = true
                             break

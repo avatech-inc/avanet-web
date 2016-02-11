@@ -192,12 +192,15 @@ export const SP1Upload = [
                 if (scope.cancel === true) return
                 if (scope.oncheck) scope.oncheck()
 
-                for (let file of files) {
-                    if (file.name.length === 8 && file.name.toLowerCase().indexOf('p') === 0) {
-                        let fileNumber = parseInt(file.name.substr(1), 10)
+                for (let i = 0; i < files.length; i++) {
+                    if (
+                        files[i].name.length === 8 &&
+                        files[i].name.toLowerCase().indexOf('p') === 0
+                    ) {
+                        let fileNumber = parseInt(files[i].name.substr(1), 10)
                         let hash = md5(deviceSerial + (fileNumber + ''))
 
-                        _files[hash] = file
+                        _files[hash] = files[i]
                         hashes.push(hash)
                     }
                 }

@@ -262,8 +262,8 @@ const Uploader = [
                 }
             }
 
-            filesUpload.addEventListener('change', () => {
-                traverseFiles(this.files)
+            filesUpload.addEventListener('change', e => {
+                traverseFiles(e.target.files)
             }, false)
 
             dropArea.addEventListener('dragleave', evt => {
@@ -279,27 +279,27 @@ const Uploader = [
                 evt.stopPropagation()
             }, false)
 
-            dropArea.addEventListener('dragenter', evt => {
-                angular.element(this).addClass('over')
+            dropArea.addEventListener('dragenter', e => {
+                angular.element(e.target).addClass('over')
 
-                evt.preventDefault()
-                evt.stopPropagation()
+                e.preventDefault()
+                e.stopPropagation()
             }, false)
 
-            dropArea.addEventListener('dragover', evt => {
-                angular.element(this).addClass('over')
+            dropArea.addEventListener('dragover', e => {
+                angular.element(e.target).addClass('over')
 
-                evt.preventDefault()
-                evt.stopPropagation()
+                e.preventDefault()
+                e.stopPropagation()
             }, false)
 
-            dropArea.addEventListener('drop', evt => {
-                traverseFiles(evt.dataTransfer.files)
+            dropArea.addEventListener('drop', e => {
+                traverseFiles(e.dataTransfer.files)
 
-                angular.element(this).removeClass('over')
+                angular.element(e.target).removeClass('over')
 
-                evt.preventDefault()
-                evt.stopPropagation()
+                e.preventDefault()
+                e.stopPropagation()
             }, false)
         }
     })

@@ -1,4 +1,6 @@
 
+import md5 from 'blueimp-md5'
+
 import './modal.html'
 import './button.html'
 

@@ -66,7 +66,6 @@ var entry = {
         './src/vendor/jquery.mentionsInput.js',
         './src/vendor/jquery.elastic.js',
         './src/vendor/jquery.knob.js',
-        './src/vendor/blueimp-md5/js/md5.js',
         './src/vendor/jspdf/dist/jspdf.debug.js',
         './src/vendor/pdfmake/build/pdfmake.js',
         './src/vendor/pdfmake/build/vfs_fonts.js',

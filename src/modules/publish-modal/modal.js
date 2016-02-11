@@ -47,27 +47,33 @@ export const PublishController = [
         }
 
         if (initialSharing) {
-            if (initialSharing.published !== null) {
+            if (initialSharing.published !== null &&
+                typeof initialSharing.published !== 'undefined') {
                 $scope.sharing.published = initialSharing.published
             }
 
-            if (initialSharing.organization !== null) {
+            if (initialSharing.organization !== null &&
+                typeof initialSharing.organization !== 'undefined') {
                 $scope.sharing.organization = initialSharing.organization
             }
 
-            if (initialSharing.sharingLevel !== null) {
+            if (initialSharing.sharingLevel !== null &&
+                typeof initialSharing.sharingLevel !== 'undefined') {
                 $scope.sharing.sharingLevel = initialSharing.sharingLevel
             }
 
-            if (initialSharing.shareWithAvyCenter !== null) {
+            if (initialSharing.shareWithAvyCenter !== null &&
+                typeof initialSharing.shareWithAvyCenter !== 'undefined') {
                 $scope.sharing.shareWithAvyCenter = initialSharing.shareWithAvyCenter
             }
 
-            if (initialSharing.shareWithStudents !== null) {
+            if (initialSharing.shareWithStudents !== null &&
+                typeof initialSharing.shareWithStudents !== 'undefined') {
                 $scope.sharing.shareWithStudents = initialSharing.shareWithStudents
             }
 
-            if (initialSharing.sharedOrganizations !== null) {
+            if (initialSharing.sharedOrganizations !== null &&
+                typeof initialSharing.sharedOrganizations !== 'undefined') {
                 $scope.sharing.sharedOrganizations = initialSharing.sharedOrganizations
             }
         }

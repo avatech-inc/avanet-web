@@ -133,25 +133,14 @@ const interpolate = _points => {
 
     for (let i = 0; i < newPoints.length; i++) {
         if (!newPoints[i]) {
-            let startPoint = new google.maps.LatLng(
-                newPoints[i - 1].lat,
-                newPoints[i - 1].lng
-            )
-
-            let endPoint = new google.maps.LatLng(
-                newPoints[i + 1].lat,
-                newPoints[i + 1].lng
-            )
-
-            let middlePoint = google.maps.geometry.spherical.interpolate(
-                startPoint,
-                endPoint,
-                0.5
-            )
+            let startPoint = L.latLng(newPoints[i - 1].lat, newPoints[i - 1].lng)
+            let endPoint = L.latLng(newPoints[i + 1].lat, newPoints[i + 1].lng)
+            let bounds = L.latLngBounds(startPoint, endPoint)
+            let middlePoint = bounds.getCenter()
 
             newPoints[i] = {
-                lat: middlePoint.lat(),
-                lng: middlePoint.lng()
+                lat: middlePoint.lat,
+                lng: middlePoint.lng
             }
         }
     }
@@ -1222,16 +1211,16 @@ const RoutePlanning = [
                 // var maxlon = '-111.60976';
 
                 // calculate bounds
-                let bounds = new google.maps.LatLngBounds()
+                // let bounds = new google.maps.LatLngBounds()
 
-                for (let i = 0; i < _line.editing._markers.length; i++) {
-                    let thisPoint = _line.editing._markers[i]
+                // for (let i = 0; i < _line.editing._markers.length; i++) {
+                //     let thisPoint = _line.editing._markers[i]
 
-                    bounds.extend(new google.maps.LatLng(
-                        thisPoint._latlng.lat,
-                        thisPoint._latlng.lng
-                    ))
-                }
+                //     bounds.extend(new google.maps.LatLng(
+                //         thisPoint._latlng.lat,
+                //         thisPoint._latlng.lng
+                //     ))
+                // }
 
                 let gpx = ('<?xml version="1.0"?>\n' +
                     '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1">\n' + // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"

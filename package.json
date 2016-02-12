@@ -37,6 +37,7 @@
     "leaflet-contextmenu": "^1.0.0",
     "leaflet-draw": "github:leaflet/leaflet.draw#v0.2.4",
     "lodash.assign": "^4.0.2",
+    "lodash.find": "^4.1.0",
     "lodash.findindex": "^4.0.2",
     "lodash.map": "^4.1.0",
     "lodash.maxby": "^4.1.0",

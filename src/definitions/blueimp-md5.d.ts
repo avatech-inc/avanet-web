@@ -3,7 +3,5 @@
 // Definitions by: Ray Martone <https://github.com/rmartone>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 declare module 'blueimp-md5' {
-    function md5(value: string, key?: string, raw?: boolean): string;
-
-    export = md5;
+    export default function md5(value: string, key?: string, raw?: boolean): string;
 }

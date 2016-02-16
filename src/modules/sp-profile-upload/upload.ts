@@ -1,12 +1,20 @@
+/// <reference path="../../definitions/blueimp-md5.d.ts" />
+import md5 from 'blueimp-md5'
 
-// <reference path="../../definitions/blueimp-md5.d.ts" />
-import md5 = require('blueimp-md5')
-
+/**
+ * JSON API response from server.
+ */
 interface Response {
     hash: string
 }
 
-const readBinaryFile = (
+/**
+ * Reads a binary file as array buffer.
+ *
+ * @param  {Blob}     file - File to read.
+ * @param  {Function} callback - Called once file is read.
+ */
+export const readBinaryFile = (
     file: Blob,
     callback: Function
 ) => {
@@ -15,7 +23,13 @@ const readBinaryFile = (
     reader.readAsArrayBuffer(file)
 }
 
-const readTextFile = (
+/**
+ * Reads a text file as text.
+ *
+ * @param  {Blob}     file - File to read.
+ * @param  {Function} callback - Called once file is read.
+ */
+export const readTextFile = (
     file: Blob,
     callback: Function
 ) => {
@@ -24,6 +38,12 @@ const readTextFile = (
     reader.readAsText(file)
 }
 
+/**
+ * Reads the device serial from a file.
+ *
+ * @param  {Blob}     file - File to read serial from.
+ * @param  {Function} callback - Called once the serial is read.
+ */
 export const readSerial = (
     serial: Blob,
     callback: Function
@@ -35,7 +55,14 @@ export const readSerial = (
     })
 }
 
-const generateHash = (
+/**
+ * Generates a hash from a filename and serial.
+ *
+ * @param  {string} filename - The filename to hash.
+ * @param  {string} deviceSerial - The serial to hash the filename with.
+ * @returns {string} The md5 hash.
+ */
+export const generateHash = (
     filename: string,
     deviceSerial: string
 ) => {
@@ -44,6 +71,13 @@ const generateHash = (
     return md5(deviceSerial + (fileNumber + ''))
 }
 
+/**
+ * Return a mapping of hashes -> files for a FileList.
+ *
+ * @param  {FileList} files - The files to generate hashes for.
+ * @param  {string} deviceSerial - The serial to hash the filenames with.
+ * @return {object} An object of hashes -> files.
+ */
 export const hashFilenames = (
     files: FileList,
     deviceSerial: string
@@ -66,7 +100,17 @@ export const hashFilenames = (
     return fileHashes
 }
 
-const uploadFile = (
+/**
+ * Upload binary data to an endpoint with an auth token header. shortCircuit
+ * is a function that checks if the upload has been aborted.
+ *
+ * @param  {binary} binary - Binary data to upload.
+ * @param  {string} endpoint - The URL endpoint to upload to.
+ * @param  {string} token - The auth token header value to set.
+ * @param  {Function} shortCircuit - Function that returns a boolean to stop process.
+ * @param  {Function} callback - Called when the data finishes uploading.
+ */
+export const uploadFile = (
     binary,
     endpoint: string,
     token: string,
@@ -92,6 +136,19 @@ const uploadFile = (
     xhr.send(binary)
 }
 
+/**
+ * Upload files passed by a mapping of hashes -> files, but only for hashes found
+ * in the newHashes array. Files are uploaded to endpoint with an auth token header.
+ * shortCircuit is a functio nthat checks if the upload has been aborted.
+ *
+ * @param  {Object} hashes - An object of hashes -> files.
+ * @param  {Array<string>} newHashes - Array of hashes to upload.
+ * @param  {string} endpoint - The URL endpoint to upload to.
+ * @param  {string} token - The auth token header value to set.
+ * @param  {Function} shortCircuit - Function that returns a boolean to stop process.
+ * @param  {Function} progress - Funciton to call as upload progresses.
+ * @param  {Function} callback - Called when the data finishes uploading.
+ */
 export const uploadFiles = (
     hashes: Object,
     newHashes: Array<string>,

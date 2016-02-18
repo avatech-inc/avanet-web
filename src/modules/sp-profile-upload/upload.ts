@@ -1,5 +1,5 @@
 /// <reference path="../../definitions/blueimp-md5.d.ts" />
-import md5 from 'blueimp-md5'
+import md5 = require('blueimp-md5')
 
 /**
  * JSON API response from server.
@@ -11,11 +11,11 @@ interface Response {
 /**
  * Reads a binary file as array buffer.
  *
- * @param  {Blob}     file - File to read.
+ * @param  {File}     file - File to read.
  * @param  {Function} callback - Called once file is read.
  */
 export const readBinaryFile = (
-    file: Blob,
+    file: File,
     callback: Function
 ) => {
     let reader = new FileReader()
@@ -26,11 +26,11 @@ export const readBinaryFile = (
 /**
  * Reads a text file as text.
  *
- * @param  {Blob}     file - File to read.
+ * @param  {File}     file - File to read.
  * @param  {Function} callback - Called once file is read.
  */
 export const readTextFile = (
-    file: Blob,
+    file: File,
     callback: Function
 ) => {
     let reader = new FileReader()
@@ -41,11 +41,11 @@ export const readTextFile = (
 /**
  * Reads the device serial from a file.
  *
- * @param  {Blob}     file - File to read serial from.
+ * @param  {File}     file - File to read serial from.
  * @param  {Function} callback - Called once the serial is read.
  */
 export const readSerial = (
-    serial: Blob,
+    serial: File,
     callback: Function
 ) => {
     readTextFile(serial, (content: string) => {
@@ -85,7 +85,7 @@ export const hashFilenames = (
     let fileHashes = {}
 
     for (let i = 0; i < files.length; i++) {
-        let file = files.item(i)
+        let file = files[i]
 
         if (
             file.name.length === 8 &&

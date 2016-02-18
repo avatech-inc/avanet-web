@@ -2,6 +2,12 @@ machine:
   node:
     version: 5.4.1
 
+test:
+  pre:
+    - npm run test-server:
+        background: true
+    - sleep 5
+
 deployment:
   master:
     branch: master

@@ -14,7 +14,7 @@
     "build:develop": "NODE_ENV=stage ./node_modules/.bin/webpack",
     "lint": "./node_modules/.bin/eslint src/modules/ src/js/ --ext .js",
     "test-server": "./node_modules/.bin/webpack-dev-server --config spec/support/webpack.config.js",
-    "test": "npm run lint && npm run test-server & sleep 5 && ./node_modules/.bin/grunt jasmine"
+    "test": "npm run lint && ./node_modules/.bin/grunt jasmine"
   },
   "dependencies": {
     "angular": "^1.4.8",

@@ -2,10 +2,6 @@ machine:
   node:
     version: 5.4.1
 
-test:
-  pre:
-    - npm install -g jasmine-node
-
 deployment:
   master:
     branch: master

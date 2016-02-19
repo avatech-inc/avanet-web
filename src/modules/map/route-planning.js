@@ -239,13 +239,15 @@ const RoutePlanning = [
             let lineSegmentGroup = L.featureGroup().addTo($scope.map)
 
             // Leaflet.Draw edit handler for custom edit/draw functionality
-            let editHandler = new L.EditToolbar.Edit($scope.map, {
+            let createEditHandler = () => new L.EditToolbar.Edit($scope.map, {
                 featureGroup: lineGroup,
                 selectedPathOptions: {
                     color: '#2080cc',
                     opacity: 1
                 }
             })
+
+            let editHandler = createEditHandler()
 
             let saveLinePoints = () => {
                 $timeout.cancel(saveLineTimeout)
@@ -624,6 +626,11 @@ const RoutePlanning = [
             let createLine = () => {
                 _line = L.polyline([], { opacity: 0.5 })
                 lineGroup.addLayer(_line)
+
+                if (editHandler === null) {
+                    editHandler = createEditHandler()
+                }
+
                 editHandler.enable()
 
                 // event when line is edited (after point is dragged or midpoint added)

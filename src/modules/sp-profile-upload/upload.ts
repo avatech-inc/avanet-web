@@ -2,10 +2,14 @@
 import md5 = require('blueimp-md5')
 
 /**
- * JSON API response from server.
+ * JSON API responses from server.
  */
 interface Response {
     hash: string
+}
+
+interface ErrorResponse {
+    message: string
 }
 
 /**
@@ -109,13 +113,17 @@ export const hashFilenames = (
  * @param  {string} token - The auth token header value to set.
  * @param  {Function} shortCircuit - Function that returns a boolean to stop process.
  * @param  {Function} callback - Called when the data finishes uploading.
+ * @param  {Function} duplicate - Called if profile already exists.
+ * @param  {Function} error - Called if the API returns an error.
  */
 export const uploadFile = (
     binary,
     endpoint: string,
     token: string,
     shortCircuit: Function,
-    callback: Function
+    callback: Function,
+    duplicate: Function,
+    error: Function
 ) => {
     if (shortCircuit()) return
 
@@ -127,6 +135,14 @@ export const uploadFile = (
                 let data = JSON.parse(xhr.responseText)
 
                 callback(data)
+            } else if (xhr.status === 409) {
+                let data = JSON.parse(xhr.responseText)
+
+                duplicate(data)
+            } else {
+                let data = JSON.parse(xhr.responseText)
+
+                error(data)
             }
         }
     }
@@ -163,13 +179,7 @@ export const uploadFiles = (
     let uploaded = []
     let uploadCount = 0
 
-    let uploadCallback = (data: Response) => {
-        if (data.hash) {
-            if (uploaded.indexOf(data.hash) === -1) {
-                uploaded.push(data.hash)
-            }
-        }
-
+    let incrementUploadCount = () => {
         uploadCount++
 
         progress((uploadCount / newHashes.length * 100).toFixed(0))
@@ -179,7 +189,35 @@ export const uploadFiles = (
         }
     }
 
-    let readCallback = binary => uploadFile(binary, endpoint, token, shortCircuit, uploadCallback)
+    let uploadCallback = (data: Response) => {
+        if (data.hash) {
+            if (uploaded.indexOf(data.hash) === -1) {
+                uploaded.push(data.hash)
+            }
+        }
+
+        incrementUploadCount()
+    }
+
+    let duplicateCallback = (data: ErrorResponse) => {
+        incrementUploadCount()
+    }
+
+    let errorCallback = (data: ErrorResponse) => {
+        incrementUploadCount()
+
+        throw data.message
+    }
+
+    let readCallback = binary => uploadFile(
+        binary,
+        endpoint,
+        token,
+        shortCircuit,
+        uploadCallback,
+        duplicateCallback,
+        errorCallback
+    )
 
     for (let hash of newHashes) {
         readBinaryFile(hashes[hash], readCallback)

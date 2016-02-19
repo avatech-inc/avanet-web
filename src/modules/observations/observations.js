@@ -517,11 +517,11 @@ const NewObservation = [
             },
             { key: 'precipitationRate',
                 titleMap: [
-                  { value: 'CLR', name: 'Very Light' },
-                  { value: 'FEW', name: 'Light' },
-                  { value: 'SCT', name: 'Moderate' },
-                  { value: 'BKN', name: 'Heavy' },
-                  { value: 'OVC', name: 'Very Heavy' }
+                  { value: 'S-1', name: 'Very Light' },
+                  { value: 'S1', name: 'Light' },
+                  { value: 'S2', name: 'Moderate' },
+                  { value: 'S5', name: 'Heavy' },
+                  { value: 'S10', name: 'Very Heavy' }
                 ]
             },
             { key: 'skyCondition',

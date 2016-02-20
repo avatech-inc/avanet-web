@@ -1101,6 +1101,7 @@ const RoutePlanning = [
                     let _route = {
                         name: $scope.route.name,
                         points: [],
+                        legs: [],
                         terrain: [],
                         stats: $scope.route.stats,
                         // GeoJSON
@@ -1139,6 +1140,14 @@ const RoutePlanning = [
                             waypoint: marker.waypoint
                         })
                     })
+
+                    for (let i = 1; i < $scope.route.points.length; i++) {
+                        _route.legs.push($scope.route.points[i].leg)
+                    }
+
+                    for (let elevationPoint of elevationProfilePoints) {
+                        _route.terrain.push(elevationPoint.elevation)
+                    }
 
                     if (!$scope.route._id) {
                         $http

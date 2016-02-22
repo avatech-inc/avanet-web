@@ -15,11 +15,11 @@ interface ErrorResponse {
 /**
  * Reads a binary file as array buffer.
  *
- * @param  {File}     file - File to read.
+ * @param  {Blob}     file - File to read.
  * @param  {Function} callback - Called once file is read.
  */
 export const readBinaryFile = (
-    file: File,
+    file: Blob,
     callback: Function
 ) => {
     let reader = new FileReader()
@@ -30,11 +30,11 @@ export const readBinaryFile = (
 /**
  * Reads a text file as text.
  *
- * @param  {File}     file - File to read.
+ * @param  {Blob}     file - File to read.
  * @param  {Function} callback - Called once file is read.
  */
 export const readTextFile = (
-    file: File,
+    file: Blob,
     callback: Function
 ) => {
     let reader = new FileReader()
@@ -45,11 +45,11 @@ export const readTextFile = (
 /**
  * Reads the device serial from a file.
  *
- * @param  {File}     file - File to read serial from.
+ * @param  {Blob}     file - File to read serial from.
  * @param  {Function} callback - Called once the serial is read.
  */
 export const readSerial = (
-    serial: File,
+    serial: Blob,
     callback: Function
 ) => {
     readTextFile(serial, (content: string) => {
@@ -105,28 +105,21 @@ export const hashFilenames = (
 }
 
 /**
- * Upload binary data to an endpoint with an auth token header. shortCircuit
- * is a function that checks if the upload has been aborted.
+ * Bulk upload binary data to an endpoint with an auth token header.
  *
- * @param  {binary} binary - Binary data to upload.
+ * @param  {ArrayBuffer} bulkBinary - Binary data to upload.
  * @param  {string} endpoint - The URL endpoint to upload to.
  * @param  {string} token - The auth token header value to set.
- * @param  {Function} shortCircuit - Function that returns a boolean to stop process.
  * @param  {Function} callback - Called when the data finishes uploading.
- * @param  {Function} duplicate - Called if profile already exists.
  * @param  {Function} error - Called if the API returns an error.
  */
-export const uploadFile = (
-    binary,
+export const uploadBulk = (
+    bulkBinary: ArrayBuffer,
     endpoint: string,
     token: string,
-    shortCircuit: Function,
     callback: Function,
-    duplicate: Function,
     error: Function
 ) => {
-    if (shortCircuit()) return
-
     let xhr = new XMLHttpRequest()
 
     xhr.onreadystatechange = () => {
@@ -135,10 +128,6 @@ export const uploadFile = (
                 let data = JSON.parse(xhr.responseText)
 
                 callback(data)
-            } else if (xhr.status === 409) {
-                let data = JSON.parse(xhr.responseText)
-
-                duplicate(data)
             } else {
                 let data = JSON.parse(xhr.responseText)
 
@@ -149,7 +138,7 @@ export const uploadFile = (
 
     xhr.open('POST', endpoint, true)
     xhr.setRequestHeader('Auth-Token', token)
-    xhr.send(binary)
+    xhr.send(bulkBinary)
 }
 
 /**
@@ -176,48 +165,30 @@ export const uploadFiles = (
 ) => {
     if (shortCircuit()) return
 
-    let uploaded = []
-    let uploadCount = 0
-
-    let incrementUploadCount = () => {
-        uploadCount++
-
-        progress((uploadCount / newHashes.length * 100).toFixed(0))
-
-        if (uploadCount === newHashes.length) {
-            callback(uploaded)
-        }
-    }
-
-    let uploadCallback = (data: Response) => {
-        if (data.hash) {
-            if (uploaded.indexOf(data.hash) === -1) {
-                uploaded.push(data.hash)
-            }
-        }
-
-        incrementUploadCount()
-    }
-
-    let duplicateCallback = (data: ErrorResponse) => {
-        incrementUploadCount()
-    }
+    let binaries = []
 
     let errorCallback = (data: ErrorResponse) => {
-        incrementUploadCount()
-
         throw data.message
     }
 
-    let readCallback = binary => uploadFile(
-        binary,
-        endpoint,
-        token,
-        shortCircuit,
-        uploadCallback,
-        duplicateCallback,
-        errorCallback
-    )
+    let readCallback = binary => {
+        binaries.push(binary)
+        binaries.push('==========\r\n')
+
+        progress(((binaries.length / 2) / newHashes.length * 100).toFixed(0))
+
+        if ((binaries.length / 2) === newHashes.length) {
+            let bulkBlob = new Blob(binaries)
+
+            readBinaryFile(bulkBlob, bulkBinary => uploadBulk(
+                bulkBinary,
+                endpoint,
+                token,
+                callback,
+                errorCallback
+            ))
+        }
+    }
 
     for (let hash of newHashes) {
         readBinaryFile(hashes[hash], readCallback)

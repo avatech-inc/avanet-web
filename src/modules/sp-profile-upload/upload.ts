@@ -4,8 +4,8 @@ import md5 = require('blueimp-md5')
 /**
  * JSON API responses from server.
  */
-interface Response {
-    hash: string
+interface BulkResponse {
+    hashes: Array<string>
 }
 
 interface ErrorResponse {
@@ -166,25 +166,37 @@ export const uploadFiles = (
     if (shortCircuit()) return
 
     let binaries = []
+    let delimiter = new ArrayBuffer(255)
+    let view = new DataView(delimiter)
+
+    for (var i = 0; i < 255; i++) {
+        view.setInt8(i, 1)
+    }
+
+    let uploadCallback = (data: BulkResponse) => {
+        callback(data.hashes)
+    }
 
     let errorCallback = (data: ErrorResponse) => {
         throw data.message
     }
 
     let readCallback = binary => {
+        binaries.push(delimiter)
         binaries.push(binary)
-        binaries.push('==========\r\n')
 
         progress(((binaries.length / 2) / newHashes.length * 100).toFixed(0))
 
         if ((binaries.length / 2) === newHashes.length) {
+            binaries.push(delimiter)
+
             let bulkBlob = new Blob(binaries)
 
             readBinaryFile(bulkBlob, bulkBinary => uploadBulk(
                 bulkBinary,
                 endpoint,
                 token,
-                callback,
+                uploadCallback,
                 errorCallback
             ))
         }

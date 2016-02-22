@@ -154,7 +154,7 @@ export const SP1Upload = [
             })
 
             filesUpload.addEventListener('change', e => {
-                let endpoint = window.apiBaseUrl + 'sp/upload'
+                let endpoint = window.apiBaseUrl + 'sp/bulkUpload'
                 let token = $http.defaults.headers.common['Auth-Token']
                 let serial = _.find(e.target.files, file => {
                     return file.name.toLowerCase() === 'serial.txt'

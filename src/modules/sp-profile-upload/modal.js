@@ -169,19 +169,28 @@ export const SP1Upload = [
                 readSerial(serial, deviceSerial => {
                     let hashes = hashFilenames(e.target.files, deviceSerial)
 
+                    if (scope.oncheck) scope.oncheck()
+
                     $http
                         .post(window.apiBaseUrl + 'sp/checkIfExists', {
                             hashes: Object.keys(hashes)
                         })
                         .success(newHashes => {
-                            if (scope.oncheck) scope.oncheck()
+                            if (newHashes.length === 0) {
+                                if (scope.oncomplete) {
+                                    scope.oncomplete({ uploaded: [] })
+                                }
+
+                                return
+                            }
+
+                            if (scope.onupload) scope.onupload()
 
                             uploadFiles(
                                 hashes,
                                 newHashes,
                                 endpoint,
                                 token,
-                                () => (scope.cancel === true),
                                 percent => {
                                     scope.onprogress({ percent: percent })
                                 }, hashes => {

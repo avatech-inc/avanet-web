@@ -144,13 +144,11 @@ export const uploadBulk = (
 /**
  * Upload files passed by a mapping of hashes -> files, but only for hashes found
  * in the newHashes array. Files are uploaded to endpoint with an auth token header.
- * shortCircuit is a functio nthat checks if the upload has been aborted.
  *
  * @param  {Object} hashes - An object of hashes -> files.
  * @param  {Array<string>} newHashes - Array of hashes to upload.
  * @param  {string} endpoint - The URL endpoint to upload to.
  * @param  {string} token - The auth token header value to set.
- * @param  {Function} shortCircuit - Function that returns a boolean to stop process.
  * @param  {Function} progress - Funciton to call as upload progresses.
  * @param  {Function} callback - Called when the data finishes uploading.
  */
@@ -159,12 +157,9 @@ export const uploadFiles = (
     newHashes: Array<string>,
     endpoint: string,
     token: string,
-    shortCircuit: Function,
     progress: Function,
     callback: Function
 ) => {
-    if (shortCircuit()) return
-
     let binaries = []
     let delimiter = new ArrayBuffer(255)
     let view = new DataView(delimiter)

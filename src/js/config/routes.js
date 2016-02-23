@@ -59,7 +59,8 @@ const Routes = [
 
         .state('index.profileEditor.details', {
             url: 'profiles/:profileId',
-            params: { location: null }
+            params: { location: null },
+            data: { }
         })
 
         // organizations

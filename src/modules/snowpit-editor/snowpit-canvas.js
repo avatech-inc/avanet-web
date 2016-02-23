@@ -405,7 +405,11 @@ const ProfileEditor = [
 
                         for (let _comment of comment.comments) {
                             // test/comment text
-                            var text = _comment.comment
+                            let text = _comment.comment
+
+                            if (typeof text === 'undefined') {
+                                text = ''
+                            }
 
                             if (_comment.type === 'ECT') {
                                 text = '[b]' + _comment.ECT.score

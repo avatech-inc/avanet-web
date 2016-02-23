@@ -309,7 +309,7 @@ module.exports = {
      * src/vendor.
      */
     resolve: {
-        extensions: ['', '.js', '.ts', '.css', '.scss', '.html'],
+        extensions: ['', '.ts', '.js', '.css', '.scss', '.html'],
         modulesDirectories: ['src', 'node_modules', 'src/vendor'],
         alias: {
             schemaForm: 'angular-schema-form/dist/schema-form'

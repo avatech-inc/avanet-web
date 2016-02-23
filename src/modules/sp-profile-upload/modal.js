@@ -1,8 +1,11 @@
 
-import md5 from 'blueimp-md5'
+import find from 'lodash.find'
+import { readSerial, hashFilenames, uploadFiles } from './upload'
 
 import './modal.html'
 import './button.html'
+
+const _ = { find: find }
 
 export const DeviceUpload = [
     '$uibModal',
@@ -144,186 +147,59 @@ export const SP1Upload = [
         },
         templateUrl: '/modules/sp-profile-upload/button.html',
         link: (scope, element) => {
-            scope.$watch('cancel', () => {
-                // alert(scope.cancel === true);
-            }, true)
-
             let filesUpload = element[0].querySelector('input')
-            let deviceSerial
-            let hashes = []
-            let _files = {}
-
-            let uploadFile = (fileBytes, callback) => {
-                if (scope.cancel === true) return
-
-                let xhr = new XMLHttpRequest()
-
-                // Update progress bar
-                xhr.upload.addEventListener('progress', evt => {
-                    if (evt.lengthComputable) {
-                        $log.debug((evt.loaded / evt.total) * 100 + '%');
-                    }
-                }, false)
-
-                xhr.addEventListener('load', () => {}, false)
-
-                xhr.onreadystatechange = () => {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            let data = JSON.parse(xhr.responseText)
-                            callback(data)
-                        }
-                    }
-                }
-
-                setTimeout(() => {
-                    xhr.open('POST', window.apiBaseUrl + 'sp/upload', true)
-
-                    // set token
-                    xhr.setRequestHeader('Auth-Token', $http.defaults.headers.common['Auth-Token'])
-
-                    // var formData = new FormData();
-                    // formData.append("fileData", file);
-                    // xhr.send(formData);
-
-                    xhr.send(fileBytes)
-                }, 50)
-            }
-
-            let uploadFiles = files => {
-                if (scope.cancel === true) return
-                if (scope.oncheck) scope.oncheck()
-
-                for (let i = 0; i < files.length; i++) {
-                    if (
-                        files[i].name.length === 8 &&
-                        files[i].name.toLowerCase().indexOf('p') === 0
-                    ) {
-                        let fileNumber = parseInt(files[i].name.substr(1), 10)
-                        let hash = md5(deviceSerial + (fileNumber + ''))
-
-                        _files[hash] = files[i]
-                        hashes.push(hash)
-                    }
-                }
-
-                $log.debug('FILES: ' + hashes.length)
-
-                // ask server which should be uploaded
-                $http.post(window.apiBaseUrl + 'sp/checkIfExists', { hashes: hashes })
-                    .success(newHashes => {
-                        if (newHashes.length === 0) {
-                            if (scope.oncomplete) {
-                                scope.oncomplete({ uploaded: [] })
-                            }
-
-                            return
-                        }
-
-                        if (scope.onupload) scope.onupload()
-
-                        let uploadCount = 0
-                        let uploaded = []
-
-                        angular.forEach(newHashes, hash => {
-                            let file = _files[hash]
-                            let reader = new FileReader()
-
-                            reader.onload = e => {
-                                let fileBytes = e.target.result
-
-                                uploadFile(fileBytes, (data) => {
-                                    if (data.hash && uploaded.indexOf(data.hash) === -1) {
-                                        uploaded.push(data.hash)
-                                    } else if (data.hash) {
-                                        $log.debug('DUPLICATE!')
-                                    }
-
-                                    uploadCount++
-
-                                    setTimeout(() => {
-                                        let progress = (
-                                            (uploadCount / newHashes.length) * 100
-                                        ).toFixed(0)
-
-                                        if (scope.onprogress) {
-                                            scope.onprogress({ percent: progress })
-                                        }
-                                    }, 1)
-
-                                    // complete
-                                    if (uploadCount === newHashes.length) {
-                                        if (scope.oncomplete) {
-                                            scope.oncomplete({ uploaded: uploaded })
-                                        }
-
-                                        $log.debug('UPLOADED: ' + uploaded.length)
-                                    }
-                                })
-                            }
-
-                            reader.readAsArrayBuffer(file)
-                        })
-                    })
-            }
-
-            let traverseFiles = files => {
-                if (typeof files !== 'undefined') {
-                    // first check if valid SP1
-                    let isSP1 = false
-
-                    let uploadFile = e => {
-                        // keep track of serial number
-                        deviceSerial = e.target.result.replace(/(\r\n|\n|\r)/gm, '').trim()
-
-                        // valid SP1, continue...
-                        uploadFiles(files)
-                    }
-
-                    for (let i = 0; i < files.length; i++) {
-                        if (files[i].name.toLowerCase() === 'serial.txt') {
-                            // get serial number
-                            let reader = new FileReader()
-
-                            reader.onload = uploadFile
-                            reader.readAsText(files[i])
-
-                            isSP1 = true
-                            break
-                        }
-                    }
-
-                    // invalid SP1
-                    if (!isSP1 && scope.oninvaliddevice) {
-                        scope.oninvaliddevice()
-                        return
-                    }
-                } else {
-                    // No support for the File API in this web browser
-                }
-            }
-
-            // var checkInput = function() {
-            //     document.body.onfocus = null;
-            //     $log.debug(filesUpload.value == null);
-            //     // check if uplpading
-            //     setTimeout(function(){
-            //         if (filesUpload.value == "") {
-            //             $log.debug("cancelled!");
-            //             scope.oncancel();
-            //         }
-            //     }, 20 * 1000); // wait 20 seconds
-            // }
 
             filesUpload.addEventListener('click', () => {
                 if (scope.onstart) scope.onstart()
-
-                $log.debug(filesUpload.test)
-
-                // document.body.onfocus = function () { setTimeout(checkInput, 200); };
             })
 
-            filesUpload.addEventListener('change', e => traverseFiles(e.target.files), false)
+            filesUpload.addEventListener('change', e => {
+                let endpoint = window.apiBaseUrl + 'sp/bulkUpload'
+                let token = $http.defaults.headers.common['Auth-Token']
+                let serial = _.find(e.target.files, file => {
+                    return file.name.toLowerCase() === 'serial.txt'
+                })
+
+                if (typeof serial === 'undefined') {
+                    if (scope.oninvaliddevice) scope.oninvaliddevice()
+
+                    return
+                }
+
+                readSerial(serial, deviceSerial => {
+                    let hashes = hashFilenames(e.target.files, deviceSerial)
+
+                    if (scope.oncheck) scope.oncheck()
+
+                    $http
+                        .post(window.apiBaseUrl + 'sp/checkIfExists', {
+                            hashes: Object.keys(hashes)
+                        })
+                        .success(newHashes => {
+                            if (newHashes.length === 0) {
+                                if (scope.oncomplete) {
+                                    scope.oncomplete({ uploaded: [] })
+                                }
+
+                                return
+                            }
+
+                            if (scope.onupload) scope.onupload()
+
+                            uploadFiles(
+                                hashes,
+                                newHashes,
+                                endpoint,
+                                token,
+                                percent => {
+                                    scope.onprogress({ percent: percent })
+                                }, hashes => {
+                                    scope.oncomplete({ uploaded: hashes })
+                                }
+                            )
+                        })
+                })
+            }, false)
         }
     })
 ]

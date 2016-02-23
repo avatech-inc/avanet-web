@@ -37,8 +37,8 @@ const MapController = [
         $scope.myProfiles = Observations.observations
         $scope.myRoutes = Routes.routes
 
-        $scope.showPreviewPane = () => $state.current.data.showPreviewPane
-        $scope.isFullScreen = () => $state.current.data.fullScreen
+        $scope.showPreviewPane = () => !!$state.current.data.showPreviewPane
+        $scope.isFullScreen = () => !!$state.current.data.fullScreen
         $scope.showBottomPane = () => $state.current.name === 'index.route'
         $scope.showRoutePane = () => $state.current.name === 'index.route'
 

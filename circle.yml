@@ -4,7 +4,9 @@ machine:
 
 test:
   pre:
-    - npm install -g jasmine-node
+    - npm run test-server:
+        background: true
+    - sleep 5
 
 deployment:
   master:

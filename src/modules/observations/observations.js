@@ -69,7 +69,7 @@ const NewObservation = [
                     enum: ['R1', 'R2', 'R3', 'R4', 'R5'],
                 },
                 sizeDestructive: {
-                    title: 'Relative size',
+                    title: 'Destructive size',
                     type: 'string',
                     enum: ['D1', 'D2', 'D3', 'D4', 'D5'],
                 },

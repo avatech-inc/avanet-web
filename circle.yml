@@ -14,9 +14,9 @@ deployment:
     commands:
       - npm run build
       - ./scripts/upload_source_maps.sh
-      - rsync -avze ssh --delete ./build/ ubuntu@52.91.103.60:~/prod/
+      - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/prod/
   develop:
     branch: develop
     commands:
       - npm run build:develop
-      - rsync -avze ssh --delete ./build/ ubuntu@52.91.103.60:~/develop/
+      - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/develop/

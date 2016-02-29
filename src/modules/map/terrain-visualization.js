@@ -1,3 +1,6 @@
+import elevColors from './terrain-colors/elevation-colors'
+import slopeColors from './terrain-colors/slope-colors'
+import aspectColors from './terrain-colors/aspect-colors'
 
 const blendRGBColors = (c0, c1, p) => [
     Math.round(Math.round(c1[0] - c0[0]) * (p / 100)) + c0[0],
@@ -48,44 +51,9 @@ const getColorMap = steps => {
 
 const Terrain = () => {
     let colorMaps = {
-        elevation: [
-            { color: 'fd4bfb', val: 0 },
-            { color: '1739fb', val: 380 * 2 },
-            { color: '00aeff', val: 380 * 3 },
-            { color: '28f937', val: 380 * 4 },
-            { color: 'fefa37', val: 380 * 7 },
-            { color: 'e6000b', val: 380 * 13 },
-            { color: '910209', val: 380 * 14 },
-            { color: '6a450c', val: 380 * 15 },
-            { color: '8b8b8b', val: 380 * 16 },
-            { color: 'ffffff', val: 8400 },
-        ],
-        slope: [
-            { color: 'ffffff', val: 0 },
-            { color: '00f61c', val: 6 },
-            { color: '02fbd2', val: 11 },
-            { color: '01c6f6', val: 17 },
-            { color: '3765f9', val: 22 },
-            { color: '9615f8', val: 27 },
-            { color: 'eb02d0', val: 31 },
-            { color: 'fb1978', val: 35 },
-            { color: 'ff5c17', val: 39 },
-            { color: 'f9c304', val: 42 },
-            { color: 'fefe2b', val: 45 },
-            { color: '000000', val: 80 },
-        ],
-        aspect: [
-            { color: 'c0fc33', val: 0 },
-            { color: '3bc93d', val: 22 },
-            { color: '3cca99', val: 67 },
-            { color: '1b29e1', val: 112 },
-            { color: '7e3ac8', val: 157 },
-            { color: 'fb0b1a', val: 202 },
-            { color: 'fc9325', val: 247 },
-            { color: 'fefc37', val: 292 },
-            { color: 'c0fc33', val: 338 },
-            { color: 'c0fc33', val: 360 },
-        ]
+        elevation: elevColors,
+        slope: slopeColors,
+        aspect: aspectColors
     }
 
     // convert to rgb first for quicker math in getColor()

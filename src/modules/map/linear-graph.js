@@ -137,7 +137,15 @@ const LinearGraph = [
                 })
             }
 
-            attrs.$observe('legend', () => a.resolve())
+            attrs.$observe('legend', () => {
+                if (!colorMap) {
+                    a.resolve()
+                } else {
+                    colorMap = getColorMap($parse(attrs.legend)(scope))
+                    render()
+                }
+            })
+
             attrs.$observe('labelValues', () => b.resolve())
             attrs.$observe('labels', () => c.resolve())
 

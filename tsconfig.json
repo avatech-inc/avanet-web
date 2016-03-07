@@ -1,5 +1,9 @@
 {
-  "files": [
-    "src/modules/sp-profile-upload/upload.ts"
-  ]
+    "compilerOptions": {
+        "noImplicitAny": true
+    },
+    "exclude": [
+        "node_modules",
+        "src/vendor"
+    ]
 }

@@ -293,21 +293,15 @@ export const SnowpitEditor = [
          * and $scope.profile.time. We only publish $scope.profile.date to the
          * API, so $scope.profile.time is just used to build the final object.
          */
-        $scope.setPublishedDate = () => {
-            const date = $scope.obDate;
-            const time = $scope.obTime;
-            const newDate = new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate(),
-              time.getHours(),
-              time.getMinutes(),
-              null,
-              null,
-            );
-
-            $scope.profile.date = newDate;
-        }
+        const combineDateTime = (date, time) => new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            time.getHours(),
+            time.getMinutes(),
+            null,
+            null,
+        );
 
         // DENSITY
 
@@ -952,7 +946,7 @@ export const SnowpitEditor = [
             }
 
             // Set the date + time
-            $scope.setPublishedDate();
+            $scope.profile.date = combineDateTime($scope.obDate, $scope.obTime);
 
             PublishModal.open({
                 initialSharing: angular.copy($scope.profile)

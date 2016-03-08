@@ -936,8 +936,11 @@ export const SnowpitEditor = [
                     'Please complete this snowpit, or adjust "Snowpit Depth" as needed.')
 
                 return
-            } else if (!$scope.profile.date) {
-                alert('Before publishing, you must enter the date and time of this snowpit.')
+            } else if (!$scope.obDate) {
+                alert('Before publishing, you must enter the date of this snowpit.')
+                return
+            } else if (!$scope.obTime) {
+                alert('Before publishing, you must enter the time of this snowpit.')
                 return
             } else if (!$scope.profile.location) {
                 alert('Before publishing, you must select the location of this profile.')

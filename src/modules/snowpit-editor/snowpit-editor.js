@@ -1,4 +1,21 @@
 
+/**
+ * Combine two Date objects, `date` and `time` to a third Date object.
+ *
+ * @param  {Date} date
+ * @param  {Date} time
+ * @return {Date}
+ */
+const combineDateTime = (date, time) => new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    time.getHours(),
+    time.getMinutes(),
+    null,
+    null,
+)
+
 export const SnowpitEditor = [
     '$scope',
     '$state',
@@ -285,23 +302,6 @@ export const SnowpitEditor = [
                 }
             }, 500)
         }, true)
-
-        // DATE/TIME
-
-        /**
-         * Sets $scope.profile.date to be a combination of $scope.profile.date
-         * and $scope.profile.time. We only publish $scope.profile.date to the
-         * API, so $scope.profile.time is just used to build the final object.
-         */
-        const combineDateTime = (date, time) => new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            time.getHours(),
-            time.getMinutes(),
-            null,
-            null,
-        );
 
         // DENSITY
 
@@ -945,7 +945,13 @@ export const SnowpitEditor = [
                 return
             }
 
-            // Set the date + time
+            // DATE/TIME
+
+            /**
+             * Sets $scope.profile.date to be a combination of $scope.profile.date
+             * and $scope.profile.time. We only publish $scope.profile.date to the
+             * API, so $scope.profile.time is just used to build the final object.
+             */
             $scope.profile.date = combineDateTime($scope.obDate, $scope.obTime);
 
             PublishModal.open({

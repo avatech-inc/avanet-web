@@ -840,12 +840,10 @@ export const SnowpitEditor = [
                                     $scope.profile.metaData = {}
                                 }
 
-                                let elevation = data.srtm3.toFixed(0)
-
                                 // check for 'empty' value of -32768
                                 // (http://glcfapp.glcf.umd.edu/data/srtm/questions.shtml#negative)
-                                if (elevation !== -32768) {
-                                    $scope.profile.elevation = elevation // meters
+                                if (data.srtm3 !== -32768) {
+                                    $scope.profile.elevation = data.srtm3.toFixed(0) // meters
                                     $scope.$apply()
 
                                 // if no data found, check astergdem
@@ -858,11 +856,9 @@ export const SnowpitEditor = [
                                         '&username=avatech')
                                         .success((data, status, headers, config) => {
                                             if (data.astergdem) {
-                                                let elevation = data.astergdem.toFixed(0)
-
                                                 // check for 'empty' value of -9999
-                                                if (elevation !== -9999) {
-                                                    $scope.profile.elevation = elevation
+                                                if (data.astergdem !== -9999) {
+                                                    $scope.profile.elevation = data.astergdem.toFixed(0) // eslint-disable-line max-len
                                                     $scope.$apply()
                                                 }
                                             }

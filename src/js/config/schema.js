@@ -59,6 +59,12 @@ const Schema = [
             'number',
             '/modules/forms/number.html'
         )
+
+        schemaFormDecoratorsProvider.addMapping(
+            'bootstrapDecorator',
+            'units',
+            '/modules/forms/number.html'
+        )
     }
 ]
 

@@ -93,7 +93,7 @@ const NewObservation = [
                 },
                 slabThickness: { title: 'Slab Thickness', type: 'number' },
                 slabWidth: { title: 'Slab Width', type: 'number' },
-                slabVertical: { title: 'Slab Vertical', type: 'number' },
+                slabVertical: { title: 'Vertical Fall', type: 'number' },
                 peopleCaught: { title: 'People Caught', type: 'number' },
                 peopleInjured: { title: 'People Injured', type: 'number' },
                 peopleCarried: { title: 'People Carried', type: 'number' },

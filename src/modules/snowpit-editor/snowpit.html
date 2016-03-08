@@ -1,3 +1,24 @@
+<style>
+.timepicker {
+	display: inline-block;
+	vertical-align: top;
+}
+.timepicker input.form-control {
+	width: 37px !important;
+	padding-left: 2px;
+	padding-right: 2px;
+	margin-top: 1px;
+}
+.timepicker button {
+	height: 28px;
+	width: 37px;
+	padding: 0;
+	margin-left: 2px;
+	margin-top: 1px;
+	font-size: 13px;
+}
+</style>
+
 <section ng-controller="SnowpitController" ng-init="init()">
 
 <div ng-show="loading" class="loading-screen fadeIn">
@@ -313,9 +334,7 @@
 					<div class="param">
 					   <span class="lbl">Date</span>
 					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="obDate" type="text" pikaday="pickerObject" max-date="{{ today }}" date-input maxlength="10" />
-
-					   <span class="lbl right" style="padding-left:14px;">Time</span>
-					   <uib-timepicker ng-model="obTime" hour-step="1" minute-step="1" show-spinners="false"></uib-timepicker>
+					   <uib-timepicker class="timepicker" ng-model="obTime" hour-step="1" minute-step="1" show-spinners="false"></uib-timepicker>
 					</div>
 
 					<div class="param">

@@ -99,6 +99,9 @@ export const SnowpitEditor = [
 
         $scope.profile = null
 
+        $scope.obDate = new Date();
+        $scope.obTime = new Date();
+
         $scope.tooltips = ($state.params.profileId === 'new')
 
         $scope.disableTooltips = () => {
@@ -282,6 +285,29 @@ export const SnowpitEditor = [
                 }
             }, 500)
         }, true)
+
+        // DATE/TIME
+
+        /**
+         * Sets $scope.profile.date to be a combination of $scope.profile.date
+         * and $scope.profile.time. We only publish $scope.profile.date to the
+         * API, so $scope.profile.time is just used to build the final object.
+         */
+        $scope.setPublishedDate = () => {
+            const date = $scope.obDate;
+            const time = $scope.obTime;
+            const newDate = new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
+              time.getHours(),
+              time.getMinutes(),
+              null,
+              null,
+            );
+
+            $scope.profile.date = newDate;
+        }
 
         // DENSITY
 
@@ -924,6 +950,9 @@ export const SnowpitEditor = [
                 $scope.selectLocation()
                 return
             }
+
+            // Set the date + time
+            $scope.setPublishedDate();
 
             PublishModal.open({
                 initialSharing: angular.copy($scope.profile)

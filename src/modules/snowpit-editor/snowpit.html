@@ -359,14 +359,25 @@
 					<div class="param">
 					   <span class="lbl">Elevation</span>
 					    <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
+					  		<input class="form-control"
+					  		       ng-model="profile.elevation"
+					  		       test-number-only
+					  		       allow-decimal="true"
+					  		       allow-negative="false"
+					  		       max-num="9000"
+					  		       meters-or-feet="{{ global.user.settings.elevation }}" />
 					  		<span class="info" ng-show="global.user.settings.elevation == 0">m</span>
 					  		<span class="info" ng-show="global.user.settings.elevation == 1">ft</span>
 				  		</div>
 
 					   <span class="lbl" style="width:64px;">Air Temp.</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
+					  		<input class="form-control"
+					  		       ng-model="profile.airTemp"
+					  		       temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}"
+					  		       number-only
+					  		       allow-decimal="true"
+					  		       allow-negative="true" />
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 0">°C</span>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 1">°F</span>
 				  		</div>

@@ -12,6 +12,7 @@ deployment:
   master:
     branch: master
     commands:
+      - python ./scripts/commit-protect.py
       - npm run build
       - ./scripts/upload_source_maps.sh
       - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/prod/
@@ -20,6 +21,7 @@ deployment:
   develop:
     branch: develop
     commands:
+      - python ./scripts/commit-protect.py
       - npm run build:develop
       - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/develop/
       - ./scripts/notify.sh 'Deployed develop branch of avanet-web'

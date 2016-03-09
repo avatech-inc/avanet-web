@@ -1,6 +1,24 @@
 
 import './new.html'
 
+const temperatureUnits = [{
+    units: '°C', convert: value => value
+}, {
+    units: '°F', convert: value => (value - 32) * 5 / 9
+}]
+
+const elevationUnits = [{
+    units: 'm', convert: value => value
+}, {
+    units: 'ft', convert: value => value * 0.3048
+}]
+
+const depthUnits = [{
+    units: 'cm', convert: value => value
+}, {
+    units: 'in', convert: value => value * 2.54
+}]
+
 const NewObservation = [
     '$scope',
     '$stateParams',
@@ -75,7 +93,7 @@ const NewObservation = [
                 },
                 slabThickness: { title: 'Slab Thickness', type: 'number' },
                 slabWidth: { title: 'Slab Width', type: 'number' },
-                slabVertical: { title: 'Slab Vertical', type: 'number' },
+                slabVertical: { title: 'Vertical Fall', type: 'number' },
                 peopleCaught: { title: 'People Caught', type: 'number' },
                 peopleInjured: { title: 'People Injured', type: 'number' },
                 peopleCarried: { title: 'People Carried', type: 'number' },
@@ -115,9 +133,24 @@ const NewObservation = [
             { key: 'selfTriggered', type: 'radiobuttons-nullable' },
             { key: 'sizeRelative', type: 'radiobuttons-nullable' },
             { key: 'sizeDestructive', type: 'radiobuttons-nullable' },
-            { key: 'slabThickness', type: 'number', units: 'cm' },
-            { key: 'slabWidth', type: 'number', units: 'm' },
-            { key: 'slabVertical', type: 'number', units: 'm' },
+            {
+                key: 'slabThickness',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert
+            },
+            {
+                key: 'slabWidth',
+                type: 'units',
+                units: elevationUnits[Global.user.settings.elevation].units,
+                convert: elevationUnits[Global.user.settings.elevation].convert
+            },
+            {
+                key: 'slabVertical',
+                type: 'units',
+                units: elevationUnits[Global.user.settings.elevation].units,
+                convert: elevationUnits[Global.user.settings.elevation].convert
+            },
             { key: 'peopleCaught' },
             { key: 'peopleCarried' },
             { key: 'peopleBuriedPartially' },
@@ -386,7 +419,13 @@ const NewObservation = [
 
             //-----------
 
-            { key: 'weakLayerDepth', type: 'number', units: 'cm', condition: 'showDepth(model)' },
+            {
+                key: 'weakLayerDepth',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert,
+                condition: 'showDepth(model)'
+            },
             { key: 'nbTaps', condition: 'tapScores.indexOf(model.score) > -1' },
 
             { key: 'shear', type: 'radiobuttons-nullable', condition: 'showShear(model)' },
@@ -399,9 +438,20 @@ const NewObservation = [
                   { value: 'BRK', name: 'BRK - Non-planar Break' },
                 ]
             },
-            { key: 'sawCutLength', type: 'number', units: 'cm', condition: 'model.name == "PST"' },
-            { key: 'isolatedColumnLength', type: 'number', units: 'cm',
-                condition: 'model.name == "PST"' },
+            {
+                key: 'sawCutLength',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert,
+                condition: 'model.name == "PST"'
+            },
+            {
+                key: 'isolatedColumnLength',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert,
+                condition: 'model.name == "PST"',
+            },
             { key: 'criticalGrainForm', type: 'grainTypeSelect',
                 condition: 'showDepth(model)' },
             { key: 'criticalGrainSizeMin', type: 'number', units: 'mm',
@@ -457,15 +507,42 @@ const NewObservation = [
             },
             { key: 'cracking', type: 'radiobuttons-nullable' },
             { key: 'whumpfing', type: 'radiobuttons-nullable' },
-            { key: 'snowPackDepthEstimate', type: 'number', units: 'cm' },
-            { key: 'newSnowDepthEstimate', type: 'number', units: 'cm' },
-            { key: 'footPenetration', type: 'number', units: 'cm' },
-            { key: 'skiPenetration', type: 'number', units: 'cm' },
+            {
+                key: 'snowPackDepthEstimate',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert
+            }, {
+                key: 'newSnowDepthEstimate',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert
+            }, {
+                key: 'footPenetration',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert
+            }, {
+                key: 'skiPenetration',
+                type: 'units',
+                units: depthUnits[Global.user.settings.elevation].units,
+                convert: depthUnits[Global.user.settings.elevation].convert
+            },
             { key: 'surfaceGrainForm', type: 'grainTypeSelect' },
             { key: 'surfaceGrainSizeMin', type: 'number', units: 'mm' },
             { key: 'surfaceGrainSizeMax', type: 'number', units: 'mm' },
-            { key: 'surfaceTemperature', type: 'number', units: '°C' },
-            { key: 'twentyCMTemperature', type: 'number', units: '°C' },
+            {
+                key: 'surfaceTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
+            {
+                key: 'twentyCMTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
         ]
 
         $scope.schemas.weather = {
@@ -535,10 +612,30 @@ const NewObservation = [
                   { value: 'X', name: 'Obscured' }
                 ]
             },
-            { key: 'maxTemperature', type: 'number', units: '°C' },
-            { key: 'minTemperature', type: 'number', units: '°C' },
-            { key: 'presentTemperature', type: 'number', units: '°C' },
-            { key: 'thermographTemperature', type: 'number', units: '°C' },
+            {
+                key: 'maxTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
+            {
+                key: 'minTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
+            {
+                key: 'presentTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
+            {
+                key: 'thermographTemperature',
+                type: 'units',
+                units: temperatureUnits[Global.user.settings.tempUnits].units,
+                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+            },
             // { key: 'thermographTrend', type: 'trend-select' },
             { key: 'thermographTrend',
                 titleMap: [
@@ -602,7 +699,12 @@ const NewObservation = [
                 { key: 'locationName' },
                 { key: 'slope', type: 'number', units: '°' },
                 { key: 'aspect', type: 'direction-select' },
-                { key: 'elevation', type: 'number', units: 'm' }
+                {
+                    key: 'elevation',
+                    type: 'units',
+                    units: elevationUnits[Global.user.settings.elevation].units,
+                    convert: elevationUnits[Global.user.settings.elevation].convert
+                }
             );
 
             // add subit button
@@ -630,16 +732,26 @@ const NewObservation = [
             $log.debug('is valid? ' + $scope.form_elements.obsForm.$valid)
             $log.debug($scope.model)
 
+            let rawData = angular.copy($scope.model)
+
+            // loop through the form fields looking for unit fields
+            // update the data to the converted field value
+            for (let field of $scope.forms[$scope.model.type]) {
+                if (field.type === 'units') {
+                    rawData[field.key[0]] = field.convert($scope.model[field.key[0]])
+                }
+            }
+
             if ($scope.form_elements.obsForm.$valid) {
                 PublishModal.open({
-                    initialSharing: angular.copy($scope.model)
+                    initialSharing: rawData
                 })
                 .then(sharing => {
-                    angular.extend($scope.model, sharing)
+                    angular.extend(rawData, sharing)
 
-                    $scope.model.published = true;
+                    rawData.published = true;
 
-                    Observations.save(angular.copy($scope.model), ob => {
+                    Observations.save(angular.copy(rawData), ob => {
                         let redirectUrl = '/obs/' + ob._id
 
                         if (redirectUrl === $location.path()) {

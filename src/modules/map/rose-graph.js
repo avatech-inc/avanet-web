@@ -50,8 +50,8 @@ const getColorMap = steps => {
 
 const RoseGraph = [
     '$timeout',
-
-    ($timeout) => ({
+    '$parse',
+    ($timeout, $parse) => ({
         restrict: 'A',
         scope: false,
         link: (scope, element, attrs) => {
@@ -162,7 +162,7 @@ const RoseGraph = [
             }
 
             attrs.$observe('legend', value => {
-                scope.colorMap = getColorMap(JSON.parse(value))
+                scope.colorMap = getColorMap($parse(attrs.legend)(scope))
                 render()
             })
 

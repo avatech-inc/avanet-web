@@ -15,8 +15,11 @@ deployment:
       - npm run build
       - ./scripts/upload_source_maps.sh
       - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/prod/
+      - ./scripts/notify.sh 'Deployed master branch of avanet-web'
+
   develop:
     branch: develop
     commands:
       - npm run build:develop
       - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/develop/
+      - ./scripts/notify.sh 'Deployed develop branch of avanet-web'

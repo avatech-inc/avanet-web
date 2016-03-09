@@ -7,7 +7,6 @@ const blendRGBColors = (c0, c1, p) => [
 
 const hexToRGB = hex => {
     let bigint = parseInt(hex, 16)
-
     return [
         (bigint >> 16) & 255,
         (bigint >> 8) & 255,
@@ -23,12 +22,8 @@ const blendHexColors = (c0, c1, p) => blendRGBColors(
 
 const getPercent = (min, max, val) => Math.floor(((val - min) * 100) / (max - min))
 
-const getColorMap = steps => {
+const getColorArray = steps => {
     let colorMap = []
-
-    // var maxValue = steps[steps-1].val;
-    // var increment = parseInt(maxValue / steps.length);
-
     for (var s = 0; s < steps.length; s++) {
         if (s === steps.length - 1) break
 
@@ -42,90 +37,57 @@ const getColorMap = steps => {
             colorMap[i] = blendHexColors(minColor, maxColor, getPercent(min, max, i))
         }
     }
-
     return colorMap
 }
 
 const Terrain = () => {
-    let colorMaps = {
-        elevation: [
-            { color: 'fd4bfb', val: 0 },
-            { color: '1739fb', val: 380 * 2 },
-            { color: '00aeff', val: 380 * 3 },
-            { color: '28f937', val: 380 * 4 },
-            { color: 'fefa37', val: 380 * 7 },
-            { color: 'e6000b', val: 380 * 13 },
-            { color: '910209', val: 380 * 14 },
-            { color: '6a450c', val: 380 * 15 },
-            { color: '8b8b8b', val: 380 * 16 },
-            { color: 'ffffff', val: 8400 },
-        ],
-        slope: [
-            { color: 'ffffff', val: 0 },
-            { color: '00f61c', val: 6 },
-            { color: '02fbd2', val: 11 },
-            { color: '01c6f6', val: 17 },
-            { color: '3765f9', val: 22 },
-            { color: '9615f8', val: 27 },
-            { color: 'eb02d0', val: 31 },
-            { color: 'fb1978', val: 35 },
-            { color: 'ff5c17', val: 39 },
-            { color: 'f9c304', val: 42 },
-            { color: 'fefe2b', val: 45 },
-            { color: '000000', val: 80 },
-        ],
-        aspect: [
-            { color: 'c0fc33', val: 0 },
-            { color: '3bc93d', val: 22 },
-            { color: '3cca99', val: 67 },
-            { color: '1b29e1', val: 112 },
-            { color: '7e3ac8', val: 157 },
-            { color: 'fb0b1a', val: 202 },
-            { color: 'fc9325', val: 247 },
-            { color: 'fefc37', val: 292 },
-            { color: 'c0fc33', val: 338 },
-            { color: 'c0fc33', val: 360 },
-        ]
-    }
-
-    // convert to rgb first for quicker math in getColor()
-    let colorMapsProcessed = {}
-
-    // angular.forEach(colorMaps, function(colorMap, key) {
-    //     var colorMap = angular.copy(colorMap);
-    //     for (var i = 0; i < colorMap.length; i++)
-    //         colorMap[i].color = hexToRGB(colorMap[i].color);
-    //     colorMapsProcessed[key] = colorMap;
-    // });
-
-    angular.forEach(colorMaps, (colorMap, key) => {
-        colorMapsProcessed[key] = getColorMap(colorMap)
-    })
-
-
-    // function getColor(colorMap, val) {
-    //     // return if above max values
-    //     if (val > colorMap[colorMap.length - 1].val) return;
-    //     // get color from color map
-    //     for (var i = 0; i < colorMap.length - 1; i++) {
-    //         if (val >= colorMap[i].val &&  val <= colorMap[i + 1].val) {
-    //             var thisStep = colorMap[i];
-    //             var nextStep = colorMap[i+1];
-    //             var percent = getPercent(thisStep.val, nextStep.val, val);
-    //             return blendRGBColors(thisStep.color, nextStep.color, percent);
-    //         }
-    //     }
-    // }
-
     let convertInt = _int => [
         (0xFFFE0000 & _int) >> 17, // elevation
         (0x1FC00 & _int) >> 10, // slope
         (0x1FF & _int) // aspect
     ]
 
-    return {
-        colorMaps: colorMaps,
-
+    const TerrainColors = {
+        colorMaps: {
+            elevation: [
+                { color: 'ffffff', val: 0 },
+                { color: 'ffffff', val: 380 * 2 },
+                { color: 'ffffff', val: 380 * 3 },
+                { color: 'ffffff', val: 380 * 4 },
+                { color: 'ffffff', val: 380 * 7 },
+                { color: 'ffffff', val: 380 * 13 },
+                { color: 'ffffff', val: 380 * 14 },
+                { color: 'ffffff', val: 380 * 15 },
+                { color: 'ffffff', val: 380 * 16 },
+                { color: 'ffffff', val: 8400 }
+            ],
+            slope: [
+                { color: 'ffffff', val: 0 },
+                { color: 'ffffff', val: 6 },
+                { color: 'ffffff', val: 11 },
+                { color: 'ffffff', val: 17 },
+                { color: 'ffffff', val: 22 },
+                { color: 'ffffff', val: 27 },
+                { color: 'ffffff', val: 31 },
+                { color: 'ffffff', val: 35 },
+                { color: 'ffffff', val: 39 },
+                { color: 'ffffff', val: 42 },
+                { color: 'ffffff', val: 45 },
+                { color: 'ffffff', val: 80 }
+            ],
+            aspect: [
+                { color: 'ffffff', val: 0 },
+                { color: 'ffffff', val: 22 },
+                { color: 'ffffff', val: 67 },
+                { color: 'ffffff', val: 112 },
+                { color: 'ffffff', val: 157 },
+                { color: 'ffffff', val: 202 },
+                { color: 'ffffff', val: 247 },
+                { color: 'ffffff', val: 292 },
+                { color: 'ffffff', val: 338 },
+                { color: 'ffffff', val: 360 }
+            ]
+        },
         hillshade: dem => {
             let altitude = 70 * (Math.PI / 180)
             let azimuth = 0 * (Math.PI / 180)
@@ -245,7 +207,7 @@ const Terrain = () => {
                 if (overlayType === 'elevation') {
                     if (newElevation > 0 && newElevation > 0) {
                         // newColor = getColor(colorMapsProcessed.elevation, newElevation);
-                        newColor = colorMapsProcessed.elevation[newElevation]
+                        newColor = TerrainColors.colorMapsProcessed.elevation[newElevation]
                     }
                 }
 
@@ -253,7 +215,7 @@ const Terrain = () => {
                 if (overlayType === 'slope') {
                     if (newSlope > 0 && newSlope <= 80) {
                         // newColor = getColor(colorMapsProcessed.slope, newSlope);
-                        newColor = colorMapsProcessed.slope[newSlope]
+                        newColor = TerrainColors.colorMapsProcessed.slope[newSlope]
                     }
                 }
 
@@ -261,56 +223,56 @@ const Terrain = () => {
                 if (overlayType === 'aspect') {
                     if (newAspect > 0 && newAspect <= 360) {
                         // newColor = getColor(colorMapsProcessed.aspect, newAspect);
-                        newColor = colorMapsProcessed.aspect[newAspect]
+                        newColor = TerrainColors.colorMapsProcessed.aspect[newAspect]
                     }
                 }
 
                 // MKS (aspect-slope)
                 // http://blogs.esri.com/esri/arcgis/2008/05/23/aspect-slope-map/
-                if (overlayType === 'mks') {
-                    let num = 0
+                // if (overlayType === 'mks') {
+                //     let num = 0
 
-                    if (newSlope >= 40) num = 40
-                    else if (newSlope >= 20) num = 30
-                    else if (newSlope >= 5) num = 20
-                    else if (newSlope >= 0) num = 10
+                //     if (newSlope >= 40) num = 40
+                //     else if (newSlope >= 20) num = 30
+                //     else if (newSlope >= 5) num = 20
+                //     else if (newSlope >= 0) num = 10
 
-                    if (newAspect >= 0 && newAspect <= 22.5) num += 1
-                    else if (newAspect > 22.5 && newAspect <= 67.5) num += 2
-                    else if (newAspect > 67.5 && newAspect <= 112.5) num += 3
-                    else if (newAspect > 112.5 && newAspect <= 157.5) num += 4
-                    else if (newAspect > 157.5 && newAspect <= 202.5) num += 5
-                    else if (newAspect > 202.5 && newAspect <= 247.5) num += 6
-                    else if (newAspect > 247.5 && newAspect <= 292.5) num += 7
-                    else if (newAspect > 292.5 && newAspect <= 337.5) num += 8
-                    else if (newAspect > 337.5 && newAspect <= 360) num += 1
+                //     if (newAspect >= 0 && newAspect <= 22.5) num += 1
+                //     else if (newAspect > 22.5 && newAspect <= 67.5) num += 2
+                //     else if (newAspect > 67.5 && newAspect <= 112.5) num += 3
+                //     else if (newAspect > 112.5 && newAspect <= 157.5) num += 4
+                //     else if (newAspect > 157.5 && newAspect <= 202.5) num += 5
+                //     else if (newAspect > 202.5 && newAspect <= 247.5) num += 6
+                //     else if (newAspect > 247.5 && newAspect <= 292.5) num += 7
+                //     else if (newAspect > 292.5 && newAspect <= 337.5) num += 8
+                //     else if (newAspect > 337.5 && newAspect <= 360) num += 1
 
-                    if (num === 19) newColor = [153, 153, 153]
-                    if (num === 21) newColor = [147, 166, 89]
-                    if (num === 22) newColor = [102, 153, 102]
-                    if (num === 23) newColor = [102, 153, 136]
-                    if (num === 24) newColor = [89, 89, 166]
-                    if (num === 25) newColor = [128, 108, 147]
-                    if (num === 26) newColor = [166, 89, 89]
-                    if (num === 27) newColor = [166, 134, 89]
-                    if (num === 28) newColor = [166, 166, 89]
-                    if (num === 31) newColor = [172, 217, 38]
-                    if (num === 32) newColor = [77, 179, 77]
-                    if (num === 33) newColor = [73, 182, 146]
-                    if (num === 34) newColor = [51, 51, 204]
-                    if (num === 35) newColor = [128, 89, 166]
-                    if (num === 36) newColor = [217, 38, 38]
-                    if (num === 37) newColor = [217, 142, 38]
-                    if (num === 38) newColor = [217, 217, 38]
-                    if (num === 41) newColor = [191, 255, 0]
-                    if (num === 42) newColor = [51, 204, 51]
-                    if (num === 43) newColor = [51, 204, 153]
-                    if (num === 44) newColor = [26, 26, 230]
-                    if (num === 45) newColor = [128, 51, 204]
-                    if (num === 46) newColor = [255, 0, 0]
-                    if (num === 47) newColor = [255, 149, 0]
-                    if (num === 48) newColor = [255, 255, 0]
-                }
+                //     if (num === 19) newColor = [153, 153, 153]
+                //     if (num === 21) newColor = [147, 166, 89]
+                //     if (num === 22) newColor = [102, 153, 102]
+                //     if (num === 23) newColor = [102, 153, 136]
+                //     if (num === 24) newColor = [89, 89, 166]
+                //     if (num === 25) newColor = [128, 108, 147]
+                //     if (num === 26) newColor = [166, 89, 89]
+                //     if (num === 27) newColor = [166, 134, 89]
+                //     if (num === 28) newColor = [166, 166, 89]
+                //     if (num === 31) newColor = [172, 217, 38]
+                //     if (num === 32) newColor = [77, 179, 77]
+                //     if (num === 33) newColor = [73, 182, 146]
+                //     if (num === 34) newColor = [51, 51, 204]
+                //     if (num === 35) newColor = [128, 89, 166]
+                //     if (num === 36) newColor = [217, 38, 38]
+                //     if (num === 37) newColor = [217, 142, 38]
+                //     if (num === 38) newColor = [217, 217, 38]
+                //     if (num === 41) newColor = [191, 255, 0]
+                //     if (num === 42) newColor = [51, 204, 51]
+                //     if (num === 43) newColor = [51, 204, 153]
+                //     if (num === 44) newColor = [26, 26, 230]
+                //     if (num === 45) newColor = [128, 51, 204]
+                //     if (num === 46) newColor = [255, 0, 0]
+                //     if (num === 47) newColor = [255, 149, 0]
+                //     if (num === 48) newColor = [255, 255, 0]
+                // }
 
                 // ------------------------------------------------------
 
@@ -329,6 +291,23 @@ const Terrain = () => {
             return newPixels
         }
     }
+
+    TerrainColors.colorMapsProcessed = {
+        elevation: getColorArray(TerrainColors.colorMaps.elevation),
+        slope: getColorArray(TerrainColors.colorMaps.slope),
+        aspect: getColorArray(TerrainColors.colorMaps.aspect),
+    }
+
+    fetch(window.apiBaseUrl + 'getTerrainColors')
+        .then(res => res.json())
+        .then(json => {
+            angular.forEach(json, (colorMap, key) => {
+                TerrainColors.colorMaps[key] = colorMap
+                TerrainColors.colorMapsProcessed[key] = getColorArray(colorMap)
+            })
+        })
+
+    return TerrainColors
 }
 
 export default Terrain

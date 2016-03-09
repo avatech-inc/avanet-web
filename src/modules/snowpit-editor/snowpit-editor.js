@@ -1,4 +1,21 @@
 
+/**
+ * Combine two Date objects, `date` and `time` to a third Date object.
+ *
+ * @param  {Date} date
+ * @param  {Date} time
+ * @return {Date}
+ */
+const combineDateTime = (date, time) => new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    time.getHours(),
+    time.getMinutes(),
+    null,
+    null,
+)
+
 export const SnowpitEditor = [
     '$scope',
     '$state',
@@ -98,6 +115,9 @@ export const SnowpitEditor = [
         $scope.rightPaneMode = 'snowpit'
 
         $scope.profile = null
+
+        $scope.obDate = new Date();
+        $scope.obTime = new Date();
 
         $scope.tooltips = ($state.params.profileId === 'new')
 
@@ -820,12 +840,10 @@ export const SnowpitEditor = [
                                     $scope.profile.metaData = {}
                                 }
 
-                                let elevation = data.srtm3.toFixed(0)
-
                                 // check for 'empty' value of -32768
                                 // (http://glcfapp.glcf.umd.edu/data/srtm/questions.shtml#negative)
-                                if (elevation !== -32768) {
-                                    $scope.profile.elevation = elevation // meters
+                                if (data.srtm3 !== -32768) {
+                                    $scope.profile.elevation = data.srtm3.toFixed(0) // meters
                                     $scope.$apply()
 
                                 // if no data found, check astergdem
@@ -838,11 +856,9 @@ export const SnowpitEditor = [
                                         '&username=avatech')
                                         .success((data, status, headers, config) => {
                                             if (data.astergdem) {
-                                                let elevation = data.astergdem.toFixed(0)
-
                                                 // check for 'empty' value of -9999
-                                                if (elevation !== -9999) {
-                                                    $scope.profile.elevation = elevation
+                                                if (data.astergdem !== -9999) {
+                                                    $scope.profile.elevation = data.astergdem.toFixed(0) // eslint-disable-line max-len
                                                     $scope.$apply()
                                                 }
                                             }
@@ -916,14 +932,26 @@ export const SnowpitEditor = [
                     'Please complete this snowpit, or adjust "Snowpit Depth" as needed.')
 
                 return
-            } else if (!$scope.profile.date) {
-                alert('Before publishing, you must enter the date and time of this snowpit.')
+            } else if (!$scope.obDate) {
+                alert('Before publishing, you must enter the date of this snowpit.')
+                return
+            } else if (!$scope.obTime) {
+                alert('Before publishing, you must enter the time of this snowpit.')
                 return
             } else if (!$scope.profile.location) {
                 alert('Before publishing, you must select the location of this profile.')
                 $scope.selectLocation()
                 return
             }
+
+            // DATE/TIME
+
+            /**
+             * Sets $scope.profile.date to be a combination of $scope.profile.date
+             * and $scope.profile.time. We only publish $scope.profile.date to the
+             * API, so $scope.profile.time is just used to build the final object.
+             */
+            $scope.profile.date = combineDateTime($scope.obDate, $scope.obTime);
 
             PublishModal.open({
                 initialSharing: angular.copy($scope.profile)

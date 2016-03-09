@@ -1,3 +1,24 @@
+<style>
+.timepicker {
+	display: inline-block;
+	vertical-align: top;
+}
+.timepicker input.form-control {
+	width: 37px !important;
+	padding-left: 2px;
+	padding-right: 2px;
+	margin-top: 1px;
+}
+.timepicker button {
+	height: 28px;
+	width: 37px;
+	padding: 0;
+	margin-left: 2px;
+	margin-top: 1px;
+	font-size: 13px;
+}
+</style>
+
 <section ng-controller="SnowpitController" ng-init="init()">
 
 <div ng-show="loading" class="loading-screen fadeIn">
@@ -9,7 +30,7 @@
 		<div class="pageHeader">
 
 			<button ng-click="publish()" class="headerButton" style="background:#4285f4;color:#fff;padding-left:12px;padding-right:9px;border-right:0;"><span style="font-weight:700;">Publish</span></button>
-			
+
 			<div class="btn-group" uib-dropdown>
 		      <button type="button" uib-dropdown-toggle class="headerButton">
 		        <i class="fa fa-download"></i><span>Download</span>
@@ -53,7 +74,7 @@
 			    <div class="btn-group pull-right" uib-dropdown>
 			      <button type="button" uib-dropdown-toggle class="headerButton"><i class="fa fa-plus"></i><span>Density</span></button>
 			      <ul class="dropdown-menu no-list" style="padding:5px;" role="menu"><li><a>
-			       	
+
 				       	<form class="form-inline">
 					        <div class="form-group">
 					          <input ng-model="newDensity.depth" type="number" class="form-control" placeholder="Depth" style="width:60px;padding-right:0px;padding-left:10px;">
@@ -80,7 +101,7 @@
 				<div class="btn-group pull-right" uib-dropdown>
 			      <button type="button" uib-dropdown-toggle class="headerButton"><i class="fa fa-plus"></i><span>Test Result</span></button>
 			      <ul class="dropdown-menu no-list stability" ng-click="$event.stopPropagation()"><li><a>
-			       	
+
 				    	<div stability-test prof="profile" depth-descending="settings.depthDescending"></div>
 
 			        </a></li></ul>
@@ -95,17 +116,17 @@
 			<div class="snowpit-container" style="position:relative;" ng-style="{ height: snowpitHeight }">
 
 				<!-- layers canvas -->
-				<canvas profile-editor="profile" 
-					settings="settings" 
-					options="canvasOptions" 
-					columns="columns" 
+				<canvas profile-editor="profile"
+					settings="settings"
+					options="canvasOptions"
+					columns="columns"
 					client-layers="clientLayers"
 					client-comments="clientComments"
 					id="profileCanvas" style="z-index:900;position:absolute;left:0;" ng-style="{ width: snowpitWidth, height: snowpitHeight }" width="{{ snowpitWidth }}" height="{{ snowpitHeight }}"></canvas>
 
 				<!-- stability tests + comments -->
 				<div style="margin-top:0px;float:left;position:relative;z-index:1003;float:left"  ng-style="{ height: snowpitHeight - 55, width: columns[0].width }" ng-class="{ 'no-click':settings.tempMode }">
-					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.tests" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;" 
+					<div ng-style="{ height: clientComments[$index].clientHeight + 2, top: (clientComments[$index].clientDepth - 12) }" ng-repeat="note in profile.tests" class="btn-group" style="text-align:center;left:0;right:15px;position:absolute;"
 					ng-mouseover="hoverComment(note)"
 					ng-mouseout="hoverComment(null)"
 					uib-dropdown>
@@ -153,10 +174,10 @@
 							draggable-layer="layer"
 							ng-repeat="layer in profile.layers"
 							ng-style="{ bottom: clientLayers[$index].clientBottom, width: clientLayers[$index].clientWidthBottom }"
-							class="grabber" 
-							ng-mouseover="$parent.hoverDragArea(layer)" 
-							ng-mouseout="$parent.hoverDragArea()" 
-							ng-mousedown="$parent.selectLayer(layer)"  
+							class="grabber"
+							ng-mouseover="$parent.hoverDragArea(layer)"
+							ng-mouseout="$parent.hoverDragArea()"
+							ng-mousedown="$parent.selectLayer(layer)"
 							style="position:absolute;right:0;pointer-events:all;z-index:998;cursor:row-resize;margin-bottom:-3px;height:7px;width:100%;background:transparent;">
 
 								<div ng-if="$index == profile.layers.length - 1" style="width:100%;height:100%;"
@@ -166,7 +187,7 @@
 
 
 						<!-- hardness both -->
-						<div ng-class="{ 'newHide': settings.tempMode }" 
+						<div ng-class="{ 'newHide': settings.tempMode }"
 
                  			data-trigger="manual"
 			                data-toggle="tooltip"
@@ -177,9 +198,9 @@
 							ng-if="settings.selectedLayer == layer && hardDif(settings.selectedLayer) == 0"
 							class="hardnessBar"
 							draggable-hardness="layer" draggable-type="both"
-							ng-repeat="layer in profile.layers" 
+							ng-repeat="layer in profile.layers"
 							ng-style="{ bottom: clientLayers[$index].clientBottom, right: clientLayers[$index].clientWidthBottom, height: clientLayers[$index].clientHeight }"
-							ng-mousedown="$parent.selectLayer(layer)"  
+							ng-mousedown="$parent.selectLayer(layer)"
 							style="position:absolute;pointer-events:all;z-index:998;cursor:col-resize;width:14px;background:transparent;margin-right:-7px;">
 
 							<div class="innerBar"></div>
@@ -187,7 +208,7 @@
 						</div>
 
 						<!-- hardness top -->
-						<div 
+						<div
 							data-trigger="manual"
 			                data-toggle="tooltip"
 			                data-placement="left"
@@ -196,16 +217,16 @@
 
 							ng-if="settings.selectedLayer == layer && clientLayers[$index].clientHeight > 15"
 							class="hardnessCircle hardnessDragTop"
-							ng-class="{ 'newHide': settings.tempMode }" 
+							ng-class="{ 'newHide': settings.tempMode }"
 							draggable-hardness="layer" draggable-type="top"
-							ng-repeat="layer in profile.layers" 
+							ng-repeat="layer in profile.layers"
 							ng-style="{ bottom: clientLayers[$index].clientBottom  + clientLayers[$index].clientHeight, right: clientLayers[$index].clientWidthTop }"
-							ng-mousedown="$parent.selectLayer(layer)"  
+							ng-mousedown="$parent.selectLayer(layer)"
 							style="position:absolute;pointer-events:all;z-index:998;cursor:ew-resize;width:10px;height:10px;background:#fff;border-radius:10px;border:2px solid #000;margin-bottom:-5px;margin-right:-5px;">
 						</div>
 
 						<!-- hardness bottom -->
-						<div 
+						<div
 							data-trigger="manual"
 			                data-toggle="tooltip"
 			                data-placement="left"
@@ -214,11 +235,11 @@
 
 							ng-if="settings.selectedLayer == layer && clientLayers[$index].clientHeight > 15"
 							class="hardnessDragBottom hardnessCircle"
-							ng-class="{ 'newHide': settings.tempMode }" 
+							ng-class="{ 'newHide': settings.tempMode }"
 							draggable-hardness="layer" draggable-type="bottom"
-							ng-repeat="layer in profile.layers" 
+							ng-repeat="layer in profile.layers"
 							ng-style="{ bottom: clientLayers[$index].clientBottom, right: clientLayers[$index].clientWidthBottom }"
-							ng-mousedown="$parent.selectLayer(layer)"  
+							ng-mousedown="$parent.selectLayer(layer)"
 							style="position:absolute;pointer-events:all;z-index:998;cursor:ew-resize;width:10px;height:10px;background:#fff;border-radius:10px;border:2px solid #000;margin-bottom:-5px;margin-right:-5px;">
 						</div>
 
@@ -226,10 +247,10 @@
 
 					<!-- temperature profile -->
 					<div ng-class="{ 'newHide':!settings.tempMode }" ng-style="{ 'pointer-events': settings.tempMode ? 'all' : 'none' }" style="position:absolute;width:100%;height:100%;">
-				
+
 						<!-- temp sliders -->
 						<div ng-repeat="temp in profile.temps" style="position:absolute;pointer-events:all;" ng-style="{ width: graphWidth, top: (temp.depth * ((snowpitHeight - 95) / profile.depth)) + 40 }">
-							<input type="range" ng-mouseover="selectTemp(temp)" class="temp" 
+							<input type="range" ng-mouseover="selectTemp(temp)" class="temp"
 								min="-30" max="0" step=".5" ng-model="temp.temp"
 								ng-if="settings.tempMode"></input>
 
@@ -276,12 +297,12 @@
 			<button type="button" class="headerButton" ng-show="settings.selectedLayer != null" ng-click="rightPaneMode = 'layer'" ng-class="{ selected: rightPaneMode == 'layer' }"><span>Layer&nbsp;{{ ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB','CC','DD','EE','FF','GG','HH','II','JJ','KK','LL','MM','NN','OO','PP','QQ','RR','SS','TT','UU','VV','WW','XX','YY','XX'][settings.selectedLayer.index] }}</span></button>
 
 
-			<button ng-hide="_isNew" ng-click="delete()" class="tooltip-trigger headerButton right" style="padding-left:5px;padding-right:5px;" 
+			<button ng-hide="_isNew" ng-click="delete()" class="tooltip-trigger headerButton right" style="padding-left:5px;padding-right:5px;"
  			data-trigger="hover"
             data-placement="left"
             data-toggle="tooltip"
             title="Delete Snowpit"
-            data-container=".layer-details" 
+            data-container=".layer-details"
             ><i class="fa fa-trash-o"></i></button>
 		</div>
 
@@ -312,10 +333,8 @@
 
 					<div class="param">
 					   <span class="lbl">Date</span>
-					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="profile.date" type="text" pikaday="pickerObject" max-date="{{ today }}" date-input maxlength="10" />
-
-					   <span class="lbl right" style="padding-left:14px;">Time</span>
-					  <input style="width:70px;padding-right:1px;" class="form-control" time="profile.time" maxlength="11" />
+					   <input style="width:80px;padding-right:1px;" class="form-control" ng-model="obDate" type="text" pikaday="pickerObject" max-date="{{ today }}" date-input maxlength="10" />
+					   <uib-timepicker class="timepicker" ng-model="obTime" hour-step="1" minute-step="1" show-spinners="false"></uib-timepicker>
 					</div>
 
 					<div class="param">
@@ -340,14 +359,25 @@
 					<div class="param">
 					   <span class="lbl">Elevation</span>
 					    <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.elevation" test-number-only allow-decimal="true" allow-negative="false" max-num="9000" meters-or-feet="{{ global.user.settings.elevation }}" />
+					  		<input class="form-control"
+					  		       ng-model="profile.elevation"
+					  		       test-number-only
+					  		       allow-decimal="true"
+					  		       allow-negative="false"
+					  		       max-num="9000"
+					  		       meters-or-feet="{{ global.user.settings.elevation }}" />
 					  		<span class="info" ng-show="global.user.settings.elevation == 0">m</span>
 					  		<span class="info" ng-show="global.user.settings.elevation == 1">ft</span>
 				  		</div>
 
 					   <span class="lbl" style="width:64px;">Air Temp.</span>
 					   <div class="paramHolder" style="width:65px;">
-					  		<input class="form-control" ng-model="profile.airTemp" temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}" number-only allow-decimal="true" allow-negative="true"/>
+					  		<input class="form-control"
+					  		       ng-model="profile.airTemp"
+					  		       temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}"
+					  		       number-only
+					  		       allow-decimal="true"
+					  		       allow-negative="true" />
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 0">°C</span>
 					  		<span class="info" ng-show="global.user.settings.tempUnits == 1">°F</span>
 				  		</div>
@@ -427,7 +457,7 @@
 						<input-direction input-class="form-control" ng-model="profile.blowingSnowDirection"></input-direction>
 					</div>
 					<div class="param">
-					  <span class="lbl">Precipitation</span>					  
+					  <span class="lbl">Precipitation</span>
 						<!-- http://www.avalanche.org/research/guidelines/pdf/Chapter1.pdf (page 7) -->
 						<select class="form-control" ng-model="profile.precipType" style="width:200px;">
 							<option value=""></option>
@@ -486,7 +516,7 @@
 			                data-toggle="tooltip"
 			                data-placement="right"
 			                title="Or enter manually"
-			                data-container=".layer-details" 
+			                data-container=".layer-details"
 			                />
 						</span>
 					</li>
@@ -540,7 +570,7 @@
 							</select>
 
 						</span>
-					</li>	
+					</li>
 					<li class="list-group-item">
 						<span class="key">Concern</span>
 						<span class="value form-inline">
@@ -558,7 +588,7 @@
 						        <label class="btn btn-default" ng-model="settings.selectedLayer.concern" uib-btn-radio="'L'" uncheckable>Layer</label>
 						    </div>
 						</span>
-					</li>	
+					</li>
 					<li class="list-group-item" style="height:92px;">
 						<span class="key">Notes<br/><span style="font-weight:100;" ng-show="settings.selectedLayer.notes.length > 120">({{ 150 - settings.selectedLayer.notes.length }})</span></span>
 						<span class="value">
@@ -571,8 +601,8 @@
 			<button ng-click="deleteLayer()" class="btn" style="float:right;margin-right:8px;"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;Delete Layer</button>
 		</div>
 
-		<div ng-show="rightPaneMode == 'photos'"> 
-		
+		<div ng-show="rightPaneMode == 'photos'">
+
 			<uploader onadd="onFileAdd(file)" onprogress="onFileProgress(file)" onupload="onFileUpload(file)"></uploader>
 
 			<div style="position: absolute;bottom: 0;top: 169px;width: 100%;" scrollable>

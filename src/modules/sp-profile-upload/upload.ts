@@ -12,6 +12,10 @@ interface ErrorResponse {
     message: string
 }
 
+interface FileHashMap {
+    [hash: string]: File;
+}
+
 /**
  * Reads a binary file as array buffer.
  *
@@ -80,13 +84,13 @@ export const generateHash = (
  *
  * @param  {FileList} files - The files to generate hashes for.
  * @param  {string} deviceSerial - The serial to hash the filenames with.
- * @return {object} An object of hashes -> files.
+ * @return {FileHashMap} An object of hashes -> files.
  */
 export const hashFilenames = (
     files: FileList,
     deviceSerial: string
 ) => {
-    let fileHashes = {}
+    let fileHashes: FileHashMap = {}
 
     for (let i = 0; i < files.length; i++) {
         let file = files[i]
@@ -145,7 +149,7 @@ export const uploadBulk = (
  * Upload files passed by a mapping of hashes -> files, but only for hashes found
  * in the newHashes array. Files are uploaded to endpoint with an auth token header.
  *
- * @param  {Object} hashes - An object of hashes -> files.
+ * @param  {FileHashMap} hashes - An object of hashes -> files.
  * @param  {Array<string>} newHashes - Array of hashes to upload.
  * @param  {string} endpoint - The URL endpoint to upload to.
  * @param  {string} token - The auth token header value to set.
@@ -153,14 +157,14 @@ export const uploadBulk = (
  * @param  {Function} callback - Called when the data finishes uploading.
  */
 export const uploadFiles = (
-    hashes: Object,
+    hashes: FileHashMap,
     newHashes: Array<string>,
     endpoint: string,
     token: string,
     progress: Function,
     callback: Function
 ) => {
-    let binaries = []
+    let binaries: Array<ArrayBuffer> = []
     let delimiter = new ArrayBuffer(255)
     let view = new DataView(delimiter)
 
@@ -176,7 +180,7 @@ export const uploadFiles = (
         throw data.message
     }
 
-    let readCallback = binary => {
+    let readCallback = (binary: ArrayBuffer) => {
         binaries.push(delimiter)
         binaries.push(binary)
 
@@ -187,7 +191,7 @@ export const uploadFiles = (
 
             let bulkBlob = new Blob(binaries)
 
-            readBinaryFile(bulkBlob, bulkBinary => uploadBulk(
+            readBinaryFile(bulkBlob, (bulkBinary: ArrayBuffer) => uploadBulk(
                 bulkBinary,
                 endpoint,
                 token,

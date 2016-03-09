@@ -19,7 +19,7 @@ if (PROD) {
 }
 
 var entry = {
-    js: ['./src/index.js'],
+    js: ['babel-polyfill', 'isomorphic-fetch', './src/index.js'],
     css: ['./src/sass.js'],
 
     /**

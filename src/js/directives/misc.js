@@ -129,15 +129,16 @@ export const MetersOrFeet = () => ({
     require: '^ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
-        let metersOrFeet = attrs.metersOrFeet
+        let metersOrFeet = parseInt(attrs.metersOrFeet, 10)
 
         attrs.$observe('metersOrFeet', newValue => {
-            if (newValue === null) return
-            metersOrFeet = newValue
+            if (typeof newValue === 'undefined') return undefined
+
+            metersOrFeet = parseInt(newValue, 10)
         })
 
         ctrl.$formatters.unshift(modelValue => {
-            if (modelValue === null) return undefined
+            if (typeof modelValue === 'undefined') return undefined
 
             // if feet
             if (metersOrFeet === 1) {
@@ -167,16 +168,16 @@ export const CmOrIn = [
         require: '^ngModel',
         restrict: 'A',
         link: (scope, elm, attrs, ctrl) => {
-            let cmOrIn = attrs.cmOrIn
+            let cmOrIn = parseInt(attrs.cmOrIn, 10)
 
             attrs.$observe('cmOrIn', newValue => {
-                if (newValue === null) return
+                if (typeof newValue === 'undefined') return undefined
 
-                cmOrIn = newValue
+                cmOrIn = parseInt(newValue, 10)
             })
 
             ctrl.$formatters.unshift(modelValue => {
-                if (modelValue === null) return undefined
+                if (typeof modelValue === 'undefined') return undefined
 
                 if (cmOrIn === 1) {
                     return Math.round(modelValue * 0.393701)
@@ -209,13 +210,13 @@ export const TempUnits = [
             let tempUnits = attrs.tempUnits
 
             attrs.$observe('tempUnits', newValue => {
-                if (newValue === null) return
+                if (typeof newValue === 'undefined') return undefined
 
                 tempUnits = newValue
             })
 
             ctrl.$formatters.unshift(modelValue => {
-                if (modelValue === null) return undefined
+                if (typeof newValue === 'undefined') return undefined
 
                 // if fahrenheit
                 if (tempUnits === 'F') {

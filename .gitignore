@@ -26,3 +26,6 @@ public/tiles2
 # npm log
 npm-debug.log
 
+# python
+*.pyc
+

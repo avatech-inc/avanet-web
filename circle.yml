@@ -2,6 +2,11 @@ machine:
   node:
     version: 5.4.1
 
+dependencies:
+  pre:
+    - pip install requests
+    - pip install parse
+
 test:
   pre:
     - npm run test-server:

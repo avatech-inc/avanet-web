@@ -32,9 +32,9 @@ if __name__ == '__main__':
         if ' - depends on ' in subject:
             depends = parse(commit_pattern, subject)
 
-            username = depends.get('username')
-            repo = depends.get('repo')
-            sha1 = depends.get('sha1')
+            username = depends['username']
+            repo = depends['repo']
+            sha1 = depends['sha1']
 
             res = requests.get(github_api.format(**vars()), headers=dict(
                 authorization='token {github_token}'.format(**vars()))

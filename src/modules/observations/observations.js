@@ -47,6 +47,9 @@ const NewObservation = [
         $scope.form_elements = {}
         $scope.selectedTab = 'ob'
 
+        let elevationSetting = Global.user.settings.elevation || 0
+        let tempUnitsSetting = Global.user.settings.tempUnits || 0
+
         if (ob._id) {
             $scope.model = angular.copy(ob)
         } else {
@@ -136,20 +139,20 @@ const NewObservation = [
             {
                 key: 'slabThickness',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert
             },
             {
                 key: 'slabWidth',
                 type: 'units',
-                units: elevationUnits[Global.user.settings.elevation].units,
-                convert: elevationUnits[Global.user.settings.elevation].convert
+                units: elevationUnits[elevationSetting].units,
+                convert: elevationUnits[elevationSetting].convert
             },
             {
                 key: 'slabVertical',
                 type: 'units',
-                units: elevationUnits[Global.user.settings.elevation].units,
-                convert: elevationUnits[Global.user.settings.elevation].convert
+                units: elevationUnits[elevationSetting].units,
+                convert: elevationUnits[elevationSetting].convert
             },
             { key: 'peopleCaught' },
             { key: 'peopleCarried' },
@@ -422,8 +425,8 @@ const NewObservation = [
             {
                 key: 'weakLayerDepth',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert,
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert,
                 condition: 'showDepth(model)'
             },
             { key: 'nbTaps', condition: 'tapScores.indexOf(model.score) > -1' },
@@ -441,15 +444,15 @@ const NewObservation = [
             {
                 key: 'sawCutLength',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert,
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert,
                 condition: 'model.name == "PST"'
             },
             {
                 key: 'isolatedColumnLength',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert,
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert,
                 condition: 'model.name == "PST"',
             },
             { key: 'criticalGrainForm', type: 'grainTypeSelect',
@@ -510,23 +513,23 @@ const NewObservation = [
             {
                 key: 'snowPackDepthEstimate',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert
             }, {
                 key: 'newSnowDepthEstimate',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert
             }, {
                 key: 'footPenetration',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert
             }, {
                 key: 'skiPenetration',
                 type: 'units',
-                units: depthUnits[Global.user.settings.elevation].units,
-                convert: depthUnits[Global.user.settings.elevation].convert
+                units: depthUnits[elevationSetting].units,
+                convert: depthUnits[elevationSetting].convert
             },
             { key: 'surfaceGrainForm', type: 'grainTypeSelect' },
             { key: 'surfaceGrainSizeMin', type: 'number', units: 'mm' },
@@ -534,14 +537,14 @@ const NewObservation = [
             {
                 key: 'surfaceTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
             {
                 key: 'twentyCMTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
         ]
 
@@ -615,26 +618,26 @@ const NewObservation = [
             {
                 key: 'maxTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
             {
                 key: 'minTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
             {
                 key: 'presentTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
             {
                 key: 'thermographTemperature',
                 type: 'units',
-                units: temperatureUnits[Global.user.settings.tempUnits].units,
-                convert: temperatureUnits[Global.user.settings.tempUnits].convert
+                units: temperatureUnits[tempUnitsSetting].units,
+                convert: temperatureUnits[tempUnitsSetting].convert
             },
             // { key: 'thermographTrend', type: 'trend-select' },
             { key: 'thermographTrend',
@@ -702,8 +705,8 @@ const NewObservation = [
                 {
                     key: 'elevation',
                     type: 'units',
-                    units: elevationUnits[Global.user.settings.elevation].units,
-                    convert: elevationUnits[Global.user.settings.elevation].convert
+                    units: elevationUnits[elevationSetting].units,
+                    convert: elevationUnits[elevationSetting].convert
                 }
             );
 

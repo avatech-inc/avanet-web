@@ -27,7 +27,7 @@ export const ObSearch = [
                 if (!Global.user.settings) return _val
 
                 // meters
-                if (Global.user.settings.elevation === 0) {
+                if (!Global.user.settings.elevation) {
                     _val = val + ' m'
 
                 // feet
@@ -44,7 +44,7 @@ export const ObSearch = [
                 if (!Global.user.settings) return _val
 
                 // meters
-                if (Global.user.settings.elevation === 0) {
+                if (!Global.user.settings.elevation) {
                     _val = val1 + '-' + val2 + ' m'
 
                 // feet

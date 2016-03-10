@@ -149,8 +149,8 @@
 
 <!-- terrain visualization legends -->
 <div ng-show="terrainOverlay == 'elevation'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.elevation }}" 
-labels="{{ global.user.settings.elevation == 0 ? [1000,2000,3000,4000,5000] : [609, 1828, 3048, 4267, 5486] }}" 
-label-values='{{ global.user.settings.elevation == 0 ? ["1,000 m", "2k", "3k", "4k", "5k"] : ["2,000 ft", "6k", "10k", "14k", "18k"] }}' 
+labels="{{ !global.user.settings.elevation ? [1000,2000,3000,4000,5000] : [609, 1828, 3048, 4267, 5486] }}" 
+label-values='{{ !global.user.settings.elevation ? ["1,000 m", "2k", "3k", "4k", "5k"] : ["2,000 ft", "6k", "10k", "14k", "18k"] }}' 
 max="6000"></canvas></div>
 
 <div ng-show="terrainOverlay == 'slope'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.slope }}" labels="[10, 20, 30, 40, 50, 60, 70]" max="80" label-values='["10°", "20°", "30°", "40°", "50°", "60°", "70°"]'></canvas></div>

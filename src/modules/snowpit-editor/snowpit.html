@@ -365,21 +365,21 @@
 					  		       allow-decimal="true"
 					  		       allow-negative="false"
 					  		       max-num="9000"
-					  		       meters-or-feet="{{ global.user.settings.elevation }}" />
-					  		<span class="info" ng-show="global.user.settings.elevation == 0">m</span>
-					  		<span class="info" ng-show="global.user.settings.elevation == 1">ft</span>
+					  		       meters-or-feet="{{ global.user.settings.elevation + 0 }}" />
+					  		<span class="info" ng-show="!!global.user.settings.elevation">m</span>
+					  		<span class="info" ng-show="!global.user.settings.elevation">ft</span>
 				  		</div>
 
 					   <span class="lbl" style="width:64px;">Air Temp.</span>
 					   <div class="paramHolder" style="width:65px;">
 					  		<input class="form-control"
 					  		       ng-model="profile.airTemp"
-					  		       temp-units="{{ global.user.settings.tempUnits == 0 ? 'C' : 'F' }}"
+					  		       temp-units="{{ !global.user.settings.tempUnits ? 'C' : 'F' }}"
 					  		       number-only
 					  		       allow-decimal="true"
 					  		       allow-negative="true" />
-					  		<span class="info" ng-show="global.user.settings.tempUnits == 0">°C</span>
-					  		<span class="info" ng-show="global.user.settings.tempUnits == 1">°F</span>
+					  		<span class="info" ng-show="!!global.user.settings.tempUnits">°C</span>
+					  		<span class="info" ng-show="!global.user.settings.tempUnits">°F</span>
 				  		</div>
 
 					</div>

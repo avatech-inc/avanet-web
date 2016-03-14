@@ -4,7 +4,11 @@ var path = require('path')
 module.exports = {
     entry: {
         test: [
-            './spec/lib/upload.spec.js'
+            'babel-polyfill',
+            'isomorphic-fetch',
+
+            './spec/lib/upload.spec.js',
+            './spec/lib/billing.spec.js'
         ]
     },
     module: {

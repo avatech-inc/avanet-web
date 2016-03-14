@@ -45,6 +45,7 @@
     "pdfMake": false,
     "google": false,
     "DrawDeclinationCanvas": false,
-    "ElevationWidget": false
+    "ElevationWidget": false,
+    "Stripe": false
   }
 }

@@ -25,6 +25,7 @@
   "education" : "Education",
   "new_organization" : "New Organization",
   "user_settings" : "User Settings",
+  "user_billing" : "Billing",
   "support" : "Support",
   "register_device" : "Register your SP",
   "download_app" : "Download Avanet App",
@@ -103,6 +104,13 @@
     "coordinates": "Coordinate System",
     "decimalDegrees": "Decimal Degrees",
     "UTM": "UTM"
+  },
+  "billing": {
+    "billing": "Billing",
+    "seats": "Seats",
+    "credit_card": "Credit Card",
+    "cvc": "CVC",
+    "expiration": "Expiration"
   },
   "snowpit_editor": {
     "surface": "Surface",

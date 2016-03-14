@@ -1,6 +1,6 @@
 /* eslint-disable new-cap, spaced-comment */
 
-/// <reference path='../../../node_modules/immutable/dist/Immutable.d.ts'/>
+/// <reference path='../../../node_modules/immutable/dist/immutable.d.ts'/>
 /// <reference path='../../definitions/redux.d.ts'/>
 /// <reference path='../../definitions/redux-thunk.d.ts'/>
 /// <reference path='../types/billing.ts' />

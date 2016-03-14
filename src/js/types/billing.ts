@@ -1,5 +1,6 @@
 
 /// <reference path='../../../node_modules/immutable/dist/immutable.d.ts'/>
+/// <reference path='../../definitions/immutable-overrides.d.ts'/>
 
 module Billing {
     export interface Ided {

@@ -136,7 +136,8 @@ const Global = [
                         let trackingUser = {
                             name: user.fullName,
                             email: user.email,
-                            createdAt: user.created
+                            createdAt: user.created,
+                            userType: user.userType
                         }
 
                         if (__STAGE__ || __PROD__) {

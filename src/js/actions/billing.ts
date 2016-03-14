@@ -547,7 +547,7 @@ export const submitOrgPayment = (
                 paymentObj.brand
             ))
 
-            dispatch(setPaymentSuccess('Success!'))
+            dispatch(setPaymentSuccess('Payment successfully processed.'))
 
             setTimeout(() => {
                 dispatch(clearPaymentSuccess())
@@ -603,7 +603,7 @@ export const submitUserPayment = (
                 paymentObj.brand
             ))
 
-            dispatch(setPaymentSuccess('Success!'))
+            dispatch(setPaymentSuccess('Payment successfully processed.'))
 
             setTimeout(() => {
                 dispatch(clearPaymentSuccess())

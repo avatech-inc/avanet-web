@@ -1,482 +1,660 @@
 <style>
 ul.members {
-	list-style-type: none;
-	border-top: 1px solid #ddd;
-	margin: 0;
-	padding: 0;
-	margin-top:10px;
-	margin-bottom: 25px;
+    list-style-type: none;
+    border-top: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+    margin-top:10px;
+    margin-bottom: 25px;
 }
 ul.members >li {
-	border-bottom: 1px solid #ddd;
-	margin: 0;
-	height: 51px;
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    height: 51px;
 }
 ul.members >li .name {
-	font-size: 19px;
-	font-weight: 500;
-	float: left;
-	line-height: 50px;
+    font-size: 19px;
+    font-weight: 500;
+    float: left;
+    line-height: 50px;
 }
 ul.members >li.pending .name {
-	opacity: .6;
+    opacity: .6;
 }
 ul.members >li .right {
-	float:right;
-	vertical-align: top;
+    float:right;
+    vertical-align: top;
 }
 ul.members >li .right >.btn-group,
 ul.members >li .right >button {
-	vertical-align: top;
-	margin-top: 8px;
+    vertical-align: top;
+    margin-top: 8px;
 }
 
 /* member menu */
 
 .memberMenu ul {
-	width: 224px; 
+    width: 224px; 
 }
 
 .memberMenu li a {
-	white-space:normal !important;
+    white-space:normal !important;
 }
 
 .memberMenu ul li a .check {
-	opacity: 0;
-	margin-left: 2px;
+    opacity: 0;
+    margin-left: 2px;
 }
 .memberMenu ul li a.selected,
 .memberMenu ul li a.disable {
-	opacity: .5;
-	pointer-events: none;
+    opacity: .5;
+    pointer-events: none;
 }
 .memberMenu ul li a.selected .check {
-	opacity: 1;
+    opacity: 1;
 }
 
 .memberMenu li .desc {
-	font-size: 13px; 
-	margin-top: 2px; margin-bottom: 2px;
-	font-weight: 400;
+    font-size: 13px; 
+    margin-top: 2px; margin-bottom: 2px;
+    font-weight: 400;
 }
 
 /* add member */
 
 .userSelect .message {
-	margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
+    margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
 }
 .userSelect .no-results {
-	margin-top: 18px;
-	font-weight: 400;
-	color: #777;
-	font-size: 15px;
-	text-align: center;
+    margin-top: 18px;
+    font-weight: 400;
+    color: #777;
+    font-size: 15px;
+    text-align: center;
 }
 ul.results {
-	list-style-type: none;
-	margin: 0; padding: 0;
-	margin-top: 3px;
+    list-style-type: none;
+    margin: 0; padding: 0;
+    margin-top: 3px;
 }
 ul.results li {
-	cursor: pointer;
-	padding: 3px 12px;
-	font-weight: 14px;
-	font-weight: 500;
+    cursor: pointer;
+    padding: 3px 12px;
+    font-weight: 14px;
+    font-weight: 500;
 }
 ul.results li.isMember {
-	pointer-events: none;
-	cursor: pointer;
-	opacity: .5;
+    pointer-events: none;
+    cursor: pointer;
+    opacity: .5;
 }
 ul.results li.isMember:hover {
-	background: transparent !important;
+    background: transparent !important;
 }
 ul.results li:hover {
-	list-style-type: none;
-	background: #f5f5f5;
+    list-style-type: none;
+    background: #f5f5f5;
 }
 
 ul.results li .arrow { 
-	transition: opacity 150ms;
-	opacity: 0;
-	float: right;
+    transition: opacity 150ms;
+    opacity: 0;
+    float: right;
 }
 ul.results li:hover .arrow{
-	opacity: 1;
+    opacity: 1;
 }
 
 /* logo upload */
 
 .logoUpload {
-	float: right;
-	vertical-align: top;
-	height: 70px;
-	background: #eee;
-	padding: 0px 24px;
-	margin-top: 8px;
-	border-radius: 5px;
-	line-height: 72px;
-	color: #999;
-	cursor: pointer;
+    float: right;
+    vertical-align: top;
+    height: 70px;
+    background: #eee;
+    padding: 0px 24px;
+    margin-top: 8px;
+    border-radius: 5px;
+    line-height: 72px;
+    color: #999;
+    cursor: pointer;
 }
 .logoUpload:hover {
-	background: #e0e0e0;
-	color:#111;
+    background: #e0e0e0;
+    color:#111;
 }
 
 .logoView, .logoEdit {
-	float: right;
-	margin-top: 6px;
-	vertical-align: top;
+    float: right;
+    margin-top: 6px;
+    vertical-align: top;
 }
 .logoView div, .logoEdit .dropdown-toggle {
-	width: 250px;
-	height: 70px;
-	display: table-cell;
-	vertical-align: middle;
-	text-align: right;
+    width: 250px;
+    height: 70px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
 }
 .logoView  img, .logoEdit img { 
-	max-width: 100%;
-	max-height: 100%
+    max-width: 100%;
+    max-height: 100%
 }
 
 .logoEdit .dropdown-toggle {
-	cursor: pointer;
-	box-shadow: none !important;
+    cursor: pointer;
+    box-shadow: none !important;
 }
 
 .logoUploadDropdownItem:hover a {
-	background-color: #f5f5f5;
+    background-color: #f5f5f5;
 }
 
 .editLogo {
-	position: absolute;
-	bottom: 0;
-	color: #fff;
-	background: rgba(0,0,0,.6);
-	width: 100px;
-	text-align: center;
-	opacity: 0;
-	right: 0;
-	height: 30px;
-	line-height: 30px;
-	border-radius: 4px;
+    position: absolute;
+    bottom: 0;
+    color: #fff;
+    background: rgba(0,0,0,.6);
+    width: 100px;
+    text-align: center;
+    opacity: 0;
+    right: 0;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 4px;
 }
 
 .logoEdit.open .dropdown-toggle .editLogo,
 .logoEdit .dropdown-toggle:hover .editLogo {
-	opacity: 1;
+    opacity: 1;
 }
 .tabButton {
-	margin-top:20px;
-	display:inline-block;
-	position: relative;
-	top: 1px;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-	padding: 8px 16px;
-	font-size: 16px;
-	margin-right:3px;
-	border: 1px solid #e9e9e9;
-	background:#e9e9e9;
-	border-bottom: 1px solid #e9e9e9;
-	font-weight: bold;
-	color:#555;
-	cursor: pointer;
-	padding-bottom: 7px;
+    margin-top:20px;
+    display:inline-block;
+    position: relative;
+    top: 1px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    margin-right:3px;
+    border: 1px solid #e9e9e9;
+    background:#e9e9e9;
+    border-bottom: 1px solid #e9e9e9;
+    font-weight: bold;
+    color:#555;
+    cursor: pointer;
+    padding-bottom: 7px;
 }
 .tabButton:hover {
-	background: #ccc;
-	border: 1px solid #ccc;
+    background: #ccc;
+    border: 1px solid #ccc;
 }
 .tabButton.selected {
-	background:#f5f5f5;
-	border:1px solid #e9e9e9;
-	color:#000;
-	pointer-events: none;
-	border-bottom: 1px solid #f5f5f5;
-	padding-bottom: 8px;
+    background:#f5f5f5;
+    border:1px solid #e9e9e9;
+    color:#000;
+    pointer-events: none;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 8px;
+}
+
+.form-group {
+margin-bottom: 6px !important;
+}
+.panel-body {
+    padding: 10px 12px !important;
+    padding-bottom: 4px !important;
+}
+.panel-footer {
+    padding: 10px 12px !important;
+}
+
+
+.settings-panel {
+  width: 460px;
+  padding-top: 0px;
+}
+
+.alert-panel {
+  width: 460px;
+}
+
+.settings-panel-title {
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.form-control.form-blank {
+  box-shadow: none;
+}
+
+.card-logo {
+    float: right;
+    line-height: 0;
+    font-size: 26px;
+    margin-top: -16px;
+    margin-right: 5px;
 }
 
 </style>
 
 <section ng-controller="OrganizationsController" ng-init="loadOrg()">
 
-	<div style="background:#fff;padding-top:20px;border-bottom:1px solid #e9e9e9;" ng-show="org">
+    <div style="background:#fff;padding-top:20px;border-bottom:1px solid #e9e9e9;" ng-show="org">
 
-		<div style="max-width:670px;margin:auto;" ng-show="org">
+        <div style="max-width:670px;margin:auto;" ng-show="org">
 
-			<div class="logoUpload" image-upload onupload="onLogoUpload(file)" ng-if="!org.logoUrl && userIsAdmin()">
-				Click to upload logo
-			</div>
+            <div class="logoUpload" image-upload onupload="onLogoUpload(file)" ng-if="!org.logoUrl && userIsAdmin()">
+                Click to upload logo
+            </div>
 
-			<div class="logoEdit btn-group" uib-dropdown ng-if="org.logoUrl && userIsAdmin()">
+            <div class="logoEdit btn-group" uib-dropdown ng-if="org.logoUrl && userIsAdmin()">
 
-			      <div uib-dropdown-toggle class="dropdown-toggle">
-			      	
-		      		<img ng-src="{{ org.logoUrl }}"/>
+                  <div uib-dropdown-toggle class="dropdown-toggle">
+                    
+                    <img ng-src="{{ org.logoUrl }}"/>
 
-		      		<div class="editLogo">Change</div>
+                    <div class="editLogo">Change</div>
 
-			      </div>
-			      <ul class="dropdown-menu pull-right" role="menu">
+                  </div>
+                  <ul class="dropdown-menu pull-right" role="menu">
 
-			      	<li class="logoUploadDropdownItem" image-upload onupload="onLogoUpload(file)"><a href="#" close-dropdown-on-click><i class="fa fa-cloud-upload"></i>Upload new logo</a></li>
+                    <li class="logoUploadDropdownItem" image-upload onupload="onLogoUpload(file)"><a href="#" close-dropdown-on-click><i class="fa fa-cloud-upload"></i>Upload new logo</a></li>
 
-			      	<li><a href="#" ng-click="removeLogo()" close-dropdown-on-click><i class="fa fa-times"></i>Remove logo</a></li>
+                    <li><a href="#" ng-click="removeLogo()" close-dropdown-on-click><i class="fa fa-times"></i>Remove logo</a></li>
 
-	      		  </ul>
-		    </div>
+                  </ul>
+            </div>
 
-			<div class="logoView" ng-if="org.logoUrl && !userIsAdmin()">
-				<div>
-	      			<img ng-src="{{ org.logoUrl }}"/>
-	      		</div>
-		    </div>
+            <div class="logoView" ng-if="org.logoUrl && !userIsAdmin()">
+                <div>
+                    <img ng-src="{{ org.logoUrl }}"/>
+                </div>
+            </div>
 
 
-			<div style="font-weight:700;font-size:12px;color:#aaa;">
-			<span ng-show="org.type=='Avalanche education'"><i class="fa fa-graduation-cap" ></i>&nbsp; EDUCATION&nbsp;</span>ORGANIZATION
-			</div>
+            <div style="font-weight:700;font-size:12px;color:#aaa;">
+            <span ng-show="org.type=='Avalanche education'"><i class="fa fa-graduation-cap" ></i>&nbsp; EDUCATION&nbsp;</span>ORGANIZATION
+            </div>
 
-			<div style="font-size:32px;">
-				{{ org.name }}&nbsp;
-			</div>
+            <div style="font-size:32px;">
+                {{ org.name }}&nbsp;
+            </div>
 
-			<div style="color:#333;">
-				{{ org.city }},
-				<span ng-show="org.state">{{ org.state }},</span>
-				{{ org.country }}
-			</div>
+            <div style="color:#333;">
+                {{ org.city }},
+                <span ng-show="org.state">{{ org.state }},</span>
+                {{ org.country }}
+            </div>
 
-		</div>
+        </div>
 
-		<div style="max-width:670px;margin:auto;" ng-show="org">
-			<div class="tabButton" ng-class="{ selected: selectedTab == null }" ng-click="selectedTab = null">Members</div>
-			<!--<div class="tabButton" ng-class="{ selected: selectedTab == 'billing' }" ng-click="selectedTab = 'billing'">Billing</div>-->
-		</div>
-	</div>
+        <div style="max-width:670px;margin:auto;" ng-show="org">
+            <div class="tabButton" ng-class="{ selected: selectedTab == null }" ng-click="selectedTab = null">Members</div>
+            <div class="tabButton" ng-class="{ selected: selectedTab == 'billing' }" ng-click="selectedTab = 'billing'">Billing</div>
+        </div>
+    </div>
 
-	<div class="container billing" ng-show="org && selectedTab=='billing'">
-		<div style="max-width:670px;margin:auto;padding-top:10px;">
-			<form name="ccForm">
-	        <div class="form-group">
-	          <label for="card-number">Card Number</label>
-	          <input type="text" class="form-control" id="cardNumber" cc-number name="ccNumber" ng-model="card.number">
-	        </div>
-	        <table class="table">
-	          <tr>
-	            <th>Valid</th>
-	            <th>Type</th>
-	          </tr>
-	          <tr>
-	            <td>
-	              {{ccForm.ccNumber.$valid }}
-	            </td>
-	            <td>
-	              {{ ccForm.ccNumber.$ccType || 'Unknown' }}
-	            </td>
-	          </tr>
-	        </table>
-	        <div class="form-group">
-	          <label for="cvc">CVC</label>
-	          <input type="text" class="form-control" id="cvc" cc-cvc cc-type="ccForm.ccNumber.$ccType" name="ccCvc" ng-model="card.cvc">
-	        </div>
-	        <table class="table">
-	          <tr>
-	            <th>Valid</th>
-	          </tr>
-	          <tr>
-	            <td>
-	              {{ccForm.ccCvc.$valid }}
-	            </td>
-	          </tr>
-	        </table>
-	        <div class="form-group">
-	          <label for="card-number">Expiration</label>
-	          <div class="row" cc-exp>
-	            <div class="col-xs-3">
-	              <input placeholder="MM" type="text" class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month">
-	            </div>
-	            <div class="col-xs-3">
-	              <input placeholder="YY" type="text" class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year">
-	            </div>
-	          </div>
-	        </div>
-	        <table class="table">
-	          <tr>
-	            <th>Valid Month</th>
-	            <th>Valid Year</th>
-	            <th>Valid Pair</th>
-	          </tr>
-	          <tr>
-	            <td>
-	              {{ccForm.ccExpMonth.$valid }}
-	            </td>
-	            <td>
-	              {{ccForm.ccExpYear.$valid }}
-	            </td>
-	            <td>
-	              {{!ccForm.$error.ccExp }}
-	            </td>
-	          </tr>
-	        </table>
-	      </form>
+    <div class="container billing" ng-show="org && selectedTab=='billing'">
+        <div style="max-width:670px;margin:auto;padding-top:0px;">
+
+            <section ng-controller="Billing">
+              <div class="settings-panel" style="padding-top: 30px;">
+                <form>
+                  <div class="panel panel-default">
+                    <div class="panel-heading settings-panel-title">{{ 'billing.subscription' | translate }}</div>
+
+                    <div class="panel-body">
+                      <div class="form-horizontal" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{ 'billing.plan' | translate }}</label>
+
+                          <div class="col-sm-8">
+                            <select class="form-control"
+                                    ng-options="plan.metadata.level as plan.title for plan in plans"
+                                    ng-model="level"
+                                    ng-change="changeLevel(level)">
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="form-group" ng-if="billingType === 'org'">
+                          <label class="col-sm-4 control-label">{{ 'billing.seats' | translate }}</label>
+
+                          <div class="col-sm-8">
+                            <select class="form-control"
+                                    ng-options="seat for seat in ::props.seatArray"
+                                    ng-model="seats"
+                                    ng-change="changeSeats(seats)">
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">{{ 'billing.cycle' | translate }}</label>
+
+                          <div class="col-sm-8">
+                            <div class="btn-group">
+                              <label class="btn btn-default"
+                                     ng-model="interval"
+                                     uib-btn-radio="'month'"
+                                     ng-click="changeInterval(interval)"
+                                     uncheckable>{{ 'billing.monthly' | translate }}</label>
+                              <label class="btn btn-default"
+                                     ng-model="interval"
+                                     uib-btn-radio="'year'"
+                                     ng-click="changeInterval(interval)"
+                                     uncheckable>{{ 'billing.yearly' | translate }}</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel-footer" style="background:#fff;">
+                      <div class="row form-horizontal">
+                        <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
+                        <div class="col-sm-8" style="text-align: right;">
+                          <span class="form-control form-blank" style="border-color: #fff; padding-right: 0;">
+                            <strong>${{ (total / 100) }}/{{ interval }}</strong>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="settings-panel" ng-if="billingType === 'org'">
+                <form>
+                  <div class="panel panel-default">
+                    <div class="panel-heading settings-panel-title">
+                      {{ 'billing.seats' | translate }}
+                    </div>
+
+                    <div class="panel-body">
+                      <div class="form-horizontal" role="form">
+                        <div class="form-group" ng-repeat="seatUser in seatUsers track by $index">
+                          <label class="col-sm-4 control-label">{{ 'billing.seat' | translate }} {{ $index + 1 }}</label>
+
+                          <div class="col-sm-7">
+                            <select class="form-control"
+                                    ng-options="unselectedUser.id as unselectedUser.fullName for unselectedUser in getUnselectedUsers($index)"
+                                    ng-model="seatUsers[$index]"
+                                    ng-change="setSeatUser($index, seatUsers[$index])">
+                            </select>
+                          </div>
+                          <div class="col-sm-1" style="padding-left: 0">
+                            <span class="btn form-control glyphicon glyphicon-remove form-blank"
+                                  style="padding-left: 0; padding-right: 0; width: 25px"
+                                  ng-if="seatUsers[$index]"
+                                  ng-click="deleteSeatUser($index)"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="settings-panel">
+                <form ng-submit="saveBilling(name, cc, cvc, exp_month, exp_year)">
+                  <div class="panel panel-default">
+                    <div class="panel-heading settings-panel-title">
+                      {{ 'billing.billing' | translate }}
+                    </div>
+
+                    <div class="panel-body">
+                      <div class="form-horizontal" role="form">
+                        <div class="form-group">
+                        <div class="col-sm-3"></div>
+                          <div class="col-sm-9">
+                            <input type="text"
+                                   name="name"
+                                   class="form-control"
+                                   required
+                                   placeholder="{{ 'billing.fullname' | translate }}"
+                                   ng-model="name"
+                                   ng-change="changePayment(name, 'name')">
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-sm-3"></div>
+                          <div class="col-sm-9">
+                            <input type="text"
+                                   name="cc"
+                                   class="form-control"
+                                   required
+                                   maxlength="19"
+                                   ng-model="cc"
+                                   ui-mask="{{ ccFormat }}"
+                                   ui-mask-placeholder-char="space"
+                                   ui-options="ccOptions"
+                                   ng-change="changePayment(cc, 'cc')">
+                            <i class="fa card-logo" ng-class="'fa-cc-' + brandlogo"></i>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-sm-3"></div>
+                          <div class="col-sm-3">
+                            <select class="form-control"
+                                    name="month"
+                                    ng-options="month for month in ::props.months"
+                                    ng-model="exp_month"
+                                    ng-change="changePayment(exp_month, 'exp_month')">
+                                <option value="">{{ 'billing.month' | translate }}</option>
+                            </select>
+                          </div>
+
+                          <div class="col-sm-3">
+                            <select class="form-control"
+                                    name="year"
+                                    ng-options="year for year in ::props.years"
+                                    ng-model="exp_year"
+                                    ng-change="changePayment(exp_year, 'exp_year')">
+                                <option value="">{{ 'billing.year' | translate }}</option>
+                            </select>
+                          </div>
+
+                          <div class="col-sm-3">
+                            <input type="text"
+                                   name="cvc"
+                                   class="form-control"
+                                   required
+                                   maxlength="4"
+                                   placeholder="CVC"
+                                   ng-model="cvc"
+                                   ng-change="changePayment(cvc, 'cvc')">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel-footer" style="text-align:right;background:#fff;">
+                      <button type="submit"
+                              class="btn btn-primary"
+                              translate="billing.start_membership"
+                              ng-if="!processing">
+                      </button>
+
+                      <a class="btn btn-primary"
+                         disabled
+                         style="width: 60px"
+                         ng-if="processing">
+                        <i class="fa fa-circle-o-notch fa-spin"></i>
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="alert alert-danger alert-panel" role="alert" ng-if="error">
+                <strong>{{ 'billing.processing_error' | translate }}</strong>&nbsp;- {{ error }}
+              </div>
+
+              <div class="alert alert-success alert-panel" role="alert" ng-if="success">
+                <strong>{{ 'billing.success' | translate }}</strong>&nbsp;- {{ success }}
+              </div>
+            </section>
+
       </div>
-	</div>
+    </div>
 
-	<div class="container" ng-show="org && selectedTab==null">
+    <div class="container" ng-show="org && selectedTab==null">
 
-		<div style="max-width:670px;margin:auto;padding-top:10px;">
+        <div style="max-width:670px;margin:auto;padding-top:10px;">
 
-			<div style="text-align:right;">
+            <div style="text-align:right;">
 
-				<div ng-if="userIsAdmin()" class="btn-group userSelect" uib-dropdown>
-			      <button type="button" uib-dropdown-toggle class="btn btn-primary" ng-click="newSearch()">
-			        <i class="fa fa-plus"></i>&nbsp;&nbsp;Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
-			      </button>
-			      <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;" ng-click="$event.stopPropagation()">
-			    	
-			    	<div style="padding:3px 12px;">
-				        <div class="form-group" style="margin-bottom:0;position:relative;">
-				          <input focus-on="focusSearch" type="text" class="form-control" placeholder="" ng-model="search.query" ng-change="doSearch()">
-				          <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
-				        </div>
+                <div ng-if="userIsAdmin()" class="btn-group userSelect" uib-dropdown>
+                  <button type="button" uib-dropdown-toggle class="btn btn-primary" ng-click="newSearch()">
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
+                  </button>
+                  <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;" ng-click="$event.stopPropagation()">
+                    
+                    <div style="padding:3px 12px;">
+                        <div class="form-group" style="margin-bottom:0;position:relative;">
+                          <input focus-on="focusSearch" type="text" class="form-control" placeholder="" ng-model="search.query" ng-change="doSearch()">
+                          <i ng-show="search.searching" style="position:absolute;top: 5px;right: 6px;font-size: 24px;" class="ion-loading-c"></i>
+                        </div>
 
-				        <div class="message" ng-show="!search.results">
-				        	Search for a user by name or email, or enter an email address to invite someone new.
-				        </div>
+                        <div class="message" ng-show="!search.results">
+                            Search for a user by name or email, or enter an email address to invite someone new.
+                        </div>
 
-				        <div class="no-results" ng-show="search.results.length == 0 && !search.email">
-				        	No results
-				        </div>
+                        <div class="no-results" ng-show="search.results.length == 0 && !search.email">
+                            No results
+                        </div>
 
-				        <div class="message" ng-show="search.results.length == 0 && search.email">
-					        <b>{{ search.email }}</b> isn't in our system. Would you like to invite them via email?<br/>
-					        <button ng-click="inviteEmail()" style="margin-top:10px;" class="btn btn-primary btn-block" close-dropdown-on-click>Invite</button>
-				        </div>
-			        </div>
+                        <div class="message" ng-show="search.results.length == 0 && search.email">
+                            <b>{{ search.email }}</b> isn't in our system. Would you like to invite them via email?<br/>
+                            <button ng-click="inviteEmail()" style="margin-top:10px;" class="btn btn-primary btn-block" close-dropdown-on-click>Invite</button>
+                        </div>
+                    </div>
 
-			        <ul ng-show="search.results.length > 0" class="results">
-			        	<li ng-repeat="result in search.results" ng-click="addMember(result)" ng-class="{ isMember: result.isMember }" close-dropdown-on-click>
-			        		{{ result.fullName }} <span ng-show="result.isMember">(joined)</span>
+                    <ul ng-show="search.results.length > 0" class="results">
+                        <li ng-repeat="result in search.results" ng-click="addMember(result)" ng-class="{ isMember: result.isMember }" close-dropdown-on-click>
+                            {{ result.fullName }} <span ng-show="result.isMember">(joined)</span>
 
-			        		<span class="arrow"><i class="fa fa-plus"></i></span>
-		        		</li>
-			        </ul>
-			        <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
+                            <span class="arrow"><i class="fa fa-plus"></i></span>
+                        </li>
+                    </ul>
+                    <!--<button type="submit" class="btn btn-default" ng-click="closeThis($event)">Submit</button>-->
 
-			        </a></li></ul>
-			    </div>
+                    </a></li></ul>
+                </div>
 
-		    </div>
+            </div>
 
-			<ul class="members">
-				<li ng-repeat="member in members" ng-class="{ pending: member.user.pending }"
-				 ng-hide="!userIsAdmin() && member.user.pending">
-					<div class="name">{{ member.user.fullName }}
-					<span ng-show="member.user._id == global.user._id">(you)</span>
-					</div>
-
-
-					<div class="right">
-						<div class="btn-group memberMenu" uib-dropdown>
-
-						<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
-							<span ng-hide="member.user.pending">
-						        {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
-					        </span>
-						</div>
-
-					      <button ng-if="userIsAdmin()" type="button" class="btn btn-default" style="width:100px;text-align:left;" uib-dropdown-toggle>
-					      	<span ng-hide="member.user.pending">
-						        {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
-					        </span>
-					        <span ng-show="member.user.pending">
-					        	Pending
-					        </span>
-					        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
-					      </button>
-					      <ul class="dropdown-menu pull-right" role="menu">
+            <ul class="members">
+                <li ng-repeat="member in members" ng-class="{ pending: member.user.pending }"
+                 ng-hide="!userIsAdmin() && member.user.pending">
+                    <div class="name">{{ member.user.fullName }}
+                    <span ng-show="member.user._id == global.user._id">(you)</span>
+                    </div>
 
 
-					      	<li ng-hide="member.user.pending"><a ng-class="{ disable: !member.admin || isOnlyAdmin(member), selected: !member.admin }" href="#" ng-click="setMemberAdmin(member, false)" close-dropdown-on-click>
-						      	<b>{{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}</b> <i class="fa fa-check check"></i><br/>
-					      		<div class='desc'>Can view {{ (org.type=='Avalanche education' ? 'instructors and students' : 'members') }} and share data shared across the organization.</div>
-					      	</a></li>
+                    <div class="right">
+                        <div class="btn-group memberMenu" uib-dropdown>
 
-					      	<li ng-hide="member.user.pending"><a ng-class="{ disable: member.admin, selected: member.admin }" href="#" ng-click="setMemberAdmin(member, true)" close-dropdown-on-click>
-					      		<b>Admin</b> <i class="fa fa-check check"></i><br/>
-					      		<div class='desc'>Can also add/remove {{ org.type=='Avalanche education' ? 'instructors and students' : 'members' }} and change organization settings.</div>
-					      	</a></li>
+                        <div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
+                            <span ng-hide="member.user.pending">
+                                {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
+                            </span>
+                        </div>
 
-					      	<li ng-show="member.user.pending"><a href="#" style="pointer-events:none;">
-					      		<div class='desc'>This user has recieved an email invitation but hasn't yet created an account.</div>
-					      	</a></li>
+                          <button ng-if="userIsAdmin()" type="button" class="btn btn-default" style="width:100px;text-align:left;" uib-dropdown-toggle>
+                            <span ng-hide="member.user.pending">
+                                {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
+                            </span>
+                            <span ng-show="member.user.pending">
+                                Pending
+                            </span>
+                            <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
+                          </button>
+                          <ul class="dropdown-menu pull-right" role="menu">
 
-					      	<li class="divider"></li>
-					      	<li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeMember(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
 
-					      	<li ng-show="!allowMemberRemove(member)"><a class="disable" href="#"><i class="fa fa-times"></i>Remove from organization</a></li>
+                            <li ng-hide="member.user.pending"><a ng-class="{ disable: !member.admin || isOnlyAdmin(member), selected: !member.admin }" href="#" ng-click="setMemberAdmin(member, false)" close-dropdown-on-click>
+                                <b>{{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}</b> <i class="fa fa-check check"></i><br/>
+                                <div class='desc'>Can view {{ (org.type=='Avalanche education' ? 'instructors and students' : 'members') }} and share data shared across the organization.</div>
+                            </a></li>
 
-			      		  </ul>
-					    </div>
+                            <li ng-hide="member.user.pending"><a ng-class="{ disable: member.admin, selected: member.admin }" href="#" ng-click="setMemberAdmin(member, true)" close-dropdown-on-click>
+                                <b>Admin</b> <i class="fa fa-check check"></i><br/>
+                                <div class='desc'>Can also add/remove {{ org.type=='Avalanche education' ? 'instructors and students' : 'members' }} and change organization settings.</div>
+                            </a></li>
 
-					    <!--<button type="button" class="btn btn-default" ng-click="removeMember(member, $index)"
-					    ng-disabled="!allowMemberRemove(member)" style="width:86px;">
-				        	<i class="fa fa-times"></i>&nbsp;&nbsp;{{ member.user._id == global.user._id ? "Leave" : "Remove" }}
-					    	
-				      	</button>-->
+                            <li ng-show="member.user.pending"><a href="#" style="pointer-events:none;">
+                                <div class='desc'>This user has recieved an email invitation but hasn't yet created an account.</div>
+                            </a></li>
 
-					</div>
-				</li>
-			</ul>
+                            <li class="divider"></li>
+                            <li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeMember(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
 
-			<div ng-if="org.type=='Avalanche education' && (userIsMember() || userIsAdmin())" style="padding-bottom:28px;">
+                            <li ng-show="!allowMemberRemove(member)"><a class="disable" href="#"><i class="fa fa-times"></i>Remove from organization</a></li>
 
-			    <h2>Students <span style="font-weight:100;">({{ students.length }})</span></h2>
+                          </ul>
+                        </div>
 
-			    <div class="panel panel-primary">
-			      <div class="panel-heading">
-			        <h3 class="panel-title">Invite your students</h3>
-			      </div>
-			      <div class="panel-body">
-			        <b>Invite students by sharing this link:</b>&nbsp;
-				    <input class="form-control" style="width:350px;display:inline-block;" type="text" value="https://avanet.avatech.com/join/{{ org.hashedId }}" select-on-click />
-			      </div>
-			    </div>
+                        <!--<button type="button" class="btn btn-default" ng-click="removeMember(member, $index)"
+                        ng-disabled="!allowMemberRemove(member)" style="width:86px;">
+                            <i class="fa fa-times"></i>&nbsp;&nbsp;{{ member.user._id == global.user._id ? "Leave" : "Remove" }}
+                            
+                        </button>-->
 
-				<ul class="members">
-					<li ng-repeat="member in students" ng-class="{ pending: member.user.pending }">
-						<div class="name">{{ member.user.fullName }}
-						</div>
+                    </div>
+                </li>
+            </ul>
 
-						<div class="right">
-							<div class="btn-group memberMenu" uib-dropdown>
+            <div ng-if="org.type=='Avalanche education' && (userIsMember() || userIsAdmin())" style="padding-bottom:28px;">
 
-							<div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
-								Student
-							</div>
+                <h2>Students <span style="font-weight:100;">({{ students.length }})</span></h2>
 
-						      <button ng-if="userIsAdmin()" type="button" uib-dropdown-toggle class="btn btn-default" style="width:100px;text-align:left;">
-						      	<span ng-hide="member.user.pending">
-							        Student
-						        </span>
-							        <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
-						      </button>
-						      <ul class="dropdown-menu pull-right" role="menu">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Invite your students</h3>
+                  </div>
+                  <div class="panel-body">
+                    <b>Invite students by sharing this link:</b>&nbsp;
+                    <input class="form-control" style="width:350px;display:inline-block;" type="text" value="https://avanet.avatech.com/join/{{ org.hashedId }}" select-on-click />
+                  </div>
+                </div>
 
-						      	<li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeStudent(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
+                <ul class="members">
+                    <li ng-repeat="member in students" ng-class="{ pending: member.user.pending }">
+                        <div class="name">{{ member.user.fullName }}
+                        </div>
 
-						      	<li ng-show="!allowMemberRemove(member)"><a class="disable" href="#"><i class="fa fa-times"></i>Remove from organization</a></li>
+                        <div class="right">
+                            <div class="btn-group memberMenu" uib-dropdown>
 
-				      		  </ul>
-						    </div>
-						</div>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+                            <div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
+                                Student
+                            </div>
+
+                              <button ng-if="userIsAdmin()" type="button" uib-dropdown-toggle class="btn btn-default" style="width:100px;text-align:left;">
+                                <span ng-hide="member.user.pending">
+                                    Student
+                                </span>
+                                    <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
+                              </button>
+                              <ul class="dropdown-menu pull-right" role="menu">
+
+                                <li ng-show="allowMemberRemove(member)"><a href="#" ng-click="removeStudent(member, $index)" close-dropdown-on-click><i class="fa fa-times"></i>Remove from organization</a></li>
+
+                                <li ng-show="!allowMemberRemove(member)"><a class="disable" href="#"><i class="fa fa-times"></i>Remove from organization</a></li>
+
+                              </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </section>

@@ -136,11 +136,13 @@ export const cardBrandMask = (stripeBrand: string): string => {
 export const Billing = [
     '$scope',
     '$http',
+    '$stateParams',
     'Global',
 
     (
         $scope: Billing.Scope,
         $http: angular.IHttpService,
+        $stateParams: Billing.StateParams,
         global: any   // todo: add some definitions/sanity to the globals
     ) => {
         const authToken: string = (<any>$http.defaults.headers.common)['Auth-Token']
@@ -166,6 +168,7 @@ export const Billing = [
         $scope.ccOptions = {
             maskDefinitions: { '8': /[\d|\u2022]/ },
             clearOnBlur: false,
+            unmaskEmpty: true,
             returnInvalid: true
         }
 
@@ -260,15 +263,15 @@ export const Billing = [
 
         let stateType = 'user'
 
+        if (typeof $stateParams.orgId !== 'undefined') {
+            stateType = 'org'
+        }
+
         billingStore.dispatch(actions.setBillingType(stateType))
         billingStore.dispatch(actions.fetchPlans(authToken))
 
         if (stateType === 'org') {
-            if (props.orgs.length > 0) {
-                $scope.org = props.orgs[0]
-
-                billingStore.dispatch(actions.fetchOrg(props.orgs[0].id, authToken))
-            }
+            billingStore.dispatch(actions.fetchOrg($stateParams.orgId, authToken))
         } else if (stateType === 'user') {
             billingStore.dispatch(actions.fetchUser(authToken))
         }

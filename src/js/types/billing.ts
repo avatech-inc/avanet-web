@@ -142,6 +142,10 @@ module Billing {
         seatUsers: Immutable.List<string>;
     }
 
+    export interface StateParams {
+        orgId?: string;
+    }
+
     export interface Scope extends angular.IScope {
         state: any;
         billingType: 'user' | 'org';

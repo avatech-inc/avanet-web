@@ -159,12 +159,12 @@ margin-bottom: 6px !important;
   <div class="settings-panel" style="padding-top: 30px;">
     <form>
       <div class="panel panel-default">
-        <div class="panel-heading settings-panel-title">Subscription</div>
+        <div class="panel-heading settings-panel-title">{{ 'billing.subscription' | translate }}</div>
 
         <div class="panel-body">
           <div class="form-horizontal" role="form">
             <div class="form-group">
-              <label class="col-sm-4 control-label">Plan</label>
+              <label class="col-sm-4 control-label">{{ 'billing.plan' | translate }}</label>
 
               <div class="col-sm-8">
                 <select class="form-control"
@@ -176,19 +176,7 @@ margin-bottom: 6px !important;
             </div>
 
             <div class="form-group" ng-if="billingType === 'org'">
-              <label class="col-sm-4 control-label">Organization</label>
-
-              <div class="col-sm-8">
-                <select class="form-control"
-                        ng-options="org as org.name for org in ::props.orgs"
-                        ng-model="org"
-                        ng-change="changeOrg(org)">
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group" ng-if="billingType === 'org'">
-              <label class="col-sm-4 control-label">Seats</label>
+              <label class="col-sm-4 control-label">{{ 'billing.seats' | translate }}</label>
 
               <div class="col-sm-8">
                 <select class="form-control"
@@ -200,7 +188,7 @@ margin-bottom: 6px !important;
             </div>
 
             <div class="form-group">
-              <label class="col-sm-4 control-label">Billing Cycle</label>
+              <label class="col-sm-4 control-label">{{ 'billing.cycle' | translate }}</label>
 
               <div class="col-sm-8">
                 <div class="btn-group">
@@ -208,12 +196,12 @@ margin-bottom: 6px !important;
                          ng-model="interval"
                          uib-btn-radio="'month'"
                          ng-click="changeInterval(interval)"
-                         uncheckable>Monthly</label>
+                         uncheckable>{{ 'billing.monthly' | translate }}</label>
                   <label class="btn btn-default"
                          ng-model="interval"
                          uib-btn-radio="'year'"
                          ng-click="changeInterval(interval)"
-                         uncheckable>Yearly</label>
+                         uncheckable>{{ 'billing.yearly' | translate }}</label>
                 </div>
               </div>
             </div>
@@ -222,7 +210,7 @@ margin-bottom: 6px !important;
 
         <div class="panel-footer" style="background:#fff;">
           <div class="row form-horizontal">
-            <label class="col-sm-4 control-label">Total</label>
+            <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
             <div class="col-sm-8" style="text-align: right;">
               <span class="form-control form-blank" style="border-color: #fff; padding-right: 0;">
                 <strong>${{ (total / 100) }}/{{ interval }}</strong>
@@ -244,7 +232,7 @@ margin-bottom: 6px !important;
         <div class="panel-body">
           <div class="form-horizontal" role="form">
             <div class="form-group" ng-repeat="seatUser in seatUsers track by $index">
-              <label class="col-sm-4 control-label">Seat {{ $index + 1 }}</label>
+              <label class="col-sm-4 control-label">{{ 'billing.seat' | translate }} {{ $index + 1 }}</label>
 
               <div class="col-sm-7">
                 <select class="form-control"
@@ -282,7 +270,7 @@ margin-bottom: 6px !important;
                        name="name"
                        class="form-control"
                        required
-                       placeholder="Full name on card"
+                       placeholder="{{ 'billing.fullname' | translate }}"
                        ng-model="name"
                        ng-change="changePayment(name, 'name')">
               </div>
@@ -313,7 +301,7 @@ margin-bottom: 6px !important;
                         ng-options="month for month in ::props.months"
                         ng-model="exp_month"
                         ng-change="changePayment(exp_month, 'exp_month')">
-                    <option value="">Month</option>
+                    <option value="">{{ 'billing.month' | translate }}</option>
                 </select>
               </div>
 
@@ -323,7 +311,7 @@ margin-bottom: 6px !important;
                         ng-options="year for year in ::props.years"
                         ng-model="exp_year"
                         ng-change="changePayment(exp_year, 'exp_year')">
-                    <option value="">Year</option>
+                    <option value="">{{ 'billing.year' | translate }}</option>
                 </select>
               </div>
 
@@ -344,8 +332,7 @@ margin-bottom: 6px !important;
         <div class="panel-footer" style="text-align:right;background:#fff;">
           <button type="submit"
                   class="btn btn-primary"
-                  translate="save"
-                  style="width: 60px"
+                  translate="billing.start_membership"
                   ng-if="!processing">
           </button>
 
@@ -361,10 +348,10 @@ margin-bottom: 6px !important;
   </div>
 
   <div class="alert alert-danger alert-panel" role="alert" ng-if="error">
-    <strong>Unable to process card</strong>&nbsp;- {{ error }}
+    <strong>{{ 'billing.processing_error' | translate }}</strong>&nbsp;- {{ error }}
   </div>
 
   <div class="alert alert-success alert-panel" role="alert" ng-if="success">
-    <strong>Success</strong>&nbsp;- {{ success }}
+    <strong>{{ 'billing.success' | translate }}</strong>&nbsp;- {{ success }}
   </div>
 </section>

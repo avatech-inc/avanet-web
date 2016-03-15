@@ -106,11 +106,24 @@
     "UTM": "UTM"
   },
   "billing": {
-    "billing": "Billing",
+    "billing": "Payment",
+    "subscription": "Subscription",
+    "cycle": "Billing Cycle",
+    "month": "Month",
+    "monthly": "Monthly",
+    "year": "Year",
+    "yearly": "Yearly",
+    "plan": "Plan",
+    "seat": "Seat",
     "seats": "Seats",
     "credit_card": "Credit Card",
+    "fullname": "Full name on card",
     "cvc": "CVC",
-    "expiration": "Expiration"
+    "expiration": "Expiration",
+    "total": "Total",
+    "start_membership": "Start Membership",
+    "processing_error": "Unable to process card",
+    "success": "Success"
   },
   "snowpit_editor": {
     "surface": "Surface",

@@ -568,13 +568,13 @@ margin-bottom: 6px !important;
                         </div>
 
                           <button ng-if="userIsAdmin()" type="button" class="btn btn-default" style="width:100px;text-align:left;" uib-dropdown-toggle>
+                            <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
                             <span ng-hide="member.user.pending">
                                 {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
                             </span>
                             <span ng-show="member.user.pending">
                                 Pending
                             </span>
-                            <i class="fa fa-caret-down" style="float: right;margin-top: 3px;"></i>
                           </button>
                           <ul class="dropdown-menu pull-right" role="menu">
 

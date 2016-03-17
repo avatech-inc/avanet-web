@@ -210,6 +210,16 @@ export const Billing = [
 
                 if (interval === 'year') {
                     total = planObj.amountMonth * seats * 12
+
+                    $scope.savings = null
+                } else if (interval === 'month') {
+                    let planYearObj: Billing.Plan = state.get('plans')
+                        .find((plan: Billing.Plan) => (
+                            plan.interval === 'year' &&
+                            plan.metadata.level === level
+                        ))
+
+                    $scope.savings = Math.round((1 - (planYearObj.amountMonth / planObj.amountMonth)) * 100)
                 }
             }
 

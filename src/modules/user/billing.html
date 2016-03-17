@@ -191,6 +191,9 @@ margin-bottom: 6px !important;
               <label class="col-sm-4 control-label">{{ 'billing.cycle' | translate }}</label>
 
               <div class="col-sm-8">
+                <span class="form-control form-blank" ng-if="savings" style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                  Save {{ savings }}% with yearly
+                </span>
                 <div class="btn-group">
                   <label class="btn btn-default"
                          ng-model="interval"
@@ -211,9 +214,10 @@ margin-bottom: 6px !important;
         <div class="panel-footer" style="background:#fff;">
           <div class="row form-horizontal">
             <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
-            <div class="col-sm-8" style="text-align: right;">
-              <span class="form-control form-blank" style="border-color: #fff; padding-right: 0;">
-                <strong>${{ (total / 100) }}/{{ interval }}</strong>
+            <div class="col-sm-8">
+              <span class="form-control form-blank" style="border-color: #fff; padding-right: 0; padding-left: 0">
+                <!-- <span ng-if="savings" style="color: #666; margin-right: 19px;">Save {{ savings }}% with a yearly subscription</span> -->
+                <strong style="float: right">${{ (total / 100) }}/{{ interval }}</strong>
               </span>
             </div>
           </div>

@@ -169,6 +169,7 @@ module Billing {
         seatUsers: Array<string>;
         plans: Array<Plan>;
         total: number;
+        savings: number;
         orgUsers: Array<User>;
         error: string;
         success: string;

@@ -2,136 +2,172 @@
 <div class='map-holder'></div>
 <div class="mapLayers" ng-show="selectedBaseLayer" ng-hide="hideMapButtons">
     <div class="btn-group dropup" uib-dropdown>
-      <button type="button" uib-dropdown-toggle>
-        <i class="ion-map"></i> <span><b>Map</b>&nbsp;&nbsp;{{ selectedBaseLayer.name }}</span>
-      </button>
-      <ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="margin-bottom:-1px;padding-top:0px;padding-bottom:0px;"><li><a style="padding:0px; background:#fff !important; border-radius: 3px; overflow: hidden;">
+    	<button type="button" uib-dropdown-toggle>
+        	<i class="ion-map"></i>
+        	<span>
+        		<b>Map</b>&nbsp;&nbsp;{{ selectedBaseLayer.name }}
+        	</span>
+      	</button>
+      	<ul class="dropdown-menu" ng-click="$event.stopPropagation()" role="menu" style="margin-bottom:-1px;padding-top:0px;padding-bottom:0px;">
+      		<li>
+	      		<a style="padding:0px; background:#fff !important; border-radius: 3px; overflow: hidden;">
 
-      		<!--<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
+		      		<!--<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
 
-      		<div class="layers-header">{{ 'select_map' | translate }}</div>-->
-      		
-      		<!--<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
-			
-			<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-			ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
-			>{{ layer.name }}</div>
+		      		<div class="layers-header">{{ 'select_map' | translate }}</div>-->
+		      		
+		      		<!--<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
+					
+					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+					ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
+					>{{ layer.name }}</div>
 
-			<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
-			
-			<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-			ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
-			>{{ layer.name }}</div>-->
+					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
+					
+					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+					ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
+					>{{ layer.name }}</div>-->
 
-			<accordion-new>
-				    <div class="accordion-item" ng-class="{ open: mapLayers.baseLayers.terrain.indexOf(selectedBaseLayer) > -1 }">
-				    	<div class="header" ng-click="$broadcast('refreshSlider')">
-				            Topo Layers
-				        </div>
-				        <div class="content">
-					      	<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-							ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}</div>
+					<accordion-new>
+						<div class="accordion-item" ng-class="{ open: mapLayers.baseLayers.terrain.indexOf(selectedBaseLayer) > -1 }">
+							<div class="header" ng-click="$broadcast('refreshSlider')">Topo Layers</div>
+							<div class="content">
+								<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+								ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}
+								</div>
+							</div>
 						</div>
-				    </div>
 
-				  	<div class="accordion-item" ng-class="{ open: mapLayers.baseLayers.aerial.indexOf(selectedBaseLayer) > -1 }" style="border-bottom:none;">
-				    	<div class="header" ng-click="$broadcast('refreshSlider')">
-				            {{ 'aerial_imagery' | translate}} Layers
-				        </div>
-				        <div class="content">
-						    <div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-							ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}</div>
-				        </div>
-				    </div>
-			    </accordion-new>
-
-        </a></li></ul>
-    </div>&nbsp;<div class="btn-group dropup" uib-dropdown>
-      <button type="button" uib-dropdown-toggle>
-        <i class="ion-ios-grid-view-outline"></i> <span><b>Grid</b>&nbsp;<span ng-show="gridOverlay">&nbsp;{{ gridOverlay == 'dd' ? 'Decimal Degrees' : 'UTM' }}</span></span>
-      </button>
-      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;"><li><a style="background:#fff !important;padding:0px;" ng-click="$event.stopPropagation()">
-
-      		<div class="btn-group" style="margin: 2px 6px;">
-		        <!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" uib-btn-radio="'dd'">Decimal Degrees</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" uib-btn-radio="'utm'">
-		        UTM</label>
-		    </div>
-
-        </a></li></ul>
-    </div>&nbsp;<div class="btn-group dropup" uib-dropdown ng-show="showTerrain">
-      <button type="button" uib-dropdown-toggle>
-        <i class="ion-paintbucket"></i> <span><b>Visualization</b>&nbsp;<span ng-show="terrainOverlay">&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span></span>
-      </button>
-      <ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;padding-top:0px;"><li><a style="background:#fff !important;padding:0px;border-radius: 3px; overflow: hidden;" ng-click="$event.stopPropagation()">
-
-	    	<div ng-show="terrainOverlay == 'custom'">
-
-	    		<accordion-new>
-				    <div class="accordion-item">
-				    	<div class="header" ng-click="$broadcast('refreshSlider')">
-				            Elevation
-				        </div>
-				        <div class="content">
-					      	<slider-new style="width:240px"
-							    ng-model="customTerrain.elev_low"
-							    ng-model-range="customTerrain.elev_high"
-							    translate-fn="formatElev"
-							    floor="0"
-							    ceiling="{{ obSearch.elevationMax }}"
-							    buffer="10"
-							    step="10">
-							</slider-new>
+						<div class="accordion-item" ng-class="{ open: mapLayers.baseLayers.aerial.indexOf(selectedBaseLayer) > -1 }" style="border-bottom:none;">
+							<div class="header" ng-click="$broadcast('refreshSlider')">{{ 'aerial_imagery' | translate}} Layers</div>
+							<div class="content">
+								<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
+								ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}</div>
+							</div>
 						</div>
+					</accordion-new>
+
+        		</a>
+        	</li>
+        </ul>
+    </div>&nbsp;
+    <div class="btn-group dropup" uib-dropdown>
+		<button type="button" uib-dropdown-toggle>
+			<i class="ion-ios-grid-view-outline"></i>
+			<span>
+				<b>Grid</b>&nbsp;
+				<span ng-show="gridOverlay">&nbsp;{{ gridOverlay == 'dd' ? 'Decimal Degrees' : 'UTM' }}</span>
+			</span>
+		</button>
+      	<ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;">
+      		<li>
+      			<a style="background:#fff !important;padding:0px;" ng-click="$event.stopPropagation()">
+      				<div class="btn-group" style="margin: 2px 6px;">
+			        	<!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" uib-btn-radio="'dd'">Decimal Degrees</label>-->
+			        	<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="gridOverlay" uib-btn-radio="'utm'">UTM</label>
+		    		</div>
+
+        		</a>
+        	</li>
+        </ul>
+    </div>&nbsp;
+    <div class="btn-group dropup" uib-dropdown ng-show="showTerrain">
+		<button type="button" uib-dropdown-toggle>
+				<i class="ion-paintbucket"></i>
+				<span>
+					<b>Visualization</b>&nbsp;
+					<span ng-show="terrainOverlay">&nbsp;{{ capitalizeFirstLetter(terrainOverlay) }}</span>
+				</span>
+		</button>
+      	<ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;padding-top:0px;">
+	      	<li>
+	      		<a style="background:#fff !important;padding:0px;border-radius: 3px; overflow: hidden;" ng-click="$event.stopPropagation()">
+
+			    	<div ng-show="terrainOverlay == 'custom'">
+
+			    		<accordion-new>
+						    <div class="accordion-item">
+						    	<div class="header" ng-click="$broadcast('refreshSlider')">Elevation</div>
+						        <div class="content">
+							      	<slider-new style="width:240px"
+									    ng-model="customTerrain.elev_low"
+									    ng-model-range="customTerrain.elev_high"
+									    translate-fn="formatElev"
+									    floor="0"
+									    ceiling="{{ obSearch.elevationMax }}"
+									    buffer="10"
+									    step="10">
+									</slider-new>
+								</div>
+						    </div>
+
+						  	<div class="accordion-item">
+						    	<div class="header" ng-click="$broadcast('refreshSlider')">Slope</div>
+						        <div class="content">
+							      	<slider-new style="width:240px"
+									    ng-model="customTerrain.slope_low"
+									    ng-model-range="customTerrain.slope_high"
+									    translate-fn="formatDegSlider"
+									    floor="0"
+									    ceiling="70"
+									    buffer="0"
+									    step="1">
+							        </slider-new>
+						        </div>
+						    </div>
+
+						  	<div class="accordion-item">
+						    	<div class="header">Aspect</div>
+						        <div class="content">
+						    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+									<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
+				  				</div>
+						    </div>
+					    </accordion-new>
+
+					  	<div class="accordion-item">
+					    	<div class="header" style="cursor:default;">
+					            <ngjs-color-picker selected="customTerrain.color" style="float:right; margin-right: 9px; margin-top: 3px;"></ngjs-color-picker>
+					            <span>Color</span>
+					        </div>
+					    </div>
+			    	</div>
+			    	<div ng-show="terrainOverlay == 'info'">
+			    		<div style="padding:2px 5px 2px 5px">
+			    			<span style="padding-left:2px;font-size:12px">Have a question about our terrain? Check out <span style="color:#428bca;cursor:pointer" ng-click="clickCoverageLink()">Avanet Terrain Coverage</span>
+      						</span>
+					    </div>
+			    	</div>
+
+
+			    	<div style="padding: 12px;padding-bottom:0px;" class='clearfix pad0' ng-show="terrainOverlay != 'info'">
+			    		<span style="position:relative; bottom:3px; font-weight:bold; font-size: 12px; margin-right: 4px;">OPACITY</span>
+			    		<input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 199px;"/>
+			    	</div>
+
+			    	<div class="btn-group" style="margin: 7px 6px 2px 6px">
+				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'elevation'">Elevation</label>
+				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'slope'">Slope</label>
+				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'aspect'">Aspect</label>
+				        <!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'hillshade'">Hillshade</label>-->
+				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'custom'">Custom</label>
+				        <label style="float:none;display:inline-block" class="btn btn-default ion-ios-information" uncheckable ng-model="terrainOverlay" uib-btn-radio="'info'"></label>
 				    </div>
-
-				  	<div class="accordion-item">
-				    	<div class="header" ng-click="$broadcast('refreshSlider')">
-				            Slope
-				        </div>
-				        <div class="content">
-					      	<slider-new style="width:240px"
-							    ng-model="customTerrain.slope_low"
-							    ng-model-range="customTerrain.slope_high"
-							    translate-fn="formatDegSlider"
-							    floor="0"
-							    ceiling="70"
-							    buffer="0"
-							    step="1">
-					        </slider-new>
-				        </div>
-				    </div>
-
-				  	<div class="accordion-item">
-				    	<div class="header">
-				            Aspect
-				        </div>
-				        <div class="content">
-				    		<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_low" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
-
-			  				<input-direction-range input-class="form-control" ng-model="customTerrain.aspect_high" angle-low="customTerrain.aspect_low" angle-high="customTerrain.aspect_high"></input-direction-range>
-		  				</div>
-				    </div>
-			    </accordion-new>
-
-			  	<div class="accordion-item">
-			    	<div class="header" style="cursor:default;">
-			            <ngjs-color-picker selected="customTerrain.color" style="float:right; margin-right: 9px; margin-top: 3px;"></ngjs-color-picker>
-			            <span>Color</span>
-			        </div>
-			    </div>
-	    	</div>
-
-	    	<div style="padding: 12px;padding-bottom:0px;" class='clearfix pad0' ng-show="terrainOverlay"><span style="position:relative; bottom:3px; font-weight:bold; font-size: 12px; margin-right: 4px;">OPACITY</span> <input type="range" min="0" max="1" step=".01" ng-model="overlayOpacity" style="display: inline-block; width: 199px;"/></div>
-
-	    	<div class="btn-group" style="margin: 7px 6px 2px 6px">
-		        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'elevation'">Elevation</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'slope'">
-		        Slope</label><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'aspect'">
-		        Aspect</label><!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'hillshade'">
-		        Hillshade</label>--><label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'custom'">
-		        Custom</label>
-		    </div>
-        </a></li></ul>
+	        	</a>
+	       	</li>
+	    </ul>
     </div>
+    <!-- <div class="btn-group dropup" uib-dropdown>
+		<button type="button" uib-dropdown-toggle>
+			<i class="ion-ios-information" style="margin-right:-1px;"></i>
+		</button>
+      	<ul class="dropdown-menu">
+      		<li style="padding:2px 5px 2px 5px">
+      			Have a question about our maps?<br>Check out<a style="font-size:12px;color:#428bca" href="http://avatech-inc.github.io/terrain-coverage/" target="_blank">Avanet Terrain Coverage</a>
+      			Or email us: <a style="font-size:12px;color:#428bca" href="mailto:contact@avatech.com">contact@avatech.com</a>
+        	</li>
+        </ul>
+    </div> -->
 </div>
 
 
@@ -148,11 +184,18 @@
 <map-search location-select="mapSearchSelect(location)" ng-hide="hideMapButtons"></map-search>
 
 <!-- terrain visualization legends -->
-<div ng-show="terrainOverlay == 'elevation'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.elevation }}" 
-labels="{{ !global.user.settings.elevation ? [1000,2000,3000,4000,5000] : [609, 1828, 3048, 4267, 5486] }}" 
-label-values='{{ !global.user.settings.elevation ? ["1,000 m", "2k", "3k", "4k", "5k"] : ["2,000 ft", "6k", "10k", "14k", "18k"] }}' 
-max="6000"></canvas></div>
+<div ng-show="terrainOverlay == 'elevation'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;">
+	<canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.elevation }}"
+		labels="{{ !global.user.settings.elevation ? [1000,2000,3000,4000,5000] : [609, 1828, 3048, 4267, 5486] }}"
+		label-values='{{ !global.user.settings.elevation ? ["1,000 m", "2k", "3k", "4k", "5k"] : ["2,000 ft", "6k", "10k", "14k", "18k"] }}'
+		max="6000">
+	</canvas>
+</div>
 
-<div ng-show="terrainOverlay == 'slope'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.slope }}" labels="[10, 20, 30, 40, 50, 60, 70]" max="80" label-values='["10°", "20°", "30°", "40°", "50°", "60°", "70°"]'></canvas></div>
+<div ng-show="terrainOverlay == 'slope'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;">
+	<canvas height="52" width="400" style="width:200px;height:26px;float:left;" linear-graph legend="{{ colorMaps.slope }}" labels="[10, 20, 30, 40, 50, 60, 70]" max="80" label-values='["10°", "20°", "30°", "40°", "50°", "60°", "70°"]'></canvas>
+</div>
 
-<div ng-show="terrainOverlay == 'aspect'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;"><canvas height="140" width="140" style="width:70px;height:70px;float:left;" rose-graph legend="{{ colorMaps.aspect }}"></canvas></div>
+<div ng-show="terrainOverlay == 'aspect'" style="background: rgba(255,255,255,.7); position: absolute; right: 63px; bottom: 10px; border-radius: 4px; padding: 5px;">
+	<canvas height="140" width="140" style="width:70px;height:70px;float:left;" rose-graph legend="{{ colorMaps.aspect }}"></canvas>
+</div>

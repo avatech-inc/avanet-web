@@ -60,6 +60,7 @@
     "node-uuid": "^1.4.3",
     "pikaday": "^1.4.0",
     "png-js": "^0.1.1",
+    "protobufjs": "^5.0.1",
     "raven": "0.7.3",
     "redux": "^3.3.1",
     "redux-thunk": "^1.0.3",

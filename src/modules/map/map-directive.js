@@ -877,6 +877,8 @@ const Map = [
                 scope.clickCoverageLink = function () {
                     window.open('http://avatech-inc.github.io/terrain-coverage/')
                 }
+
+                scope.formatDegSlider = val => (val + '°')
             }
 
             scope.$watch('load', () => {

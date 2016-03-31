@@ -879,13 +879,6 @@ const Map = [
                 }
 
                 scope.formatDegSlider = val => (val + '°')
-
-                // L.rectangle([
-                //     [56.9994444446564, -137.000555555694], [58.0005555554955, -135.999444444855]
-                // ], {
-                //     fill: 0,
-                //     weight: 0.5
-                // }).addTo(scope.map);
             }
 
             scope.$watch('load', () => {

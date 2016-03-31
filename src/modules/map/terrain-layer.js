@@ -58,23 +58,12 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         let tileSize = L.GridLayer.prototype.getTileSize.call(this)
         let zoom = this._tileZoom
         let zoomN = this.options.maxNativeZoom
-        // console.log(this.options)
-        // // increase tile size for zoom level 12 (scale up from 11)
-        // if ((Object.getPrototypeOf().$type.name === 'RasterESA')) {
-        // if (Object.getPrototypeOf(this.raster)) {
-        //     tileSize = new L.Point(512, 512); // 128
-        // }
-        // // increase tile size when overzooming (scalw down from 13)
-        // } else {
-        //     tileSize = (
-        //         zoomN !== null &&
-        //         zoom > zoomN
-        //     ) ? tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize
-        // }
-        if (parseInt(zoom, 10) === 12) {
+
+        // if (this.options.underzoom && parseInt(zoom, 10) === 12) {
+        if (parseInt(zoom, 10) === 12) { // increase tile size for zoom level 12 (scale up from 11)
             tileSize = new L.Point(512, 512) // 128
         }
-        if (parseInt(zoom, 10) > 13) {
+        if (parseInt(zoom, 10) > 13) { // increase tile size when overzooming (scale down from 13)
             tileSize = (
                 zoomN !== null &&
                 zoom > zoomN
@@ -143,13 +132,6 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 )
             }
 
-            // if ((tag === 'png') && (tilePoint.z === 12)) {
-            //     // var tileSize = new L.Point(512, 512); // 128
-            //     canvas.width = 512
-            //     canvas.height = 512
-            //     context = canvas.getContext('2d')
-            // }
-
             // draw canvas
             this.updateTile(context, pixels.buffer);
         }
@@ -172,19 +154,12 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         xhr.responseType = 'arraybuffer'
 
         xhr.onreadystatechange = function () {
-            var _z
             // if xhr is DONE and didn't succeed
             if (xhr.readyState === 4 && xhr.status !== 200) {
                 // if xhr was looking for a pbf zxytile
                 if (xhr.responseURL.indexOf('.pbf') > -1) {
                     var splits = xhr.responseURL.split('/')
-                    // if (parseInt(splits[splits.length - 3], 10) === 12) {
-                    //     _z = 11
-                    // } else {
-                    //     _z = splits[splits.length - 3]
-                    // }
                     let pngUrl = L.Util.template(TerrainSources.pngV1, L.extend({
-                        // console.log(tilePoint)
                         // make zoom level 12 overzoomed from 11
                         z: splits[splits.length - 3],
                         x: splits[splits.length - 2],

@@ -72,7 +72,13 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         //     ) ? tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize
         // }
         if (parseInt(zoom, 10) === 12) {
-            tileSize = new L.Point(512, 512); // 128
+            tileSize = new L.Point(512, 512) // 128
+        }
+        if (parseInt(zoom, 10) > 13) {
+            tileSize = (
+                zoomN !== null &&
+                zoom > zoomN
+            ) ? tileSize.divideBy(map.getZoomScale(zoomN, zoom)).round() : tileSize
         }
 
         return tileSize
@@ -149,9 +155,9 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         }
 
         // adjust zoom point for overzoom
-        // if (tilePoint.z > this.options.maxNativeZoom) {
-        //     tilePoint.z = this.options.maxNativeZoom
-        // }
+        if (tilePoint.z > this.options.maxNativeZoom) {
+            tilePoint.z = this.options.maxNativeZoom
+        }
 
         // make zoom level 12 overzoomed from 11
         if (parseInt(tilePoint.z, 10) === 12) {

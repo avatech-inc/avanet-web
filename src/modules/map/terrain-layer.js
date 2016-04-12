@@ -311,11 +311,11 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         let zoom = Math.min(13, this._map.getZoom())
         // let zoom = this._map.getZoom()
 
-        // if (this.options.underzoom) {
-        //     if (parseInt(zoom, 10) === 12) {
-        //         zoom = 11 // 13
-        //     }
-        // }
+        if (this.options.underzoom) {
+            if (parseInt(zoom, 10) === 12) {
+                zoom = 11 // 13
+            }
+        }
 
         // get xyz of clicked tile based on clicked lat/lng
         let tilePoint = this._latLngToTilePoint(lat, lng, zoom)
@@ -336,30 +336,30 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         }
 
         // adjust points for overzoom
-        // if (this._map.getZoom() > this.options.maxNativeZoom) {
-        //     let zoomDifference = this._map.getZoom() - this.options.maxNativeZoom
-        //     let zoomDivide = Math.pow(2, zoomDifference)
+        if (this._map.getZoom() > this.options.maxNativeZoom) {
+            let zoomDifference = this._map.getZoom() - this.options.maxNativeZoom
+            let zoomDivide = Math.pow(2, zoomDifference)
 
-        //     pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
-        //     pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
 
-        // // adjust points for underzoom
-        // } else if (this.options.underzoom && parseInt(this._map.getZoom(), 10) === 12) {
-        //     let zoomDifference = this._map.getZoom() - 11
-        //     let zoomDivide = Math.pow(2, zoomDifference)
+        // adjust points for underzoom
+        } else if (this.options.underzoom && parseInt(this._map.getZoom(), 10) === 12) {
+            let zoomDifference = this._map.getZoom() - 11
+            let zoomDivide = Math.pow(2, zoomDifference)
 
-        //     pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
-        //     pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
+            pointInTile.x = Math.floor(pointInTile.x / zoomDivide)
+            pointInTile.y = Math.floor(pointInTile.y / zoomDivide)
 
-        //     // previous underzoom code
-        //     // var zoomDifference = 1;
-        //     // var zoomDivide = Math.pow(2, zoomDifference)
-        //     // pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
-        //     // pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
-        // }
+            // previous underzoom code
+            // var zoomDifference = 1;
+            // var zoomDivide = Math.pow(2, zoomDifference)
+            // pointInTile.x = Math.floor(pointInTile.x * zoomDivide);
+            // pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
+        }
+
         pointInTile.x = Math.floor(pointInTile.x)
         pointInTile.y = Math.floor(pointInTile.y)
-
 
         // make sure point is within 256x256 bounds
         if (pointInTile.x > 255) pointInTile.x = 255
@@ -372,23 +372,31 @@ const AvatechTerrainLayer = L.GridLayer.extend({
 
         let tileId = tilePoint.x + ':' + tilePoint.y + ':' + parseInt(this._map.getZoom(), 10)
         let tile = this._tiles[tileId]
+        let terrainData = {
+            lat: lat,
+            lng: lng,
+
+            index: index,
+            pointInTile: pointInTile,
+            original: original,
+
+            elevation: null,
+            slope: null,
+            aspect: null
+        }
+
 
         if (!tile) {
-            // promise.resolve(null);
+            promise.resolve(terrainData)
             return promise.promise
         }
+
         let canvas = tile.el
 
         // wait for tile to load
         canvas._terrainLoaded.promise.then(() => {
             // make sure terrain is loaded
             if (!canvas._terrainData) return
-
-            // make sure coords are with bounds
-            if (pointInTile.x > 255) pointInTile.x = 255
-            if (pointInTile.y > 255) pointInTile.y = 255
-            if (pointInTile.x < 0) pointInTile.x = 0
-            if (pointInTile.y < 0) pointInTile.y = 0
 
             let esaData
             // GET TERRRAIN DATA
@@ -408,19 +416,9 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 esaData = this._convertInt(canvas._terrainData[arrayIndex])
             }
 
-            let terrainData = {
-                lat: lat,
-                lng: lng,
-
-                index: index,
-                pointInTile: pointInTile,
-                original: original,
-
-                elevation: esaData[0],
-                slope: esaData[1],
-                aspect: esaData[2]
-            }
-
+            terrainData.elevation = esaData[0]
+            terrainData.slope = esaData[1]
+            terrainData.aspect = esaData[2]
 
             // if empty values, make null
             if (terrainData &&
@@ -432,6 +430,7 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 terrainData.slope = null
                 terrainData.aspect = null
             }
+
             promise.resolve(terrainData)
         })
         return promise.promise

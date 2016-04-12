@@ -160,11 +160,26 @@ window.ElevationWidget = function() {
             this._applyData();
         }
 
+        let errorMessageContainer = L.DomUtil.create("div", "elev-error hidden")
+        let errorMessageTitle = L.DomUtil.create("div", "elev-error-title")
+        let errorMessageMessage = L.DomUtil.create("div", "elev-error-message")
+
+        errorMessageTitle.innerHTML = "No elevation data available.<br>"
+        errorMessageMessage.innerHTML = 'Click <a href="http://avatech-inc.github.io/terrain-coverage/" target="_blank">here</a> for a map of elevation coverage.'
+
         $(".bottom-pane .elevation").remove();
         $(".bottom-pane").append($(container));
-        $(container).addClass("elevation-widget");
+        $(container).addClass("elevation-widget").append($(errorMessageContainer).append(errorMessageTitle).append(errorMessageMessage))
         //return container;
         //return null;
+    }
+
+    this.showError = function() {
+        $(".bottom-pane .elev-error").removeClass("hidden")
+    }
+
+    this.hideError = function() {
+        $(".bottom-pane .elev-error").addClass("hidden")
     }
 
     this._dragHandler = function() {
@@ -768,7 +783,7 @@ window.ElevationWidget = function() {
         }
 
         this._focuslabelX2.attr("x", 225).attr("y",-5)
-            .text("SLOPE: " + item.slope + "°");
+            .text("SLOPE: " + (item.slope ? item.slope : '0') + "°");
 
         this._focuslabelX3.attr("x", 290).attr("y", -5)
             .text("ASPECT: " + item.aspect);

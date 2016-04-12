@@ -68,31 +68,191 @@ const calculateLineSegmentStats = points => {
 
     if (bearing < 0) bearing += 360
 
-    // calculate stats
-    return {
+    let stats = {
         timeEstimateMinutes: (
             endPoint.totalTimeEstimateMinutes -
             startPoint.totalTimeEstimateMinutes
         ),
         distance: endPoint.totalDistance - startPoint.totalDistance,
 
-        elevationChange: endPoint.elevation - startPoint.elevation,
-        elevationMin: _.minBy(points, 'elevation').elevation,
-        elevationMax: _.maxBy(points, 'elevation').elevation,
+        elevationChange: null,
+        elevationMin: null,
+        elevationMax: null,
 
-        slopeMin: _.minBy(points, 'slope').slope,
-        slopeMax: _.maxBy(points, 'slope').slope,
-        slopeAverage: _.sumBy(points, 'slope') / points.length,
+        slopeMin: 0,
+        slopeMax: 0,
+        slopeAverage: 0,
 
-        verticalUp: _.sumBy(points, 'verticalUp'),
-        verticalDown: _.sumBy(points, 'verticalDown'),
+        verticalUp: null,
+        verticalDown: null,
 
-        aspectMin: _.minBy(points, 'aspect').aspect,
-        aspectMax: _.maxBy(points, 'aspect').aspect,
+        aspectMin: null,
+        aspectMax: null,
         aspectAverage: getAverageAspect(_.map(points, 'aspect')),
 
         bearing: bearing
     }
+
+    // set elevation change, max, min if available
+    if (startPoint.elevation !== null && endPoint.elevation !== null) {
+        stats.elevationChange = endPoint.elevation - startPoint.elevation
+    }
+
+    let minElevationPoint = _.minBy(points, 'elevation')
+    let maxElevationPoint = _.maxBy(points, 'elevation')
+
+    if (minElevationPoint && minElevationPoint.elevation !== null) {
+        stats.elevationMin = minElevationPoint.elevation
+    }
+
+    if (maxElevationPoint && maxElevationPoint.elevation) {
+        stats.elevationMax = maxElevationPoint.elevation
+    }
+
+    let minSlopePoint = _.minBy(points, 'slope')
+    let maxSlopePoint = _.maxBy(points, 'slope')
+
+    if (minSlopePoint && minSlopePoint.slope !== null) {
+        stats.slopeMin = minSlopePoint.slope
+    }
+
+    if (maxSlopePoint && maxSlopePoint.slope !== null) {
+        stats.slopeMax = maxSlopePoint.slope
+    }
+
+    let slopeTotal = _.sumBy(points, 'slope')
+
+    if (slopeTotal) stats.slopeAverage = slopeTotal / points.length
+
+    let verticalUp = _.sumBy(points, 'verticalUp')
+    let verticalDown = _.sumBy(points, 'verticalDown')
+
+    if (verticalUp) stats.verticalUp = verticalUp
+    if (verticalDown) stats.verticalDown = verticalDown
+
+    let minAspectPoint = _.minBy(points, 'aspect')
+    let maxAspectPoint = _.maxBy(points, 'aspect')
+
+    if (minAspectPoint) stats.aspectMin = minAspectPoint.aspect
+    if (maxAspectPoint) stats.aspectMax = maxAspectPoint.aspect
+
+    // calculate stats
+    return stats
+}
+
+let calculateRouteStats = (points, munterRateUp, munterRateDown) => {
+    if (!points) return []
+
+    let totalDistance = 0
+    let totalTimeEstimateMinutes = 0
+    let originalIndex = 0
+
+    let statsPoints = []
+
+    for (let i = 0; i < points.length; i++) {
+        // $log.debug(i);
+        let point = points[i]
+
+        if (!point) continue
+
+        // assign index for tracking
+        point.index = i
+
+        // assign original index for tracking markers
+        if (point.original) {
+            point.originalIndex = originalIndex
+            originalIndex++
+        }
+
+        // defaults for first point
+        point.totalDistance = 0
+        point.totalTimeEstimateMinutes = 0
+
+        if (i === 0) continue
+
+        // keep track of distance
+
+        let segmentDistance = turf.lineDistance(
+            turf.linestring([
+                [
+                    points[i - 1].lng,
+                    points[i - 1].lat
+                ],
+                [
+                    point.lng,
+                    point.lat
+                ]
+            ]),
+            'kilometers'
+        )
+
+        point.distance = segmentDistance
+        totalDistance += segmentDistance
+        point.totalDistance = totalDistance
+
+        // keep track of bearing
+        point.bearing = turf.bearing(
+            turf.point([
+                points[i - 1].lng,
+                points[i - 1].lat
+            ]),
+            turf.point([
+                point.lng,
+                point.lat
+            ])
+        )
+
+        if (point.bearing < 0) point.bearing += 360
+
+        // keep track of vertical up/down and munter time estimates
+
+        // munter time estimate details...
+        // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+        // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=
+        // munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+        // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+        // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+        if (point.elevation === null) {
+            point.direction = 'flat'
+            point.munterUnits = segmentDistance
+
+            let munterRateFlat = (munterRateUp + munterRateDown) / 2
+            point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
+        } else {
+            let previousElevation = points[i - 1].elevation
+            point.elevationDifference = point.elevation - previousElevation
+
+            if (point.elevationDifference > 0) {
+                point.direction = 'up'
+                point.verticalUp = point.elevationDifference
+
+                point.munterUnits = segmentDistance + (point.verticalUp / 100)
+                point.timeEstimateMinutes = (point.munterUnits / munterRateUp) * 60
+            } else if (point.elevationDifference < 0) {
+                point.direction = 'down'
+                point.verticalDown = Math.abs(point.elevationDifference)
+
+                point.munterUnits = segmentDistance + (point.verticalDown / 100)
+                point.timeEstimateMinutes = (
+                    point.munterUnits / munterRateDown
+                ) * 60
+            } else {
+                point.direction = 'flat'
+                point.munterUnits = segmentDistance
+
+                let munterRateFlat = (munterRateUp + munterRateDown) / 2
+                point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
+            }
+        }
+
+        totalTimeEstimateMinutes += point.timeEstimateMinutes
+        point.totalTimeEstimateMinutes = totalTimeEstimateMinutes
+
+        statsPoints.push(point)
+    }
+
+    return statsPoints
 }
 
 const getLegPoints = (points, pointIndexStart, pointIndexEnd) => {
@@ -249,7 +409,7 @@ const RoutePlanning = [
 
             let editHandler = createEditHandler()
 
-            let saveLinePoints = () => {
+            let saveLinePoints = points => {
                 $timeout.cancel(saveLineTimeout)
                 saveLineTimeout = $timeout(() => {
                     $scope.route.stats = {}
@@ -276,16 +436,16 @@ const RoutePlanning = [
                             }
 
                             // get leg
-                            if (elevationProfilePoints) {
+                            if (points) {
                                 let legPoints = getLegPoints(
-                                    elevationProfilePoints,
+                                    points,
                                     lastWaypointIndex,
                                     thisPoint._index
                                 )
 
                                 pointDetails.leg = calculateLineSegmentStats(legPoints)
                                 pointDetails.terrain = getElevationProfilePoint(
-                                    elevationProfilePoints,
+                                    points,
                                     thisPoint._index
                                 )
                             }
@@ -304,9 +464,9 @@ const RoutePlanning = [
                     }
 
                     // route terrain stats
-                    if (elevationProfilePoints) {
+                    if (points) {
                         // $log.debug("here!!!!!!!!!!!!!!!!!");
-                        $scope.route.stats = calculateLineSegmentStats(elevationProfilePoints)
+                        $scope.route.stats = calculateLineSegmentStats(points)
                         // $log.debug($scope.route.stats);
                     }
                 }, 10)
@@ -445,113 +605,16 @@ const RoutePlanning = [
 
                 createElevationProfileWidget()
 
+                if (maxElevation === 0) {
+                    elevationWidget.showError()
+                } else {
+                    elevationWidget.hideError()
+                }
+
                 lastLine = L.geoJson(geoJSON, {
                     // working on a better solution
                     onEachFeature: elevationWidget.addData.bind(elevationWidget)
                 })
-            }
-
-            let calculateRouteStats = () => {
-                let points = elevationProfilePoints
-                if (!points) return
-
-                let totalDistance = 0
-                let totalTimeEstimateMinutes = 0
-                let originalIndex = 0
-
-                for (let i = 0; i < points.length; i++) {
-                    // $log.debug(i);
-                    let point = points[i]
-
-                    if (!point) continue
-
-                    // assign index for tracking
-                    point.index = i
-
-                    // assign original index for tracking markers
-                    if (point.original) {
-                        point.originalIndex = originalIndex
-                        originalIndex++
-                    }
-
-                    // defaults for first point
-                    point.totalDistance = 0
-                    point.totalTimeEstimateMinutes = 0
-
-                    if (i === 0) continue
-
-                    // keep track of distance
-
-                    let segmentDistance = turf.lineDistance(
-                        turf.linestring([
-                            [
-                                points[i - 1].lng,
-                                points[i - 1].lat
-                            ],
-                            [
-                                point.lng,
-                                point.lat
-                            ]
-                        ]),
-                        'kilometers'
-                    )
-
-                    point.distance = segmentDistance
-                    totalDistance += segmentDistance
-                    point.totalDistance = totalDistance
-
-                    // keep track of bearing
-                    point.bearing = turf.bearing(
-                        turf.point([
-                            points[i - 1].lng,
-                            points[i - 1].lat
-                        ]),
-                        turf.point([
-                            point.lng,
-                            point.lat
-                        ])
-                    )
-
-                    if (point.bearing < 0) point.bearing += 360
-
-                    // keep track of vertical up/down and munter time estimates
-
-                    // munter time estimate details...
-                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-
-                    let previousElevation = points[i - 1].elevation
-                    point.elevationDifference = point.elevation - previousElevation
-
-                    if (point.elevationDifference > 0) {
-                        point.direction = 'up'
-                        point.verticalUp = point.elevationDifference
-
-                        point.munterUnits = segmentDistance + (point.verticalUp / 100)
-                        point.timeEstimateMinutes = (point.munterUnits / $scope.munterRate.up) * 60
-                    } else if (point.elevationDifference < 0) {
-                        point.direction = 'down'
-                        point.verticalDown = Math.abs(point.elevationDifference)
-
-                        point.munterUnits = segmentDistance + (point.verticalDown / 100)
-                        point.timeEstimateMinutes = (
-                            point.munterUnits / $scope.munterRate.down
-                        ) * 60
-                    } else {
-                        point.direction = 'flat'
-                        point.munterUnits = segmentDistance
-
-                        let munterRateFlat = ($scope.munterRate.up + $scope.munterRate.down) / 2
-                        point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-                    }
-
-                    totalTimeEstimateMinutes += point.timeEstimateMinutes
-                    point.totalTimeEstimateMinutes = totalTimeEstimateMinutes
-                }
-
-                saveLinePoints()
             }
 
             let processUpdate = callback => {
@@ -570,7 +633,7 @@ const RoutePlanning = [
                 )
 
                 // sample every 5m
-                let sampleCount = Math.round((distance * 1000) / 5)
+                let sampleCount = Math.round((distance * 1000) / 20)
 
                 // keep track of original points
                 for (let i = 0; i < points.length; i++) {
@@ -595,7 +658,13 @@ const RoutePlanning = [
                     // $log.debug(receivedPoints);
 
                     // calculate route stats/time, etc.
-                    calculateRouteStats()
+                    let statsPoints = calculateRouteStats(
+                        elevationProfilePoints,
+                        $scope.munterRate.up,
+                        $scope.munterRate.down
+                    )
+
+                    saveLinePoints(statsPoints)
 
                     // plot elevation profile
                     plotElevationProfile()
@@ -614,7 +683,7 @@ const RoutePlanning = [
 
                     $scope.loading = false
 
-                    saveLinePoints()
+                    saveLinePoints(statsPoints)
                 })
 
                 // $log.debug("promises!");
@@ -689,7 +758,7 @@ const RoutePlanning = [
                     ) {
                         makeWaypoint(marker)
                         updateSegments()
-                        saveLinePoints()
+                        saveLinePoints(elevationProfilePoints)
                     }
                 })
             }
@@ -804,7 +873,7 @@ const RoutePlanning = [
             let deleteWaypoint = marker => {
                 makeRegularPoint(marker)
                 processUpdate()
-                saveLinePoints()
+                saveLinePoints(elevationProfilePoints)
             }
 
             let makePoint = marker => {
@@ -871,7 +940,7 @@ const RoutePlanning = [
                         nameInput.value = marker.waypoint.name
                         nameInput.onkeyup = () => {
                             marker.waypoint.name = nameInput.value
-                            saveLinePoints()
+                            saveLinePoints(elevationProfilePoints)
                         }
 
                         if (marker._index > 0 && $scope.routeControl.editing) {
@@ -926,7 +995,7 @@ const RoutePlanning = [
                             marker.fire('click')
 
                             processUpdate()
-                            saveLinePoints()
+                            saveLinePoints(elevationProfilePoints)
                         })
 
                         popup.appendChild(deleteButton)
@@ -1239,11 +1308,12 @@ const RoutePlanning = [
                 // }
 
                 let gpx = ('<?xml version="1.0"?>\n' +
-                    '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1">\n' + // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+                    '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="Avatech, Inc.">\n' +
+                    // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
                     '  <metadata>\n' +
                     '    <name><![CDATA[Avanet GPX export]]></name>\n' +
                     '    <desc><![CDATA[]]></desc>\n' +
-                    '    <link href="http://avanet.avatech.com">\n' +
+                    '    <link href="https://avanet.avatech.com/">\n' +
                     '      <text>Created with Avanet - Avatech, Inc.</text>\n' +
                     '    </link>\n' +
                     // '    <bounds minlat="' + minlat + '" minlon="' + minlon +
@@ -1592,7 +1662,11 @@ const RoutePlanning = [
                     return
                 }
 
-                calculateRouteStats()
+                calculateRouteStats(
+                    elevationProfilePoints,
+                    $scope.munterRate.up,
+                    $scope.munterRate.down
+                )
             }, true)
 
             $scope.$watch('hoverOnLeg', () => {

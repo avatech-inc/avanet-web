@@ -673,11 +673,10 @@ const Map = [
                     scope.overlayOpacity = 0.5
 
                     let terrainOptions = {
-                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}.png',
-                        // pbfUrl: 'https://vtiles-{s}.avatech.com/{z}/{x}/{y}_ESA.pbf',
-                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v1/{z}/{x}/{y}.pbf',
+                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}_.png',
+                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v2/{z}/{x}/{y}.pbf',
 
-                        protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESAPACK.proto',
+                        protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESA.proto',
 
                         zIndex: 999,
                         opacity: scope.overlayOpacity,

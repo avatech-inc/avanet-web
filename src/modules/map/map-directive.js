@@ -1,5 +1,5 @@
 
-import AvatechTerrainLayer from './terrain-layer'
+import { TerrainLayer } from 'leaflet-terrain'
 
 import './map-directive.html'
 import './observation-map-popup.html'
@@ -15,7 +15,6 @@ const Map = [
     'mapLayers',
     '$http',
     '$log',
-    'terrainVisualization',
     '$uibModal',
 
     (
@@ -29,7 +28,6 @@ const Map = [
         mapLayers,
         $http,
         $log,
-        terrainVisualization,
         $uibModal
     ) => ({
         restrict: 'A',
@@ -53,7 +51,7 @@ const Map = [
             scope.mapLayers = mapLayers
 
             // get color maps for terrain viz legends
-            scope.colorMaps = terrainVisualization.colorMaps
+            scope.colorMaps = TerrainLayer.ColorMaps
 
             // defaults
             if (typeof scope.showTerrain === 'undefined') scope.showTerrain = true
@@ -153,18 +151,18 @@ const Map = [
                 scope.map.on('load', e => mapLoaded.resolve())
 
                 // setup heatmap
-                let heatMap
+                // let heatMap
 
-                setTimeout(() => {
-                    heatMap = L.heatLayer(
-                        [],
-                        {
-                            radius: 1,
-                            blur: 1,
-                            maxZoom: 20
-                        }
-                    ).addTo(scope.map)
-                }, 10)
+                // setTimeout(() => {
+                //     heatMap = L.heatLayer(
+                //         [],
+                //         {
+                //             radius: 1,
+                //             blur: 1,
+                //             maxZoom: 20
+                //         }
+                //     ).addTo(scope.map)
+                // }, 10)
 
                 // setup clustering
                 let pruneCluster = new PruneCluster.PruneClusterForLeaflet()
@@ -308,7 +306,7 @@ const Map = [
                     if (!scope.obSearch) return
 
                     // reset heatmap
-                    if (heatMap) heatMap.setLatLngs([])
+                    // if (heatMap) heatMap.setLatLngs([])
 
                     // hide all markers
                     angular.forEach(obsOnMap, marker => {
@@ -326,12 +324,12 @@ const Map = [
                             obsOnMap[ob._id].data.filtered = false
 
                             // add to heatmap
-                            if (heatMap) {
-                                heatMap.addLatLng([
-                                    ob.location[1],
-                                    ob.location[0]
-                                ])
-                            }
+                            // if (heatMap) {
+                            //     heatMap.addLatLng([
+                            //         ob.location[1],
+                            //         ob.location[0]
+                            //     ])
+                            // }
                         }
                     })
 
@@ -469,13 +467,13 @@ const Map = [
                         pruneCluster.ProcessView() // eslint-disable-line new-cap
 
                         // hide heatmap
-                        if (heatMap) {
-                            heatMap.setOptions({
-                                radius: 1,
-                                blur: 1,
-                                maxZoom: 20
-                            })
-                        }
+                        // if (heatMap) {
+                        //     heatMap.setOptions({
+                        //         radius: 1,
+                        //         blur: 1,
+                        //         maxZoom: 20
+                        //     })
+                        // }
                     } else if (scope.detailMode && zoom < detailedZoomMin) {
                         $log.debug('DETAIL MODE OFF')
                         scope.detailMode = false
@@ -485,13 +483,13 @@ const Map = [
                         pruneCluster.ProcessView() // eslint-disable-line new-cap
 
                         // show heatmap
-                        if (heatMap) {
-                            heatMap.setOptions({
-                                radius: 10,
-                                blur: 15,
-                                maxZoom: zoom // (zoom + (zoom / 4))
-                            })
-                        }
+                        // if (heatMap) {
+                        //     heatMap.setOptions({
+                        //         radius: 10,
+                        //         blur: 15,
+                        //         maxZoom: zoom // (zoom + (zoom / 4))
+                        //     })
+                        // }
 
                         // track zoom on mixpanel (to see which zoom levels are most popular)
                         if (__PROD__) {
@@ -500,35 +498,17 @@ const Map = [
                     }
                 })
 
-                // keep track of location at cursor
-                let terrainQueryTimer
-
                 scope.map.on('mousemove', e => {
                     scope.$apply(() => {
                         scope.mapCursorLocation = e.latlng
 
-                        // query terrain layer
-                        if (e.latlng && scope.terrainLayer) {
-                            if (terrainQueryTimer) $timeout.cancel(terrainQueryTimer)
-
-                            terrainQueryTimer = $timeout(() => {
-                                scope.terrainLayer
-                                    .getTerrainData(e.latlng.lat, e.latlng.lng)
-                                    .then(data => {
-                                        if (!data || !data.elevation) return
-
-                                        scope.mapCursorElevation = data.elevation
-                                        scope.$apply()
-                                    })
-                            }, 50)
-                        }
+                        scope.terrainLayer.latlngToTerrainData(e.latlng).then(terrainData => {
+                            scope.mapCursorElevation = terrainData.elevation
+                        })
                     })
-
-                    // scope.$apply();
                 })
 
                 scope.map.on('mouseout', e => {
-                    // $timeout(;
                     scope.$apply(() => {
                         scope.mapCursorLocation = null
                     })
@@ -623,49 +603,20 @@ const Map = [
                 }
 
                 // handle loading of observations
-                let initLoad = () => {
-                    if (scope.showObs) {
-                        scope.loadingProfiles = true
-                        scope.loadProfiles(false)
+                if (scope.showObs) {
+                    scope.loadingProfiles = true
+                    scope.loadProfiles(false)
 
-                        setTimeout(() => {
-                            setInterval(() => {
-                                scope.loadProfiles(false)
-                            }, 60000)
+                    setTimeout(() => {
+                        setInterval(() => {
+                            scope.loadProfiles(false)
                         }, 60000)
-                    }
+                    }, 60000)
                 }
-
-                let terrainLoad = () => {
-                    scope.terrainLayer.off('load', terrainLoad)
-
-                    if (scope.showObs) {
-                        scope.loadProfiles()
-                    }
-                }
-
-                let moveTimer
 
                 scope.map.on('moveend', () => {
-                    if (scope.terrainLayer) {
-                        scope.terrainLayer.off('load', terrainLoad)
-
-                        // todo: hacky way to wait for terrain loading,
-                        // need to find a better solution
-                        if (moveTimer) $timeout.cancel(moveTimer)
-
-                        moveTimer = $timeout(() => {
-                            if (!scope.isTerrainLoaded) {
-                                scope.terrainLayer.off('load', terrainLoad)
-                                scope.terrainLayer.on('load', terrainLoad)
-                            } else {
-                                terrainLoad()
-                            }
-                        }, 200)
-                    } else {
-                        if (scope.showObs) {
-                            scope.loadProfiles()
-                        }
+                    if (scope.showObs) {
+                        scope.loadProfiles()
                     }
                 })
 
@@ -721,44 +672,30 @@ const Map = [
                 if (scope.showTerrain) {
                     scope.overlayOpacity = 0.5
 
-                    scope.terrainLayer = new AvatechTerrainLayer({
+                    let terrainOptions = {
+                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}_.png',
+                        pbfUrl: 'http://127.0.0.1:9999/{z}/{x}/{y}.pbf',
+                        // pbfUrl: 'https://vtiles-{s}.avatech.com/{z}/{x}/{y}_ESA.pbf',
+                        // pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/global_esa_v6/{z}/{x}/{y}.pbf.gz',
+
+                        protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESAPACK.proto',
+
                         zIndex: 999,
-                        opacity: scope.overlayOpacity
-                    }).addTo(scope.map)
+                        opacity: scope.overlayOpacity,
+                        updateWhenIdle: false
+                    }
 
-                    scope.terrainLayer.on('loading', () => {
-                        scope.isTerrainLoaded = false
-                    })
+                    if (window.Worker) {
+                        terrainOptions.pngWorker = '/assets/png-worker.js'
+                        terrainOptions.pbfWorker = '/assets/pbf-worker.js'
+                    }
 
-                    scope.terrainLayer.on('load', () => {
-                        scope.isTerrainLoaded = true
-                    })
+                    scope.terrainLayer = new TerrainLayer(terrainOptions)
 
-                    scope.terrainLayer.once('load', initLoad)
+                    scope.terrainLayer._zoomAnimated = false;
+                    scope.terrainLayer.addTo(scope.map)
 
-                    setTimeout(() => {
-                        scope.terrainLayer.setZIndex(99998)
-                    }, 100)
-
-                    scope.$watch('overlayOpacity', () => {
-                        scope.terrainLayer.setOpacity(scope.overlayOpacity)
-                    })
-
-                    scope.map.on('viewreset', () => {
-                        scope.terrainLayer.redrawQueue = []
-                        // workers.forEach(function (worker) {
-                        //     worker.postMessage('clear');
-                        // });
-                    })
-
-                    scope.map.on('zoomstart', () => {
-                        scope.terrainLayer.redrawQueue = []
-                    })
-
-                    // set terrain overlay
-                    scope.$watch('terrainOverlay', () => {
-                        scope.terrainLayer.setOverlayType(scope.terrainOverlay)
-                    })
+                    scope.isTerrainLoaded = true
 
                     // custom terrain visualization
                     scope.elevationMax = !Global.user.settings.elevation ? 8850 : 8850
@@ -778,6 +715,14 @@ const Map = [
 
                     let customTerrainTimer
 
+                    scope.$watch('terrainOverlay', () => {
+                        scope.terrainLayer.setType(scope.terrainOverlay)
+                    })
+
+                    scope.$watch('overlayOpacity', () => {
+                        scope.terrainLayer.setOpacity(scope.overlayOpacity)
+                    })
+
                     scope.$watch('customTerrain', () => {
                         if (customTerrainTimer) clearTimeout(customTerrainTimer)
 
@@ -786,13 +731,11 @@ const Map = [
                                 scope.customTerrain.color = scope.customTerrain.color.substr(1)
                             }
 
-                            scope.terrainLayer.setCustomParams(
+                            scope.terrainLayer.setParams(
                                 angular.copy(scope.customTerrain)
                             )
                         }, 30)
                     }, true)
-                } else {
-                    initLoad()
                 }
 
                 scope.capitalizeFirstLetter = str => {

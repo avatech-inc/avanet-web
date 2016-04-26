@@ -3,3 +3,4 @@ src/js/types/*
 src/js/stores/*
 src/js/actions/*
 src/modules/user/billing.js
+src/modules/sp-profile-upload/upload.js

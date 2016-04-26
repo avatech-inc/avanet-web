@@ -30,6 +30,7 @@
     "window": false,
     "$": false,
     "jQuery": false,
+    "d3": false,
     "_": false,
     "angular": false,
     "moment": false,

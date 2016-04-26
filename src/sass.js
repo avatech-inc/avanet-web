@@ -1,6 +1,9 @@
 
 // SASS
 
+require('../node_modules/metrics-graphics/dist/metricsgraphics.css')
+require('./sass/elevation-profile.scss')
+
 require('./vendor/ionicons.min.css')
 require('./vendor/font-awesome/css/font-awesome.min.css')
 require('./vendor/font-roboto.scss')

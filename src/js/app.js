@@ -108,7 +108,8 @@ import Settings from '../modules/user/settings'
 // eslint-disable-next-line import/no-unresolved
 import { Billing } from '../modules/user/billing'
 
-import Terrain from '../modules/map/terrain-visualization'
+// views
+import { TerrainLayer } from 'leaflet-terrain'
 
 let DEPS = [
     'ngRoute',
@@ -131,7 +132,6 @@ let DEPS = [
     'pikaday',
     'ngjsColorPicker',
     'ngAudio',
-    'terrain',
     'ui.mask'
 ]
 
@@ -153,7 +153,6 @@ if (__PROD__) {
 }
 
 angular.module('schemaForm').config(Schema)
-angular.module('terrain', []).factory('terrainVisualization', Terrain)
 
 // define app and dependencies
 angular.module('avatech', DEPS)
@@ -282,6 +281,12 @@ angular.module('avatech').run([
         Global
     ) => {
         $rootScope.todaysDate = new Date()
+
+        fetch(window.apiBaseUrl + 'getTerrainColors')
+            .then(res => res.json())
+            .then(json => {
+                TerrainLayer.update(json)
+            })
 
         // init global service
         Global.init()

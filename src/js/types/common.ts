@@ -1,5 +1,6 @@
 
 interface AppWindow extends Window {
-    apiBaseUrl: string,
-    payBaseUrl: string
+    apiBaseUrl: string;
+    payBaseUrl: string;
+    Worker: Worker;
 }

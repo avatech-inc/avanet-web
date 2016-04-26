@@ -1,0 +1,21 @@
+
+.mg-x-axis text, .mg-y-axis text, .mg-histogram .axis text {
+    opacity: 1;
+}
+
+.mg-line1-color {
+    stroke: #428bca;
+}
+
+.mg-area1-color {
+    fill: #428bca;
+}
+
+path.mg-main-line {
+    opacity: 1;
+    stroke-width: 2px;
+}
+
+path.mg-main-area {
+    opacity: 0.4;
+}

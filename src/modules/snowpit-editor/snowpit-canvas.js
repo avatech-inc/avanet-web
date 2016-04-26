@@ -176,6 +176,9 @@ const ProfileEditor = [
             clientComments: '=?clientComments'
         },
         link: (scope, element) => {
+            // Reference to the canvas
+            scope.$parent.graph = element[0]
+
             // select layer on click
             element.bind('mousedown', e => {
                 if (scope.settings.tempMode) return

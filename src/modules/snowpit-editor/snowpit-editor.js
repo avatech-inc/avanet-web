@@ -962,6 +962,10 @@ export const SnowpitEditor = [
                 angular.extend($scope.profile, sharing)
 
                 $scope.profile.published = true
+
+                // Upload Snowpit
+                $scope.uploadSnowpitGraph()
+
                 $scope.update()
 
                 $location.path('/obs/' + $scope.profile._id)
@@ -1011,6 +1015,47 @@ export const SnowpitEditor = [
 
         $scope.showPhoto = index => {
             Lightbox.openModal($scope.profile.media, index)
+        }
+
+        // SNOWPIT GRAPH UPLOAD
+
+        let convertCanvas = canvas => canvas.toDataURL('image/png')
+
+        $scope.uploadSnowpitGraph = () => {
+            let canvas = document.getElementById('profileCanvas')
+            let image = convertCanvas(canvas)
+            let xhr = new XMLHttpRequest()
+            let media = {}
+
+            // Upload to Cloudinary
+            xhr.onreadystatechange = () => {
+                let status
+
+                if (xhr.readyState === 4) {
+                    status = xhr.status
+
+                    if (status === 200) {
+                        let data = JSON.parse(xhr.responseText)
+                        media.URL = data.secure_url
+                        media.type = 'graph'
+                        media.caption = 'Snowpit ' + data.public_id
+                        media.cloudinary_format = data.format
+
+                        // Update our ob
+                        $scope.profile.media.unshift(media)
+                        $scope.apply()
+                    }
+                }
+            }
+
+            xhr.open('POST', 'https://api.cloudinary.com/v1_1/avatech/upload', true)
+
+            let formData = new FormData()
+            formData.append('upload_preset', 'mqemm6fd')
+            formData.append('file', image)
+
+            // Move along
+            xhr.send(formData)
         }
 
         // UTILITIES

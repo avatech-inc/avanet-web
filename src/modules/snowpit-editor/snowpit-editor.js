@@ -1038,7 +1038,12 @@ export const SnowpitEditor = [
                             media.cloudinary_format = data.format
 
                             // Update our ob
-                            $scope.profile.media.unshift(media)
+                            if ($scope.profile.media) {
+                                $scope.profile.media.unshift(media)
+                            } else {
+                                $scope.profile.media = []
+                                $scope.profile.media.push(media)
+                            }
                             $scope.update()
 
                             // Remove the canvas

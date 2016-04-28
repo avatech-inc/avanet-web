@@ -963,12 +963,8 @@ export const SnowpitEditor = [
 
                 $scope.profile.published = true
 
-                // Upload Snowpit
+                // Upload Snowpit and redirect
                 $scope.uploadSnowpitGraph()
-
-                $scope.update()
-
-                $location.path('/obs/' + $scope.profile._id)
             })
         }
 
@@ -1019,45 +1015,53 @@ export const SnowpitEditor = [
 
         // SNOWPIT GRAPH UPLOAD
 
-        let convertCanvas = canvas => {
-            return canvas.toDataURL('image/png')
-        }
-
         $scope.uploadSnowpitGraph = () => {
-            let canvas = $scope.graph
-            let image = convertCanvas(canvas)
-            let xhr = new XMLHttpRequest()
-            let media = {}
+            snowpitExport.UPLOAD(  // eslint-disable-line new-cap
+                getProfileForExport(),
+                $scope.settings
+            )
+            setTimeout(function () {
+                let canvas = document.getElementById('exported')
+                let image = canvas.toDataURL('image/jpeg', 1.0)
+                let xhr = new XMLHttpRequest()
+                let media = {}
 
-            // Upload to Cloudinary
-            xhr.onreadystatechange = () => {
-                let status
+                // Upload to Cloudinary
+                xhr.onreadystatechange = () => {
+                    let status
 
-                if (xhr.readyState === 4) {
-                    status = xhr.status
+                    if (xhr.readyState === 4) {
+                        status = xhr.status
 
-                    if (status === 200) {
-                        let data = JSON.parse(xhr.responseText)
-                        media.URL = data.secure_url
-                        media.type = 'graph'
-                        media.caption = 'Snowpit ' + data.public_id
-                        media.cloudinary_format = data.format
+                        if (status === 200) {
+                            let data = JSON.parse(xhr.responseText)
+                            media.URL = data.secure_url
+                            media.type = 'graph'
+                            media.caption = 'Snowpit ' + data.public_id
+                            media.cloudinary_format = data.format
 
-                        // Update our ob
-                        $scope.profile.media.unshift(media)
-                        $scope.$apply()
+                            // Update our ob
+                            $scope.profile.media.unshift(media)
+                            $scope.update()
+
+                            // Remove the canvas
+                            document.body.removeChild(canvas)
+
+                            // Redirect
+                            $location.path('/obs/' + $scope.profile._id)
+                        }
                     }
                 }
-            }
 
-            xhr.open('POST', 'https://api.cloudinary.com/v1_1/avatech/upload', true)
+                xhr.open('POST', 'https://api.cloudinary.com/v1_1/avatech/upload/', true)
 
-            let formData = new FormData()
-            formData.append('upload_preset', 'mqemm6fd')
-            formData.append('file', image)
+                let formData = new FormData()
+                formData.append('upload_preset', 'mjfp4lpw')
+                formData.append('file', image)
 
-            // Move along
-            xhr.send(formData)
+                // Move along
+                xhr.send(formData)
+            }, 400)
         }
 
         // UTILITIES

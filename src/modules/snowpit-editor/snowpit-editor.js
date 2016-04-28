@@ -82,9 +82,6 @@ export const SnowpitEditor = [
             { width: 240 }
         ]
 
-        // canvas options
-        $scope.graph = {}
-
         $scope.canvasOptions = {
             labelColor: '#222',
             commentLineColor: '#aaa',

@@ -140,12 +140,12 @@ if (__DEV__) {
 
 if (__STAGE__) {
     window.apiBaseUrl = 'https://avanet-api-dev.herokuapp.com/v2/'
-    window.payBaseUrl = 'https://payments-demo.avatech.com/'
+    window.payBaseUrl = 'https://secure-demo.avatech.com/'
 }
 
 if (__PROD__) {
     window.apiBaseUrl = 'https://api.avatech.com/v2/'
-    window.payBaseUrl = 'https://payments.avatech.com/'
+    window.payBaseUrl = 'https://secure.avatech.com/'
 
     DEPS.unshift('ngRaven')
 }

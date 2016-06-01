@@ -58,6 +58,8 @@ export const OnEnter = () => ({
                 scope.onenter()
                 return false
             }
+
+            return true
         })
     }
 })
@@ -92,19 +94,15 @@ export const AutoFocus = () => ({
     }
 })
 
-export const WindowResize = ['$window', $window => {
-    return $scope => {
-        $scope._getWindowSize = () => {
-            $scope.windowHeight = $window.innerHeight
-            $scope.windowWidth = $window.innerWidth
-        }
-
-        angular.element($window).bind('resize', () => {
-            $scope._getWindowSize()
-        })
-
-        $scope._getWindowSize()
+export const WindowResize = ['$window', $window => $scope => {
+    $scope._getWindowSize = () => {
+        $scope.windowHeight = $window.innerHeight
+        $scope.windowWidth = $window.innerWidth
     }
+
+    angular.element($window).bind('resize', () => $scope._getWindowSize())
+
+    $scope._getWindowSize()
 }]
 
 export const OnChange = () => ({
@@ -119,7 +117,9 @@ export const OnChange = () => ({
             let currentValue = elm.val()
 
             if (scope.onChange !== currentValue) {
-                scope.$apply(() => scope.onChange = currentValue)
+                scope.$apply(() => {
+                    scope.onChange = currentValue
+                })
             }
         })
     }

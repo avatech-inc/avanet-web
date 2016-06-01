@@ -147,6 +147,8 @@ export const SnowpitEditor = [
 
                 return url
             }
+
+            return ''
         }
 
         // beacuse of the ui.router hack to allow url transition without loading new state,
@@ -687,9 +689,9 @@ export const SnowpitEditor = [
             $scope.settings.hoverDragLayer = layer
         }
 
-        $scope.getWidth = hardness => {
-            return Math.round($scope.graphWidth * $scope.hardness[hardness].width)
-        }
+        $scope.getWidth = hardness => (
+            Math.round($scope.graphWidth * $scope.hardness[hardness].width)
+        )
 
         $scope.hardDif = layer => {
             if (!layer.hardness2) return 0
@@ -1139,8 +1141,7 @@ export const DraggableHardness = [
                 let max
                 let index = 0
 
-                for (let key in ControlScope.hardness) {  // eslint-disable-line guard-for-in
-                    let hardness = ControlScope.hardness[key]
+                for (let hardness of ControlScope.hardness) {
                     let width = hardness.width * ControlScope.graphWidth
 
                     if (index === 0) {
@@ -1156,7 +1157,8 @@ export const DraggableHardness = [
                 if (newPos > max) newPos = max
 
                 // snap to nearest hardness level
-                for (let key in ControlScope.hardness) {  // eslint-disable-line guard-for-in
+                for (var i = 0; i < Object.keys(ControlScope.hardness).length; i++) {
+                    let key = Object.keys(ControlScope.hardness)[i]
                     let hardness = ControlScope.hardness[key]
                     let width = hardness.width * ControlScope.graphWidth
 

@@ -68,7 +68,9 @@ export const RegisterDeviceController = [
                     alert(response.data.message)
                 })
                 // always
-                .finally(() => $scope.checking = false)
+                .finally(() => {
+                    $scope.checking = false
+                })
         }
     }
 ]

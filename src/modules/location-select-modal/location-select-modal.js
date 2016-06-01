@@ -38,15 +38,6 @@ export const LocationSelectController = [
 
         // $uibModalInstance.opened.then(function(){ });
 
-        let mapWatcher = $scope.$watch('mapHolder.map', () => {
-            if ($scope.mapHolder.map) {
-                // unregister watch
-                mapWatcher()
-                // go
-                loadMap()
-            }
-        })
-
         let mapChangeTimer
 
         let mapChange = () => {
@@ -102,6 +93,15 @@ export const LocationSelectController = [
                 initLoc[1]
             )
         }
+
+        let mapWatcher = $scope.$watch('mapHolder.map', () => {
+            if ($scope.mapHolder.map) {
+                // unregister watch
+                mapWatcher()
+                // go
+                loadMap()
+            }
+        })
 
         $scope.close = () => $uibModalInstance.dismiss()
         $scope.select = () => $uibModalInstance.close($scope.form.location)

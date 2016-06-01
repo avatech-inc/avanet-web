@@ -233,7 +233,11 @@ const Global = [
 
                 if (!angular.equals(service.user, user)) {
                     // if user has logged out in another window, log out here too
-                    if (!user) return service.logout()
+                    if (!user) {
+                        service.logout()
+
+                        return
+                    }
 
                     // check if new user or same user (set via setUser);
                     // console.log(service.user._id);

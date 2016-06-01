@@ -1,5 +1,7 @@
 
 import find from 'lodash.find'
+
+// eslint-disable-next-line import/no-unresolved
 import { readSerial, hashFilenames, uploadFiles } from './upload'
 
 import './modal.html'
@@ -156,9 +158,10 @@ export const SP1Upload = [
             filesUpload.addEventListener('change', e => {
                 let endpoint = window.apiBaseUrl + 'sp/bulkUpload'
                 let token = $http.defaults.headers.common['Auth-Token']
-                let serial = _.find(e.target.files, file => {
-                    return file.name.toLowerCase() === 'serial.txt'
-                })
+                let serial = _.find(
+                    e.target.files,
+                    file => file.name.toLowerCase() === 'serial.txt'
+                )
 
                 if (typeof serial === 'undefined') {
                     if (scope.oninvaliddevice) scope.oninvaliddevice()

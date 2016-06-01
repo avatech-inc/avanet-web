@@ -6,9 +6,7 @@ const Autosize = () => ({
         $(elem).on('focus', e => $(e.target).autosize())
 
         // handle programatic reset to empty string
-        scope.$watch(() => {
-            return $(elem).val()
-        }, (newVal, oldVal) => {
+        scope.$watch(() => $(elem).val(), (newVal, oldVal) => {
             if (
                 newVal === null ||
                 newVal === '' &&

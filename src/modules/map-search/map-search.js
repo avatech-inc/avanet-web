@@ -247,6 +247,7 @@ const MapSearch = [
                         'library'
                     ]
 
+                    // eslint-disable-next-line array-callback-return, consistent-return
                     data.geonames = data.geonames.filter(a => {
                         let code = a.fcodeName
 

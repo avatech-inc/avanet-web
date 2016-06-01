@@ -104,6 +104,8 @@ import Login from '../modules/user/login'
 import Register from '../modules/user/register'
 import ResetPassword from '../modules/user/reset-password'
 import Settings from '../modules/user/settings'
+
+// eslint-disable-next-line import/no-unresolved
 import { Billing } from '../modules/user/billing'
 
 import Terrain from '../modules/map/terrain-visualization'

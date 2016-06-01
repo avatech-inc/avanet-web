@@ -54,7 +54,9 @@ const CommentsNew = [
                         .all('comments')
                         .customGETLIST($scope.ownerType + '/' + $scope.ownerId)
                         .then(
-                            comments => $scope.comments = comments,
+                            comments => {
+                                $scope.comments = comments
+                            },
                             // error
                             () => {}
                         )

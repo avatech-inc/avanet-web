@@ -230,6 +230,8 @@ const ProfileEditor = [
                         }
                     }
                 }
+
+                return undefined
             }
 
             let first = true

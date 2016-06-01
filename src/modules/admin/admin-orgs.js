@@ -18,7 +18,9 @@ const AdminOrgsController = [
         $scope.getOrgs = () => Restangular
             .all('orgs')
             .getList()
-            .then(orgs => $scope.orgs = orgs)
+            .then(orgs => {
+                $scope.orgs = orgs
+            })
     }
 ]
 

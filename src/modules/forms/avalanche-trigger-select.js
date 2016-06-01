@@ -23,7 +23,7 @@ const AvalancheTriggerSelect = () => ({
         }
 
         scope.removeTrigger = trigger => {
-            if (!scope.triggers) return false
+            if (!scope.triggers) return
 
             angular.forEach(scope.triggers, (triggerCode, index) => {
                 if (triggerCode === trigger) {
@@ -49,23 +49,33 @@ const AvalancheTriggerSelect = () => ({
         }
 
         scope.getTriggerName = triggerCode => {
+            let i
+            let j
             let name = ''
+            let triggerCategories = Object.keys(scope.artificialTriggers)
 
-            angular.forEach(scope.artificialTriggers, (triggers, triggerCategory) => {
-                angular.forEach(triggers, trigger => {
+            for (i = 0; i < triggerCategories.length; i++) {
+                let triggerCategory = triggerCategories[i]
+                let triggers = scope.artificialTriggers[triggerCategory]
+
+                for (j = 0; j < triggers.length; j++) {
+                    let trigger = triggers[i]
+
                     if (trigger.code === triggerCode) {
                         name = triggerCategory + ': ' + trigger.name
                         return name
                     }
-                })
-            })
+                }
+            }
 
-            angular.forEach(scope.naturalTriggers, trigger => {
+            for (i = 0; i < scope.naturalTriggers.length; i++) {
+                let trigger = scope.naturalTriggers[i]
+
                 if (trigger.code === triggerCode) {
                     name = trigger.name
                     return name
                 }
-            })
+            }
 
             return name
         }

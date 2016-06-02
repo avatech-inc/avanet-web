@@ -40,6 +40,9 @@ module Billing {
         level?: string;
         seats?: number;
         interval?: string;
+        coupon?: string;
+        amount?: number;
+        percent?: number;
         index?: number;
         id?: string;
         message?: string;
@@ -56,6 +59,7 @@ module Billing {
     export interface PaymentRequest {
         plan: string;
         token?: string;
+        coupon?: string;
     }
 
     export interface OrgPaymentRequest extends PaymentRequest {
@@ -68,6 +72,8 @@ module Billing {
 
     interface PlanMetadata {
         level: string;
+        rank: number;
+        status: string;
     }
 
     export interface PaymentResponse {
@@ -131,6 +137,11 @@ module Billing {
         plans: Immutable.List<Plan>;
         level: string;
         interval: 'month' | 'year';
+        coupon: string;
+        couponMessage: string;
+        couponAmountOff: number;
+        couponPercentOff: number;
+        couponInterval: 'month' | 'year';
         changed: boolean;
         error: string;
         success: string;
@@ -166,6 +177,9 @@ module Billing {
         level: string;
         seats: number;
         interval: 'month' | 'year';
+        coupon: string;
+        couponMessage: string;
+        couponInterval: 'month' | 'year';
         seatUsers: Array<string>;
         plans: Array<Plan>;
         total: number;
@@ -180,6 +194,7 @@ module Billing {
         changeOrg(org: Org): void;
         changeSeats(seats: number): void;
         changeInterval(interval: 'month' | 'year'): void;
+        changeCoupon(coupon: string): void;
         setSeatUser(index: number, id: string): void;
         deleteSeatUser(index: number): void;
         changePayment(value: any, field: string): void;

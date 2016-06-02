@@ -198,14 +198,30 @@ margin-bottom: 6px !important;
                   <label class="btn btn-default"
                          ng-model="interval"
                          uib-btn-radio="'month'"
-                         ng-click="changeInterval(interval)"
-                         uncheckable>{{ 'billing.monthly' | translate }}</label>
+                         ng-disabled="couponInterval && couponInterval === 'year'"
+                         ng-click="changeInterval(interval)">{{ 'billing.monthly' | translate }}</label>
                   <label class="btn btn-default"
                          ng-model="interval"
                          uib-btn-radio="'year'"
-                         ng-click="changeInterval(interval)"
-                         uncheckable>{{ 'billing.yearly' | translate }}</label>
+                         ng-disabled="couponInterval && couponInterval === 'month'"
+                         ng-click="changeInterval(interval)">{{ 'billing.yearly' | translate }}</label>
                 </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-4 control-label">{{ 'billing.coupon' | translate }}</label>
+
+              <div class="col-sm-8">
+                <span class="form-control form-blank" ng-if="couponMessage" style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                  {{ couponMessage }}
+                </span>
+                <input type="text"
+                       name="coupon"
+                       style="width: 128px"
+                       class="form-control"
+                       ng-model="coupon"
+                       ng-blur="changeCoupon(coupon, 'coupon')">
               </div>
             </div>
           </div>
@@ -217,7 +233,7 @@ margin-bottom: 6px !important;
             <div class="col-sm-8">
               <span class="form-control form-blank" style="border-color: #fff; padding-right: 0; padding-left: 0">
                 <!-- <span ng-if="savings" style="color: #666; margin-right: 19px;">Save {{ savings }}% with a yearly subscription</span> -->
-                <strong style="float: right">${{ (total / 100) }}/{{ interval }}</strong>
+                <strong style="float: right">{{ (total / 100) | currency }}/{{ interval }}</strong>
               </span>
             </div>
           </div>

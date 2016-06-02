@@ -19,6 +19,11 @@ export const SET_PLANS = 'billing/SET_PLANS'
 export const SET_LEVEL = 'billing/SET_LEVEL'
 export const SET_SEATS = 'billing/SET_SEATS'
 export const SET_SUB_INTERVAL = 'billing/SET_INTERVAL'
+export const SET_COUPON = 'billing/SET_COUPON'
+export const SET_COUPON_MESSAGE = 'billing/SET_COUPON_MESSAGE'
+export const SET_COUPON_AMOUNT_OFF = 'billing/SET_COUPON_AMOUNT_OFF'
+export const SET_COUPON_PERCENT_OFF = 'billing/SET_COUPON_PERCENT_OFF'
+export const SET_COUPON_INTERVAL = 'billing/SET_COUPON_INTERVAL'
 export const SET_SEAT_USER = 'billing/SET_SEAT_USER'
 export const DELETE_SEAT_USER = 'billing/DELETE_SEAT_USER'
 export const SET_PAYMENT_SUCCESS = 'billing/SET_PAYMENT_SUCCESS'
@@ -64,6 +69,31 @@ export const setSeats = (seats: number) => ({
 
 export const setSubInterval = (interval: 'month' | 'year') => ({
     type: SET_SUB_INTERVAL,
+    interval: interval
+})
+
+export const setCoupon = (coupon: string) => ({
+    type: SET_COUPON,
+    coupon: coupon
+})
+
+export const setCouponMessage = (message: string) => ({
+    type: SET_COUPON_MESSAGE,
+    message: message
+})
+
+export const setCouponAmountOff = (amount: number) => ({
+    type: SET_COUPON_AMOUNT_OFF,
+    amount: amount
+})
+
+export const setCouponPercentOff = (percent: number) => ({
+    type: SET_COUPON_PERCENT_OFF,
+    percent: percent
+})
+
+export const setCouponInterval = (interval: 'month' | 'year') => ({
+    type: SET_COUPON_INTERVAL,
     interval: interval
 })
 
@@ -309,7 +339,45 @@ export const fetchPlans = (authToken: string) => (dispatch: Redux.Dispatch) =>
                 return plan
             })
 
-            dispatch(setPlans(plans))
+            plans.sort((a: Billing.Plan, b: Billing.Plan) => a.metadata.rank - b.metadata.rank)
+
+            dispatch(setPlans(plans.filter((plan: Billing.Plan) => plan.metadata.status === 'live')))
+
+            return Promise.resolve
+        })
+
+/**
+ * @param  {string} coupon
+ * @param  {string} authToken
+ * @return {Function} - (dispatch: Store.dispatch): Promise
+ */
+export const fetchCoupon = (coupon: string, authToken: string) => (dispatch: Redux.Dispatch) =>
+    fetch(`${window.payBaseUrl}coupons/`, {
+            method: 'POST',
+            headers: { 'Auth-Token': authToken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ coupon: coupon })
+        })
+        .then(response => response.json())
+        .then(json => {
+            if (json.valid) {
+                dispatch(setCouponMessage('Coupon code applied!'))
+
+                if (json.amount_off) {
+                    dispatch(setCouponAmountOff(json.amount_off))
+                } else if (json.percent_off) {
+                    dispatch(setCouponPercentOff(json.percent_off))
+                }
+
+                if (json.metadata.interval) {
+                    dispatch(setSubInterval(json.metadata.interval))
+                    dispatch(setCouponInterval(json.metadata.interval))
+                }
+            } else {
+                dispatch(setCouponMessage('Invalid coupon code'))
+                dispatch(setCouponAmountOff(0))
+                dispatch(setCouponPercentOff(0))
+                dispatch(setCouponInterval(null))
+            }
 
             return Promise.resolve
         })
@@ -514,6 +582,7 @@ export const submitOrgPayment = (
     seats: number,
     quantity: number,
     paidMembers: Array<string>,
+    coupon: string,
     authToken: string
 ) => (dispatch: Redux.Dispatch) => {
     let body: Billing.OrgPaymentRequest = { plan: plan, seats: seats, quantity: quantity }
@@ -521,6 +590,10 @@ export const submitOrgPayment = (
 
     if (token !== null) {
         body.token = token
+    }
+
+    if (coupon !== null) {
+        body.coupon = coupon
     }
 
     if (paymentObj.customer) {
@@ -533,6 +606,12 @@ export const submitOrgPayment = (
             dispatch(setProcessing(false))
             dispatch(clearPaymentError())
             dispatch(paymentFormChanged(false))
+
+            dispatch(setCoupon(''))
+            dispatch(setCouponMessage(''))
+            dispatch(setCouponAmountOff(0))
+            dispatch(setCouponPercentOff(0))
+            dispatch(setCouponInterval(null))
 
             dispatch(setSeats(paymentObj.seats_total))
             dispatch(setLevel(paymentObj.subscription_metadata.level))
@@ -572,6 +651,7 @@ export const submitUserPayment = (
     token: string,
     paymentObj: Billing.UserPaymentResponse,
     plan: string,
+    coupon: string,
     authToken: string
 ) => (dispatch: Redux.Dispatch) => {
     let body: Billing.UserPaymentRequest = { plan: plan }
@@ -579,6 +659,10 @@ export const submitUserPayment = (
 
     if (token !== null) {
         body.token = token
+    }
+
+    if (coupon !== null) {
+        body.coupon = coupon
     }
 
     if (paymentObj.customer) {
@@ -590,6 +674,12 @@ export const submitUserPayment = (
             dispatch(setProcessing(false))
             dispatch(clearPaymentError())
             dispatch(paymentFormChanged(false))
+
+            dispatch(setCoupon(''))
+            dispatch(setCouponMessage(''))
+            dispatch(setCouponAmountOff(0))
+            dispatch(setCouponPercentOff(0))
+            dispatch(setCouponInterval(null))
 
             dispatch(setLevel(paymentObj.subscription_metadata.level))
             dispatch(setSubInterval(paymentObj.billing_interval))

@@ -179,6 +179,11 @@ export const Billing = [
             let level: string = state.get('level')
             let seats: number = state.get('seats')
             let interval: 'month' | 'year' = state.get('interval')
+            let coupon: string = state.get('coupon')
+            let couponMessage: string = state.get('couponMessage')
+            let couponAmountOff: number = state.get('couponAmountOff')
+            let couponPercentOff: number = state.get('couponPercentOff')
+            let couponInterval: 'month' | 'year' = state.get('couponInterval')
             let success: string = state.get('success')
             let error: string = state.get('error')
             let processing: boolean = state.get('processing')
@@ -221,6 +226,12 @@ export const Billing = [
 
                     $scope.savings = Math.round((1 - (planYearObj.amountMonth / planObj.amountMonth)) * 100)
                 }
+
+                if (couponAmountOff) {
+                    total = total - couponAmountOff
+                } else if (couponPercentOff) {
+                    total = total * (1 - (couponPercentOff / 100))
+                }
             }
 
             let brand: string = card.get('brand')
@@ -255,6 +266,9 @@ export const Billing = [
             $scope.level = level
             $scope.seats = seats
             $scope.interval = interval
+            $scope.coupon = coupon
+            $scope.couponMessage = couponMessage
+            $scope.couponInterval = couponInterval
             $scope.total = total
             $scope.error = error
             $scope.success = success
@@ -277,12 +291,19 @@ export const Billing = [
             stateType = 'org'
         }
 
+        billingStore.dispatch(actions.setCoupon(''))
+        billingStore.dispatch(actions.setCouponMessage(''))
+        billingStore.dispatch(actions.setCouponAmountOff(0))
+        billingStore.dispatch(actions.setCouponPercentOff(0))
+        billingStore.dispatch(actions.setCouponInterval(null))
+
         billingStore.dispatch(actions.setBillingType(stateType))
         billingStore.dispatch(actions.fetchPlans(authToken))
 
         if (stateType === 'org') {
             billingStore.dispatch(actions.fetchOrg($stateParams.orgId, authToken))
         } else if (stateType === 'user') {
+            billingStore.dispatch(actions.setSeats(1))
             billingStore.dispatch(actions.fetchUser(authToken))
         }
 
@@ -295,9 +316,27 @@ export const Billing = [
         $scope.changeLevel = level => billingStore.dispatch(actions.setLevel(level))
         $scope.changeOrg = org => billingStore.dispatch(actions.fetchOrg(org.id, authToken))
         $scope.changeSeats = seats => billingStore.dispatch(actions.setSeats(seats))
-        $scope.changeInterval = interval => billingStore.dispatch(actions.setSubInterval(interval))
+
+        $scope.changeInterval = interval => {
+            billingStore.dispatch(actions.setSubInterval(interval))
+        }
+
         $scope.setSeatUser = (index, id) => billingStore.dispatch(actions.setSeatUser(index, id))
         $scope.deleteSeatUser = index => billingStore.dispatch(actions.deleteSeatUser(index))
+
+        $scope.changeCoupon = coupon => {
+            billingStore.dispatch(actions.setCoupon(coupon))
+
+            if (coupon === '') {
+                billingStore.dispatch(actions.setCouponMessage(''))
+                billingStore.dispatch(actions.setCouponAmountOff(0))
+                billingStore.dispatch(actions.setCouponPercentOff(0))
+                billingStore.dispatch(actions.setCouponInterval(null))
+            } else {
+                billingStore.dispatch(actions.fetchCoupon(coupon, authToken))
+            }
+        }
+
         $scope.changePayment = (value, field) => {
             // Determine card type
             if (field === 'cc') {
@@ -333,6 +372,7 @@ export const Billing = [
                     plan.interval === state.get('interval') &&
                     plan.metadata.level === state.get('level')
                 ))
+            let coupon: string = state.get('coupon')
 
             if (state.get('processing')) return
 
@@ -369,6 +409,7 @@ export const Billing = [
                         seats,
                         paidMembers.length,
                         paidMembers,
+                        coupon,
                         authToken
                     ))).catch(error => billingStore.dispatch(actions.handleError(error)))
             } else if (billingType === 'user') {
@@ -380,6 +421,7 @@ export const Billing = [
                         values[0],
                         values[1],
                         planObj.id,
+                        coupon,
                         authToken
                     ))).catch(error => billingStore.dispatch(actions.handleError(error)))
             }

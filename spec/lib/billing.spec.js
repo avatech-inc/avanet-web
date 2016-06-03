@@ -468,7 +468,7 @@ describe('billing store', () => {
         actions.fetchPlans('token')(billingStore.dispatch).then(() => {
             expect(state.get('plans').get(0).amount).toBe(6000)
             expect(state.get('plans').get(0).amountMonth).toBe(500)
-            expect(state.get('plans').get(0).title).toBe('Tour - $5/month')
+            expect(state.get('plans').get(0).title).toBe('Premium - $5/month')
 
             done()
         })

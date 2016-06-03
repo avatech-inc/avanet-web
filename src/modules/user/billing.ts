@@ -177,6 +177,7 @@ export const Billing = [
 
             let billingType: 'user' | 'org' = state.get('type')
             let level: string = state.get('level')
+            let origLevel: string = state.get('origLevel')
             let seats: number = state.get('seats')
             let interval: 'month' | 'year' = state.get('interval')
             let coupon: string = state.get('coupon')
@@ -188,6 +189,8 @@ export const Billing = [
             let error: string = state.get('error')
             let processing: boolean = state.get('processing')
             let card: CardRecord = state.get('card')
+            let showBilling = true
+            let saveMessage = "billing.start_membership"
 
             let seatUsers: Array<string> = state.get('seatUsers').toArray()
             let org: OrgRecord = state.get('org')
@@ -252,6 +255,20 @@ export const Billing = [
                 billingStore.dispatch(actions.clearCard())
             }
 
+            if (origLevel !== 'rec' && total === 0) {
+                showBilling = false
+            }
+
+            if (origLevel === 'rec') {
+                saveMessage = "billing.start_membership"
+            } else if (origLevel === 'tour' && level === 'pro') {
+                saveMessage = "billing.upgrade_membership"
+            } else if (origLevel === 'pro' && level === 'tour') {
+                saveMessage = "billing.downgrade_membership"
+            } else if (origLevel === level) {
+                saveMessage = "billing.save_membership"
+            }
+
             $scope.plans = state.get('plans')
                 .filter((plan: Billing.Plan) => plan.interval === $scope.interval)
                 .filter((plan: Billing.Plan) => (
@@ -273,6 +290,8 @@ export const Billing = [
             $scope.error = error
             $scope.success = success
             $scope.processing = processing
+            $scope.showBilling = showBilling
+            $scope.saveMessage = saveMessage
 
             if (billingType === 'org') {
                 $scope.seatUsers = seatUsers
@@ -363,6 +382,35 @@ export const Billing = [
 
             billingStore.dispatch(actions.clearPaymentError())
             billingStore.dispatch(actions.paymentFormChanged(true))
+        }
+
+        $scope.cancelBilling = () => {
+            let billingType: 'user' | 'org' = state.get('type')
+            let planObj: Billing.Plan = state.get('plans')
+                .find((plan: Billing.Plan) => (
+                    plan.interval === state.get('interval') &&
+                    plan.metadata.level === state.get('level')
+                ))
+
+            if (state.get('processing')) return
+
+            billingStore.dispatch(actions.setProcessing(true))
+            billingStore.dispatch(actions.clearPaymentError())
+
+            // Resolve the Stripe token to null unless the payment form has changed.
+            let tokenPromise = Promise.resolve(null)
+
+            Promise.all([
+                tokenPromise,
+                actions.fetchUserPayment(authToken)
+            ]).then((values: [string, Billing.UserPaymentResponse]) =>
+                billingStore.dispatch(actions.submitUserPayment(
+                    values[0],
+                    values[1],
+                    planObj.id,
+                    null,
+                    authToken
+                ))).catch(error => billingStore.dispatch(actions.handleError(error)))
         }
 
         $scope.saveBilling = (name, cc, cvc, expMonth, expYear) => {

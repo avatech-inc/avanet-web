@@ -137,6 +137,8 @@ module Billing {
         plans: Immutable.List<Plan>;
         level: string;
         interval: 'month' | 'year';
+        origLevel: string;
+        origInterval: string;
         coupon: string;
         couponMessage: string;
         couponAmountOff: number;
@@ -188,6 +190,8 @@ module Billing {
         error: string;
         success: string;
         processing: boolean;
+        showBilling: boolean;
+        saveMessage: string;
         org: Org;
         getUnselectedUsers(index: number): Array<Ided>;
         changeLevel(level: string): void;
@@ -198,6 +202,7 @@ module Billing {
         setSeatUser(index: number, id: string): void;
         deleteSeatUser(index: number): void;
         changePayment(value: any, field: string): void;
+        cancelBilling(): void;
         saveBilling(
             name: string,
             cc: string,

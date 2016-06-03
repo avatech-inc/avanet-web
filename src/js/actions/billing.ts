@@ -17,8 +17,10 @@ declare var window: AppWindow
 export const SET_BILLING_TYPE = 'billing/SET_BILLING_TYPE'
 export const SET_PLANS = 'billing/SET_PLANS'
 export const SET_LEVEL = 'billing/SET_LEVEL'
+export const SET_ORIG_LEVEL = 'billing/SET_ORIG_LEVEL'
 export const SET_SEATS = 'billing/SET_SEATS'
-export const SET_SUB_INTERVAL = 'billing/SET_INTERVAL'
+export const SET_SUB_INTERVAL = 'billing/SET_SUB_INTERVAL'
+export const SET_ORIG_SUB_INTERVAL = 'billing/SET_ORIG_SUB_INTERVAL'
 export const SET_COUPON = 'billing/SET_COUPON'
 export const SET_COUPON_MESSAGE = 'billing/SET_COUPON_MESSAGE'
 export const SET_COUPON_AMOUNT_OFF = 'billing/SET_COUPON_AMOUNT_OFF'
@@ -62,6 +64,11 @@ export const setLevel = (level: string) => ({
     level: level
 })
 
+export const setOrigLevel = (level: string) => ({
+    type: SET_ORIG_LEVEL,
+    level: level
+})
+
 export const setSeats = (seats: number) => ({
     type: SET_SEATS,
     seats: seats
@@ -69,6 +76,11 @@ export const setSeats = (seats: number) => ({
 
 export const setSubInterval = (interval: 'month' | 'year') => ({
     type: SET_SUB_INTERVAL,
+    interval: interval
+})
+
+export const setOrigSubInterval = (interval: 'month' | 'year') => ({
+    type: SET_ORIG_SUB_INTERVAL,
     interval: interval
 })
 
@@ -236,6 +248,8 @@ export const fetchOrg = (orgId: string, authToken: string) =>
                     dispatch(setSeats(json.seats_total))
                     dispatch(setLevel(json.subscription_metadata.level))
                     dispatch(setSubInterval(json.billing_interval))
+                    dispatch(setOrigLevel(json.subscription_metadata.level))
+                    dispatch(setOrigSubInterval(json.billing_interval))
 
                     dispatch(receiveCard(
                         json.cardholders_name,
@@ -285,6 +299,8 @@ export const fetchUser = (authToken: string) =>
                 if (json.customer) {
                     dispatch(setLevel(json.subscription_metadata.level))
                     dispatch(setSubInterval(json.billing_interval))
+                    dispatch(setOrigLevel(json.subscription_metadata.level))
+                    dispatch(setOrigSubInterval(json.billing_interval))
 
                     dispatch(receiveCard(
                         json.cardholders_name,
@@ -334,7 +350,15 @@ export const fetchPlans = (authToken: string) => (dispatch: Redux.Dispatch) =>
                 let level = _.capitalize(plan.metadata.level)
                 let price = plan.amountMonth / 100
 
-                plan.title = `${level} - \$${price}/month`
+                if (level === 'Tour') {
+                    level = 'Premium'
+                }
+
+                if (price) {
+                    plan.title = `${level} - \$${price}/month`
+                } else {
+                    plan.title = `${level} - Free`
+                }
 
                 return plan
             })
@@ -360,7 +384,7 @@ export const fetchCoupon = (coupon: string, authToken: string) => (dispatch: Red
         .then(response => response.json())
         .then(json => {
             if (json.valid) {
-                dispatch(setCouponMessage('Coupon code applied!'))
+                dispatch(setCouponMessage('billing.coupon_applied'))
 
                 if (json.amount_off) {
                     dispatch(setCouponAmountOff(json.amount_off))
@@ -373,7 +397,7 @@ export const fetchCoupon = (coupon: string, authToken: string) => (dispatch: Red
                     dispatch(setCouponInterval(json.metadata.interval))
                 }
             } else {
-                dispatch(setCouponMessage('Invalid coupon code'))
+                dispatch(setCouponMessage('billing.coupon_invalid'))
                 dispatch(setCouponAmountOff(0))
                 dispatch(setCouponPercentOff(0))
                 dispatch(setCouponInterval(null))
@@ -626,7 +650,7 @@ export const submitOrgPayment = (
                 paymentObj.brand
             ))
 
-            dispatch(setPaymentSuccess('Payment successfully processed.'))
+            dispatch(setPaymentSuccess('Updated membership.'))
 
             setTimeout(() => {
                 dispatch(clearPaymentSuccess())
@@ -693,7 +717,7 @@ export const submitUserPayment = (
                 paymentObj.brand
             ))
 
-            dispatch(setPaymentSuccess('Payment successfully processed.'))
+            dispatch(setPaymentSuccess('Updated membership.'))
 
             setTimeout(() => {
                 dispatch(clearPaymentSuccess())

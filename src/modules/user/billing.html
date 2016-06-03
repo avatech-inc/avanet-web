@@ -232,7 +232,11 @@ margin-bottom: 6px !important;
             <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
             <div class="col-sm-8">
               <span class="form-control form-blank" style="border-color: #fff; padding-right: 0; padding-left: 0">
-                <strong ng-show="total" style="float: right">{{ (total / 100) | currency }}/{{ interval }}</strong>
+                <strong ng-show="total" style="float: right">
+                  <span ng-show="couponAmountOff">{{ (origTotal / 100) | currency }} with {{ couponAmountOff | currency }} off = </span>
+                  <span ng-show="couponPercentOff">{{ (origTotal / 100) | currency }} with {{ couponPercentOff }}% off = </span>
+                  {{ (total / 100) | currency }}/{{ interval }}
+                </strong>
                 <strong ng-hide="total" style="float: right">Free</strong>
               </span>
             </div>

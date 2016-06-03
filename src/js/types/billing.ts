@@ -182,9 +182,12 @@ module Billing {
         coupon: string;
         couponMessage: string;
         couponInterval: 'month' | 'year';
+        couponAmountOff: number;
+        couponPercentOff: number;
         seatUsers: Array<string>;
         plans: Array<Plan>;
         total: number;
+        origTotal: number;
         savings: number;
         orgUsers: Array<User>;
         error: string;

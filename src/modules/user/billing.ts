@@ -212,6 +212,7 @@ export const Billing = [
                 ))
 
             let total = 0
+            let origTotal = 0
 
             if (planObj) {
                 total = planObj.amountMonth * seats
@@ -229,6 +230,8 @@ export const Billing = [
 
                     $scope.savings = Math.round((1 - (planYearObj.amountMonth / planObj.amountMonth)) * 100)
                 }
+
+                origTotal = total
 
                 if (couponAmountOff) {
                     total = total - couponAmountOff
@@ -286,7 +289,10 @@ export const Billing = [
             $scope.coupon = coupon
             $scope.couponMessage = couponMessage
             $scope.couponInterval = couponInterval
+            $scope.couponAmountOff = couponAmountOff
+            $scope.couponPercentOff = couponPercentOff
             $scope.total = total
+            $scope.origTotal = origTotal
             $scope.error = error
             $scope.success = success
             $scope.processing = processing

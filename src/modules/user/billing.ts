@@ -362,6 +362,14 @@ export const Billing = [
             }
         }
 
+        $scope.clearCoupon = coupon => {
+            billingStore.dispatch(actions.setCoupon(coupon))
+            billingStore.dispatch(actions.setCouponMessage(''))
+            billingStore.dispatch(actions.setCouponAmountOff(0))
+            billingStore.dispatch(actions.setCouponPercentOff(0))
+            billingStore.dispatch(actions.setCouponInterval(null))
+        }
+
         $scope.changePayment = (value, field) => {
             // Determine card type
             if (field === 'cc') {

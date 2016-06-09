@@ -355,15 +355,23 @@ margin-bottom: 6px !important;
                           <label class="col-sm-4 control-label">{{ 'billing.coupon' | translate }}</label>
 
                           <div class="col-sm-8">
-                            <span class="form-control form-blank" ng-if="couponMessage" style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                            <span class="form-control form-blank"
+                                  ng-show="couponMessage"
+                                  style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
                               {{ couponMessage }}
                             </span>
+                            <button class="btn"
+                                    style="float: right;"
+                                    ng-hide="couponMessage || !coupon"
+                                    ng-click="changeCoupon(coupon)">Apply</button>
                             <input type="text"
                                    name="coupon"
                                    style="width: 128px"
                                    class="form-control"
                                    ng-model="coupon"
-                                   ng-blur="changeCoupon(coupon, 'coupon')">
+                                   ng-keypress="($event.which === 13) ? $event.preventDefault(); changeCoupon(coupon) : 0"
+                                   ng-blur="changeCoupon(coupon)"
+                                   ng-change="clearCoupon(coupon)">
                           </div>
                         </div>
                       </div>

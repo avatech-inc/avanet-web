@@ -202,6 +202,7 @@ module Billing {
         changeSeats(seats: number): void;
         changeInterval(interval: 'month' | 'year'): void;
         changeCoupon(coupon: string): void;
+        clearCoupon(coupon: string): void;
         setSeatUser(index: number, id: string): void;
         deleteSeatUser(index: number): void;
         changePayment(value: any, field: string): void;

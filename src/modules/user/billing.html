@@ -187,7 +187,7 @@ margin-bottom: 6px !important;
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" ng-show="showBilling">
               <label class="col-sm-4 control-label">{{ 'billing.cycle' | translate }}</label>
 
               <div class="col-sm-8">
@@ -198,29 +198,64 @@ margin-bottom: 6px !important;
                   <label class="btn btn-default"
                          ng-model="interval"
                          uib-btn-radio="'month'"
-                         ng-click="changeInterval(interval)"
-                         uncheckable>{{ 'billing.monthly' | translate }}</label>
+                         ng-disabled="couponInterval && couponInterval === 'year'"
+                         ng-click="changeInterval(interval)">{{ 'billing.monthly' | translate }}</label>
                   <label class="btn btn-default"
                          ng-model="interval"
                          uib-btn-radio="'year'"
-                         ng-click="changeInterval(interval)"
-                         uncheckable>{{ 'billing.yearly' | translate }}</label>
+                         ng-disabled="couponInterval && couponInterval === 'month'"
+                         ng-click="changeInterval(interval)">{{ 'billing.yearly' | translate }}</label>
                 </div>
+              </div>
+            </div>
+
+            <div class="form-group" ng-show="showBilling">
+              <label class="col-sm-4 control-label">{{ 'billing.coupon' | translate }}</label>
+
+              <div class="col-sm-8">
+                <span class="form-control form-blank" ng-if="couponMessage" style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                  {{ couponMessage | translate }}
+                </span>
+                <input type="text"
+                       name="coupon"
+                       style="width: 128px"
+                       class="form-control"
+                       ng-model="coupon"
+                       ng-blur="changeCoupon(coupon, 'coupon')">
               </div>
             </div>
           </div>
         </div>
 
-        <div class="panel-footer" style="background:#fff;">
+        <div class="panel-footer" style="background:#fff;" ng-show="showBilling">
           <div class="row form-horizontal">
             <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
             <div class="col-sm-8">
               <span class="form-control form-blank" style="border-color: #fff; padding-right: 0; padding-left: 0">
-                <!-- <span ng-if="savings" style="color: #666; margin-right: 19px;">Save {{ savings }}% with a yearly subscription</span> -->
-                <strong style="float: right">${{ (total / 100) }}/{{ interval }}</strong>
+                <strong ng-show="total" style="float: right">
+                  <span ng-show="couponAmountOff">{{ (origTotal / 100) | currency }} with {{ couponAmountOff | currency }} off = </span>
+                  <span ng-show="couponPercentOff">{{ (origTotal / 100) | currency }} with {{ couponPercentOff }}% off = </span>
+                  {{ (total / 100) | currency }}/{{ interval }}
+                </strong>
+                <strong ng-hide="total" style="float: right">Free</strong>
               </span>
             </div>
           </div>
+        </div>
+
+        <div class="panel-footer" style="text-align:right;background:#fff;" ng-hide="showBilling">
+          <button ng-click="cancelBilling()"
+                  class="btn btn-primary"
+                  translate="billing.cancel_membership"
+                  ng-if="!processing">
+          </button>
+
+          <a class="btn btn-primary"
+             disabled
+             style="width: 60px"
+             ng-if="processing">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+          </a>
         </div>
       </div>
     </form>
@@ -258,7 +293,7 @@ margin-bottom: 6px !important;
     </form>
   </div>
 
-  <div class="settings-panel">
+  <div class="settings-panel" ng-show="showBilling">
     <form ng-submit="saveBilling(name, cc, cvc, exp_month, exp_year)">
       <div class="panel panel-default">
         <div class="panel-heading settings-panel-title">
@@ -268,7 +303,7 @@ margin-bottom: 6px !important;
         <div class="panel-body">
           <div class="form-horizontal" role="form">
             <div class="form-group">
-            <div class="col-sm-3"></div>
+              <div class="col-sm-3"></div>
               <div class="col-sm-9">
                 <input type="text"
                        name="name"
@@ -336,8 +371,8 @@ margin-bottom: 6px !important;
         <div class="panel-footer" style="text-align:right;background:#fff;">
           <button type="submit"
                   class="btn btn-primary"
-                  translate="billing.start_membership"
                   ng-if="!processing">
+            {{ saveMessage | translate }}
           </button>
 
           <a class="btn btn-primary"

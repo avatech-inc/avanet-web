@@ -45,6 +45,13 @@ const DefaultBilling: Billing.StateRecord = {
     plans: Immutable.List([]),
     level: 'tour',
     interval: 'year',
+    origLevel: null,
+    origInterval: null,
+    coupon: '',
+    couponMessage: null,
+    couponAmountOff: 0,
+    couponPercentOff: 0,
+    couponInterval: null,
     changed: false,
     error: null,
     success: null,
@@ -60,6 +67,13 @@ class BillingState extends Immutable.Record<Billing.StateRecord>(DefaultBilling)
     plans: Immutable.List<Billing.Plan>;
     level: string;
     interval: 'month' | 'year';
+    origLevel: string;
+    origInterval: string;
+    coupon: string;
+    couponMessage: string;
+    couponAmountOff: number;
+    couponPercentOff: number;
+    couponInterval: 'month' | 'year';
     changed: boolean;
     error: string;
     success: string;
@@ -226,8 +240,29 @@ const rootReducer = (
     case actions.SET_LEVEL:
         return state.set('level', action.level)
 
+    case actions.SET_ORIG_LEVEL:
+        return state.set('origLevel', action.level)
+
     case actions.SET_SUB_INTERVAL:
         return state.set('interval', action.interval)
+
+    case actions.SET_ORIG_SUB_INTERVAL:
+        return state.set('origInterval', action.interval)
+
+    case actions.SET_COUPON:
+        return state.set('coupon', action.coupon)
+
+    case actions.SET_COUPON_MESSAGE:
+        return state.set('couponMessage', action.message)
+
+    case actions.SET_COUPON_AMOUNT_OFF:
+        return state.set('couponAmountOff', action.amount)
+
+    case actions.SET_COUPON_PERCENT_OFF:
+        return state.set('couponPercentOff', action.percent)
+
+    case actions.SET_COUPON_INTERVAL:
+        return state.set('couponInterval', action.interval)
 
     case actions.SET_PROCESSING:
         return state.set('processing', action.processing)

@@ -53,10 +53,10 @@ export const USERPAYMENTRESPONSE = {
 
 /* eslint-disable max-len */
 export const PLANSRESPONSE = { results: [
-    { amount: 6000, created: 1456426075, currency: 'usd', id: 'tour-yearly-usd', interval: 'year', interval_count: 1, livemode: false, metadata: { level: 'tour' }, name: 'Avanet Tour Yearly USD', object: 'plan', statement_descriptor: null, trial_period_days: null },
-    { amount: 900, created: 1456426045, currency: 'usd', id: 'tour-monthly-usd', interval: 'month', interval_count: 1, livemode: false, metadata: { level: 'tour' }, name: 'Avanet Tour Monthly USD', object: 'plan', statement_descriptor: null, trial_period_days: null },
-    { amount: 1700, created: 1444515260, currency: 'usd', id: 'pro-monthly-usd', interval: 'month', interval_count: 1, livemode: false, metadata: { level: 'pro' }, name: 'Avanet Pro Monthly USD', object: 'plan', statement_descriptor: 'AVANET', trial_period_days: null },
-    { amount: 12000, created: 1444515233, currency: 'usd', id: 'pro-yearly-usd', interval: 'year', interval_count: 1, livemode: false, metadata: { level: 'pro' }, name: 'Avanet Pro Yearly USD', object: 'plan', statement_descriptor: 'AVANET', trial_period_days: null },
+    { amount: 6000, created: 1456426075, currency: 'usd', id: 'tour-yearly-usd', interval: 'year', interval_count: 1, livemode: false, metadata: { level: 'tour', rank: 0, status: 'live' }, name: 'Avanet Tour Yearly USD', object: 'plan', statement_descriptor: null, trial_period_days: null },
+    { amount: 900, created: 1456426045, currency: 'usd', id: 'tour-monthly-usd', interval: 'month', interval_count: 1, livemode: false, metadata: { level: 'tour', rank: 0, status: 'live' }, name: 'Avanet Tour Monthly USD', object: 'plan', statement_descriptor: null, trial_period_days: null },
+    { amount: 1700, created: 1444515260, currency: 'usd', id: 'pro-monthly-usd', interval: 'month', interval_count: 1, livemode: false, metadata: { level: 'pro', rank: 1, status: 'live' }, name: 'Avanet Pro Monthly USD', object: 'plan', statement_descriptor: 'AVANET', trial_period_days: null },
+    { amount: 12000, created: 1444515233, currency: 'usd', id: 'pro-yearly-usd', interval: 'year', interval_count: 1, livemode: false, metadata: { level: 'pro', rank: 1, status: 'live' }, name: 'Avanet Pro Yearly USD', object: 'plan', statement_descriptor: 'AVANET', trial_period_days: null },
 ] }
 /* eslint-enable max-len */
 

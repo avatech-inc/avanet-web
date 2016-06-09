@@ -122,6 +122,13 @@
     "expiration": "Expiration",
     "total": "Total",
     "start_membership": "Start Membership",
+    "cancel_membership": "Cancel Membership",
+    "save_membership": "Save Membership",
+    "downgrade_membership": "Downgrade Membership",
+    "upgrade_membership": "Upgrade Membership",
+    "coupon": "Coupon",
+    "coupon_applied": "Coupon applied",
+    "coupon_invalid": "Invalid coupon",
     "processing_error": "Unable to process card",
     "success": "Success"
   },

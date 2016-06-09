@@ -177,12 +177,20 @@ export const Billing = [
 
             let billingType: 'user' | 'org' = state.get('type')
             let level: string = state.get('level')
+            let origLevel: string = state.get('origLevel')
             let seats: number = state.get('seats')
             let interval: 'month' | 'year' = state.get('interval')
+            let coupon: string = state.get('coupon')
+            let couponMessage: string = state.get('couponMessage')
+            let couponAmountOff: number = state.get('couponAmountOff')
+            let couponPercentOff: number = state.get('couponPercentOff')
+            let couponInterval: 'month' | 'year' = state.get('couponInterval')
             let success: string = state.get('success')
             let error: string = state.get('error')
             let processing: boolean = state.get('processing')
             let card: CardRecord = state.get('card')
+            let showBilling = true
+            let saveMessage = "billing.start_membership"
 
             let seatUsers: Array<string> = state.get('seatUsers').toArray()
             let org: OrgRecord = state.get('org')
@@ -204,6 +212,7 @@ export const Billing = [
                 ))
 
             let total = 0
+            let origTotal = 0
 
             if (planObj) {
                 total = planObj.amountMonth * seats
@@ -220,6 +229,14 @@ export const Billing = [
                         ))
 
                     $scope.savings = Math.round((1 - (planYearObj.amountMonth / planObj.amountMonth)) * 100)
+                }
+
+                origTotal = total
+
+                if (couponAmountOff) {
+                    total = total - couponAmountOff
+                } else if (couponPercentOff) {
+                    total = total * (1 - (couponPercentOff / 100))
                 }
             }
 
@@ -241,6 +258,20 @@ export const Billing = [
                 billingStore.dispatch(actions.clearCard())
             }
 
+            if (origLevel !== 'rec' && total === 0) {
+                showBilling = false
+            }
+
+            if (origLevel === 'rec') {
+                saveMessage = "billing.start_membership"
+            } else if (origLevel === 'tour' && level === 'pro') {
+                saveMessage = "billing.upgrade_membership"
+            } else if (origLevel === 'pro' && level === 'tour') {
+                saveMessage = "billing.downgrade_membership"
+            } else if (origLevel === level) {
+                saveMessage = "billing.save_membership"
+            }
+
             $scope.plans = state.get('plans')
                 .filter((plan: Billing.Plan) => plan.interval === $scope.interval)
                 .filter((plan: Billing.Plan) => (
@@ -255,10 +286,18 @@ export const Billing = [
             $scope.level = level
             $scope.seats = seats
             $scope.interval = interval
+            $scope.coupon = coupon
+            $scope.couponMessage = couponMessage
+            $scope.couponInterval = couponInterval
+            $scope.couponAmountOff = couponAmountOff
+            $scope.couponPercentOff = couponPercentOff
             $scope.total = total
+            $scope.origTotal = origTotal
             $scope.error = error
             $scope.success = success
             $scope.processing = processing
+            $scope.showBilling = showBilling
+            $scope.saveMessage = saveMessage
 
             if (billingType === 'org') {
                 $scope.seatUsers = seatUsers
@@ -277,12 +316,19 @@ export const Billing = [
             stateType = 'org'
         }
 
+        billingStore.dispatch(actions.setCoupon(''))
+        billingStore.dispatch(actions.setCouponMessage(''))
+        billingStore.dispatch(actions.setCouponAmountOff(0))
+        billingStore.dispatch(actions.setCouponPercentOff(0))
+        billingStore.dispatch(actions.setCouponInterval(null))
+
         billingStore.dispatch(actions.setBillingType(stateType))
         billingStore.dispatch(actions.fetchPlans(authToken))
 
         if (stateType === 'org') {
             billingStore.dispatch(actions.fetchOrg($stateParams.orgId, authToken))
         } else if (stateType === 'user') {
+            billingStore.dispatch(actions.setSeats(1))
             billingStore.dispatch(actions.fetchUser(authToken))
         }
 
@@ -295,9 +341,27 @@ export const Billing = [
         $scope.changeLevel = level => billingStore.dispatch(actions.setLevel(level))
         $scope.changeOrg = org => billingStore.dispatch(actions.fetchOrg(org.id, authToken))
         $scope.changeSeats = seats => billingStore.dispatch(actions.setSeats(seats))
-        $scope.changeInterval = interval => billingStore.dispatch(actions.setSubInterval(interval))
+
+        $scope.changeInterval = interval => {
+            billingStore.dispatch(actions.setSubInterval(interval))
+        }
+
         $scope.setSeatUser = (index, id) => billingStore.dispatch(actions.setSeatUser(index, id))
         $scope.deleteSeatUser = index => billingStore.dispatch(actions.deleteSeatUser(index))
+
+        $scope.changeCoupon = coupon => {
+            billingStore.dispatch(actions.setCoupon(coupon))
+
+            if (coupon === '') {
+                billingStore.dispatch(actions.setCouponMessage(''))
+                billingStore.dispatch(actions.setCouponAmountOff(0))
+                billingStore.dispatch(actions.setCouponPercentOff(0))
+                billingStore.dispatch(actions.setCouponInterval(null))
+            } else {
+                billingStore.dispatch(actions.fetchCoupon(coupon, authToken))
+            }
+        }
+
         $scope.changePayment = (value, field) => {
             // Determine card type
             if (field === 'cc') {
@@ -326,6 +390,35 @@ export const Billing = [
             billingStore.dispatch(actions.paymentFormChanged(true))
         }
 
+        $scope.cancelBilling = () => {
+            let billingType: 'user' | 'org' = state.get('type')
+            let planObj: Billing.Plan = state.get('plans')
+                .find((plan: Billing.Plan) => (
+                    plan.interval === state.get('interval') &&
+                    plan.metadata.level === state.get('level')
+                ))
+
+            if (state.get('processing')) return
+
+            billingStore.dispatch(actions.setProcessing(true))
+            billingStore.dispatch(actions.clearPaymentError())
+
+            // Resolve the Stripe token to null unless the payment form has changed.
+            let tokenPromise = Promise.resolve(null)
+
+            Promise.all([
+                tokenPromise,
+                actions.fetchUserPayment(authToken)
+            ]).then((values: [string, Billing.UserPaymentResponse]) =>
+                billingStore.dispatch(actions.submitUserPayment(
+                    values[0],
+                    values[1],
+                    planObj.id,
+                    null,
+                    authToken
+                ))).catch(error => billingStore.dispatch(actions.handleError(error)))
+        }
+
         $scope.saveBilling = (name, cc, cvc, expMonth, expYear) => {
             let billingType: 'user' | 'org' = state.get('type')
             let planObj: Billing.Plan = state.get('plans')
@@ -333,6 +426,7 @@ export const Billing = [
                     plan.interval === state.get('interval') &&
                     plan.metadata.level === state.get('level')
                 ))
+            let coupon: string = state.get('coupon')
 
             if (state.get('processing')) return
 
@@ -369,6 +463,7 @@ export const Billing = [
                         seats,
                         paidMembers.length,
                         paidMembers,
+                        coupon,
                         authToken
                     ))).catch(error => billingStore.dispatch(actions.handleError(error)))
             } else if (billingType === 'user') {
@@ -380,6 +475,7 @@ export const Billing = [
                         values[0],
                         values[1],
                         planObj.id,
+                        coupon,
                         authToken
                     ))).catch(error => billingStore.dispatch(actions.handleError(error)))
             }

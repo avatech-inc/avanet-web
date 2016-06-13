@@ -554,20 +554,20 @@ const Map = [
                     scope.mapLayers.loaded
                 ]).then(() => {
                     // get default layer based on location
-                    let defaultMap = 'mbworld'
+                    let defaultMap = 'mbx-enmetric-topo'
                     let country = scope.global.user.country
 
                     if (country) {
                         if (country === 'US') {
-                            defaultMap = 'mbus'
+                            defaultMap = 'mbx-enimp-topo'
                         } else if (country === 'CA') {
-                            defaultMap = 'mbmetric'
+                            defaultMap = 'mbx-enmetric-topo'
                         } else if (country === 'FR') {
-                            defaultMap = 'mbfr'
+                            defaultMap = 'mbx-fra-top'
                         } else if (country === 'DE') {
-                            defaultMap = 'mbde'
+                            defaultMap = 'mbx-deu-topo'
                         } else if (country === 'AT') {
-                            defaultMap = 'mbde'
+                            defaultMap = 'mbx-deu-topo'
                         }
                     }
 

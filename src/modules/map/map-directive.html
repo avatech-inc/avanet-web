@@ -33,7 +33,7 @@
 							<div class="header" ng-click="$broadcast('refreshSlider')">Topo Layers</div>
 							<div class="content">
 								<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-								ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}
+								ng-if="(global.user.userType.indexOf('pro') > -1) || layer.free" >{{ layer.name }}
 								</div>
 							</div>
 						</div>
@@ -42,7 +42,7 @@
 							<div class="header" ng-click="$broadcast('refreshSlider')">{{ 'aerial_imagery' | translate}} Layers</div>
 							<div class="content">
 								<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
-								ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'" >{{ layer.name }}</div>
+								ng-if="(global.user.userType.indexOf('pro') > -1) || layer.free" >{{ layer.name }}</div>
 							</div>
 						</div>
 					</accordion-new>

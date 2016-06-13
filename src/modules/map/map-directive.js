@@ -553,31 +553,11 @@ const Map = [
                     mapLoaded,
                     scope.mapLayers.loaded
                 ]).then(() => {
-                    // get default layer based on location
-                    let defaultMap = 'mbx-enmetric-topo'
-                    let country = scope.global.user.country
-
-                    if (country) {
-                        if (country === 'US') {
-                            defaultMap = 'mbx-enimp-topo'
-                        } else if (country === 'CA') {
-                            defaultMap = 'mbx-enmetric-topo'
-                        } else if (country === 'FR') {
-                            defaultMap = 'mbx-fra-top'
-                        } else if (country === 'DE') {
-                            defaultMap = 'mbx-deu-topo'
-                        } else if (country === 'AT') {
-                            defaultMap = 'mbx-deu-topo'
-                        }
-                    }
-
-                    let defaultLayer = scope.mapLayers.getLayerByAlias(defaultMap)
-
                     // get saved default base layer
                     let savedMap = scope.global.user.settings.defaultMap
                     let baseMap = scope.mapLayers.getLayerByAlias(savedMap)
 
-                    if (!baseMap) baseMap = defaultLayer
+                    if (!baseMap) baseMap = scope.mapLayers.baseLayers.terrain[0]
 
                     // setTimeout is needed to solve that bug where the zoom animation is incorrect
                     setTimeout(() => scope.setBaseLayer(baseMap))

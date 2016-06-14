@@ -29,3 +29,9 @@ deployment:
       - npm run build:develop
       - rsync -avze ssh --delete ./build/ ubuntu@52.5.78.170:~/develop/
       - ./scripts/notify.sh 'Deployed develop branch of avanet-web'
+
+  docs:
+    branch: [develop, master]
+    commands:
+      - ./scripts/docs.sh
+      - ./scripts/notify.sh 'Built docs for avanet-web'

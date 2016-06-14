@@ -11,6 +11,10 @@ import thunk = require('redux-thunk')
 import { createStore, applyMiddleware } from 'redux'
 import * as actions from '../actions/billing'
 
+/**
+ * @module stores/billing
+ */
+
 const DefaultCard: Billing.Card = {
     name: null,
     last_4: null,
@@ -89,6 +93,7 @@ class BillingState extends Immutable.Record<Billing.StateRecord>(DefaultBilling)
  * Takes an immutable list of seat users `state` and returns a copy of it
  * modified with BillingAction `action`
  *
+ * @ignore
  * @param  {Immutable.List<string>} state
  * @param  {BillingAction}          action
  * @return {Immutable.List<string>}
@@ -118,7 +123,8 @@ const seats = (
 /**
  * Takes an immutable map org `state` and returns a copy of it
  * modified with FetchAction `action`
- * 
+ *
+ * @ignore
  * @param  {Org}         state
  * @param  {FetchAction} action
  * @return {Org}
@@ -147,6 +153,7 @@ const org = (
 }
 
 /**
+ * @ignore
  * @param  {string}
  * @param  {MessageAction}
  * @return {string}
@@ -167,6 +174,7 @@ const error = (
 }
 
 /**
+ * @ignore
  * @param  {string}
  * @param  {MessageAction}
  * @return {string}
@@ -187,6 +195,7 @@ const success = (
 }
 
 /**
+ * @ignore
  * @param  {CardRecord}
  * @param  {CardAction}
  * @return {CardRecord}
@@ -220,7 +229,8 @@ const card = (
 /**
  * Takes an immutable record `state` and returns a copy of it modified with
  * BillingAction `action`
- * 
+ *
+ * @ignore
  * @param  {BillingState}  state
  * @param  {BillingAction} action
  * @return {BillingState}
@@ -303,4 +313,14 @@ const rootReducer = (
     }
 }
 
+/**
+ * @type {Redux.Store}
+ * @description Redux billing store to manage billing state.
+ *
+ * @example
+ * billingStore.dispatch(actions.setBillingType('org'))
+ *
+ * @example
+ * billingStore.dispatch(actions.setBillingType('org'))
+ */
 export const billingStore = createStore(rootReducer, applyMiddleware(thunk))

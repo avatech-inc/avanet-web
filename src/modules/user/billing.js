@@ -143,12 +143,20 @@ exports.Billing = [
             state = billing_1.billingStore.getState();
             var billingType = state.get('type');
             var level = state.get('level');
+            var origLevel = state.get('origLevel');
             var seats = state.get('seats');
             var interval = state.get('interval');
+            var coupon = state.get('coupon');
+            var couponMessage = state.get('couponMessage');
+            var couponAmountOff = state.get('couponAmountOff');
+            var couponPercentOff = state.get('couponPercentOff');
+            var couponInterval = state.get('couponInterval');
             var success = state.get('success');
             var error = state.get('error');
             var processing = state.get('processing');
             var card = state.get('card');
+            var showBilling = true;
+            var saveMessage = "billing.start_membership";
             var seatUsers = state.get('seatUsers').toArray();
             var org = state.get('org');
             var orgUsers = [];
@@ -164,6 +172,7 @@ exports.Billing = [
                 .find(function (plan) { return (plan.interval === interval &&
                 plan.metadata.level === level); });
             var total = 0;
+            var origTotal = 0;
             if (planObj) {
                 total = planObj.amountMonth * seats;
                 if (interval === 'year') {
@@ -175,6 +184,13 @@ exports.Billing = [
                         .find(function (plan) { return (plan.interval === 'year' &&
                         plan.metadata.level === level); });
                     $scope.savings = Math.round((1 - (planYearObj.amountMonth / planObj.amountMonth)) * 100);
+                }
+                origTotal = total;
+                if (couponAmountOff) {
+                    total = total - couponAmountOff;
+                }
+                else if (couponPercentOff) {
+                    total = total * (1 - (couponPercentOff / 100));
                 }
             }
             var brand = card.get('brand');
@@ -190,6 +206,21 @@ exports.Billing = [
                 $scope.cvc = card.get('cvc');
                 billing_1.billingStore.dispatch(actions.clearCard());
             }
+            if (origLevel !== 'rec' && total === 0) {
+                showBilling = false;
+            }
+            if (origLevel === 'rec') {
+                saveMessage = "billing.start_membership";
+            }
+            else if (origLevel === 'tour' && level === 'pro') {
+                saveMessage = "billing.upgrade_membership";
+            }
+            else if (origLevel === 'pro' && level === 'tour') {
+                saveMessage = "billing.downgrade_membership";
+            }
+            else if (origLevel === level) {
+                saveMessage = "billing.save_membership";
+            }
             $scope.plans = state.get('plans')
                 .filter(function (plan) { return plan.interval === $scope.interval; })
                 .filter(function (plan) { return (plan.metadata.level === 'pro' ||
@@ -201,10 +232,18 @@ exports.Billing = [
             $scope.level = level;
             $scope.seats = seats;
             $scope.interval = interval;
+            $scope.coupon = coupon;
+            $scope.couponMessage = couponMessage;
+            $scope.couponInterval = couponInterval;
+            $scope.couponAmountOff = couponAmountOff;
+            $scope.couponPercentOff = couponPercentOff;
             $scope.total = total;
+            $scope.origTotal = origTotal;
             $scope.error = error;
             $scope.success = success;
             $scope.processing = processing;
+            $scope.showBilling = showBilling;
+            $scope.saveMessage = saveMessage;
             if (billingType === 'org') {
                 $scope.seatUsers = seatUsers;
                 $scope.orgUsers = orgUsers;
@@ -217,21 +256,51 @@ exports.Billing = [
         if (typeof $stateParams.orgId !== 'undefined') {
             stateType = 'org';
         }
+        billing_1.billingStore.dispatch(actions.setCoupon(''));
+        billing_1.billingStore.dispatch(actions.setCouponMessage(''));
+        billing_1.billingStore.dispatch(actions.setCouponAmountOff(0));
+        billing_1.billingStore.dispatch(actions.setCouponPercentOff(0));
+        billing_1.billingStore.dispatch(actions.setCouponInterval(null));
         billing_1.billingStore.dispatch(actions.setBillingType(stateType));
         billing_1.billingStore.dispatch(actions.fetchPlans(authToken));
         if (stateType === 'org') {
             billing_1.billingStore.dispatch(actions.fetchOrg($stateParams.orgId, authToken));
         }
         else if (stateType === 'user') {
+            billing_1.billingStore.dispatch(actions.setSeats(1));
             billing_1.billingStore.dispatch(actions.fetchUser(authToken));
         }
         $scope.getUnselectedUsers = function (index) { return exports.unselectedItems($scope.orgUsers, $scope.seatUsers, index); };
         $scope.changeLevel = function (level) { return billing_1.billingStore.dispatch(actions.setLevel(level)); };
         $scope.changeOrg = function (org) { return billing_1.billingStore.dispatch(actions.fetchOrg(org.id, authToken)); };
         $scope.changeSeats = function (seats) { return billing_1.billingStore.dispatch(actions.setSeats(seats)); };
-        $scope.changeInterval = function (interval) { return billing_1.billingStore.dispatch(actions.setSubInterval(interval)); };
+        $scope.changeInterval = function (interval) {
+            billing_1.billingStore.dispatch(actions.setSubInterval(interval));
+        };
         $scope.setSeatUser = function (index, id) { return billing_1.billingStore.dispatch(actions.setSeatUser(index, id)); };
         $scope.deleteSeatUser = function (index) { return billing_1.billingStore.dispatch(actions.deleteSeatUser(index)); };
+        $scope.changeCoupon = function (coupon, e) {
+            if (e.which === 13) {
+                e.preventDefault();
+            }
+            billing_1.billingStore.dispatch(actions.setCoupon(coupon));
+            if (coupon === '') {
+                billing_1.billingStore.dispatch(actions.setCouponMessage(''));
+                billing_1.billingStore.dispatch(actions.setCouponAmountOff(0));
+                billing_1.billingStore.dispatch(actions.setCouponPercentOff(0));
+                billing_1.billingStore.dispatch(actions.setCouponInterval(null));
+            }
+            else {
+                billing_1.billingStore.dispatch(actions.fetchCoupon(coupon, authToken));
+            }
+        };
+        $scope.clearCoupon = function (coupon) {
+            billing_1.billingStore.dispatch(actions.setCoupon(coupon));
+            billing_1.billingStore.dispatch(actions.setCouponMessage(''));
+            billing_1.billingStore.dispatch(actions.setCouponAmountOff(0));
+            billing_1.billingStore.dispatch(actions.setCouponPercentOff(0));
+            billing_1.billingStore.dispatch(actions.setCouponInterval(null));
+        };
         $scope.changePayment = function (value, field) {
             // Determine card type
             if (field === 'cc') {
@@ -255,11 +324,30 @@ exports.Billing = [
             billing_1.billingStore.dispatch(actions.clearPaymentError());
             billing_1.billingStore.dispatch(actions.paymentFormChanged(true));
         };
+        $scope.cancelBilling = function () {
+            var billingType = state.get('type');
+            var planObj = state.get('plans')
+                .find(function (plan) { return (plan.interval === state.get('interval') &&
+                plan.metadata.level === state.get('level')); });
+            if (state.get('processing'))
+                return;
+            billing_1.billingStore.dispatch(actions.setProcessing(true));
+            billing_1.billingStore.dispatch(actions.clearPaymentError());
+            // Resolve the Stripe token to null unless the payment form has changed.
+            var tokenPromise = Promise.resolve(null);
+            Promise.all([
+                tokenPromise,
+                actions.fetchUserPayment(authToken)
+            ]).then(function (values) {
+                return billing_1.billingStore.dispatch(actions.submitUserPayment(values[0], values[1], planObj.id, null, authToken));
+            }).catch(function (error) { return billing_1.billingStore.dispatch(actions.handleError(error)); });
+        };
         $scope.saveBilling = function (name, cc, cvc, expMonth, expYear) {
             var billingType = state.get('type');
             var planObj = state.get('plans')
                 .find(function (plan) { return (plan.interval === state.get('interval') &&
                 plan.metadata.level === state.get('level')); });
+            var coupon = state.get('coupon');
             if (state.get('processing'))
                 return;
             billing_1.billingStore.dispatch(actions.setProcessing(true));
@@ -277,7 +365,7 @@ exports.Billing = [
                     tokenPromise,
                     actions.fetchOrgPayment(orgId_1, authToken)
                 ]).then(function (values) {
-                    return billing_1.billingStore.dispatch(actions.submitOrgPayment(orgId_1, values[0], values[1], planObj.id, seats_1, paidMembers_1.length, paidMembers_1, authToken));
+                    return billing_1.billingStore.dispatch(actions.submitOrgPayment(orgId_1, values[0], values[1], planObj.id, seats_1, paidMembers_1.length, paidMembers_1, coupon, authToken));
                 }).catch(function (error) { return billing_1.billingStore.dispatch(actions.handleError(error)); });
             }
             else if (billingType === 'user') {
@@ -285,7 +373,7 @@ exports.Billing = [
                     tokenPromise,
                     actions.fetchUserPayment(authToken)
                 ]).then(function (values) {
-                    return billing_1.billingStore.dispatch(actions.submitUserPayment(values[0], values[1], planObj.id, authToken));
+                    return billing_1.billingStore.dispatch(actions.submitUserPayment(values[0], values[1], planObj.id, coupon, authToken));
                 }).catch(function (error) { return billing_1.billingStore.dispatch(actions.handleError(error)); });
             }
         };

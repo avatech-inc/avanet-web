@@ -15,8 +15,15 @@ var _ = { capitalize: lodash_1.capitalize };
 exports.SET_BILLING_TYPE = 'billing/SET_BILLING_TYPE';
 exports.SET_PLANS = 'billing/SET_PLANS';
 exports.SET_LEVEL = 'billing/SET_LEVEL';
+exports.SET_ORIG_LEVEL = 'billing/SET_ORIG_LEVEL';
 exports.SET_SEATS = 'billing/SET_SEATS';
-exports.SET_SUB_INTERVAL = 'billing/SET_INTERVAL';
+exports.SET_SUB_INTERVAL = 'billing/SET_SUB_INTERVAL';
+exports.SET_ORIG_SUB_INTERVAL = 'billing/SET_ORIG_SUB_INTERVAL';
+exports.SET_COUPON = 'billing/SET_COUPON';
+exports.SET_COUPON_MESSAGE = 'billing/SET_COUPON_MESSAGE';
+exports.SET_COUPON_AMOUNT_OFF = 'billing/SET_COUPON_AMOUNT_OFF';
+exports.SET_COUPON_PERCENT_OFF = 'billing/SET_COUPON_PERCENT_OFF';
+exports.SET_COUPON_INTERVAL = 'billing/SET_COUPON_INTERVAL';
 exports.SET_SEAT_USER = 'billing/SET_SEAT_USER';
 exports.DELETE_SEAT_USER = 'billing/DELETE_SEAT_USER';
 exports.SET_PAYMENT_SUCCESS = 'billing/SET_PAYMENT_SUCCESS';
@@ -70,6 +77,15 @@ exports.setLevel = function (level) { return ({
     level: level
 }); };
 /**
+ * Set original plan level. Used for determining upgrade/downgrade/cancel logic.
+ *
+ * @param  {String} level - <code>'tour'</code> or <code>'pro'</code>.
+ */
+exports.setOrigLevel = function (level) { return ({
+    type: exports.SET_ORIG_LEVEL,
+    level: level
+}); };
+/**
  * Set the number of seats for an organization. Updates the number of fields
  * for organization seats.
  *
@@ -86,6 +102,61 @@ exports.setSeats = function (seats) { return ({
  */
 exports.setSubInterval = function (interval) { return ({
     type: exports.SET_SUB_INTERVAL,
+    interval: interval
+}); };
+/**
+ * Set original subscribiption billing interval to <code>'month'</code> or <code>'year'</code>.
+ * Used for determining upgrade/downgrade/cancel logic.
+ *
+ * @param  {String} interval - <code>'month'</code> or <code>'year'</code>.
+ */
+exports.setOrigSubInterval = function (interval) { return ({
+    type: exports.SET_ORIG_SUB_INTERVAL,
+    interval: interval
+}); };
+/**
+ * Sets a coupon code.
+ *
+ * @param  {String} coupon - Coupon code.
+ */
+exports.setCoupon = function (coupon) { return ({
+    type: exports.SET_COUPON,
+    coupon: coupon
+}); };
+/**
+ * Sets a coupon code for valid/invalid coupons.
+ *
+ * @param  {String} message - Coupon message.
+ */
+exports.setCouponMessage = function (message) { return ({
+    type: exports.SET_COUPON_MESSAGE,
+    message: message
+}); };
+/**
+ * Applies the dollar amount off determined by the coupon. Pasing 0 clears the amount.
+ *
+ * @param  {Number} amount - Dollar amount.
+ */
+exports.setCouponAmountOff = function (amount) { return ({
+    type: exports.SET_COUPON_AMOUNT_OFF,
+    amount: amount
+}); };
+/**
+ * Applies the percentage off determined by the coupon. Pasing 0 clears the percentage.
+ *
+ * @param  {Number} percent - Percentage.
+ */
+exports.setCouponPercentOff = function (percent) { return ({
+    type: exports.SET_COUPON_PERCENT_OFF,
+    percent: percent
+}); };
+/**
+ * Restrict available plan intervals based on coupon metadta.
+ *
+ * @param  {String} interval - <code>'month'</code> or <code>'year'</code>.
+ */
+exports.setCouponInterval = function (interval) { return ({
+    type: exports.SET_COUPON_INTERVAL,
     interval: interval
 }); };
 /**
@@ -286,6 +357,8 @@ exports.fetchOrg = function (orgId, authToken) {
                 dispatch(exports.setSeats(json.seats_total));
                 dispatch(exports.setLevel(json.subscription_metadata.level));
                 dispatch(exports.setSubInterval(json.billing_interval));
+                dispatch(exports.setOrigLevel(json.subscription_metadata.level));
+                dispatch(exports.setOrigSubInterval(json.billing_interval));
                 dispatch(exports.receiveCard(json.cardholders_name, json.last_4, json.exp_month, json.exp_year, '\u2022\u2022\u2022', json.brand));
                 paidMembers = json.paid_members_hacky;
             }
@@ -320,6 +393,8 @@ exports.fetchUser = function (authToken) {
             if (json.customer) {
                 dispatch(exports.setLevel(json.subscription_metadata.level));
                 dispatch(exports.setSubInterval(json.billing_interval));
+                dispatch(exports.setOrigLevel(json.subscription_metadata.level));
+                dispatch(exports.setOrigSubInterval(json.billing_interval));
                 dispatch(exports.receiveCard(json.cardholders_name, json.last_4, json.exp_month, json.exp_year, '\u2022\u2022\u2022', json.brand));
             }
             else {
@@ -355,10 +430,54 @@ exports.fetchPlans = function (authToken) { return function (dispatch) {
             }
             var level = _.capitalize(plan.metadata.level);
             var price = plan.amountMonth / 100;
-            plan.title = level + " - $" + price + "/month";
+            if (level === 'Tour') {
+                level = 'Premium';
+            }
+            if (price) {
+                plan.title = level + " - $" + price + "/month";
+            }
+            else {
+                plan.title = level + " - Free";
+            }
             return plan;
         });
-        dispatch(exports.setPlans(plans));
+        plans.sort(function (a, b) { return a.metadata.rank - b.metadata.rank; });
+        dispatch(exports.setPlans(plans.filter(function (plan) { return plan.metadata.status === 'live'; })));
+        return Promise.resolve;
+    });
+}; };
+/**
+ * @param  {string} coupon
+ * @param  {string} authToken
+ * @return {Function} - (dispatch: Store.dispatch): Promise
+ */
+exports.fetchCoupon = function (coupon, authToken) { return function (dispatch) {
+    return fetch(window.payBaseUrl + "coupons/", {
+        method: 'POST',
+        headers: { 'Auth-Token': authToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coupon: coupon })
+    })
+        .then(function (response) { return response.json(); })
+        .then(function (json) {
+        if (json.valid) {
+            dispatch(exports.setCouponMessage('billing.coupon_applied'));
+            if (json.amount_off) {
+                dispatch(exports.setCouponAmountOff(json.amount_off));
+            }
+            else if (json.percent_off) {
+                dispatch(exports.setCouponPercentOff(json.percent_off));
+            }
+            if (json.metadata.interval) {
+                dispatch(exports.setSubInterval(json.metadata.interval));
+                dispatch(exports.setCouponInterval(json.metadata.interval));
+            }
+        }
+        else {
+            dispatch(exports.setCouponMessage('billing.coupon_invalid'));
+            dispatch(exports.setCouponAmountOff(0));
+            dispatch(exports.setCouponPercentOff(0));
+            dispatch(exports.setCouponInterval(null));
+        }
         return Promise.resolve;
     });
 }; };
@@ -569,15 +688,20 @@ exports.handleError = function (error) {
  * @param  {String}  plan
  * @param  {Number}  seats
  * @param  {Number}  quantity
+ * @param  {String[]} paidMembers
+ * @param  {String}  coupon
  * @param  {String}  authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
-exports.submitOrgPayment = function (orgId, token, paymentObj, plan, seats, quantity, paidMembers, authToken) {
+exports.submitOrgPayment = function (orgId, token, paymentObj, plan, seats, quantity, paidMembers, coupon, authToken) {
     return function (dispatch) {
         var body = { plan: plan, seats: seats, quantity: quantity };
         var request = exports.postOrgPayment;
         if (token !== null) {
             body.token = token;
+        }
+        if (coupon !== null) {
+            body.coupon = coupon;
         }
         if (paymentObj.customer) {
             request = exports.patchOrgPayment;
@@ -588,11 +712,16 @@ exports.submitOrgPayment = function (orgId, token, paymentObj, plan, seats, quan
             dispatch(exports.setProcessing(false));
             dispatch(exports.clearPaymentError());
             dispatch(exports.paymentFormChanged(false));
+            dispatch(exports.setCoupon(''));
+            dispatch(exports.setCouponMessage(''));
+            dispatch(exports.setCouponAmountOff(0));
+            dispatch(exports.setCouponPercentOff(0));
+            dispatch(exports.setCouponInterval(null));
             dispatch(exports.setSeats(paymentObj.seats_total));
             dispatch(exports.setLevel(paymentObj.subscription_metadata.level));
             dispatch(exports.setSubInterval(paymentObj.billing_interval));
             dispatch(exports.receiveCard(paymentObj.cardholders_name, paymentObj.last_4, paymentObj.exp_month, paymentObj.exp_year, '\u2022\u2022\u2022', paymentObj.brand));
-            dispatch(exports.setPaymentSuccess('Payment successfully processed.'));
+            dispatch(exports.setPaymentSuccess('Updated membership.'));
             setTimeout(function () {
                 dispatch(exports.clearPaymentSuccess());
             }, 5000);
@@ -606,20 +735,22 @@ exports.submitOrgPayment = function (orgId, token, paymentObj, plan, seats, quan
  * Handles processing state and payment response.
  *
  * @param  {String}  orgId
- * @param  {String} token
+ * @param  {String}  token
  * @param  {PaymentResponse} paymentObj
  * @param  {String}  plan
- * @param  {Number}  seats
- * @param  {Number}  quantity
+ * @param  {String}  coupon
  * @param  {String}  authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
-exports.submitUserPayment = function (token, paymentObj, plan, authToken) {
+exports.submitUserPayment = function (token, paymentObj, plan, coupon, authToken) {
     return function (dispatch) {
         var body = { plan: plan };
         var request = exports.postUserPayment;
         if (token !== null) {
             body.token = token;
+        }
+        if (coupon !== null) {
+            body.coupon = coupon;
         }
         if (paymentObj.customer) {
             request = exports.patchUserPayment;
@@ -629,10 +760,15 @@ exports.submitUserPayment = function (token, paymentObj, plan, authToken) {
             dispatch(exports.setProcessing(false));
             dispatch(exports.clearPaymentError());
             dispatch(exports.paymentFormChanged(false));
+            dispatch(exports.setCoupon(''));
+            dispatch(exports.setCouponMessage(''));
+            dispatch(exports.setCouponAmountOff(0));
+            dispatch(exports.setCouponPercentOff(0));
+            dispatch(exports.setCouponInterval(null));
             dispatch(exports.setLevel(paymentObj.subscription_metadata.level));
             dispatch(exports.setSubInterval(paymentObj.billing_interval));
             dispatch(exports.receiveCard(paymentObj.cardholders_name, paymentObj.last_4, paymentObj.exp_month, paymentObj.exp_year, '\u2022\u2022\u2022', paymentObj.brand));
-            dispatch(exports.setPaymentSuccess('Payment successfully processed.'));
+            dispatch(exports.setPaymentSuccess('Updated membership.'));
             setTimeout(function () {
                 dispatch(exports.clearPaymentSuccess());
             }, 5000);

@@ -1053,7 +1053,90 @@ const RoutePlanning = [
                 })
 
                 // return marker
+<<<<<<< Updated upstream
                 return _line.editing._markers[_index]
+=======
+                return polyline.editing._markers[index]
+            }
+
+            let editingOff = () => {
+                // close popups
+                setTimeout(() => {
+                    let popups = $('.leaflet-popup-close-button')
+                    angular.forEach(popups, popup => popup.click())
+                })
+
+                // hide all points that aren't waypoints
+                $('.leaflet-editing-icon')
+                    .not('.waypoint-icon')
+                    .not('.end-icon')
+                    .addClass('_hide')
+
+                angular.forEach(_line.editing._markers, marker => {
+                    // disable point dragging
+                    marker.dragging.disable()
+
+                    // convert end point into a waypoint (if it isn't already)
+                    if (
+                        marker._index === _line.editing._markers.length - 1 &&
+                        !marker.waypoint
+                    ) {
+                        makePoint(marker)
+                        makeWaypoint(marker)
+                        updateSegments()
+
+                        $scope.$evalAsync(() => {
+                            processUpdate(_line)
+                        })
+                    }
+                })
+            }
+
+            // $scope.map = $rootScope.map;
+            // load if routeId specified
+            if ($stateParams.routeId && $stateParams.routeId !== 'new') {
+                $http
+                    .get(window.apiBaseUrl + 'routes/' + $stateParams.routeId)
+                    .then(res => {
+                        let route = res.data
+
+                        $scope.route._id = route._id
+                        $scope.route.name = route.name
+
+                        // create editable path
+                        _line = createLine()
+
+                        lineGroup.addLayer(_line)
+                        editHandler.enable()
+
+                        // add markers
+                        for (let i = 0; i < route.points.length; i++) {
+                            let point = route.points[i]
+                            let marker = addPointToPolyline(
+                                _line, {
+                                    lat: point.coords[1],
+                                    lng: point.coords[0]
+                                })
+
+                            // if waypoint
+                            if (point.waypoint) {
+                                makePoint(marker)
+                                makeWaypoint(marker, point.waypoint)
+                            }
+                        }
+
+                        $scope.map.fitBounds(_line.getBounds(), { maxZoom: 14, animate: false })
+                        $scope.loading = false
+
+                        processUpdate(_line)
+                    })
+
+                    // todo: handle 404?
+
+            // if new
+            } else if ($stateParams.routeId === 'new') {
+                $scope.loading = false
+>>>>>>> Stashed changes
             }
 
             let mapClick = e => {

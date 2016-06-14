@@ -14,6 +14,10 @@ const _ = { capitalize: capitalize }
 
 declare var window: AppWindow
 
+/**
+ * @module  actions/billing
+ */
+
 export const SET_BILLING_TYPE = 'billing/SET_BILLING_TYPE'
 export const SET_PLANS = 'billing/SET_PLANS'
 export const SET_LEVEL = 'billing/SET_LEVEL'
@@ -44,101 +48,208 @@ export const RECEIVE_ORG_USERS = 'users/RECEIVE_ORG_USERS'
 
 export const RESET = 'tests/RESET'
 
+/**
+ * Set the billing type to <code>'user'</code> or <code>'org'</code>, changes
+ * available fields.
+ * 
+ * @param  {String} billingType - <code>'user'</code> or <code>'org'</code>.
+ */
 export const setBillingType = (billingType: string) => ({
     type: SET_BILLING_TYPE,
     billingType: billingType
 })
 
+/**
+ * Set the available plans.
+ * 
+ * @param  {Billing.Plan[]} plans - Array of Plans to make available.
+ */
 export const setPlans = (plans: Array<Billing.Plan>) => ({
     type: SET_PLANS,
     plans: plans
 })
 
+/**
+ * Set processing state. Prevents credit card information from being submitted twice.
+ * 
+ * @param  {Boolean} processing - Whether credit card information is processing.
+ */
 export const setProcessing = (processing: boolean) => ({
     type: SET_PROCESSING,
     processing: processing
 })
 
+/**
+ * Set the plan level. Updates the available plans and current selection.
+ * 
+ * @param  {String} level - <code>'tour'</code> or <code>'pro'</code>.
+ */
 export const setLevel = (level: string) => ({
     type: SET_LEVEL,
     level: level
 })
 
+/**
+ * Set original plan level. Used for determining upgrade/downgrade/cancel logic.
+ * 
+ * @param  {String} level - <code>'tour'</code> or <code>'pro'</code>.
+ */
 export const setOrigLevel = (level: string) => ({
     type: SET_ORIG_LEVEL,
     level: level
 })
 
+/**
+ * Set the number of seats for an organization. Updates the number of fields
+ * for organization seats.
+ * 
+ * @param  {Number} seats - Number of seats.
+ */
 export const setSeats = (seats: number) => ({
     type: SET_SEATS,
     seats: seats
 })
 
+/**
+ * Set subscribiption billing interval to <code>'month'</code> or <code>'year'</code>.
+ * 
+ * @param  {String} interval - <code>'month'</code> or <code>'year'</code>.
+ */
 export const setSubInterval = (interval: 'month' | 'year') => ({
     type: SET_SUB_INTERVAL,
     interval: interval
 })
 
+/**
+ * Set original subscribiption billing interval to <code>'month'</code> or <code>'year'</code>.
+ * Used for determining upgrade/downgrade/cancel logic.
+ * 
+ * @param  {String} interval - <code>'month'</code> or <code>'year'</code>.
+ */
 export const setOrigSubInterval = (interval: 'month' | 'year') => ({
     type: SET_ORIG_SUB_INTERVAL,
     interval: interval
 })
 
+/**
+ * Sets a coupon code.
+ * 
+ * @param  {String} coupon - Coupon code.
+ */
 export const setCoupon = (coupon: string) => ({
     type: SET_COUPON,
     coupon: coupon
 })
 
+/**
+ * Sets a coupon code for valid/invalid coupons.
+ * 
+ * @param  {String} message - Coupon message.
+ */
 export const setCouponMessage = (message: string) => ({
     type: SET_COUPON_MESSAGE,
     message: message
 })
 
+/**
+ * Applies the dollar amount off determined by the coupon. Pasing 0 clears the amount.
+ * 
+ * @param  {Number} amount - Dollar amount.
+ */
 export const setCouponAmountOff = (amount: number) => ({
     type: SET_COUPON_AMOUNT_OFF,
     amount: amount
 })
 
+/**
+ * Applies the percentage off determined by the coupon. Pasing 0 clears the percentage.
+ * 
+ * @param  {Number} percent - Percentage.
+ */
 export const setCouponPercentOff = (percent: number) => ({
     type: SET_COUPON_PERCENT_OFF,
     percent: percent
 })
 
+/**
+ * Restrict available plan intervals based on coupon metadta.
+ * 
+ * @param  {String} interval - <code>'month'</code> or <code>'year'</code>.
+ */
 export const setCouponInterval = (interval: 'month' | 'year') => ({
     type: SET_COUPON_INTERVAL,
     interval: interval
 })
 
+/**
+ * Sets a user by <code>id</code> to seat number <code>index</code>.
+ * 
+ * @param  {Number} index - Seat number, 0-indexed.
+ * @param  {String} id - User id.
+ */
 export const setSeatUser = (index: number, id: string) => ({
     type: SET_SEAT_USER,
     index: index,
     id: id
 })
 
+/**
+ * Removes a user from seat number <code>index</code>.
+ * 
+ * @param  {Number} index - Seat number, 0-indexed.
+ */
 export const deleteSeatUser = (index: number) => ({
     type: DELETE_SEAT_USER,
     index: index
 })
 
+/**
+ * Receive an Org JSON object from the API.
+ * 
+ * @param  {Any} json - JSON response from the API.
+ */
 export const receiveOrg = (json: any) => ({
     type: RECEIVE_ORG,
     json: json
 })
 
+/**
+ * Receive an Org Users JSON object from the API.
+ * 
+ * @param  {Any} json - JSON response from the API.
+ */
 export const receiveOrgUsers = (json: any) => ({
     type: RECEIVE_ORG_USERS,
     json: json
 })
 
+/**
+ * Reset the store to a blank state. Used for testing.
+ */
 export const resetStore = () => ({
     type: RESET
 })
 
+/**
+ * Set credit card brand.
+ * 
+ * @param  {String} brand
+ */
 export const setCardBrand = (brand: string) => ({
     type: SET_CARD_BRAND,
     brand: brand
 })
 
+/**
+ * Receive saved card details from the API.
+ * 
+ * @param  {String} name
+ * @param  {String} last_4
+ * @param  {Number} exp_month
+ * @param  {Number} exp_year
+ * @param  {String} cvc
+ * @param  {String} brand
+ */
 export const receiveCard = (
     name: string,
     last_4: string,  // eslint-disable-line camelcase
@@ -156,29 +267,53 @@ export const receiveCard = (
     brand: brand
 })
 
+/**
+ * Clear card details from state.
+ */
 export const clearCard = () => ({
     type: CLEAR_CARD
 })
 
+/**
+ * Set the form to dirty so we know to save it.
+ * 
+ * @param  {Boolean} changed
+ */
 export const paymentFormChanged = (changed: boolean) => ({
     type: PAYMENT_FORM_CHANGED,
     changed: changed
 })
 
+/**
+ * Display payment status success message.
+ * 
+ * @param  {String} message - Message to display.
+ */
 export const setPaymentSuccess = (message: string) => ({
     type: SET_PAYMENT_SUCCESS,
     message: message
 })
 
+/**
+ * Clear payment success message.
+ */
 export const clearPaymentSuccess = () => ({
     type: CLEAR_PAYMENT_SUCCESS
 })
 
+/**
+ * Display payment status error message.
+ * 
+ * @param  {String} message - Message to display.
+ */
 export const setPaymentError = (message: string) => ({
     type: SET_PAYMENT_ERROR,
     message: message
 })
 
+/**
+ * Clear payment error message.
+ */
 export const clearPaymentError = () => ({
     type: CLEAR_PAYMENT_ERROR
 })
@@ -186,6 +321,12 @@ export const clearPaymentError = () => ({
 export class PaymentError {
     message: string;
 
+    /**
+     * @constructs PaymentError
+     * @description Used for relaying payment error messages.
+     * 
+     * @param  {string} message
+     */
     constructor(message: string) {
         this.message = message
     }
@@ -194,14 +335,22 @@ export class PaymentError {
 export class NetworkError {
     message: string;
 
+    /**
+     * @constructs NetworkError
+     * @description Used for relaying network error messages.
+     * 
+     * @param  {string} message
+     */
     constructor(message: string) {
         this.message = message
     }
 }
 
 /**
- * @param  {string}  orgId
- * @param  {string}  authToken
+ * Fetch org payment users from the API.
+ * 
+ * @param  {String}  orgId
+ * @param  {String}  authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
 export const fetchOrgUsers = (orgId: string, paidMembers: Array<string>, authToken: string) =>
@@ -232,8 +381,10 @@ export const fetchOrgUsers = (orgId: string, paidMembers: Array<string>, authTok
             })
 
 /**
- * @param  {string}  orgId
- * @param  {string}  authToken
+ * Fetch org payment info from the API.
+ * 
+ * @param  {String}  orgId
+ * @param  {String}  authToken
  * @return {Promise}
  */
 export const fetchOrg = (orgId: string, authToken: string) =>
@@ -288,7 +439,9 @@ export const fetchOrg = (orgId: string, authToken: string) =>
             })
 
 /**
- * @param  {string}  authToken
+ * Fetch user payment info from the API.
+ * 
+ * @param  {String}  authToken
  * @return {Promise}
  */
 export const fetchUser = (authToken: string) =>
@@ -333,7 +486,9 @@ export const fetchUser = (authToken: string) =>
             })
 
 /**
- * @param  {string} authToken
+ * Fetch available plans from the API.
+ * 
+ * @param  {String} authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
 export const fetchPlans = (authToken: string) => (dispatch: Redux.Dispatch) =>
@@ -407,10 +562,12 @@ export const fetchCoupon = (coupon: string, authToken: string) => (dispatch: Red
         })
 
 /**
- * @param  {string}  cc
- * @param  {string}  cvc
- * @param  {number}  month
- * @param  {number}  year
+ * Create CC token with Stripe.
+ *
+ * @param  {String}  cc
+ * @param  {String}  cvc
+ * @param  {Number}  month
+ * @param  {Number}  year
  * @return {Promise} - resolve: string, reject: PaymentError
  */
 export const createToken = (
@@ -435,8 +592,10 @@ export const createToken = (
     }))
 
 /**
- * @param  {string}  orgId
- * @param  {string}  authToken
+ * Fetch org payment from the API.
+ * 
+ * @param  {String}  orgId
+ * @param  {String}  authToken
  * @return {Promise} - resolve: OrgPaymentResponse, reject: NetworkError
  */
 export const fetchOrgPayment = (orgId: string, authToken: string) =>
@@ -451,9 +610,11 @@ export const fetchOrgPayment = (orgId: string, authToken: string) =>
         })
 
 /**
- * @param  {string}  orgId
+ * Patch org payment to the API.
+ * 
+ * @param  {String}  orgId
  * @param  {Payment} body
- * @param  {string}  authToken
+ * @param  {String}  authToken
  * @return {Promise} - resolve: OrgPaymentResponse, reject: NetworkError
  */
 export const patchOrgPayment = (orgId: string, body: Billing.PaymentRequest, authToken: string) =>
@@ -472,9 +633,11 @@ export const patchOrgPayment = (orgId: string, body: Billing.PaymentRequest, aut
         })
 
 /**
- * @param  {string}  orgId
+ * Post org payment to the API.
+ * 
+ * @param  {String}  orgId
  * @param  {Payment} body
- * @param  {string}  authToken
+ * @param  {String}  authToken
  * @return {Promise} - resolve: OrgPaymentResponse, reject: NetworkError
  */
 export const postOrgPayment = (orgId: string, body: Billing.PaymentRequest, authToken: string) =>
@@ -493,10 +656,11 @@ export const postOrgPayment = (orgId: string, body: Billing.PaymentRequest, auth
         })
 
 /**
- * [description]
- * @param  {string}        orgId
+ * Post paying org members to the API.
+ * 
+ * @param  {String}        orgId
  * @param  {Array<string>} members
- * @param  {string}        authToken
+ * @param  {String}        authToken
  * @return {Promise} - resolve: MemberResponse, reject: NetworkError
  */
 export const postOrgMembers = (orgId: string, members: Array<string>, authToken: string) =>
@@ -514,7 +678,9 @@ export const postOrgMembers = (orgId: string, members: Array<string>, authToken:
     })
 
 /**
- * @param  {string}  authToken
+ * Fetch user payment from the API.
+ * 
+ * @param  {String}  authToken
  * @return {Promise} - resolve: UserPaymentResponse, reject: NetworkError
  */
 export const fetchUserPayment = (authToken: string) =>
@@ -529,8 +695,10 @@ export const fetchUserPayment = (authToken: string) =>
         })
 
 /**
+ * Patch user payment to the API.
+ * 
  * @param  {Payment} body
- * @param  {string}  authToken
+ * @param  {String}  authToken
  * @return {Promise} - resolve: UserPaymentResponse, reject: NetworkError
  */
 export const patchUserPayment = (body: Billing.PaymentRequest, authToken: string) =>
@@ -549,6 +717,8 @@ export const patchUserPayment = (body: Billing.PaymentRequest, authToken: string
         })
 
 /**
+ * Post user payment to the API.
+ * 
  * @param  {Payment} body
  * @param  {string}  authToken
  * @return {Promise} - resolve: UserPaymentResponse, reject: NetworkError
@@ -570,6 +740,8 @@ export const postUserPayment = (body: Billing.PaymentRequest, authToken: string)
 
 
 /**
+ * Handle NetworkError or Payment error.
+ * 
  * @param  {MessageAction} error
  * @return {Function} - (dispatch: Store.dispatch): void
  */
@@ -589,13 +761,18 @@ export const handleError = (error: Billing.MessageAction) =>
     }
 
 /**
- * @param  {string}  orgId
- * @param  {string} token
+ * Submit org payment. Posts a Stripe token to the payment API.
+ * Handles processing state, organization seats and payment response.
+ * 
+ * @param  {String}  orgId
+ * @param  {String} token
  * @param  {PaymentResponse} paymentObj
- * @param  {string}  plan
- * @param  {number}  seats
- * @param  {number}  quantity
- * @param  {string}  authToken
+ * @param  {String}  plan
+ * @param  {Number}  seats
+ * @param  {Number}  quantity
+ * @param  {String[]} paidMembers
+ * @param  {String}  coupon
+ * @param  {String}  authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
 export const submitOrgPayment = (
@@ -662,13 +839,15 @@ export const submitOrgPayment = (
 }
 
 /**
- * @param  {string}  orgId
- * @param  {string} token
+ * Submit org payment. Posts a Stripe token to the payment API.
+ * Handles processing state and payment response.
+ * 
+ * @param  {String}  orgId
+ * @param  {String}  token
  * @param  {PaymentResponse} paymentObj
- * @param  {string}  plan
- * @param  {number}  seats
- * @param  {number}  quantity
- * @param  {string}  authToken
+ * @param  {String}  plan
+ * @param  {String}  coupon
+ * @param  {String}  authToken
  * @return {Function} - (dispatch: Store.dispatch): Promise
  */
 export const submitUserPayment = (

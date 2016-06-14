@@ -121,6 +121,8 @@ const ObservationPreview = [
 
                 return url
             }
+
+            return ''
         }
 
         $scope.delete = () => {

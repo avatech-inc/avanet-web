@@ -1,0 +1,404 @@
+<style>
+ul.members {
+    list-style-type: none;
+    border-top: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+    margin-top:10px;
+    margin-bottom: 25px;
+}
+ul.members >li {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    height: 51px;
+}
+ul.members >li .name {
+    font-size: 19px;
+    font-weight: 500;
+    float: left;
+    line-height: 50px;
+}
+ul.members >li.pending .name {
+    opacity: .6;
+}
+ul.members >li .right {
+    float:right;
+    vertical-align: top;
+}
+ul.members >li .right >.btn-group,
+ul.members >li .right >button {
+    vertical-align: top;
+    margin-top: 8px;
+}
+
+/* member menu */
+
+.memberMenu ul {
+    width: 224px; 
+}
+
+.memberMenu li a {
+    white-space:normal !important;
+}
+
+.memberMenu ul li a .check {
+    opacity: 0;
+    margin-left: 2px;
+}
+.memberMenu ul li a.selected,
+.memberMenu ul li a.disable {
+    opacity: .5;
+    pointer-events: none;
+}
+.memberMenu ul li a.selected .check {
+    opacity: 1;
+}
+
+.memberMenu li .desc {
+    font-size: 13px; 
+    margin-top: 2px; margin-bottom: 2px;
+    font-weight: 400;
+}
+
+/* add member */
+
+.userSelect .message {
+    margin-top:10px;font-weight: 400;color: #555;font-size: 14px;
+}
+.userSelect .no-results {
+    margin-top: 18px;
+    font-weight: 400;
+    color: #777;
+    font-size: 15px;
+    text-align: center;
+}
+ul.results {
+    list-style-type: none;
+    margin: 0; padding: 0;
+    margin-top: 3px;
+}
+ul.results li {
+    cursor: pointer;
+    padding: 3px 12px;
+    font-weight: 14px;
+    font-weight: 500;
+}
+ul.results li.isMember {
+    pointer-events: none;
+    cursor: pointer;
+    opacity: .5;
+}
+ul.results li.isMember:hover {
+    background: transparent !important;
+}
+ul.results li:hover {
+    list-style-type: none;
+    background: #f5f5f5;
+}
+
+ul.results li .arrow { 
+    transition: opacity 150ms;
+    opacity: 0;
+    float: right;
+}
+ul.results li:hover .arrow{
+    opacity: 1;
+}
+
+
+
+
+.form-group {
+margin-bottom: 6px !important;
+}
+.panel-body {
+    padding: 10px 12px !important;
+    padding-bottom: 4px !important;
+}
+.panel-footer {
+    padding: 10px 12px !important;
+}
+
+
+.panel-body.settings {
+    padding: 8px 12px !important;
+    padding-bottom: 2px !important;
+}
+
+.settings-panel {
+  width: 460px;
+  margin: auto;
+  padding-top: 0px;
+}
+
+.alert-panel {
+  width: 460px;
+  margin: auto;
+}
+
+.settings-panel-title {
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.form-control.form-blank {
+  box-shadow: none;
+}
+
+.card-logo {
+    float: right;
+    line-height: 0;
+    font-size: 26px;
+    margin-top: -16px;
+    margin-right: 5px;
+}
+</style>
+
+<section ng-controller="Billing">
+  <div class="settings-panel" style="padding-top: 30px;">
+    <form>
+      <div class="panel panel-default">
+        <div class="panel-heading settings-panel-title">{{ 'billing.subscription' | translate }}</div>
+
+        <div class="panel-body">
+          <div class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-sm-4 control-label">{{ 'billing.plan' | translate }}</label>
+
+              <div class="col-sm-8">
+                <select class="form-control"
+                        ng-options="plan.metadata.level as plan.title for plan in plans"
+                        ng-model="level"
+                        ng-change="changeLevel(level)">
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" ng-if="billingType === 'org'">
+              <label class="col-sm-4 control-label">{{ 'billing.seats' | translate }}</label>
+
+              <div class="col-sm-8">
+                <select class="form-control"
+                        ng-options="seat for seat in ::props.seatArray"
+                        ng-model="seats"
+                        ng-change="changeSeats(seats)">
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" ng-show="showBilling">
+              <label class="col-sm-4 control-label">{{ 'billing.cycle' | translate }}</label>
+
+              <div class="col-sm-8">
+                <span class="form-control form-blank" ng-if="savings" style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                  Save {{ savings }}% with yearly
+                </span>
+                <div class="btn-group">
+                  <label class="btn btn-default"
+                         ng-model="interval"
+                         uib-btn-radio="'month'"
+                         ng-disabled="couponInterval && couponInterval === 'year'"
+                         ng-click="changeInterval(interval)">{{ 'billing.monthly' | translate }}</label>
+                  <label class="btn btn-default"
+                         ng-model="interval"
+                         uib-btn-radio="'year'"
+                         ng-disabled="couponInterval && couponInterval === 'month'"
+                         ng-click="changeInterval(interval)">{{ 'billing.yearly' | translate }}</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" ng-show="showBilling">
+              <label class="col-sm-4 control-label">{{ 'billing.coupon' | translate }}</label>
+
+              <div class="col-sm-8">
+                <span class="form-control form-blank"
+                      ng-show="couponMessage"
+                      style="border-color: #fff; padding-right: 0; text-align: right; float: right; width: 140px; color: #666;">
+                  {{ couponMessage | translate }}
+                </span>
+                <button class="btn"
+                        style="float: right;"
+                        ng-hide="couponMessage || !coupon"
+                        ng-click="changeCoupon(coupon)">Apply</button>
+                <input type="text"
+                       name="coupon"
+                       style="width: 128px"
+                       class="form-control"
+                       ng-model="coupon"
+                       ng-keypress="($event.which === 13) ? $event.preventDefault(); changeCoupon(coupon) : 0"
+                       ng-blur="changeCoupon(coupon)"
+                       ng-change="clearCoupon(coupon)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer" style="background:#fff;" ng-show="showBilling">
+          <div class="row form-horizontal">
+            <label class="col-sm-4 control-label">{{ 'billing.total' | translate }}</label>
+            <div class="col-sm-8">
+              <span class="form-control form-blank" style="border-color: #fff; padding-right: 0; padding-left: 0">
+                <strong ng-show="total" style="float: right">
+                  <span ng-show="couponAmountOff">{{ (origTotal / 100) | currency }} with {{ couponAmountOff | currency }} off = </span>
+                  <span ng-show="couponPercentOff">{{ (origTotal / 100) | currency }} with {{ couponPercentOff }}% off = </span>
+                  {{ (total / 100) | currency }}/{{ interval }}
+                </strong>
+                <strong ng-hide="total" style="float: right">Free</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer" style="text-align:right;background:#fff;" ng-hide="showBilling">
+          <button ng-click="cancelBilling()"
+                  class="btn btn-primary"
+                  translate="billing.cancel_membership"
+                  ng-if="!processing">
+          </button>
+
+          <a class="btn btn-primary"
+             disabled
+             style="width: 60px"
+             ng-if="processing">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="settings-panel" ng-if="billingType === 'org'">
+    <form>
+      <div class="panel panel-default">
+        <div class="panel-heading settings-panel-title">
+          {{ 'billing.seats' | translate }}
+        </div>
+
+        <div class="panel-body">
+          <div class="form-horizontal" role="form">
+            <div class="form-group" ng-repeat="seatUser in seatUsers track by $index">
+              <label class="col-sm-4 control-label">{{ 'billing.seat' | translate }} {{ $index + 1 }}</label>
+
+              <div class="col-sm-7">
+                <select class="form-control"
+                        ng-options="unselectedUser.id as unselectedUser.fullName for unselectedUser in getUnselectedUsers($index)"
+                        ng-model="seatUsers[$index]"
+                        ng-change="setSeatUser($index, seatUsers[$index])">
+                </select>
+              </div>
+              <div class="col-sm-1" style="padding-left: 0">
+                <span class="btn form-control glyphicon glyphicon-remove form-blank"
+                      style="padding-left: 0; padding-right: 0; width: 25px"
+                      ng-if="seatUsers[$index]"
+                      ng-click="deleteSeatUser($index)"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="settings-panel" ng-show="showBilling">
+    <form ng-submit="saveBilling(name, cc, cvc, exp_month, exp_year)">
+      <div class="panel panel-default">
+        <div class="panel-heading settings-panel-title">
+          {{ 'billing.billing' | translate }}
+        </div>
+
+        <div class="panel-body">
+          <div class="form-horizontal" role="form">
+            <div class="form-group">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-9">
+                <input type="text"
+                       name="name"
+                       class="form-control"
+                       required
+                       placeholder="{{ 'billing.fullname' | translate }}"
+                       ng-model="name"
+                       ng-change="changePayment(name, 'name')">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-9">
+                <input type="text"
+                       name="cc"
+                       class="form-control"
+                       required
+                       maxlength="19"
+                       ng-model="cc"
+                       ui-mask="{{ ccFormat }}"
+                       ui-mask-placeholder-char="space"
+                       ui-options="ccOptions"
+                       ng-change="changePayment(cc, 'cc')">
+                <i class="fa card-logo" ng-class="'fa-cc-' + brandlogo"></i>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-3">
+                <select class="form-control"
+                        name="month"
+                        ng-options="month for month in ::props.months"
+                        ng-model="exp_month"
+                        ng-change="changePayment(exp_month, 'exp_month')">
+                    <option value="">{{ 'billing.month' | translate }}</option>
+                </select>
+              </div>
+
+              <div class="col-sm-3">
+                <select class="form-control"
+                        name="year"
+                        ng-options="year for year in ::props.years"
+                        ng-model="exp_year"
+                        ng-change="changePayment(exp_year, 'exp_year')">
+                    <option value="">{{ 'billing.year' | translate }}</option>
+                </select>
+              </div>
+
+              <div class="col-sm-3">
+                <input type="text"
+                       name="cvc"
+                       class="form-control"
+                       required
+                       maxlength="4"
+                       placeholder="{{ 'billing.cvc' | translate }}"
+                       ng-model="cvc"
+                       ng-change="changePayment(cvc, 'cvc')">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer" style="text-align:right;background:#fff;">
+          <button type="submit"
+                  class="btn btn-primary"
+                  ng-if="!processing">
+            {{ saveMessage | translate }}
+          </button>
+
+          <a class="btn btn-primary"
+             disabled
+             style="width: 60px"
+             ng-if="processing">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="alert alert-danger alert-panel" role="alert" ng-if="error">
+    <strong>{{ 'billing.processing_error' | translate }}</strong>&nbsp;- {{ error }}
+  </div>
+
+  <div class="alert alert-success alert-panel" role="alert" ng-if="success">
+    <strong>{{ 'billing.success' | translate }}</strong>&nbsp;- {{ success }}
+  </div>
+</section>

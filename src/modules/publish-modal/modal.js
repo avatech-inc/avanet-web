@@ -107,7 +107,9 @@ export const PublishController = [
 
         // search
 
-        $scope.newSearch = () => $scope.search = { query: '' }
+        $scope.newSearch = () => {
+            $scope.search = { query: '' }
+        }
 
         $scope.doSearch = () => {
             $timeout.cancel($scope.search.timer)

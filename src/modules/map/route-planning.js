@@ -49,11 +49,11 @@ const getAverageAspect = aspects => {
     return deg
 }
 
-const calculateLineSegmentStats = points => {
-    if (!points || points.length < 2) return {}
+const getLineSegmentStats = statsPoints => {
+    if (!statsPoints || statsPoints.length < 2) return {}
 
-    let startPoint = points[0]
-    let endPoint = points[points.length - 1]
+    let startPoint = statsPoints[0]
+    let endPoint = statsPoints[statsPoints.length - 1]
 
     let bearing = turf.bearing(
         turf.point([
@@ -68,31 +68,197 @@ const calculateLineSegmentStats = points => {
 
     if (bearing < 0) bearing += 360
 
-    // calculate stats
-    return {
+    let stats = {
         timeEstimateMinutes: (
             endPoint.totalTimeEstimateMinutes -
             startPoint.totalTimeEstimateMinutes
         ),
         distance: endPoint.totalDistance - startPoint.totalDistance,
 
-        elevationChange: endPoint.elevation - startPoint.elevation,
-        elevationMin: _.minBy(points, 'elevation').elevation,
-        elevationMax: _.maxBy(points, 'elevation').elevation,
+        elevationChange: null,
+        elevationMin: null,
+        elevationMax: null,
 
-        slopeMin: _.minBy(points, 'slope').slope,
-        slopeMax: _.maxBy(points, 'slope').slope,
-        slopeAverage: _.sumBy(points, 'slope') / points.length,
+        slopeMin: 0,
+        slopeMax: 0,
+        slopeAverage: 0,
 
-        verticalUp: _.sumBy(points, 'verticalUp'),
-        verticalDown: _.sumBy(points, 'verticalDown'),
+        verticalUp: null,
+        verticalDown: null,
 
-        aspectMin: _.minBy(points, 'aspect').aspect,
-        aspectMax: _.maxBy(points, 'aspect').aspect,
-        aspectAverage: getAverageAspect(_.map(points, 'aspect')),
+        aspectMin: null,
+        aspectMax: null,
+        aspectAverage: getAverageAspect(_.map(statsPoints, 'aspect')),
 
         bearing: bearing
     }
+
+    // set elevation change, max, min if available
+    if (startPoint.elevation !== null && endPoint.elevation !== null) {
+        stats.elevationChange = endPoint.elevation - startPoint.elevation
+    }
+
+    let minElevationPoint = _.minBy(statsPoints, 'elevation')
+    let maxElevationPoint = _.maxBy(statsPoints, 'elevation')
+
+    if (minElevationPoint && minElevationPoint.elevation !== null) {
+        stats.elevationMin = minElevationPoint.elevation
+    }
+
+    if (maxElevationPoint && maxElevationPoint.elevation) {
+        stats.elevationMax = maxElevationPoint.elevation
+    }
+
+    let minSlopePoint = _.minBy(statsPoints, 'slope')
+    let maxSlopePoint = _.maxBy(statsPoints, 'slope')
+
+    if (minSlopePoint && minSlopePoint.slope !== null) {
+        stats.slopeMin = minSlopePoint.slope
+    }
+
+    if (maxSlopePoint && maxSlopePoint.slope !== null) {
+        stats.slopeMax = maxSlopePoint.slope
+    }
+
+    let slopeTotal = _.sumBy(statsPoints, 'slope')
+
+    if (slopeTotal) stats.slopeAverage = slopeTotal / statsPoints.length
+
+    let verticalUp = _.sumBy(statsPoints, 'verticalUp')
+    let verticalDown = _.sumBy(statsPoints, 'verticalDown')
+
+    if (verticalUp) stats.verticalUp = verticalUp
+    if (verticalDown) stats.verticalDown = verticalDown
+
+    let minAspectPoint = _.minBy(statsPoints, 'aspect')
+    let maxAspectPoint = _.maxBy(statsPoints, 'aspect')
+
+    if (minAspectPoint) stats.aspectMin = minAspectPoint.aspect
+    if (maxAspectPoint) stats.aspectMax = maxAspectPoint.aspect
+
+    // calculate stats
+    return stats
+}
+
+let getRouteStats = (points, terrainData, munterRateUp, munterRateDown) => {
+    if (!points) return []
+
+    let totalDistance = 0
+    let totalTimeEstimateMinutes = 0
+    let originalIndex = 0
+
+    let statsPoints = []
+
+    for (let i = 0; i < points.length; i++) {
+        let point = points[i]
+        let terrain = terrainData[i]
+
+        if (!point) continue
+
+        let statsPoint = {
+            lat: points[i].lat,
+            lng: points[i].lng,
+            original: points[i].original,
+            elevation: terrain.elevation,
+            slope: terrain.slope,
+            aspect: terrain.aspect
+        }
+
+        // assign index for tracking
+        statsPoint.index = i
+
+        // assign original index for tracking markers
+        if (statsPoint.original) {
+            statsPoint.originalIndex = originalIndex
+            originalIndex++
+        }
+
+        // defaults for first point
+        statsPoint.totalDistance = 0
+        statsPoint.totalTimeEstimateMinutes = 0
+
+        if (i === 0) continue
+
+        // keep track of distance
+
+        let segmentDistance = turf.lineDistance(
+            turf.linestring([
+                [
+                    points[i - 1].lng,
+                    points[i - 1].lat
+                ],
+                [
+                    point.lng,
+                    point.lat
+                ]
+            ]),
+            'kilometers'
+        )
+
+        statsPoint.distance = segmentDistance
+        totalDistance += segmentDistance
+        statsPoint.totalDistance = totalDistance
+
+        // keep track of bearing
+        statsPoint.bearing = turf.bearing(
+            turf.point([
+                points[i - 1].lng,
+                points[i - 1].lat
+            ]),
+            turf.point([
+                point.lng,
+                point.lat
+            ])
+        )
+
+        if (statsPoint.bearing < 0) statsPoint.bearing += 360
+
+        // keep track of vertical up/down and munter time estimates
+
+        // munter time estimate details...
+        // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
+        // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=
+        // munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
+        // distance: 1km = 1 unit (since distance is already in km, just use as-is)
+        // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
+
+        if (terrain.elevation === null) {
+            statsPoint.direction = 'flat'
+            statsPoint.munterUnits = segmentDistance
+
+            let munterRateFlat = (munterRateUp + munterRateDown) / 2
+            statsPoint.timeEstimateMinutes = (statsPoint.munterUnits / munterRateFlat) * 60
+        } else {
+            statsPoint.elevationDifference = terrain.elevation - terrainData[i - 1].elevation
+
+            if (statsPoint.elevationDifference > 0) {
+                statsPoint.direction = 'up'
+                statsPoint.verticalUp = statsPoint.elevationDifference
+
+                statsPoint.munterUnits = segmentDistance + (statsPoint.verticalUp / 100)
+                statsPoint.timeEstimateMinutes = (statsPoint.munterUnits / munterRateUp) * 60
+            } else if (statsPoint.elevationDifference < 0) {
+                statsPoint.direction = 'down'
+                statsPoint.verticalDown = Math.abs(statsPoint.elevationDifference)
+
+                statsPoint.munterUnits = segmentDistance + (statsPoint.verticalDown / 100)
+                statsPoint.timeEstimateMinutes = (statsPoint.munterUnits / munterRateDown) * 60
+            } else {
+                statsPoint.direction = 'flat'
+                statsPoint.munterUnits = segmentDistance
+
+                let munterRateFlat = (munterRateUp + munterRateDown) / 2
+                statsPoint.timeEstimateMinutes = (statsPoint.munterUnits / munterRateFlat) * 60
+            }
+        }
+
+        totalTimeEstimateMinutes += statsPoint.timeEstimateMinutes
+        statsPoint.totalTimeEstimateMinutes = totalTimeEstimateMinutes
+
+        statsPoints.push(statsPoint)
+    }
+
+    return statsPoints
 }
 
 const getLegPoints = (points, pointIndexStart, pointIndexEnd) => {
@@ -122,6 +288,8 @@ const getElevationProfilePoint = (points, pointIndex) => {
 
         if (point.originalIndex === pointIndex) return point
     }
+
+    return -1
 }
 
 const interpolate = _points => {
@@ -209,8 +377,13 @@ const RoutePlanning = [
                 })
         }
 
-        $scope._hoverOnLeg = index => $scope.hoverOnLeg = index
-        $scope._hoverOnPoint = index => $scope.hoverOnPoint = index
+        $scope._hoverOnLeg = index => {
+            $scope.hoverOnLeg = index
+        }
+
+        $scope._hoverOnPoint = index => {
+            $scope.hoverOnPoint = index
+        }
 
         $scope.munterRate = {
             up: 4,
@@ -224,7 +397,6 @@ const RoutePlanning = [
         // });
 
         let ready = () => {
-            let elevationProfilePoints
             let lastLine
             let elevationWidget
             let saveLineTimeout
@@ -239,7 +411,7 @@ const RoutePlanning = [
             let lineSegmentGroup = L.featureGroup().addTo($scope.map)
 
             // Leaflet.Draw edit handler for custom edit/draw functionality
-            let createEditHandler = () => new L.EditToolbar.Edit($scope.map, {
+            let editHandler = new L.EditToolbar.Edit($scope.map, {
                 featureGroup: lineGroup,
                 selectedPathOptions: {
                     color: '#2080cc',
@@ -247,69 +419,44 @@ const RoutePlanning = [
                 }
             })
 
-            let editHandler = createEditHandler()
+            let updateRouteStats = (statsPoints, terrainData) => {
+                $scope.route.stats = {}
+                $scope.route.points = []
 
-            let saveLinePoints = () => {
-                $timeout.cancel(saveLineTimeout)
-                saveLineTimeout = $timeout(() => {
-                    $scope.route.stats = {}
-                    $scope.route.points = []
+                let legIndex = 0
+                let prevWaypointIndex = 0
 
-                    let legIndex = 0
-                    let lastWaypointIndex = 0
+                for (let i = 0; i < _line.editing._markers.length; i++) {
+                    let point = _line.editing._markers[i]
 
-                    for (let i = 0; i < _line.editing._markers.length; i++) {
-                        let thisPoint = _line.editing._markers[i]
-
-                        if (
-                            thisPoint.waypoint ||
-                            i === 0 ||
-                            i === _line.editing._markers.length - 1
-                        ) {
-                            let pointDetails = {
-                                lat: thisPoint._latlng.lat,
-                                lng: thisPoint._latlng.lng,
-                                waypoint: thisPoint.waypoint,
-                                pointIndex: thisPoint._index,
-                                terrain: {},
-                                leg: {}
-                            }
-
-                            // get leg
-                            if (elevationProfilePoints) {
-                                let legPoints = getLegPoints(
-                                    elevationProfilePoints,
-                                    lastWaypointIndex,
-                                    thisPoint._index
-                                )
-
-                                pointDetails.leg = calculateLineSegmentStats(legPoints)
-                                pointDetails.terrain = getElevationProfilePoint(
-                                    elevationProfilePoints,
-                                    thisPoint._index
-                                )
-                            }
-
-                            // set leg on every point so that we can highlight it
-                            pointDetails.leg.index = legIndex
-
-                            $scope.route.points.push(pointDetails)
-
-                            if (thisPoint.waypoint) {
-                                legIndex++
-                            }
-
-                            lastWaypointIndex = thisPoint._index
+                    // if point is a waypoint, or first or last
+                    if (point.waypoint || i === 0 || i === _line.editing._markers.length - 1) {
+                        let pointDetails = {
+                            lat: point._latlng.lat,
+                            lng: point._latlng.lng,
+                            waypoint: point.waypoint,
+                            pointIndex: point._index,
+                            terrain: {},
+                            leg: {}
                         }
-                    }
 
-                    // route terrain stats
-                    if (elevationProfilePoints) {
-                        // $log.debug("here!!!!!!!!!!!!!!!!!");
-                        $scope.route.stats = calculateLineSegmentStats(elevationProfilePoints)
-                        // $log.debug($scope.route.stats);
+                        let legPoints = getLegPoints(statsPoints, prevWaypointIndex, point._index)
+
+                        pointDetails.leg = getLineSegmentStats(legPoints)
+                        pointDetails.terrain = getElevationProfilePoint(statsPoints, point._index)
+                        pointDetails.leg.index = legIndex
+
+                        $scope.route.points.push(pointDetails)
+
+                        if (point.waypoint) {
+                            legIndex++
+                        }
+
+                        prevWaypointIndex = point._index
                     }
-                }, 10)
+                }
+
+                $scope.route.stats = getLineSegmentStats(statsPoints)
             }
 
             let updateSegments = () => {
@@ -317,19 +464,23 @@ const RoutePlanning = [
 
                 let legIndex = 0
                 let mouseMoveHandler = e => {
-                    if (e.latlng && elevationWidget) {
-                        elevationWidget.highlight(e.latlng)
-                    }
+                    // if (e.latlng && elevationWidget) {
+                    //     elevationWidget.highlight(e.latlng)
+                    // }
 
-                    $timeout(() => $scope.hoverOnLegMap = e.target.segment.legIndex)
+                    $timeout(() => {
+                        $scope.hoverOnLegMap = e.target.segment.legIndex
+                    })
                 }
 
                 let mouseOutHandler = e => {
-                    if (elevationWidget) {
-                        elevationWidget.highlight()
-                    }
+                    // if (elevationWidget) {
+                    //     elevationWidget.highlight()
+                    // }
 
-                    $timeout(() => $scope.hoverOnLegMap = null)
+                    $timeout(() => {
+                        $scope.hoverOnLegMap = null
+                    })
                 }
 
                 for (let i = 0; i < _line.editing._markers.length - 1; i++) {
@@ -367,289 +518,199 @@ const RoutePlanning = [
                 }
             }
 
-            let createElevationProfileWidget = () => {
-                if (elevationWidget) elevationWidget.clear()
+            // let createElevationProfileWidget = () => {
+            //     if (elevationWidget) elevationWidget.clear()
 
-                elevationWidget = new ElevationWidget()
+            //     elevationWidget = new ElevationWidget()
 
-                elevationWidget.create($scope.map, {
-                    imperial: Global.user.settings.elevation === 1, // true
-                    // width: 670,
-                    height: 163,
-                    margins: {
-                        top: 24,
-                        right: 18,
-                        bottom: 20,
-                        left: 40
-                    },
-                    useHeightIndicator: true, // if false a marker is drawn at map position
-                    hoverNumber: {
-                        decimalsX: 3, // decimals on distance (always in km)
-                        decimalsY: 0, // deciamls on height (always in m)
-                        formatter: undefined // custom formatter function may be injected
-                    },
+            //     elevationWidget.create($scope.map, {
+            //         imperial: Global.user.settings.elevation === 1, // true
+            //         // width: 670,
+            //         height: 163,
+            //         margins: {
+            //             top: 24,
+            //             right: 18,
+            //             bottom: 20,
+            //             left: 40
+            //         },
+            //         useHeightIndicator: true, // if false a marker is drawn at map position
+            //         hoverNumber: {
+            //             decimalsX: 3, // decimals on distance (always in km)
+            //             decimalsY: 0, // deciamls on height (always in m)
+            //             formatter: undefined // custom formatter function may be injected
+            //         },
 
-                    // xTicks: undefined, //number of ticks in x axis,
-                    // calculated by default according to width
-                    // yTicks: undefined, //number of ticks on y axis,
-                    // calculated by default according to height
-                })
-            }
+            //         // xTicks: undefined, //number of ticks in x axis,
+            //         // calculated by default according to width
+            //         // yTicks: undefined, //number of ticks on y axis,
+            //         // calculated by default according to height
+            //     })
+            // }
 
-            let plotElevationProfile = () => {
-                let points = elevationProfilePoints
+            // let plotElevationProfile = () => {
+            //     let points = elevationProfilePoints
 
-                if (!points) return
+            //     if (!points) return
 
-                let geoJSON = {
-                    name: 'NewFeatureType',
-                    type: 'FeatureCollection',
-                    features: [{
-                        type: 'Feature',
-                        geometry: { type: 'LineString', coordinates: [] },
-                        properties: null
-                    }]
-                }
+            //     let geoJSON = {
+            //         name: 'NewFeatureType',
+            //         type: 'FeatureCollection',
+            //         features: [{
+            //             type: 'Feature',
+            //             geometry: { type: 'LineString', coordinates: [] },
+            //             properties: null
+            //         }]
+            //     }
 
-                geoJSON.features[0].geometry.coordinates = []
+            //     geoJSON.features[0].geometry.coordinates = []
 
-                // get max elevation
-                let maxElevation = 0
+            //     // get max elevation
+            //     let maxElevation = 0
 
-                for (let i = 0; i < points.length; i++) {
-                    maxElevation = Math.max(points[i].elevation, maxElevation)
-                }
+            //     for (let i = 0; i < points.length; i++) {
+            //         maxElevation = Math.max(points[i].elevation, maxElevation)
+            //     }
 
-                for (let i = 0; i < points.length; i++) {
-                    let thisPoint = points[i]
+            //     for (let i = 0; i < points.length; i++) {
+            //         let thisPoint = points[i]
 
-                    if (!thisPoint || thisPoint.lat === null || thisPoint.lat === null) continue
+            //         if (!thisPoint || thisPoint.lat === null || thisPoint.lat === null) continue
 
-                    if (!thisPoint.elevation) thisPoint.elevation = maxElevation
+            //         if (!thisPoint.elevation) thisPoint.elevation = maxElevation
 
-                    geoJSON.features[0].geometry.coordinates.push([
-                        thisPoint.lng,
-                        thisPoint.lat,
-                        thisPoint.elevation,
-                        thisPoint.slope,
-                        $scope.formatters.formatDirection(thisPoint.aspect),
-                        thisPoint.totalTimeEstimateMinutes,
-                        thisPoint.totalDistance,
-                        $scope.formatters.formatDirection(thisPoint.bearing)
-                    ])
-                }
+            //         geoJSON.features[0].geometry.coordinates.push([
+            //             thisPoint.lng,
+            //             thisPoint.lat,
+            //             thisPoint.elevation,
+            //             thisPoint.slope,
+            //             $scope.formatters.formatDirection(thisPoint.aspect),
+            //             thisPoint.totalTimeEstimateMinutes,
+            //             thisPoint.totalDistance,
+            //             $scope.formatters.formatDirection(thisPoint.bearing)
+            //         ])
+            //     }
 
-                if (lastLine) {
-                    $scope.map.removeLayer(lastLine)
-                }
+            //     if (lastLine) {
+            //         $scope.map.removeLayer(lastLine)
+            //     }
 
-                createElevationProfileWidget()
+            //     createElevationProfileWidget()
 
-                lastLine = L.geoJson(geoJSON, {
-                    // working on a better solution
-                    onEachFeature: elevationWidget.addData.bind(elevationWidget)
-                })
-            }
+            //     if (maxElevation === 0) {
+            //         elevationWidget.showError()
+            //     } else {
+            //         elevationWidget.hideError()
+            //     }
 
-            let calculateRouteStats = () => {
-                let points = elevationProfilePoints
-                if (!points) return
+            //     lastLine = L.geoJson(geoJSON, {
+            //         // working on a better solution
+            //         onEachFeature: elevationWidget.addData.bind(elevationWidget)
+            //     })
+            // }
 
-                let totalDistance = 0
-                let totalTimeEstimateMinutes = 0
-                let originalIndex = 0
-
-                for (let i = 0; i < points.length; i++) {
-                    // $log.debug(i);
-                    let point = points[i]
-
-                    if (!point) continue
-
-                    // assign index for tracking
-                    point.index = i
-
-                    // assign original index for tracking markers
-                    if (point.original) {
-                        point.originalIndex = originalIndex
-                        originalIndex++
-                    }
-
-                    // defaults for first point
-                    point.totalDistance = 0
-                    point.totalTimeEstimateMinutes = 0
-
-                    if (i === 0) continue
-
-                    // keep track of distance
-
-                    let segmentDistance = turf.lineDistance(
-                        turf.linestring([
-                            [
-                                points[i - 1].lng,
-                                points[i - 1].lat
-                            ],
-                            [
-                                point.lng,
-                                point.lat
-                            ]
-                        ]),
-                        'kilometers'
-                    )
-
-                    point.distance = segmentDistance
-                    totalDistance += segmentDistance
-                    point.totalDistance = totalDistance
-
-                    // keep track of bearing
-                    point.bearing = turf.bearing(
-                        turf.point([
-                            points[i - 1].lng,
-                            points[i - 1].lat
-                        ]),
-                        turf.point([
-                            point.lng,
-                            point.lat
-                        ])
-                    )
-
-                    if (point.bearing < 0) point.bearing += 360
-
-                    // keep track of vertical up/down and munter time estimates
-
-                    // munter time estimate details...
-                    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-                    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-                    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-                    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-
-                    let previousElevation = points[i - 1].elevation
-                    point.elevationDifference = point.elevation - previousElevation
-
-                    if (point.elevationDifference > 0) {
-                        point.direction = 'up'
-                        point.verticalUp = point.elevationDifference
-
-                        point.munterUnits = segmentDistance + (point.verticalUp / 100)
-                        point.timeEstimateMinutes = (point.munterUnits / $scope.munterRate.up) * 60
-                    } else if (point.elevationDifference < 0) {
-                        point.direction = 'down'
-                        point.verticalDown = Math.abs(point.elevationDifference)
-
-                        point.munterUnits = segmentDistance + (point.verticalDown / 100)
-                        point.timeEstimateMinutes = (
-                            point.munterUnits / $scope.munterRate.down
-                        ) * 60
-                    } else {
-                        point.direction = 'flat'
-                        point.munterUnits = segmentDistance
-
-                        let munterRateFlat = ($scope.munterRate.up + $scope.munterRate.down) / 2
-                        point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-                    }
-
-                    totalTimeEstimateMinutes += point.timeEstimateMinutes
-                    point.totalTimeEstimateMinutes = totalTimeEstimateMinutes
-                }
-
-                saveLinePoints()
-            }
-
-            let processUpdate = callback => {
-                updateSegments()
-
-                $log.debug('processUpdate!')
-
-                let points = _line._latlngs
+            let processUpdate = polyline => {
+                if (typeof polyline === 'undefined' || !polyline._latlngs) return
 
                 // get line distance
-                let distance = turf.lineDistance(
-                    turf.linestring(
-                        points.map(point => [point.lng, point.lat])
-                    ),
+                const distance = turf.lineDistance(
+                    turf.linestring(polyline._latlngs.map(point => [point.lng, point.lat])),
                     'kilometers'
                 )
 
                 // sample every 5m
-                let sampleCount = Math.round((distance * 1000) / 5)
+                const sampleCount = Math.round((distance * 1000) / 20)
+                let routePoints = []
 
                 // keep track of original points
-                for (let i = 0; i < points.length; i++) {
-                    points[i].original = true
+                for (let i = 0; i < polyline._latlngs.length; i++) {
+                    routePoints.push({
+                        lat: polyline._latlngs[i].lat,
+                        lng: polyline._latlngs[i].lng,
+                        original: true
+                    })
                 }
 
                 // interpolate between points
-                while ((points.length * 2) - 1 <= sampleCount) {
-                    points = interpolate(points)
+                while ((routePoints.length * 2) - 1 <= sampleCount) {
+                    routePoints = interpolate(routePoints)
                 }
 
-                $scope.terrainLayer.getTerrainDataBulk(points, receivedPoints => {
-                    if (callback) callback()
+                const terrainData = $scope.terrainLayer.latLngsToTerrainData(routePoints)
 
-                    if (!receivedPoints || receivedPoints.length === 0) return
+                // TerrainGraph.update(terrainData)
 
-                    $log.debug('TERRAIN DATA LAODED!')
+                const statsPoints = getRouteStats(
+                    routePoints,
+                    terrainData,
+                    $scope.munterRate.up,
+                    $scope.munterRate.down
+                )
 
-                    // store elevation profile for later
-                    elevationProfilePoints = angular.copy(receivedPoints)
+                updateRouteStats(statsPoints, terrainData)
 
-                    // $log.debug(receivedPoints);
+                // $scope.terrainLayer.getTerrainDataBulk(points, receivedPoints => {
+                //     if (callback) callback()
 
-                    // calculate route stats/time, etc.
-                    calculateRouteStats()
+                //     if (!receivedPoints || receivedPoints.length === 0) return
 
-                    // plot elevation profile
-                    plotElevationProfile()
+                //     $log.debug('TERRAIN DATA LAODED!')
 
-                    // add waypoints to elevation profile
-                    angular.forEach(_line.editing._markers, (marker, i) => {
-                        // if waypoint isn't first or last
-                        if (
-                            marker.waypoint &&
-                            i !== 0 &&
-                            i !== _line.editing._markers.length - 1
-                        ) {
-                            elevationWidget.addWaypoint(marker._latlng)
-                        }
-                    })
+                //     // store elevation profile for later
+                //     elevationProfilePoints = angular.copy(receivedPoints)
 
-                    $scope.loading = false
+                //     // $log.debug(receivedPoints);
 
-                    saveLinePoints()
-                })
+                //     // calculate route stats/time, etc.
+                //     let statsPoints = calculateRouteStats(
+                //         elevationProfilePoints,
+                //         $scope.munterRate.up,
+                //         $scope.munterRate.down
+                //     )
+
+                //     // plot elevation profile
+                //     plotElevationProfile()
+
+                //     // add waypoints to elevation profile
+                //     angular.forEach(_line.editing._markers, (marker, i) => {
+                //         // if waypoint isn't first or last
+                //         if (
+                //             marker.waypoint &&
+                //             i !== 0 &&
+                //             i !== _line.editing._markers.length - 1
+                //         ) {
+                //             elevationWidget.addWaypoint(marker._latlng)
+                //         }
+                //     })
+
+                //     $scope.loading = false
+                // })
 
                 // $log.debug("promises!");
                 // $log.debug(promises);
-
-                updateSegments()
             }
 
+            /**
+             * Returns Leaflet polyline with edit handler.
+             *
+             * @return {L.Polyline}
+             */
             let createLine = () => {
-                _line = L.polyline([], { opacity: 0.5 })
-                lineGroup.addLayer(_line)
-
-                if (editHandler === null) {
-                    editHandler = createEditHandler()
-                }
-
-                editHandler.enable()
+                const polyline = L.polyline([], { opacity: 0.5 })
 
                 // event when line is edited (after point is dragged or midpoint added)
-                _line.on('edit', e => {
+                polyline.on('edit', e => {
                     // prevent addition of new points for 1 second after moving point
                     // to prevent accidental addition of new point
                     preventEdit = true
 
                     setTimeout(() => { preventEdit = false }, 1000)
 
-                    // handle new midpoints
-                    angular.forEach(_line.editing._markers, marker => {
-                        if (!marker.isPoint) {
-                            makeRegularPoint(marker)
-                        }
+                    $scope.$evalAsync(() => {
+                        processUpdate(polyline)
                     })
-
-                    processUpdate()
                 })
+
+                return polyline
             }
 
             let editingOn = () => {
@@ -665,131 +726,29 @@ const RoutePlanning = [
                 })
             }
 
-            let editingOff = () => {
-                // close popups
-                setTimeout(() => {
-                    let popups = $('.leaflet-popup-close-button')
-                    angular.forEach(popups, popup => popup.click())
-                })
-
-                // hide all points that aren't waypoints
-                $('.leaflet-editing-icon')
-                    .not('.waypoint-icon')
-                    .not('.end-icon')
-                    .addClass('_hide')
-
-                angular.forEach(_line.editing._markers, marker => {
-                    // disable point dragging
-                    marker.dragging.disable()
-
-                    // convert end point into a waypoint (if it isn't already)
-                    if (
-                        marker._index === _line.editing._markers.length - 1 &&
-                        !marker.waypoint
-                    ) {
-                        makeWaypoint(marker)
-                        updateSegments()
-                        saveLinePoints()
-                    }
-                })
-            }
-
-            // $scope.map = $rootScope.map;
-            // load if routeId specified
-            if ($stateParams.routeId && $stateParams.routeId !== 'new') {
-                $http
-                    .get(window.apiBaseUrl + 'routes/' + $stateParams.routeId)
-                    .then(res => {
-                        let route = res.data
-
-                        $scope.route._id = route._id
-                        $scope.route.name = route.name
-
-                        // set map to fit route bounds
-                        let bounds = turf.extent(route.path)
-
-                        $scope.map.fitBounds([
-                            [bounds[1], bounds[0]],
-                            [bounds[3], bounds[2]]
-                        ], { maxZoom: 14, animate: false })
-
-                        // wait a bit for map to move. using a timeout here instead of:
-                        // $scope.map.on('moveend', function() { ... })
-                        // since it's just a percaution and 'moveend' can be unpredictabile
-                        $timeout(() => {
-                            // create editable path
-                            createLine()
-
-                            // add markers
-                            for (let i = 0; i < route.points.length; i++) {
-                                let point = route.points[i]
-                                let marker = addPoint({
-                                    lat: point.coords[1],
-                                    lng: point.coords[0]
-                                })
-
-                                // if waypoint
-                                if (point.waypoint) {
-                                    makeWaypoint(marker, point.waypoint)
-                                }
-                            }
-
-                            // disable editing until terrain is loaded
-                            editingOff()
-
-                            // load terrain
-                            processUpdate(() => {
-                                // elevation profile has been loaded
-                                $log.debug('elevation profile has been loaded!')
-
-                                // note: this will still get called even if no terrain is present
-                                editingOn()
-                                $scope.loading = false
-                                $scope.$apply()
-                            })
-                        }, 200)
-                    })
-
-                    // todo: handle 404?
-
-            // if new
-            } else if ($stateParams.routeId === 'new') {
-                $scope.loading = false
-            }
-
-            let calculateWaypointIndex = () => {
+            /**
+             * Assign marker.waypoint.index to the index of the waypoint of line `polyline`.
+             *
+             * @param  {L.Polyline} polyline
+             */
+            let updateWaypointIndexes = polyline => {
                 // keep track of waypoint index
                 let waypointCount = 1
 
-                angular.forEach(_line.editing._markers, (_marker, _index) => {
-                    if (_marker.waypoint) {
-                        _marker.waypoint.index = waypointCount
+                for (let marker of polyline.editing._markers) {
+                    if (marker.waypoint) {
+                        marker.waypoint.index = waypointCount
                         waypointCount++
                     }
-                })
+                }
             }
 
-            let makeWaypoint = (marker, waypointData) => {
-                makePoint(marker)  // eslint-disable-line no-use-before-define
-
-                marker.waypoint = {
-                    name: ''
-                }
-
-                if (waypointData) {
-                    marker.waypoint = waypointData
-                }
-
-                // add marker css class
-                $(marker._icon).addClass('waypoint-icon')
-
-                // keep track of waypoint index
-                calculateWaypointIndex()
-            }
-
+            /**
+             * Convert waypoint to marker.
+             *
+             * @param  {L.EditingToolbar.Marker} marker
+             */
             let makeRegularPoint = marker => {
-                makePoint(marker) // eslint-disable-line no-use-before-define
-
                 if (marker.waypoint) {
                     delete marker.waypoint
                 }
@@ -798,15 +757,45 @@ const RoutePlanning = [
                 $(marker._icon).removeClass('waypoint-icon')
 
                 // keep track of waypoint index
-                calculateWaypointIndex()
+                updateWaypointIndexes(_line)
             }
 
             let deleteWaypoint = marker => {
                 makeRegularPoint(marker)
-                processUpdate()
-                saveLinePoints()
+                updateSegments()
+
+                $scope.$evalAsync(() => {
+                    processUpdate(_line)
+                })
             }
 
+            /**
+             * Convert marker to waypoint with optional waypoint data to apply to it.
+             *
+             * @param  {L.EditingToolbar.Marker} marker
+             * @param  {Obj} waypointData
+             */
+            let makeWaypoint = (marker, waypointData) => {
+                if (!waypointData) {
+                    waypointData = { name: '' }  // eslint-disable-line no-param-reassign
+                }
+
+                marker.waypoint = waypointData
+
+                // add marker css class
+                $(marker._icon).addClass('waypoint-icon')
+
+                // keep track of waypoint index
+                updateWaypointIndexes(_line)
+            }
+
+            /**
+             * Changes a Leaflet marker into a "point", which has event listeners
+             * for popups and elevation graph updates.
+             *
+             * @param  {[type]} marker [description]
+             * @return {[type]}        [description]
+             */
             let makePoint = marker => {
                 // mark as a route planning point
                 marker.isPoint = true
@@ -827,11 +816,11 @@ const RoutePlanning = [
 
                 // elevation widget highlight
                 marker.on('mouseover', e => {
-                    if (e.latlng && elevationWidget) {
-                        elevationWidget.highlight(e.latlng)
-                    }
+                    // TerrainGraph.highlight(e.latlng)
 
-                    $timeout(() => $scope.hoverOnPointMap = e.target._index)
+                    $timeout(() => {
+                        $scope.hoverOnPointMap = e.target._index
+                    })
                 })
 
                 marker.on('mouseout', e => {
@@ -839,7 +828,9 @@ const RoutePlanning = [
                         elevationWidget.highlight()
                     }
 
-                    $timeout(() => $scope.hoverOnPointMap = null)
+                    $timeout(() => {
+                        $scope.hoverOnPointMap = null
+                    })
                 })
 
                 // popup
@@ -871,7 +862,10 @@ const RoutePlanning = [
                         nameInput.value = marker.waypoint.name
                         nameInput.onkeyup = () => {
                             marker.waypoint.name = nameInput.value
-                            saveLinePoints()
+
+                            $scope.$evalAsync(() => {
+                                processUpdate(_line)
+                            })
                         }
 
                         if (marker._index > 0 && $scope.routeControl.editing) {
@@ -887,13 +881,6 @@ const RoutePlanning = [
                                 deleteWaypoint(marker)
 
                                 marker.fire('click')
-
-                                // if ($scope.routeControl.editing) {
-                                //     marker.fire('click');
-                                // }
-                                // else {
-                                //     editingOff();
-                                // }
                             })
                         }
                     } else {
@@ -920,13 +907,14 @@ const RoutePlanning = [
                             //     $log.debug("can't create waypoint on start point or end point")
                             //     return;
                             // }
+                            makeWaypoint(marker)
 
                             marker.closePopup()
-                            makeWaypoint(marker)
                             marker.fire('click')
 
-                            processUpdate()
-                            saveLinePoints()
+                            $scope.$evalAsync(() => {
+                                processUpdate(_line)
+                            })
                         })
 
                         popup.appendChild(deleteButton)
@@ -952,17 +940,14 @@ const RoutePlanning = [
                 })
             }
 
-            let addPoint = (latlng, index) => {
-                let _index = index
-
-                // this prevents a bug where addPoint is called without a latlng object
-                if (!latlng) return undefined
+            let addPointToPolyline = (polyline, latlng) => {
+                let index = polyline.editing._poly._latlngs.length
 
                 // prevent adding a point too far from last point
-                if (_line.editing._markers.length) {
+                if (polyline.editing._markers.length) {
                     // get last point
-                    let lastPoint = _line.editing._markers[
-                        _line.editing._markers.length - 1
+                    let lastPoint = polyline.editing._markers[
+                        polyline.editing._markers.length - 1
                     ]._latlng
 
                     // get distance from last point
@@ -987,33 +972,33 @@ const RoutePlanning = [
                     }
                 }
 
-                if (_index === null || typeof _index === 'undefined') {
-                    _index = _line.editing._poly._latlngs.length
-                }
-
-                _line.editing._poly.addLatLng(latlng)
-                _line.editing._markers.splice(_index, 0, _line.editing._createMarker(latlng))
-                _line.editing._poly.redraw()
+                polyline.editing._poly.addLatLng(latlng)
+                polyline.editing._markers.splice(index, 0, polyline.editing._createMarker(latlng))
+                polyline.editing._poly.redraw()
 
                 // before calling updateMarkers, keep track of where waypoints are
                 let waypoints = {}
 
-                for (let [i, marker] of _line.editing._markers.entries()) {
+                for (let [i, marker] of polyline.editing._markers.entries()) {
                     if (marker.waypoint) {
                         waypoints[i] = marker.waypoint
                     }
                 }
 
                 // call updateMarkers to reload points
-                _line.editing.updateMarkers()
+                polyline.editing.updateMarkers()
 
-                angular.forEach(_line.editing._markers, (marker, _index) => {
+                angular.forEach(polyline.editing._markers, (marker, index) => {
+                    if (!marker.isPoint) {
+                        makePoint(marker)
+                    }
+
                     // if first point and no waypoint, create
-                    if (_index === 0 && !waypoints[marker._index]) {
+                    if (index === 0 && !waypoints[marker._index]) {
                         makeWaypoint(marker)
 
                     // if last point and no waypoint, create
-                    // else if (index === (_line.editing._markers.length - 1) &&
+                    // else if (index === (polyline.editing._markers.length - 1) &&
                     // !waypoints[marker._index]) makeWaypoint(marker);
 
                     // if existing waypoint
@@ -1024,7 +1009,7 @@ const RoutePlanning = [
                     // not new midpoints)
                     } else if (
                         $scope.routeControl.autoWaypoint &&
-                        _index === _line.editing._poly._latlngs.length - 1
+                        index === polyline.editing._poly._latlngs.length - 1
                     ) {
                         makeWaypoint(marker)
 
@@ -1035,7 +1020,87 @@ const RoutePlanning = [
                 })
 
                 // return marker
-                return _line.editing._markers[_index]
+                return polyline.editing._markers[index]
+            }
+
+            let editingOff = () => {
+                // close popups
+                setTimeout(() => {
+                    let popups = $('.leaflet-popup-close-button')
+                    angular.forEach(popups, popup => popup.click())
+                })
+
+                // hide all points that aren't waypoints
+                $('.leaflet-editing-icon')
+                    .not('.waypoint-icon')
+                    .not('.end-icon')
+                    .addClass('_hide')
+
+                angular.forEach(_line.editing._markers, marker => {
+                    // disable point dragging
+                    marker.dragging.disable()
+
+                    // convert end point into a waypoint (if it isn't already)
+                    if (
+                        marker._index === _line.editing._markers.length - 1 &&
+                        !marker.waypoint
+                    ) {
+                        makePoint(marker)
+                        makeWaypoint(marker)
+                        updateSegments()
+
+                        $scope.$evalAsync(() => {
+                            processUpdate(_line)
+                        })
+                    }
+                })
+            }
+
+            // $scope.map = $rootScope.map;
+            // load if routeId specified
+            if ($stateParams.routeId && $stateParams.routeId !== 'new') {
+                $http
+                    .get(window.apiBaseUrl + 'routes/' + $stateParams.routeId)
+                    .then(res => {
+                        let route = res.data
+
+                        $scope.route._id = route._id
+                        $scope.route.name = route.name
+
+                        // create editable path
+                        _line = createLine()
+
+                        $scope.map.fitBounds(_line.getBounds(), { maxZoom: 14, animate: false })
+
+                        lineGroup.addLayer(_line)
+                        editHandler.enable()
+
+                        // add markers
+                        for (let i = 0; i < route.points.length; i++) {
+                            let point = route.points[i]
+                            let marker = addPointToPolyline(
+                                _line, {
+                                    lat: point.coords[1],
+                                    lng: point.coords[0]
+                                })
+
+                            // if waypoint
+                            if (point.waypoint) {
+                                makePoint(marker)
+                                makeWaypoint(marker, point.waypoint)
+                            }
+                        }
+
+                        $scope.loading = false
+
+                        processUpdate(_line)
+                    })
+
+                    // todo: handle 404?
+
+            // if new
+            } else if ($stateParams.routeId === 'new') {
+                $scope.loading = false
             }
 
             let mapClick = e => {
@@ -1043,13 +1108,20 @@ const RoutePlanning = [
                 if (preventEdit) return
 
                 // add route polyline if it doesn't exist (only gets hit on first point)
-                if (!_line) createLine()
+                if (!_line) {
+                    _line = createLine()
+
+                    lineGroup.addLayer(_line)
+                    editHandler.enable()
+                }
 
                 // add point
-                addPoint(e.latlng)
+                addPointToPolyline(_line, e.latlng)
 
                 // update
-                processUpdate()
+                $scope.$evalAsync(() => {
+                    processUpdate(_line)
+                })
             }
 
             $scope.map.on('click', mapClick)
@@ -1145,9 +1217,9 @@ const RoutePlanning = [
                         _route.legs.push($scope.route.points[i].leg)
                     }
 
-                    for (let elevationPoint of elevationProfilePoints) {
-                        _route.terrain.push(elevationPoint.elevation)
-                    }
+                    // for (let elevationPoint of elevationProfilePoints) {
+                    //     _route.terrain.push(elevationPoint.elevation)
+                    // }
 
                     if (!$scope.route._id) {
                         $http
@@ -1239,11 +1311,12 @@ const RoutePlanning = [
                 // }
 
                 let gpx = ('<?xml version="1.0"?>\n' +
-                    '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1">\n' + // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+                    '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="Avatech, Inc.">\n' +
+                    // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
                     '  <metadata>\n' +
                     '    <name><![CDATA[Avanet GPX export]]></name>\n' +
                     '    <desc><![CDATA[]]></desc>\n' +
-                    '    <link href="http://avanet.avatech.com">\n' +
+                    '    <link href="https://avanet.avatech.com/">\n' +
                     '      <text>Created with Avanet - Avatech, Inc.</text>\n' +
                     '    </link>\n' +
                     // '    <bounds minlat="' + minlat + '" minlon="' + minlon +
@@ -1584,7 +1657,6 @@ const RoutePlanning = [
 
             $scope.$watch('munterRate', () => {
                 if (
-                    !elevationProfilePoints ||
                     !$scope.munterRate ||
                     isNaN($scope.munterRate.up) ||
                     isNaN($scope.munterRate.down === null)
@@ -1592,7 +1664,7 @@ const RoutePlanning = [
                     return
                 }
 
-                calculateRouteStats()
+                processUpdate(_line)
             }, true)
 
             $scope.$watch('hoverOnLeg', () => {

@@ -3,7 +3,8 @@ import './new.html'
 import './view.html'
 
 const validateEmail = email => {
-    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/  // eslint-disable-line max-len
+    // eslint-disable-next-line no-useless-escape, max-len
+    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return re.test(email)
 }
 
@@ -155,12 +156,10 @@ const OrganizationsController = [
             addMember($scope.search.email)
         }
 
-        $scope.allowMemberRemove = member => {
-            return (!(
-                member.admin &&
-                member.user._id === $scope.global.user._id
-            ))
-        }
+        $scope.allowMemberRemove = member => (!(
+            member.admin &&
+            member.user._id === $scope.global.user._id
+        ))
 
         $scope.isOnlyAdmin = member => {
             let adminCount = 0

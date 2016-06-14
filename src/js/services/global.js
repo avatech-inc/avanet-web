@@ -136,7 +136,8 @@ const Global = [
                         let trackingUser = {
                             name: user.fullName,
                             email: user.email,
-                            createdAt: user.created
+                            createdAt: user.created,
+                            userType: user.userType
                         }
 
                         if (__STAGE__ || __PROD__) {
@@ -232,7 +233,11 @@ const Global = [
 
                 if (!angular.equals(service.user, user)) {
                     // if user has logged out in another window, log out here too
-                    if (!user) return service.logout()
+                    if (!user) {
+                        service.logout()
+
+                        return
+                    }
 
                     // check if new user or same user (set via setUser);
                     // console.log(service.user._id);

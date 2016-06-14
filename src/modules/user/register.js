@@ -161,7 +161,7 @@ const Register = [
                         .post(newUser)
 
                         // success
-                        .then(function (data) {
+                        .then(data => {
                             if (__PROD__) {
                                 analytics.track('registered')
                             }

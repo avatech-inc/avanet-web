@@ -37,7 +37,7 @@ const Uploader = [
                 let xhr = new XMLHttpRequest()
 
                 // Update progress bar
-                xhr.upload.addEventListener('progress', function (evt) {
+                xhr.upload.addEventListener('progress', evt => {
                     if (evt.lengthComputable) {
                         let progress = (evt.loaded / evt.total) * 100
 

@@ -21,22 +21,12 @@ export const DatePicker = ['$log', $log => ({
         }, true)
 
         scope.$watch('dateInput', () => {
-            $log.debug(scope.dateInput)
-
-            if (!scope.dateInput) return $log.debug('BAD DATE!')
-
-            // $log.debug("    DATE: " + scope.dateInput.toISOString());
-
             scope.internalDate.setDate(scope.dateInput.getDate())
             scope.internalDate.setMonth(scope.dateInput.getMonth())
             scope.internalDate.setFullYear(scope.dateInput.getFullYear())
         }, true)
 
         scope.$watch('timeInput', () => {
-            if (!scope.timeInput) return $log.debug('BAD TIME!')
-
-            // $log.debug("    TIME: " + scope.timeInput.toISOString());
-
             scope.internalDate.setMinutes(scope.timeInput.getMinutes())
             scope.internalDate.setHours(scope.timeInput.getHours())
         }, true)

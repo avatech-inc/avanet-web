@@ -728,7 +728,11 @@ const NewObservation = [
         }
 
         $scope.onSubmit = form => {
-            if (!$scope.model.location) return alert('Please select a location.')
+            if (!$scope.model.location) {
+                alert('Please select a location.')
+
+                return
+            }
 
             $scope.$broadcast('schemaFormValidate')
 

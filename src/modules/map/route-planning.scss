@@ -1,5 +1,23 @@
 $routeColor: #428bca; //#2080cc; //#6664bd
 
+.elev-error {
+    position: absolute;
+    top: 33%;
+    left: 40px;
+    right: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    pointer-events: none;
+}
+
+.elev-error a {
+    pointer-events: auto;
+}
+
+.elev-error-message {
+    font-size: 0.8em;
+}
+
 .elevation-widget .background {
     background-color: transparent;
     font-size: 12px;

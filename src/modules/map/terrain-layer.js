@@ -1,6 +1,11 @@
 
 // By Andrew Sohn
+// Modified by Peter Crosby, starting early Feb 16
 // (C) 2015 Avatech, Inc.
+
+import ProtoBuf from 'protobufjs'
+import TerrainPbf from './terrain-config/terrain-pbf'
+import TerrainSources from './terrain-config/terrain-sources'
 
 const AvatechTerrainLayer = L.GridLayer.extend({
     initialize: function (options) {
@@ -18,6 +23,9 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         this.redraw.call(this)
 
         this.options = L.setOptions(this, options)
+        // decode pbf
+        var builder = ProtoBuf.loadProtoFile(TerrainPbf.protoModel)
+        this.raster = builder.build(TerrainPbf.protoName)
     },
 
     createTile: function (tilePoint, tileLoaded) {
@@ -51,12 +59,11 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         let zoom = this._tileZoom
         let zoomN = this.options.maxNativeZoom
 
-        // increase tile size for zoom level 12 (scale up from 11)
-        if (this.options.underzoom && parseInt(zoom, 10) === 12) {
-            tileSize = new L.Point(512, 512); // 128
-
-        // increase tile size when overzooming (scalw down from 13)
-        } else {
+        // if (this.options.underzoom && parseInt(zoom, 10) === 12) {
+        if (parseInt(zoom, 10) === 12) { // increase tile size for zoom level 12 (scale up from 11)
+            tileSize = new L.Point(512, 512) // 128
+        }
+        if (parseInt(zoom, 10) > 13) { // increase tile size when overzooming (scale down from 13)
             tileSize = (
                 zoomN !== null &&
                 zoom > zoomN
@@ -104,7 +111,7 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         let context = canvas.getContext('2d')
         // context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-        let redraw = () => {
+        let redraw = (tag) => {
             // if no terrain overlay specified, clear canvas
             if (!this.overlayType) {
                 context.clearRect(0, 0, canvas.width, canvas.height)
@@ -120,7 +127,8 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 pixels = this.terrainVisualization.render(
                     canvas._terrainData,
                     this.overlayType,
-                    this.customParams
+                    this.customParams,
+                    tag
                 )
             }
 
@@ -129,76 +137,108 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         }
 
         // adjust zoom point for overzoom
-        // overzoom
         if (tilePoint.z > this.options.maxNativeZoom) {
             tilePoint.z = this.options.maxNativeZoom
         }
 
         // make zoom level 12 overzoomed from 11
-        if (this.options.underzoom && parseInt(tilePoint.z, 10) === 12) {
+        if (parseInt(tilePoint.z, 10) === 12) {
             tilePoint.z = 11
         }
 
-        // elevation tile URL
-        let url = L.Util.template('https://tiles-{s}.avatech.com/{z}/{x}/{y}.png', L.extend(tilePoint, {
-            // use multiple subdomains to parallelize requests
-            //   cycle through using same implementation as Leaflet TileLayer.
-            //   makes sure to return same subdomain each time a URL is fetched
-            //   to prevent duplicate browser caching.
-            s: () => {
-                let subdomains = 'abc'
-                return subdomains[Math.abs(tilePoint.x + tilePoint.y) % subdomains.length]
-            }
-        }))
-
-        // get tile as raw Array Buffer so we can process PNG on our own
-        // to avoid bogus data from native browser alpha premultiplication
         let xhr = new XMLHttpRequest
 
-        xhr.open('GET', url, true)
+        // first try to pull a pbf tile
+        let pbfUrl = L.Util.template(TerrainSources.pbfV2, L.extend(tilePoint))
+        xhr.open('GET', pbfUrl, true)
         xhr.responseType = 'arraybuffer'
 
+        xhr.onreadystatechange = function () {
+            // if xhr is DONE and didn't succeed
+            if (xhr.readyState === 4 && xhr.status !== 200) {
+                // if xhr was looking for a pbf zxytile
+                if (xhr.responseURL.indexOf('.pbf') > -1) {
+                    var splits = xhr.responseURL.split('/')
+                    let pngUrl = L.Util.template(TerrainSources.pngV1, L.extend({
+                        // make zoom level 12 overzoomed from 11
+                        z: splits[splits.length - 3],
+                        x: splits[splits.length - 2],
+                        y: splits[splits.length - 1].split('_')[0],
+                    }, {
+                        s: () => {
+                            let subdomains = 'abc'
+                            var add = tilePoint.x + tilePoint.y
+                            return subdomains[Math.abs(add) % subdomains.length]
+                        }
+                    }))
+                    // then try to pull a png tile if pbf fails
+                    xhr.open('GET', pngUrl, true)
+                    xhr.send(null)
+                }
+            }
+        }
+
         xhr.onload = () => {
+            let data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer)
+            let tile
             // if anything other than a 200 status code is recieved, fire loaded callback
             if (xhr.status !== 200) {
                 return canvas._tileLoaded(null, canvas)
             }
 
-            // get PNG data from response
-            let data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer)
+            if (xhr.responseURL.indexOf('pbf') > -1) {
+                tile = this.raster.decode(data)
 
-            // decode PNG
-            let png = new PNG(data)
+                // if PBF was succesfully decoded
+                if (tile) {
+                    canvas._terrainData = tile;
+                    canvas._terrainLoaded.resolve();
 
-            // if PNG was succesfully decoded
-            if (png) {
-                let pixels = png.decodePixels()
+                    // fire tileLoaded callback
+                    if (canvas._tileLoaded) {
+                        canvas._tileLoaded(null, canvas)
+                        // remove the function so it can't be called twice
+                        canvas._tileLoaded = null
+                    }
 
-                canvas._terrainData = new Uint32Array(new Uint8ClampedArray(pixels).buffer)
-                canvas._terrainLoaded.resolve()
+                    redraw('pbf')
+                    this.redrawQueue.push(redraw.bind(this, 'pbf'))
 
-                // fire tileLoaded callback
-                if (canvas._tileLoaded) {
-                    // console.log("loaded!")
+                    tile = null
+                // error decoding PBF
+                } else if (canvas._tileLoaded) {
                     canvas._tileLoaded(null, canvas)
-
-                    // remove the function so it can't be called twice
-                    canvas._tileLoaded = null
                 }
+            } else if (xhr.responseURL.indexOf('png') > -1) {
+                tile = new PNG(data)
 
-                redraw()
+                // if PNG was succesfully decoded
+                if (tile) {
+                    let pixels = tile.decodePixels()
 
-                this.redrawQueue.push(redraw)
+                    canvas._terrainData = new Uint32Array(new Uint8ClampedArray(pixels).buffer)
+                    canvas._terrainLoaded.resolve()
 
-                pixels = null
-                png = null
+                    // fire tileLoaded callback
+                    if (canvas._tileLoaded) {
+                        // console.log("loaded!")
+                        canvas._tileLoaded(null, canvas)
 
-            // error decoding PNG
-            } else if (canvas._tileLoaded) {
-                canvas._tileLoaded(null, canvas)
+                        // remove the function so it can't be called twice
+                        canvas._tileLoaded = null
+                    }
+
+                    redraw('png')
+                    this.redrawQueue.push(redraw.bind(this, 'png'))
+
+                    pixels = null
+                    tile = null
+                // error decoding PNG
+                } else if (canvas._tileLoaded) {
+                    canvas._tileLoaded(null, canvas)
+                }
             }
         }
-
         // if network error, fire loaded callback
         xhr.onerror = () => {
             if (canvas._tileLoaded) {
@@ -244,17 +284,10 @@ const AvatechTerrainLayer = L.GridLayer.extend({
     _latLngToTilePoint: function (lat, lng, zoom) {
         let _lat = lat * (Math.PI / 180)
 
+
         return {
-            x: parseInt(Math.floor(
-                (lng + 180) /
-                360 *
-                (1 << zoom)
-            ), 10),
-            y: parseInt(Math.floor(
-                (1 - Math.log(Math.tan(_lat) + 1 / Math.cos(_lat)) / Math.PI) /
-                2 *
-                (1 << zoom)
-            ), 10),
+            x: parseInt(Math.floor((lng + 180) / 360 * (1 << zoom)), 10),
+            y: parseInt(Math.floor((1 - Math.log(Math.tan(_lat) + 1 / Math.cos(_lat)) / Math.PI) / 2 * (1 << zoom)), 10),  // eslint-disable-line max-len
             z: zoom
         }
     },
@@ -271,11 +304,12 @@ const AvatechTerrainLayer = L.GridLayer.extend({
         // round down lat/lng for fewer lookups
         // 4 decimal places = 11.132 m percision
         // https://en.wikipedia.org/wiki/Decimal_degrees
-        // lat = Math.round(lat * 1e4) / 1e4;
-        // lng = Math.round(lng * 1e4) / 1e4;
+        // lat = Math.floor(lat)
+        // lng = Math.floor(lng)
 
         // adjust zoom level for overzoom
-        let zoom = Math.min(this.options.maxNativeZoom, this._map.getZoom())
+        let zoom = Math.min(13, this._map.getZoom())
+        // let zoom = this._map.getZoom()
 
         if (this.options.underzoom) {
             if (parseInt(zoom, 10) === 12) {
@@ -324,6 +358,9 @@ const AvatechTerrainLayer = L.GridLayer.extend({
             // pointInTile.y = Math.floor(pointInTile.y * zoomDivide);
         }
 
+        pointInTile.x = Math.floor(pointInTile.x)
+        pointInTile.y = Math.floor(pointInTile.y)
+
         // make sure point is within 256x256 bounds
         if (pointInTile.x > 255) pointInTile.x = 255
         if (pointInTile.y > 255) pointInTile.y = 255
@@ -335,9 +372,22 @@ const AvatechTerrainLayer = L.GridLayer.extend({
 
         let tileId = tilePoint.x + ':' + tilePoint.y + ':' + parseInt(this._map.getZoom(), 10)
         let tile = this._tiles[tileId]
+        let terrainData = {
+            lat: lat,
+            lng: lng,
+
+            index: index,
+            pointInTile: pointInTile,
+            original: original,
+
+            elevation: null,
+            slope: null,
+            aspect: null
+        }
+
 
         if (!tile) {
-            // promise.resolve(null);
+            promise.resolve(terrainData)
             return promise.promise
         }
 
@@ -348,34 +398,30 @@ const AvatechTerrainLayer = L.GridLayer.extend({
             // make sure terrain is loaded
             if (!canvas._terrainData) return
 
-            // make sure coords are with bounds
-            if (pointInTile.x > 255) pointInTile.x = 255
-            if (pointInTile.y > 255) pointInTile.y = 255
-            if (pointInTile.x < 0) pointInTile.x = 0
-            if (pointInTile.y < 0) pointInTile.y = 0
-
-            // convert xy coord to 2d array index
-            let arrayIndex = (pointInTile.y * 256 + pointInTile.x)
-
-            // get terrain data
-            let _terrainData = this._convertInt(canvas._terrainData[arrayIndex])
-
-            let terrainData = {
-                lat: lat,
-                lng: lng,
-
-                index: index,
-                pointInTile: pointInTile,
-                original: original,
-
-                elevation: _terrainData[0],
-                slope: _terrainData[1],
-                aspect: _terrainData[2]
+            let esaData
+            // GET TERRRAIN DATA
+            if (Object.getPrototypeOf(canvas._terrainData).$type !== undefined) {
+                if ((Object.getPrototypeOf(canvas._terrainData).$type.name === 'RasterESA')) {
+                    // PBF
+                    esaData = [
+                        canvas._terrainData.rows[pointInTile.y].cells[pointInTile.x].elev,
+                        canvas._terrainData.rows[pointInTile.y].cells[pointInTile.x].slope,
+                        canvas._terrainData.rows[pointInTile.y].cells[pointInTile.x].aspect
+                    ]
+                }
+            } else {
+                // PNG
+                // convert xy coord to 2d array index
+                let arrayIndex = (pointInTile.y * 256 + pointInTile.x)
+                esaData = this._convertInt(canvas._terrainData[arrayIndex])
             }
 
+            terrainData.elevation = esaData[0]
+            terrainData.slope = esaData[1]
+            terrainData.aspect = esaData[2]
+
             // if empty values, make null
-            if (
-                terrainData &&
+            if (terrainData &&
                 terrainData.elevation === 127 &&
                 terrainData.slope === 127 &&
                 terrainData.aspect === 511
@@ -387,7 +433,6 @@ const AvatechTerrainLayer = L.GridLayer.extend({
 
             promise.resolve(terrainData)
         })
-
         return promise.promise
     },
 
@@ -406,7 +451,6 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 i, // index
                 points[i].original // original
             )
-
             promises.push(promise)
         }
 
@@ -420,7 +464,6 @@ const AvatechTerrainLayer = L.GridLayer.extend({
                 let terrainData = results[i]
                 receivedPoints[terrainData.index] = terrainData
             }
-
             callback(receivedPoints)
         })
     }

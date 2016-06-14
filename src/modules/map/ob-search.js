@@ -220,12 +220,14 @@ export const ObSearchFactory = [
                         }
                     }
                 }
-            }
 
-            return allowed
+                return allowed
+            }
         }
 
-        service.search_type = val => service.searchQuery.type[val.type]
+        service.search_type = val => {
+            return service.searchQuery.type[val.type]
+        }
 
         service.search_date = val => {
             let d = new Date()

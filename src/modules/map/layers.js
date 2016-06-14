@@ -1,4 +1,33 @@
 
+/* eslint-disable quote-props */
+const DeprecatedAliases = {
+    'mbi': 'mbx-aerial',
+    'acrgis-worldimagery': 'esriworld-aerial',
+    'nbmit': 'usgsnatmap-aerial',
+    'nz-aerial': 'nzl-aerial',
+    'sweden-aerial': 'swe-aerial',
+    'mbus': 'mbx-enimp-topo',
+    'mbmetric': 'mbx-enmetric-topo',
+    'mbworld': 'mbx-world-topo',
+    'mbfr': 'mbx-fra-topo',
+    'mbde': 'mbx-deu-topo',
+    'nbm': 'usgs-topo',
+    't': 'caltopo-topo',
+    'cm': 'canmatrix-topo',
+    'arcgis-us': 'esrius-topo',
+    'arcgis-world': 'esriworld-topo',
+    'alaska': 'gina-topo',
+    'nz-topo': 'nzl-topo',
+    'sweden-topo': 'swe-topo',
+    'swisstopo': 'che-topo',
+    'austriatopo': 'aut-topo',
+    'fr-topo': 'fra-topo',
+    'au-topo': 'aus-topo',
+    'norway-topo': 'nor-topo',
+    'japan-topo': 'jpn-topo'
+}
+/* eslint-enable quote-props */
+
 const Layers = [
     'Restangular',
     'Global',
@@ -59,10 +88,15 @@ const Layers = [
             if (!service.baseLayers) return null
 
             let layer
+            let _alias = alias
+
+            if (alias in DeprecatedAliases) {
+                _alias = DeprecatedAliases[alias]
+            }
 
             if (service.baseLayers.terrain) {
                 for (let terrainLayer of service.baseLayers.terrain) {
-                    if (terrainLayer.alias === alias) {
+                    if (terrainLayer.alias === _alias) {
                         layer = terrainLayer
                     }
                 }
@@ -70,7 +104,7 @@ const Layers = [
 
             if (service.baseLayers.aerial) {
                 for (let aerialLayer of service.baseLayers.aerial) {
-                    if (aerialLayer.alias === alias) {
+                    if (aerialLayer.alias === _alias) {
                         layer = aerialLayer
                     }
                 }

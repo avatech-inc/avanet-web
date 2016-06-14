@@ -349,7 +349,11 @@ export const Billing = [
         $scope.setSeatUser = (index, id) => billingStore.dispatch(actions.setSeatUser(index, id))
         $scope.deleteSeatUser = index => billingStore.dispatch(actions.deleteSeatUser(index))
 
-        $scope.changeCoupon = coupon => {
+        $scope.changeCoupon = (coupon, e) => {
+            if (e.which === 13) {
+                e.preventDefault()
+            }
+
             billingStore.dispatch(actions.setCoupon(coupon))
 
             if (coupon === '') {

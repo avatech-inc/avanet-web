@@ -227,8 +227,8 @@ margin-bottom: 6px !important;
                        style="width: 128px"
                        class="form-control"
                        ng-model="coupon"
-                       ng-keypress="($event.which === 13) ? $event.preventDefault(); changeCoupon(coupon) : 0"
-                       ng-blur="changeCoupon(coupon)"
+                       ng-keypress="($event.which === 13) ? changeCoupon(coupon, $event) : 0"
+                       ng-blur="changeCoupon(coupon, $event)"
                        ng-change="clearCoupon(coupon)">
               </div>
             </div>

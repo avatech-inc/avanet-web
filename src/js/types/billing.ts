@@ -1,4 +1,5 @@
 
+/// <reference path='../../definitions/jquery.d.ts'/>
 /// <reference path='../../../node_modules/immutable/dist/immutable.d.ts'/>
 /// <reference path='../../definitions/immutable-overrides.d.ts'/>
 
@@ -201,7 +202,7 @@ module Billing {
         changeOrg(org: Org): void;
         changeSeats(seats: number): void;
         changeInterval(interval: 'month' | 'year'): void;
-        changeCoupon(coupon: string): void;
+        changeCoupon(coupon: string, e: BaseJQueryEventObject): void;
         clearCoupon(coupon: string): void;
         setSeatUser(index: number, id: string): void;
         deleteSeatUser(index: number): void;

@@ -553,31 +553,11 @@ const Map = [
                     mapLoaded,
                     scope.mapLayers.loaded
                 ]).then(() => {
-                    // get default layer based on location
-                    let defaultMap = 'mbworld'
-                    let country = scope.global.user.country
-
-                    if (country) {
-                        if (country === 'US') {
-                            defaultMap = 'mbus'
-                        } else if (country === 'CA') {
-                            defaultMap = 'mbmetric'
-                        } else if (country === 'FR') {
-                            defaultMap = 'mbfr'
-                        } else if (country === 'DE') {
-                            defaultMap = 'mbde'
-                        } else if (country === 'AT') {
-                            defaultMap = 'mbde'
-                        }
-                    }
-
-                    let defaultLayer = scope.mapLayers.getLayerByAlias(defaultMap)
-
                     // get saved default base layer
                     let savedMap = scope.global.user.settings.defaultMap
                     let baseMap = scope.mapLayers.getLayerByAlias(savedMap)
 
-                    if (!baseMap) baseMap = defaultLayer
+                    if (!baseMap) baseMap = scope.mapLayers.baseLayers.terrain[0]
 
                     // setTimeout is needed to solve that bug where the zoom animation is incorrect
                     setTimeout(() => scope.setBaseLayer(baseMap))
@@ -879,6 +859,12 @@ const Map = [
                     }
 
                     return _val
+                }
+
+                scope.clickCoverageLink = () => {
+                    window.open('http://avatech-inc.github.io/terrain-coverage/')
+
+                    return true
                 }
 
                 scope.formatDegSlider = val => (val + '°')

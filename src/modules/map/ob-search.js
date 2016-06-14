@@ -223,6 +223,8 @@ export const ObSearchFactory = [
 
                 return allowed
             }
+
+            return true
         }
 
         service.search_type = val => service.searchQuery.type[val.type]

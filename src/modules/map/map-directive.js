@@ -746,8 +746,14 @@ const Map = [
                         opacity: scope.overlayOpacity
                     }).addTo(scope.map)
 
-                    scope.terrainLayer.on('loading', () => scope.isTerrainLoaded = false)
-                    scope.terrainLayer.on('load', () => scope.isTerrainLoaded = true)
+                    scope.terrainLayer.on('loading', () => {
+                        scope.isTerrainLoaded = false
+                    })
+
+                    scope.terrainLayer.on('load', () => {
+                        scope.isTerrainLoaded = true
+                    })
+
                     scope.terrainLayer.once('load', initLoad)
 
                     setTimeout(() => {

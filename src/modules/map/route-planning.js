@@ -209,8 +209,13 @@ const RoutePlanning = [
                 })
         }
 
-        $scope._hoverOnLeg = index => $scope.hoverOnLeg = index
-        $scope._hoverOnPoint = index => $scope.hoverOnPoint = index
+        $scope._hoverOnLeg = index => {
+            $scope.hoverOnLeg = index
+        }
+
+        $scope._hoverOnPoint = index => {
+            $scope.hoverOnPoint = index
+        }
 
         $scope.munterRate = {
             up: 4,
@@ -321,7 +326,9 @@ const RoutePlanning = [
                         elevationWidget.highlight(e.latlng)
                     }
 
-                    $timeout(() => $scope.hoverOnLegMap = e.target.segment.legIndex)
+                    $timeout(() => {
+                        $scope.hoverOnLegMap = e.target.segment.legIndex
+                    })
                 }
 
                 let mouseOutHandler = e => {
@@ -329,7 +336,9 @@ const RoutePlanning = [
                         elevationWidget.highlight()
                     }
 
-                    $timeout(() => $scope.hoverOnLegMap = null)
+                    $timeout(() => {
+                        $scope.hoverOnLegMap = null
+                    })
                 }
 
                 for (let i = 0; i < _line.editing._markers.length - 1; i++) {
@@ -644,6 +653,7 @@ const RoutePlanning = [
                     // handle new midpoints
                     angular.forEach(_line.editing._markers, marker => {
                         if (!marker.isPoint) {
+                            // eslint-disable-next-line no-use-before-define
                             makeRegularPoint(marker)
                         }
                     })
@@ -687,6 +697,7 @@ const RoutePlanning = [
                         marker._index === _line.editing._markers.length - 1 &&
                         !marker.waypoint
                     ) {
+                        // eslint-disable-next-line no-use-before-define
                         makeWaypoint(marker)
                         updateSegments()
                         saveLinePoints()
@@ -723,6 +734,8 @@ const RoutePlanning = [
                             // add markers
                             for (let i = 0; i < route.points.length; i++) {
                                 let point = route.points[i]
+
+                                // eslint-disable-next-line no-use-before-define
                                 let marker = addPoint({
                                     lat: point.coords[1],
                                     lng: point.coords[0]
@@ -730,6 +743,7 @@ const RoutePlanning = [
 
                                 // if waypoint
                                 if (point.waypoint) {
+                                    // eslint-disable-next-line no-use-before-define
                                     makeWaypoint(marker, point.waypoint)
                                 }
                             }
@@ -831,7 +845,9 @@ const RoutePlanning = [
                         elevationWidget.highlight(e.latlng)
                     }
 
-                    $timeout(() => $scope.hoverOnPointMap = e.target._index)
+                    $timeout(() => {
+                        $scope.hoverOnPointMap = e.target._index
+                    })
                 })
 
                 marker.on('mouseout', e => {
@@ -839,7 +855,9 @@ const RoutePlanning = [
                         elevationWidget.highlight()
                     }
 
-                    $timeout(() => $scope.hoverOnPointMap = null)
+                    $timeout(() => {
+                        $scope.hoverOnPointMap = null
+                    })
                 })
 
                 // popup

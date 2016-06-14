@@ -23,34 +23,6 @@ const MapController = [
 
         let firstTime = true
 
-        let init = () => {
-            firstTime = false
-
-            // when an observation preview is loaded, go to location on map
-            $scope.$on('observationLoaded', (e, ob) => {
-                if (!ob || !ob.location) return
-
-                $timeout(() => {
-                    let point = new L.LatLng(
-                        ob.location[1],
-                        ob.location[0]
-                    )
-
-                    // close any open popups
-                    let closebtn = $('.leaflet-popup-close-button')
-
-                    if (closebtn.length) closebtn[0].click()
-
-                    // if location is outside current map, pan to location
-                    if ($scope.map && !$scope.map.getBounds().contains(point)) {
-                        $scope.map.setView(point, 13, { animate: false })
-                    }
-                })
-            })
-
-            $scope.loadMap = true
-        }
-
         $scope.loadMap = false
         $scope.$on('$stateChangeSuccess', (event, toState) => {
             if (toState.name.indexOf('index') === 0 && firstTime) {
@@ -70,7 +42,7 @@ const MapController = [
         $scope.showBottomPane = () => $state.current.name === 'index.route'
         $scope.showRoutePane = () => $state.current.name === 'index.route'
 
-        $scope.hoverProfile = id => { $scope.hoverOb = id }
+        $scope.hoverProfile = id => $scope.hoverOb = id
 
         // which list to show in side bar
         $scope.selectedTab = 'obs'
@@ -153,7 +125,7 @@ const MapController = [
         }
 
         $scope.getProfileSelectedIndex = profile => {
-            for (let i = 0; i < $scope.selectedProfiles.length; i++) {
+            for (let i in $scope.selectedProfiles) {
                 if ($scope.selectedProfiles[i]._id === profile._id) {
                     return i
                 }
@@ -162,7 +134,9 @@ const MapController = [
             return -1
         }
 
-        $scope.isProfileSelected = profile => ($scope.getProfileSelectedIndex(profile) !== -1)
+        $scope.isProfileSelected = profile => {
+            return ($scope.getProfileSelectedIndex(profile) !== -1)
+        }
 
         $scope.publishProfiles = () => {
             PublishModal
@@ -183,6 +157,34 @@ const MapController = [
             $scope.selectedTab = 'obs'
             $scope.selectedList = 'my_unpublished'
         })
+
+        let init = () => {
+            firstTime = false
+
+            // when an observation preview is loaded, go to location on map
+            $scope.$on('observationLoaded', (e, ob) => {
+                if (!ob || !ob.location) return
+
+                $timeout(() => {
+                    let point = new L.LatLng(
+                        ob.location[1],
+                        ob.location[0]
+                    )
+
+                    // close any open popups
+                    let closebtn = $('.leaflet-popup-close-button')
+
+                    if (closebtn.length) closebtn[0].click()
+
+                    // if location is outside current map, pan to location
+                    if ($scope.map && !$scope.map.getBounds().contains(point)) {
+                        $scope.map.setView(point, 13, { animate: false })
+                    }
+                })
+            })
+
+            $scope.loadMap = true
+        }
     }
 ]
 

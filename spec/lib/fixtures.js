@@ -150,6 +150,6 @@ export const APIMOCKS = (url, opts) => {
         return PLANSRESPONSE
 
     default:
-        throw 'Unhandled URL: ' + url
+        throw new Error('Unhandled URL: ' + url)
     }
 }

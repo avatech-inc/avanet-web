@@ -1141,8 +1141,8 @@ export const DraggableHardness = [
                 let max
                 let index = 0
 
-                for (let hardness of ControlScope.hardness) {
-                    let width = hardness.width * ControlScope.graphWidth
+                for (let [key, value] of Object.entries(ControlScope.hardness)) {
+                    let width = value.width * ControlScope.graphWidth
 
                     if (index === 0) {
                         min = width

@@ -160,9 +160,9 @@ window.ElevationWidget = function() {
             this._applyData();
         }
 
-        let errorMessageContainer = L.DomUtil.create("div", "elev-error hidden")
-        let errorMessageTitle = L.DomUtil.create("div", "elev-error-title")
-        let errorMessageMessage = L.DomUtil.create("div", "elev-error-message")
+        var errorMessageContainer = L.DomUtil.create("div", "elev-error hidden")
+        var errorMessageTitle = L.DomUtil.create("div", "elev-error-title")
+        var errorMessageMessage = L.DomUtil.create("div", "elev-error-message")
 
         errorMessageTitle.innerHTML = "No elevation data available.<br>"
         errorMessageMessage.innerHTML = 'Click <a href="http://avatech-inc.github.io/terrain-coverage/" target="_blank">here</a> for a map of elevation coverage.'

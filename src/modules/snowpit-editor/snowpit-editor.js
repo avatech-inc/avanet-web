@@ -830,6 +830,38 @@ export const SnowpitEditor = [
                             }
                         })
 
+                    fetch(`http://elevation.avatech.com/v1/point/${location[1]},${location[0]}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.elev === 0) {
+                                return Promise.reject()
+                            }
+
+                            return Promise.resolve(data.elev)
+                        })
+                        .then(null, () => {
+                            return fetch(`https://ba-secure.geonames.net/srtm3JSON?lat=${location[1]}&lng=${location[0]}&username=avatech`)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (!data.srtm3 || data.srtm3 === -32768) {
+                                return Promise.reject()
+                            }
+
+                            return Promise.resolve(data.srtm3.toFixed(0))
+                        })
+                        .then(null, () => {
+                            return fetch(`https://ba-secure.geonames.net/astergdemJSON?lat=${location[1]}&lng=${location[0]}&username=avatech`)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (!data.astergdem || data.astergdem === -9999) {
+                                return Promise.reject()
+                            }
+
+                            return Promise.resolve(data.astergdem.toFixed(0))
+                        })
+
                     $.getJSON(
                         'https://ba-secure.geonames.net/srtm3JSON?lat=' +
                         location[1] +

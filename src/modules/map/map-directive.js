@@ -1,4 +1,10 @@
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+ 
+import React from 'react'
+import ReactDom from 'react-dom'
+import TerrainVis from 'avatech-public/src/components/mapModifiers/terrainVis/terrainVis'
+
 import { TerrainLayer } from 'leaflet-terrain'
 
 import './map-directive.html'
@@ -828,6 +834,62 @@ const Map = [
             scope.$watch('load', () => {
                 if (scope.load && !loaded) loadMap()
             })
+
+            const DEFAULT_CUSTOM_PARAMS = {
+                color: 'FF0000',
+
+                elev_low: 0,
+                elev_high: 8000,
+
+                slope_low: 0,
+                slope_high: 45,
+
+                aspect: {
+                    n: true,
+                    ne: true,
+                    e: true,
+                    se: true,
+                    s: true,
+                    sw: true,
+                    w: true,
+                    nw: true
+                }
+            }
+
+            var terrainType = 'elevation'
+
+            class Container extends React.Component {
+                constructor(props) {
+                    super(props)
+                }
+
+                render() {
+                    return React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            MuiThemeProvider,
+                            null,
+                            React.createElement(TerrainVis, {
+                                initialOpacity: 0.7,
+                                initialParams: DEFAULT_CUSTOM_PARAMS,
+                                initialType: terrainType,
+                                onChangeOpacity: function onChangeOpacity(opacity) {
+                                    return scope.terrainLayer.setOpacity(opacity);
+                                },
+                                onChangeParams: function onChangeParams(params) {
+                                    return scope.terrainLayer.setParams(params);
+                                },
+                                onChangeType: function onChangeType(type) {
+                                    return scope.terrainLayer.setType(type);
+                                }
+                            })
+                        )
+                    )
+                }
+            }
+
+            ReactDom.render(React.createElement(Container, null), document.getElementById('terrainVis'))
         }
     })
 ]

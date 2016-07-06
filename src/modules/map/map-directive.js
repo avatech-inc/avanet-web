@@ -674,9 +674,8 @@ const Map = [
 
                     let terrainOptions = {
                         pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}_.png',
-                        pbfUrl: 'http://127.0.0.1:9999/{z}/{x}/{y}.pbf',
                         // pbfUrl: 'https://vtiles-{s}.avatech.com/{z}/{x}/{y}_ESA.pbf',
-                        // pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/global_esa_v6/{z}/{x}/{y}.pbf.gz',
+                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v1/{z}/{x}/{y}.pbf',
 
                         protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESAPACK.proto',
 

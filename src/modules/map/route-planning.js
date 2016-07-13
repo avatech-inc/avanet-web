@@ -744,9 +744,29 @@ const RoutePlanning = [
                 }
 
                 $scope.terrainLayer.latLngsToTerrainData(routePoints).then(terrainData => {
+                    let terrain = terrainData
+                    if (!terrainData.elevation) {
+                        let linestring = ''
+                        for (var i = 0; i < routePoints.length; i++) {
+                            linestring += `${routePoints[i].lat},${routePoints[i].lng} `
+                        }
+
+                        fetch(`http://elevation.avatech.com/v1/linestring/${linestring}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.elev === 0) {
+                                    return Promise.reject()
+                                }
+                                return Promise.resolve(data.data)
+                            })
+                            .then(data => {
+                                terrain = data
+                            })
+                    }
+
                     const statsPoints = getRouteStats(
                         routePoints,
-                        terrainData,
+                        terrain,
                         $scope.munterRate.up,
                         $scope.munterRate.down
                     )

@@ -389,6 +389,11 @@ const Map = [
                         if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution
                         if (layer.subdomains) options.subdomains = layer.subdomains
 
+                        // if (layer.proxy) {
+                        //     var _url = "http://localhost:4000/?url=" +
+                        //         _url.substr(_url.indexOf("://") + 3);
+                        // }
+
                         newBaseLayer = L.tileLayer(layer.template, options)
                     } else if (layer.type === 'WMS') {
                         let options = {
@@ -501,21 +506,17 @@ const Map = [
                             if (terrainData.elevation) {
                                 scope.mapCursorElevation = terrainData.elevation
                             } else {
-                                try {
-                                    fetch(`http://elevation.avatech.com/elevation/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
-                                        .then(res => res.json())
-                                        .then(data => {
-                                            if (data.elev === 0) {
-                                                return Promise.reject()
-                                            }
-                                            return Promise.resolve(data.elev)
-                                        })
-                                        .then(elevation => {
-                                            scope.mapCursorElevation = elevation
-                                        })
-                                } catch (err) {
-                                    // eslint-disable-line no-empty
-                                }
+                                fetch(`http://elevation.avatech.com/v1/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.elev === 0) {
+                                            return Promise.reject()
+                                        }
+                                        return Promise.resolve(data.elev)
+                                    })
+                                    .then(elevation => {
+                                        scope.mapCursorElevation = elevation
+                                    })
                             }
                         })
                     })

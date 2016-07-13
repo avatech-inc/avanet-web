@@ -503,7 +503,21 @@ const Map = [
                         scope.mapCursorLocation = e.latlng
 
                         scope.terrainLayer.latlngToTerrainData(e.latlng).then(terrainData => {
-                            scope.mapCursorElevation = terrainData.elevation
+                            if (terrainData.elevation) {
+                                scope.mapCursorElevation = terrainData.elevation
+                            } else {
+                                fetch(`http://elevation.avatech.com/v1/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.elev === 0) {
+                                            return Promise.reject()
+                                        }
+                                        return Promise.resolve(data.elev)
+                                    })
+                                    .then(elevation => {
+                                        scope.mapCursorElevation = elevation
+                                    })
+                            }
                         })
                     })
                 })
@@ -688,6 +702,7 @@ const Map = [
                         terrainOptions.pbfWorker = '/assets/pbf-worker.js'
                     }
 
+                    TerrainLayer.update(scope.colorMaps)
                     scope.terrainLayer = new TerrainLayer(terrainOptions)
 
                     scope.terrainLayer._zoomAnimated = false;

@@ -506,7 +506,7 @@ const Map = [
                             if (terrainData.elevation) {
                                 scope.mapCursorElevation = terrainData.elevation
                             } else {
-                                fetch(`http://elevation.avatech.com/v1/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
+                                fetch(`http://elevation.avatech.com/elevation/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
                                     .then(res => res.json())
                                     .then(data => {
                                         if (data.elev === 0) {

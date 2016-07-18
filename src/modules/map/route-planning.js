@@ -751,7 +751,7 @@ const RoutePlanning = [
                             linestring += `${routePoints[i].lat},${routePoints[i].lng} `
                         }
 
-                        fetch(`http://elevation.avatech.com/v1/linestring/${linestring}`)
+                        fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
                             .then(res => res.json())
                             .then(data => {
                                 if (data.elev === 0) {

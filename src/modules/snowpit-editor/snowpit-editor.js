@@ -839,9 +839,7 @@ export const SnowpitEditor = [
 
                             return Promise.resolve(data.elev)
                         })
-                        .then(null, () => {
-                            return fetch(`https://ba-secure.geonames.net/srtm3JSON?lat=${location[1]}&lng=${location[0]}&username=avatech`)
-                        })
+                        .then(null, () => fetch(`https://ba-secure.geonames.net/srtm3JSON?lat=${location[1]}&lng=${location[0]}&username=avatech`))
                         .then(res => res.json())
                         .then(data => {
                             if (!data.srtm3 || data.srtm3 === -32768) {
@@ -850,9 +848,7 @@ export const SnowpitEditor = [
 
                             return Promise.resolve(data.srtm3.toFixed(0))
                         })
-                        .then(null, () => {
-                            return fetch(`https://ba-secure.geonames.net/astergdemJSON?lat=${location[1]}&lng=${location[0]}&username=avatech`)
-                        })
+                        .then(null, () => fetch(`https://ba-secure.geonames.net/astergdemJSON?lat=${location[1]}&lng=${location[0]}&username=avatech`))
                         .then(res => res.json())
                         .then(data => {
                             if (!data.astergdem || data.astergdem === -9999) {

@@ -421,7 +421,7 @@ const terrainGraph = terrainData => {
         // }
     });
 
-    d3.select(document.querySelector('#elevation-profile .mg-line2')).style("stroke-dasharray", ("3, 3"))
+    d3.select(document.querySelector('#elevation-profile .mg-line2')).style('stroke-dasharray', ('3, 3'))  // eslint-disable-line max-len
 }
 
 const RoutePlanning = [

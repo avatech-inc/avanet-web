@@ -318,7 +318,7 @@ const interpolate = _points => {
     return newPoints
 }
 
-const terrainGraph = terrainData => {
+const elevationProfile = terrainData => {
     MG.data_graphic({
         data: [terrainData],
 
@@ -713,7 +713,7 @@ const RoutePlanning = [
                     )
 
                     if (statsPoints) {
-                        terrainGraph(statsPoints)
+                        elevationProfile(statsPoints)
                     }
 
                     updateRouteStats(statsPoints, terrainData)
@@ -887,7 +887,7 @@ const RoutePlanning = [
 
                 // elevation widget highlight
                 marker.on('mouseover', e => {
-                    // TerrainGraph.highlight(e.latlng)
+                    // elevationProfile.highlight(e.latlng)
 
                     $timeout(() => {
                         $scope.hoverOnPointMap = e.target._index

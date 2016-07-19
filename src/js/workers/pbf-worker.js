@@ -9,7 +9,7 @@ var proto = 'syntax = "proto2";' +
 
 importScripts('bytebuffer.js', 'protobuf.js')
 
-var PbfDecoder = ProtoBuf.loadProto(proto, 'RasterESAPACK.proto').build('RasterESA')
+var PbfDecoder = ProtoBuf.loadProto(proto, 'RasterESA.proto').build('RasterESA')
 
 self.addEventListener('message', function (e) {
     let buffer = PbfDecoder.decode(e.data.data)

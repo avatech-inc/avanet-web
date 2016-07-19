@@ -319,67 +319,8 @@ const interpolate = _points => {
 }
 
 const terrainGraph = terrainData => {
-    var missingData = []
-    var lastKnownData = 0
-    var isMissing = !terrainData[0].elevation
-    var firstIsMissing = !terrainData[0].elevation
-
-    for (var i = 0; i < terrainData.length; i++) {
-        if (terrainData[i].elevation) {
-            lastKnownData = terrainData[i].elevation
-
-            if (firstIsMissing) {
-                missingData.unshift({
-                    totalDistance: 0,
-                    elevation: lastKnownData
-                })
-
-                firstIsMissing = false
-            }
-        }
-
-        if (isMissing && terrainData[i].elevation) {
-            // switch off isMissing mode and push new good data
-            isMissing = false
-
-            missingData.push({
-                totalDistance: terrainData[i].totalDistance,
-                elevation: terrainData[i].elevation
-            })
-
-            missingData.push({
-                totalDistance: terrainData[i].totalDistance,
-                elevation: null
-            })
-        } else if (!isMissing && !terrainData[i].elevation) {
-            // switch on isMissing mode and push last known data
-            isMissing = true
-
-            missingData.push({
-                totalDistance: terrainData[i].totalDistance,
-                elevation: null
-            })
-
-            missingData.push({
-                totalDistance: terrainData[i].totalDistance,
-                elevation: lastKnownData
-            })
-        }
-
-        if (terrainData[i].elevation) {
-            lastKnownData = terrainData[i].elevation
-        }
-    }
-
-    if (isMissing) {
-        missingData.push({
-            totalDistance: terrainData[terrainData.length - 1].totalDistance,
-            elevation: lastKnownData
-        })
-    }
-
     MG.data_graphic({
-        data: [terrainData, missingData],
+        data: [terrainData],
 
         // eslint-disable-next-line max-len
         width: parseInt(window.getComputedStyle(document.getElementById('elevation-profile')).width.slice(0, -2), 10),

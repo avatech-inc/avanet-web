@@ -142,7 +142,7 @@ const getLineSegmentStats = statsPoints => {
     return stats
 }
 
-let getRouteStats = (points, terrainData, munterRateUp, munterRateDown) => {
+let getRouteStats = (points, elevationAPIData, terrainData, munterRateUp, munterRateDown) => {
     if (!points) return []
 
     let totalDistance = 0
@@ -152,20 +152,26 @@ let getRouteStats = (points, terrainData, munterRateUp, munterRateDown) => {
     let statsPoints = []
 
     for (let i = 0; i < points.length; i++) {
+        let elevation
         let point = points[i]
         let terrain = terrainData[i]
 
         if (!point) continue
 
+        if (!elevationAPIData[i]) {
+            elevation = terrain.elevation
+        } else {
+            elevation = Math.round(elevationAPIData[i].elev, 0)
+        }
+
         let statsPoint = {
             lat: points[i].lat,
             lng: points[i].lng,
             original: points[i].original,
-            elevation: terrain.elevation,
+            elevation: elevation,
             slope: terrain.slope,
             aspect: terrain.aspect
         }
-
         // assign index for tracking
         statsPoint.index = i
 
@@ -318,9 +324,9 @@ const interpolate = _points => {
     return newPoints
 }
 
-const elevationProfile = terrainData => {
+const elevationProfile = elevationData => {
     MG.data_graphic({
-        data: [terrainData],
+        data: [elevationData],
 
         // eslint-disable-next-line max-len
         width: parseInt(window.getComputedStyle(document.getElementById('elevation-profile')).width.slice(0, -2), 10),
@@ -567,96 +573,6 @@ const RoutePlanning = [
                 }
             }
 
-            // let createElevationProfileWidget = () => {
-            //     if (elevationWidget) elevationWidget.clear()
-
-            //     elevationWidget = new ElevationWidget()
-
-            //     elevationWidget.create($scope.map, {
-            //         imperial: Global.user.settings.elevation === 1, // true
-            //         // width: 670,
-            //         height: 163,
-            //         margins: {
-            //             top: 24,
-            //             right: 18,
-            //             bottom: 20,
-            //             left: 40
-            //         },
-            //         useHeightIndicator: true, // if false a marker is drawn at map position
-            //         hoverNumber: {
-            //             decimalsX: 3, // decimals on distance (always in km)
-            //             decimalsY: 0, // deciamls on height (always in m)
-            //             formatter: undefined // custom formatter function may be injected
-            //         },
-
-            //         // xTicks: undefined, //number of ticks in x axis,
-            //         // calculated by default according to width
-            //         // yTicks: undefined, //number of ticks on y axis,
-            //         // calculated by default according to height
-            //     })
-            // }
-
-            // let plotElevationProfile = () => {
-            //     let points = elevationProfilePoints
-
-            //     if (!points) return
-
-            //     let geoJSON = {
-            //         name: 'NewFeatureType',
-            //         type: 'FeatureCollection',
-            //         features: [{
-            //             type: 'Feature',
-            //             geometry: { type: 'LineString', coordinates: [] },
-            //             properties: null
-            //         }]
-            //     }
-
-            //     geoJSON.features[0].geometry.coordinates = []
-
-            //     // get max elevation
-            //     let maxElevation = 0
-
-            //     for (let i = 0; i < points.length; i++) {
-            //         maxElevation = Math.max(points[i].elevation, maxElevation)
-            //     }
-
-            //     for (let i = 0; i < points.length; i++) {
-            //         let thisPoint = points[i]
-
-            //         if (!thisPoint || thisPoint.lat === null || thisPoint.lat === null) continue
-
-            //         if (!thisPoint.elevation) thisPoint.elevation = maxElevation
-
-            //         geoJSON.features[0].geometry.coordinates.push([
-            //             thisPoint.lng,
-            //             thisPoint.lat,
-            //             thisPoint.elevation,
-            //             thisPoint.slope,
-            //             $scope.formatters.formatDirection(thisPoint.aspect),
-            //             thisPoint.totalTimeEstimateMinutes,
-            //             thisPoint.totalDistance,
-            //             $scope.formatters.formatDirection(thisPoint.bearing)
-            //         ])
-            //     }
-
-            //     if (lastLine) {
-            //         $scope.map.removeLayer(lastLine)
-            //     }
-
-            //     createElevationProfileWidget()
-
-            //     if (maxElevation === 0) {
-            //         elevationWidget.showError()
-            //     } else {
-            //         elevationWidget.hideError()
-            //     }
-
-            //     lastLine = L.geoJson(geoJSON, {
-            //         // working on a better solution
-            //         onEachFeature: elevationWidget.addData.bind(elevationWidget)
-            //     })
-            // }
-
             let processUpdate = polyline => {
                 if (typeof polyline === 'undefined' || !polyline._latlngs) return
 
@@ -685,79 +601,26 @@ const RoutePlanning = [
                 }
 
                 $scope.terrainLayer.latLngsToTerrainData(routePoints).then(terrainData => {
-                    let terrain = terrainData
-                    if (!terrainData.elevation) {
-                        let linestring = ''
-                        for (var i = 0; i < routePoints.length; i++) {
-                            linestring += `${routePoints[i].lat},${routePoints[i].lng} `
-                        }
-
-                        fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.elev === 0) {
-                                    return Promise.reject()
-                                }
-                                return Promise.resolve(data.data)
-                            })
-                            .then(data => {
-                                terrain = data
-                            })
+                    let linestring = ''
+                    for (var i = 0; i < routePoints.length; i++) {
+                        linestring += `${routePoints[i].lat},${routePoints[i].lng} `
                     }
-
-                    const statsPoints = getRouteStats(
-                        routePoints,
-                        terrain,
-                        $scope.munterRate.up,
-                        $scope.munterRate.down
-                    )
-
-                    if (statsPoints) {
-                        elevationProfile(statsPoints)
-                    }
-
-                    updateRouteStats(statsPoints, terrainData)
+                    fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.elev === 0) {
+                                return Promise.reject()
+                            }
+                            return Promise.resolve(data.data)
+                        })
+                        .then(elevAPIData => {
+                            const statsPoints = getRouteStats(routePoints, elevAPIData, terrainData, $scope.munterRate.up, $scope.munterRate.down)  // eslint-disable-line max-len
+                            if (statsPoints) {
+                                elevationProfile(statsPoints)
+                            }
+                            updateRouteStats(statsPoints, terrainData)
+                        })
                 })
-
-                // $scope.terrainLayer.getTerrainDataBulk(points, receivedPoints => {
-                //     if (callback) callback()
-
-                //     if (!receivedPoints || receivedPoints.length === 0) return
-
-                //     $log.debug('TERRAIN DATA LAODED!')
-
-                //     // store elevation profile for later
-                //     elevationProfilePoints = angular.copy(receivedPoints)
-
-                //     // $log.debug(receivedPoints);
-
-                //     // calculate route stats/time, etc.
-                //     let statsPoints = calculateRouteStats(
-                //         elevationProfilePoints,
-                //         $scope.munterRate.up,
-                //         $scope.munterRate.down
-                //     )
-
-                //     // plot elevation profile
-                //     plotElevationProfile()
-
-                //     // add waypoints to elevation profile
-                //     angular.forEach(_line.editing._markers, (marker, i) => {
-                //         // if waypoint isn't first or last
-                //         if (
-                //             marker.waypoint &&
-                //             i !== 0 &&
-                //             i !== _line.editing._markers.length - 1
-                //         ) {
-                //             elevationWidget.addWaypoint(marker._latlng)
-                //         }
-                //     })
-
-                //     $scope.loading = false
-                // })
-
-                // $log.debug("promises!");
-                // $log.debug(promises);
             }
 
             /**

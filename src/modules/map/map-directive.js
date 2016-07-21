@@ -519,7 +519,6 @@ const Map = [
                                             scope.mapCursorElevation = elevation
                                         })
                                 } catch (err) {
-                                    return Promise.reject()
                                 }
                             }
                         })

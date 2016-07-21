@@ -506,17 +506,21 @@ const Map = [
                             if (terrainData.elevation) {
                                 scope.mapCursorElevation = terrainData.elevation
                             } else {
-                                fetch(`http://elevation.avatech.com/elevation/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.elev === 0) {
-                                            return Promise.reject()
-                                        }
-                                        return Promise.resolve(data.elev)
-                                    })
-                                    .then(elevation => {
-                                        scope.mapCursorElevation = elevation
-                                    })
+                                try {
+                                    fetch(`http://elevation.avatech.com/elevation/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.elev === 0) {
+                                                return Promise.reject()
+                                            }
+                                            return Promise.resolve(data.elev)
+                                        })
+                                        .then(elevation => {
+                                            scope.mapCursorElevation = elevation
+                                        })
+                                } catch (err) {
+                                    return Promise.reject()
+                                }
                             }
                         })
                     })

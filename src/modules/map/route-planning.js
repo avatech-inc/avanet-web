@@ -182,10 +182,7 @@ const getLineSegmentStats = (statsPoints) => {
     return stats
 }
 
-/*
-    getSegmentDistance
-*/
-let getSegmentDistance = (previous, current) => {
+const getSegmentDistance = (previous, current) => { // eslint-disable-line arrow-body-style
     return turf.lineDistance(
         turf.linestring([
             [previous.lng, previous.lat],

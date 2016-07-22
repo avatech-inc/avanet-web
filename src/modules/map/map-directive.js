@@ -519,6 +519,7 @@ const Map = [
                                             scope.mapCursorElevation = elevation
                                         })
                                 } catch (err) {
+                                    // eslint-disable-line no-empty
                                 }
                             }
                         })

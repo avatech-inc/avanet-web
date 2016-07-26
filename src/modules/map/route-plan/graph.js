@@ -73,6 +73,7 @@ export function elevationGraph(elevationData) {
             show_rollover_text: false,
             colors: ['blue', 'blue']
             // mouseover: function(d, i) {
+<<<<<<< 360b8233033fbf9d9b213473b486f6fa88852917
             //     d3.select(this).append("text")
             //         .text(d.elevation)
             //         .attr("x", x(d.x))
@@ -97,5 +98,25 @@ export function elevationGraph(elevationData) {
         d3.select(document.querySelector('#elevation-profile .mg-line2')).style('stroke-dasharray', ('3, 3'))  // eslint-disable-line max-len
     } else {
         document.getElementById('elevation-profile').innerHTML = ''  // eslint-disable-line max-len
+=======
+            //     var timeFormat
+
+            //     if (d.totalTimeEstimateMinutes < 60) {
+            //         timeFormat = d3.time.format("%-M min")
+            //     } else {
+            //         timeFormat = d3.time.format("%-H hr %-M min")
+            //     }
+
+            //     document.getElementById('graphrollover').innerHTML = 'Distance: ' +
+            //     d3.format('.3f')(d.totalDistance) +
+            //     ' km Elevation: ' + d3.format(',d')(d.elevation) +
+            //     ' m Slope: ' + d3.format('d')(d.slope) +
+            //     '&deg; Aspect: ' + d3.format('d')(d.aspect) +
+            //     '&deg; Bearing: ' + d3.format('0f')(d.bearing) +
+            //     '&deg; Time: ' + timeFormat(new Date(2015, 0, 1, 0, d.totalTimeEstimateMinutes))
+            // }
+        });
+        d3.select(document.querySelector('#elevation-profile .mg-line2')).style('stroke-dasharray', ('3, 3'))  // eslint-disable-line max-len
+>>>>>>> addition of route-plan abstraction
     }
 }

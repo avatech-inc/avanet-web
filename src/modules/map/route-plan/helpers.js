@@ -1,56 +1,19 @@
 
-<<<<<<< 360b8233033fbf9d9b213473b486f6fa88852917
-
-/**
-
-*/
-// export function checkCompleteSegmentTerrain(
-//     terrainData,
-//     segmentPoints
-// ) {
-//     console.log(segmentPoints)
-    // let elevationOnly = false
-    // for (let i = 0; i < terrainData.length; i++) {
-    //     if (
-    //         !terrainData[i].elevation &
-    //         !terrainData[i].aspect &
-    //         !terrainData[i].slope
-    //     ) {
-    //         elevationOnly = true
-    //     }
-    // }
-    // return elevationOnly
-// }
-
-/**
-
-*/
-export function checkCompleteTerrain(terrainData) {
-    let elevationOnly = false
-=======
 /**
 
 */
 export function checkCompleteTerrainData(terrainData) {
-    let completeTerrain = true
->>>>>>> addition of route-plan abstraction
+    let elevationOnly = false
     for (let i = 0; i < terrainData.length; i++) {
         if (
             !terrainData[i].elevation &
             !terrainData[i].aspect &
             !terrainData[i].slope
         ) {
-<<<<<<< 360b8233033fbf9d9b213473b486f6fa88852917
             elevationOnly = true
         }
     }
     return elevationOnly
-=======
-            completeTerrain = false
-        }
-    }
-    return completeTerrain
->>>>>>> addition of route-plan abstraction
 }
 
 /**
@@ -163,11 +126,7 @@ export function calculateMunterEstimate(
         const munterRateFlat = (munterRate.up + munterRate.down) / 2
         point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
     } else {
-<<<<<<< 360b8233033fbf9d9b213473b486f6fa88852917
         point.elevationDifference = currentElev - previousElev
-=======
-        point.elevationDifference = currentElev.elev - previousElev.elev
->>>>>>> addition of route-plan abstraction
 
         if (point.elevationDifference > 0) {
             point.direction = 'up'

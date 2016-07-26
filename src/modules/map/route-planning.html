@@ -95,7 +95,12 @@
           <span style="color:green;">+{{ formatters.formatElevation(route.stats.verticalUp) }}</span> /
           <span style="color:red;">-{{ formatters.formatElevation(route.stats.verticalDown) }}</span><br/>
 
-          <div ng-if="completeTerrain">
+          <div ng-if="elevationOnly">
+            <div style="font-size:10px;font-weight:100;text-align:center">
+              <label>Complete slope & aspect data not currently available</label><br/>
+            </div>
+          </div>
+          <div ng-if="!elevationOnly">
             <label>SLOPE</label>
             AVG: {{ route.stats.slopeAverage.toFixed(0) }}&deg; /
             MAX: {{ route.stats.slopeMax.toFixed(0) }}&deg;<br/>

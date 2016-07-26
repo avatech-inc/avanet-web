@@ -3,17 +3,17 @@
 
 */
 export function checkCompleteTerrainData(terrainData) {
-    let completeTerrain = true
+    let elevationOnly = false
     for (let i = 0; i < terrainData.length; i++) {
         if (
             !terrainData[i].elevation &
             !terrainData[i].aspect &
             !terrainData[i].slope
         ) {
-            completeTerrain = false
+            elevationOnly = true
         }
     }
-    return completeTerrain
+    return elevationOnly
 }
 
 /**
@@ -126,7 +126,7 @@ export function calculateMunterEstimate(
         const munterRateFlat = (munterRate.up + munterRate.down) / 2
         point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
     } else {
-        point.elevationDifference = currentElev.elev - previousElev.elev
+        point.elevationDifference = currentElev - previousElev
 
         if (point.elevationDifference > 0) {
             point.direction = 'up'

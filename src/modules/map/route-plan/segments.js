@@ -44,7 +44,7 @@ export function getSegmentPoints(
 
 */
 export function getSegmentStats(
-    completeTerrain,
+    elevationOnly,
     routeStats
 ) {
     function getSummary(
@@ -62,7 +62,7 @@ export function getSegmentStats(
         let avgSlope = null
         let minSlope = null
         let maxSlope = null
-        if (completeTerrain) {
+        if (!elevationOnly) {
             avgAspect = getAverage(_.map(routeStats, 'aspect'))
             const minAspectPoint = _.minBy(routeStats, 'aspect')
             if (minAspectPoint) minAspect = minAspectPoint.aspect
@@ -137,7 +137,7 @@ export function getSegmentStats(
     ) return {}
 
     return getSummary(
-        completeTerrain,
+        elevationOnly,
         endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes, // time estimate
         endPoint.elevation - startPoint.elevation, // elevation change
         endPoint.totalDistance - startPoint.totalDistance, // segment distance

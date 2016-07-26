@@ -115,62 +115,66 @@ const RoutePlanning = [
               munterRate
             ) => {
                 // GET BOOLEAN - IF TERRAIN IS COMPLETE, only elevation available
-                const completeTerrain = checkCompleteTerrainData(terrainData)
-                $scope.completeTerrain = completeTerrain
+                const elevationOnly = checkCompleteTerrainData(terrainData)
+                $scope.elevationOnly = elevationOnly
+
                 // GET FULL ROUTE STATS
                 const routeFoundation = getRouteFoundation(
-                  completeTerrain,
+                  elevationOnly,
                   routePoints,
                   elevQueryRes,
                   terrainData,
                   munterRate
                 )
+
                 // CALC SUMMARY STATS
-                $scope.route.stats = getSegmentStats(completeTerrain, routeFoundation)
+                $scope.route.stats = getSegmentStats(elevationOnly, routeFoundation)
 
                 // CALC SEGMENT STATS (sidebar)
-                $scope.route.points = [{}, {}]
+                $scope.route.points = []
 
                 let legIndex = 0
                 let prevWaypointIndex = 0
 
                 // FOR EACH POINT ON ROUTE
-                // for (let i = 0; i < _line.editing._markers.length; i++) {
-                //     const routePoint = _line.editing._markers[i]
-                //
-                //     // if point is a waypoint, or first or last
-                //     if (
-                //       routePoint.waypoint ||
-                //       i === 0 ||
-                //       i === _line.editing._markers.length - 1
-                //     ) {
-                //         // GET SLICE OF ROUTE POINTS FOR SEGMENT
-                //         const segmentPoints = getSegmentPoints(
-                //           routeFoundation,
-                //           prevWaypointIndex,
-                //           routePoint._index
-                //         )
-                //
-                //         let pointDetails = {
-                //             lat: routePoint._latlng.lat,
-                //             lng: routePoint._latlng.lng,
-                //             waypoint: routePoint.waypoint,
-                //             pointIndex: routePoint._index,
-                //             terrain: {},
-                //             leg: getSegmentStats(completeTerrain, segmentPoints, legIndex),
-                //         }
-                //         console.log(pointDetails)
-                //         // pointDetails.terrain = helpers.getElevationProfilePoint(
-                //         //   routeStats,
-                //         //   routePoint._index
-                //         // )
-                //         $scope.route.points.push(pointDetails)
-                //         if (routePoint.waypoint) {
-                //             legIndex++
-                //         }
-                //         prevWaypointIndex = routePoint._index
-                //     }
-                // }
+                if (_line.editing._markers) {
+                    for (let i = 0; i < _line.editing._markers.length; i++) {
+                        const routePoint = _line.editing._markers[i]
+
+                        // if point is a waypoint, or first or last
+                        if (
+                          routePoint.waypoint ||
+                          i === 0 ||
+                          i === _line.editing._markers.length - 1
+                        ) {
+                            // GET SLICE OF ROUTE POINTS FOR SEGMENT
+                            const segmentPoints = getSegmentPoints(
+                              routeFoundation,
+                              prevWaypointIndex,
+                              routePoint._index
+                            )
+
+                            let pointDetails = {
+                                lat: routePoint._latlng.lat,
+                                lng: routePoint._latlng.lng,
+                                waypoint: routePoint.waypoint,
+                                pointIndex: routePoint._index,
+                                terrain: {},
+                                leg: getSegmentStats(elevationOnly, segmentPoints, legIndex),
+                            }
+                            console.log(pointDetails)
+                            // pointDetails.terrain = helpers.getElevationProfilePoint(
+                            //   routeStats,
+                            //   routePoint._index
+                            // )
+                            $scope.route.points.push(pointDetails)
+                            if (routePoint.waypoint) {
+                                legIndex++
+                            }
+                            prevWaypointIndex = routePoint._index
+                        }
+                    }
+                }
             }
 
             const updateSegments = () => {

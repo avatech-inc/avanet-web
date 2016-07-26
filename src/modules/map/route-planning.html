@@ -44,7 +44,7 @@
 				<div class="btn-group filter right" ng-if="route._id" ng-hide="discussMode">
 			      <button type="button" ng-click="delete()"><i class="ion-trash-a"></i>&nbsp;&nbsp;Delete</button>
 		      	</div>
-	      	</div>	
+	      	</div>
 
 	    </div>
 
@@ -101,17 +101,18 @@
 			<div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
 				<div style="font-size:13px;">
 					<label>NET ELEV</label> {{ route.stats.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.stats.elevationChange) }}
-					<label>VERTICAL</label> 
-						<span style="color:green;">+{{ formatters.formatElevation(route.stats.verticalUp) }}</span> / 
+					<label>VERTICAL</label>
+						<span style="color:green;">+{{ formatters.formatElevation(route.stats.verticalUp) }}</span> /
 						<span style="color:red;">-{{ formatters.formatElevation(route.stats.verticalDown) }}</span>
 					<br/>
-					<label>SLOPE</label>
-					<!--MIN: {{ route.stats.slopeMin.toFixed(0) }}&deg; /-->
-					AVG: {{ route.stats.slopeAverage.toFixed(0) }}&deg; /
-					MAX: {{ route.stats.slopeMax.toFixed(0) }}&deg;
-					<br/>
-					<label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.stats.aspectAverage) }}<br/>
-					
+          <div ng-if=" bo\8">
+  					<label>SLOPE</label>
+    					AVG: {{ route.stats.slopeAverage.toFixed(0) }}&deg; /
+    					MAX: {{ route.stats.slopeMax.toFixed(0) }}&deg;
+  					<br/>
+            <label style="margin-bottom:3px;">ASPECT AVG</label>{{ formatters.formatDirection(route.stats.aspectAverage) }}<br/>
+          </div>
+
 					<label>Munter rate: Up</label> <input type="number" ng-model="munterRate.up" style="width: 37px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
 					<label>Down</label>
 					<input type="number" ng-model="munterRate.down" style="width: 37px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
@@ -151,7 +152,7 @@
 			            /* Hide arrow */
 			            .tooltip.customClass .tooltip-arrow {
 			                display: none;
-			            } 
+			            }
 			        </style>
 				</div>
 			</div>
@@ -159,9 +160,9 @@
 			<div class="route-list">
 				<div ng-repeat="routePoint in route.points">
 
-					<div class="route-item" style="padding-left:34px;font-size:12px;" 
+					<div class="route-item" style="padding-left:34px;font-size:12px;"
 					ng-if="$index != 0"
-					ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }" 
+					ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }"
 					ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
 						<div class="side-line"></div>
 						DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
@@ -169,7 +170,7 @@
 						BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
 						NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
 						VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
-						SLOPE: 
+						SLOPE:
 						<!--MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /-->
 						AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
 						MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;
@@ -177,7 +178,7 @@
 						ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
 					</div>
 					<div class="route-item" style="font-weight:bold"
-						ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }" 
+						ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }"
 						ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
 						<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 						<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
@@ -188,7 +189,7 @@
 						<!--<span ng-show="$index == 0">START</span>-->
 
 						<!-- hide elevation for now
-						({{ formatters.formatElevation(routePoint.terrain.elevation) }})--> 
+						({{ formatters.formatElevation(routePoint.terrain.elevation) }})-->
 
 						<div style="float: right; font-size: 12px; line-height: 13px; position: relative; bottom: 3px; text-align: right; font-weight: 500;" ng-hide="$index == 0">
 							{{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>

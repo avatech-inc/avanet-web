@@ -1,424 +1,18 @@
 
-const _ = {}
-
-import lodashmap from 'lodash.map'
-import minBy from 'lodash.minby'
-import maxBy from 'lodash.maxby'
-import sumBy from 'lodash.sumby'
-import sum from 'lodash.sum'
-
-import MG from 'metrics-graphics'
-
-_.map = lodashmap
-_.minBy = minBy
-_.maxBy = maxBy
-_.sumBy = sumBy
-_.sum = sum
-
 import './route-planning.html'
 
-// UTILS
-const calculateMunterEstimate = (
-    totalTimeEstimate,
-    munterRate,
-    point,
-    previousElev,
-    currentElev,
-    segmentDistance
-) => {
-    // MUNTER TIME ESTIMATES - DETAILS
-    // http://www.foxmountainguides.com/about/the-guides-blog/tags/tag/munter-touring-plan
-    // https://books.google.com/books?id=Yg3WTwZxLhIC&lpg=PA339&ots=E-lqpwepiA&dq=munter%20time%20calculation&pg=PA112#v=onepage&q=munter%20time%20calculation&f=false
-    // distance: 1km = 1 unit (since distance is already in km, just use as-is)
-    // vertical: 100m = 1 unit (vertical is in m, so just divide by 100)
-    let totalTime = totalTimeEstimate
-    if (currentElev.elev === null) {
-        point.direction = 'flat'
-        point.munterUnits = segmentDistance
+import { getRouteFoundation } from './route-plan/foundation'
+import { elevationGraph } from './route-plan/graph'
+import {
+  checkCompleteTerrainData,
+  getLinestringQuery,
+  interpolate
+} from './route-plan/helpers'
+import {
+  getSegmentPoints,
+  getSegmentStats
+} from './route-plan/segments'
 
-        let munterRateFlat = (munterRate.up + munterRate.down) / 2
-        point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-    } else {
-        point.elevationDifference = currentElev.elev - previousElev.elev
-
-        if (point.elevationDifference > 0) {
-            point.direction = 'up'
-            point.verticalUp = point.elevationDifference
-
-            point.munterUnits = segmentDistance + (point.verticalUp / 100)
-            point.timeEstimateMinutes = (point.munterUnits / munterRate.up) * 60
-        } else if (point.elevationDifference < 0) {
-            point.direction = 'down'
-            point.verticalDown = Math.abs(point.elevationDifference)
-
-            point.munterUnits = segmentDistance + (point.verticalDown / 100)
-            point.timeEstimateMinutes = (point.munterUnits / munterRate.down) * 60
-        } else {
-            point.direction = 'flat'
-            point.munterUnits = segmentDistance
-
-            let munterRateFlat = (munterRate.up + munterRate.down) / 2
-            point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-        }
-    }
-    totalTime += point.timeEstimateMinutes
-    point.totalTimeEstimateMinutes = totalTime
-    return point
-}
-
-const getBearing = (start, end) => {
-    let bearing = turf.bearing(
-        turf.point([start.lng, start.lat]),
-        turf.point([end.lng, end.lat])
-    )
-    if (bearing < 0) bearing += 360
-    return bearing
-}
-
-// for aspect only
-const getAverageAspect = aspects => {
-    let sines = []
-    let cosines = []
-
-    // get sines and cosines
-    for (let aspect of aspects) {
-        if (aspect !== null && aspect !== undefined) {
-            aspect = parseInt(aspect, 10)
-
-            // convert aspect degrees to radians
-            sines.push(Math.sin(aspect * (Math.PI / 180)))
-            cosines.push(Math.cos(aspect * (Math.PI / 180)))
-        }
-    }
-
-    // calculate mean of sines and cosines
-    let meanSine = _.sum(sines) / sines.length
-    let meanCosine = _.sum(cosines) / cosines.length
-
-    // calculate aspect in radians
-    let averageAspectRadians = Math.atan2(meanSine, meanCosine)
-
-    // convert to degrees
-    let deg = averageAspectRadians * (180 / Math.PI)
-
-    // if negative, adjust
-    if (deg < 0) deg = 360 + deg
-
-    return deg
-}
-
-const getLineSegmentStats = (statsPoints) => {
-    if (!statsPoints || statsPoints.length < 2) return {}
-    let startPoint = statsPoints[0]
-    let endPoint = statsPoints[statsPoints.length - 1]
-
-    let bearing = getBearing(startPoint, endPoint)
-
-    let stats = {
-        timeEstimateMinutes: endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes, // eslint-disable-line max-len
-        distance: endPoint.totalDistance - startPoint.totalDistance,
-
-        elevationChange: null,
-        elevationMin: null,
-        elevationMax: null,
-
-        slopeMin: 0,
-        slopeMax: 0,
-        slopeAverage: 0,
-
-        verticalUp: null,
-        verticalDown: null,
-
-        aspectMin: null,
-        aspectMax: null,
-        aspectAverage: getAverageAspect(_.map(statsPoints, 'aspect')),
-
-        bearing: bearing
-    }
-
-    // set elevation change, max, min if available
-    if (startPoint.elevation !== null && endPoint.elevation !== null) {
-        stats.elevationChange = endPoint.elevation - startPoint.elevation
-    }
-
-    let minElevationPoint = _.minBy(statsPoints, 'elevation')
-    let maxElevationPoint = _.maxBy(statsPoints, 'elevation')
-
-    if (minElevationPoint && minElevationPoint.elevation !== null) {
-        stats.elevationMin = minElevationPoint.elevation
-    }
-
-    if (maxElevationPoint && maxElevationPoint.elevation) {
-        stats.elevationMax = maxElevationPoint.elevation
-    }
-
-    let minSlopePoint = _.minBy(statsPoints, 'slope')
-    let maxSlopePoint = _.maxBy(statsPoints, 'slope')
-
-    if (minSlopePoint && minSlopePoint.slope !== null) {
-        stats.slopeMin = minSlopePoint.slope
-    }
-
-    if (maxSlopePoint && maxSlopePoint.slope !== null) {
-        stats.slopeMax = maxSlopePoint.slope
-    }
-
-    let slopeTotal = _.sumBy(statsPoints, 'slope')
-
-    if (slopeTotal) stats.slopeAverage = slopeTotal / statsPoints.length
-
-    let verticalUp = _.sumBy(statsPoints, 'verticalUp')
-    let verticalDown = _.sumBy(statsPoints, 'verticalDown')
-
-    if (verticalUp) stats.verticalUp = verticalUp
-    if (verticalDown) stats.verticalDown = verticalDown
-
-    let minAspectPoint = _.minBy(statsPoints, 'aspect')
-    let maxAspectPoint = _.maxBy(statsPoints, 'aspect')
-
-    if (minAspectPoint) stats.aspectMin = minAspectPoint.aspect
-    if (maxAspectPoint) stats.aspectMax = maxAspectPoint.aspect
-
-    return stats
-}
-
-const getSegmentDistance = (previous, current) => { // eslint-disable-line arrow-body-style
-    return turf.lineDistance(
-        turf.linestring([
-            [previous.lng, previous.lat],
-            [current.lng, current.lat]
-        ]),
-        'kilometers'
-    )
-}
-
-let getProfileGraphStats = (elevationData) => {
-    if (!elevationData) return []
-
-    let totalDistance = 0
-    let graphPoints = []
-
-    for (let i = 0; i < elevationData.length; i++) {
-        if (!elevationData[i]) continue
-
-        let graphPoint = {
-            lat: elevationData[i].lat,
-            lng: elevationData[i].lng,
-            elevation: elevationData[i].elev,
-            index: i,
-            totalDistance: 0
-        }
-        if (i === 0) continue
-
-        totalDistance += getSegmentDistance(elevationData[i - 1], elevationData[i])
-        graphPoint.totalDistance = totalDistance
-        graphPoints.push(graphPoint)
-    }
-    return graphPoints
-}
-
-let getRouteStats = (points, elevData, terrainData, munterRate) => {
-    // check if terrainData is valid to use - no undefined values?
-    // if terrainData is valid:
-    //    ~ existing code
-    // if not valid:
-    //    calculate only using elevation api data
-    //    ignore terrain data
-    if (!points) return []
-    let statsPoints = []
-
-    let totalDistance = 0
-    let totalTimeEstimateMinutes = 0
-    let originalIndex = 0
-
-    let noTerrain = false
-    if (terrainData[0].elevation == null) {
-        noTerrain = true
-    }
-
-    if (noTerrain) {
-        for (let i = 0; i < elevData.length; i++) {
-            if (!elevData[i]) continue
-
-            let statsPoint = {
-                lat: elevData[i].lat,
-                lng: elevData[i].lng,
-                elevation: elevData[i].elev,
-            }
-            // assign index for tracking
-            statsPoint.index = i
-
-            // defaults for first point
-            statsPoint.totalDistance = 0
-            statsPoint.totalTimeEstimateMinutes = 0
-
-            if (i === 0) continue
-
-            // keep track of distance
-            const segmentDistance = getSegmentDistance(elevData[i - 1], elevData[i])
-            statsPoint.distance = segmentDistance
-            totalDistance += segmentDistance
-            statsPoint.totalDistance = totalDistance
-
-            // keep track of bearing
-            statsPoint.bearing = getBearing(elevData[i - 1], elevData[i])
-
-            // keep track of vertical up/down and munter time estimates
-            statsPoint = calculateMunterEstimate(
-                totalTimeEstimateMinutes,
-                munterRate,
-                statsPoint,
-                elevData[i - 1],
-                elevData[i],
-                segmentDistance
-            )
-            totalTimeEstimateMinutes = statsPoint.totalTimeEstimateMinutes
-            statsPoints.push(statsPoint)
-        }
-    } else {
-        for (let i = 0; i < points.length; i++) {
-            if (!points[i]) continue
-
-            let statsPoint = {
-                lat: points[i].lat,
-                lng: points[i].lng,
-                original: points[i].original,
-                elevation: terrainData[i].elevation,
-                slope: terrainData[i].slope,
-                aspect: terrainData[i].aspect
-            }
-            // assign index for tracking
-            statsPoint.index = i
-
-            // assign original index for tracking markers
-            if (statsPoint.original) {
-                statsPoint.originalIndex = originalIndex
-                originalIndex++
-            }
-
-            // defaults for first point
-            statsPoint.totalDistance = 0
-            statsPoint.totalTimeEstimateMinutes = 0
-
-            if (i === 0) continue
-
-            // keep track of distance
-            const segmentDistance = getSegmentDistance(points[i - 1], points[i])
-            statsPoint.distance = segmentDistance
-            totalDistance += segmentDistance
-            statsPoint.totalDistance = totalDistance
-
-            // keep track of bearing
-            statsPoint.bearing = getBearing(points[i - 1], points[i])
-
-            // keep track of vertical up/down and munter time estimates
-            statsPoint = calculateMunterEstimate(
-                totalTimeEstimateMinutes,
-                munterRate,
-                statsPoint,
-                terrainData[i - 1].elevation,
-                terrainData[i].elevation,
-                segmentDistance
-            )
-            totalTimeEstimateMinutes = statsPoint.totalTimeEstimateMinutes
-            statsPoints.push(statsPoint)
-        }
-    }
-    return statsPoints
-}
-
-const getLegPoints = (points, pointIndexStart, pointIndexEnd) => {
-    if (!points) return []
-
-    let startIndex = 0
-    let endIndex = 0
-
-    for (let i = 0; i < points.length; i++) {
-        if (points[i].originalIndex === pointIndexStart) {
-            startIndex = i
-        } else if (points[i].originalIndex === pointIndexEnd) {
-            endIndex = i
-        }
-    }
-    return points.slice(startIndex, endIndex + 1)
-}
-
-const getElevationProfilePoint = (points, pointIndex) => {
-    if (!points) return -1
-    for (let i = 0; i < points.length; i++) {
-        if (points[i].originalIndex === pointIndex) {
-            return points[i]
-        }
-    }
-    return -1
-}
-
-const interpolate = _points => {
-    let newPoints = []
-
-    for (let i = 0; i < _points.length; i++) {
-        newPoints[i * 2] = _points[i]
-    }
-
-    for (let i = 0; i < newPoints.length; i++) {
-        if (!newPoints[i]) {
-            let startPoint = L.latLng(newPoints[i - 1].lat, newPoints[i - 1].lng)
-            let endPoint = L.latLng(newPoints[i + 1].lat, newPoints[i + 1].lng)
-            let bounds = L.latLngBounds(startPoint, endPoint)
-            let middlePoint = bounds.getCenter()
-
-            newPoints[i] = {
-                lat: middlePoint.lat,
-                lng: middlePoint.lng
-            }
-        }
-    }
-    return newPoints
-}
-
-const elevationProfile = elevationData => {
-    MG.data_graphic({
-        data: [
-            getProfileGraphStats(elevationData)
-        ],
-        width: parseInt(window.getComputedStyle(document.getElementById('elevation-profile')).width.slice(0, -2), 10), // eslint-disable-line max-len
-        height: parseInt(window.getComputedStyle(document.getElementById('elevation-profile')).height.slice(0, -2), 10), // eslint-disable-line max-len
-        target: '#elevation-profile',
-        x_accessor: 'totalDistance',
-        y_accessor: 'elevation',
-        missing_is_hidden: true,
-        transition_on_update: false,
-        xax_format: value => `${value} km`,
-        yax_format: d3.format(',d'),
-        min_y_from_data: true,
-        y_extended_ticks: true,
-        bottom: 25,
-        right: 15,
-        top: 20,
-        left: 40,
-        buffer: 0,
-        show_rollover_text: false,
-        colors: ['blue', 'blue']
-        // mouseover: function(d, i) {
-        //     var timeFormat
-
-        //     if (d.totalTimeEstimateMinutes < 60) {
-        //         timeFormat = d3.time.format("%-M min")
-        //     } else {
-        //         timeFormat = d3.time.format("%-H hr %-M min")
-        //     }
-
-        //     document.getElementById('graphrollover').innerHTML = 'Distance: ' +
-        //     d3.format('.3f')(d.totalDistance) +
-        //     ' km Elevation: ' + d3.format(',d')(d.elevation) +
-        //     ' m Slope: ' + d3.format('d')(d.slope) +
-        //     '&deg; Aspect: ' + d3.format('d')(d.aspect) +
-        //     '&deg; Bearing: ' + d3.format('0f')(d.bearing) +
-        //     '&deg; Time: ' + timeFormat(new Date(2015, 0, 1, 0, d.totalTimeEstimateMinutes))
-        // }
-    });
-    d3.select(document.querySelector('#elevation-profile .mg-line2')).style('stroke-dasharray', ('3, 3'))  // eslint-disable-line max-len
-}
 
 const RoutePlanning = [
     '$http',
@@ -494,19 +88,16 @@ const RoutePlanning = [
             down: 10
         }
 
-        let ready = () => {
-            let lastLine
+        const ready = () => {
             let elevationWidget
-            let saveLineTimeout
-
             let _line
             let preventEdit = false
 
             // the feature group holder for the route
-            let lineGroup = L.featureGroup().addTo($scope.map)
+            const lineGroup = L.featureGroup().addTo($scope.map)
 
             // keep track of line segments (point-to-point line segments, not route segments)
-            let lineSegmentGroup = L.featureGroup().addTo($scope.map)
+            const lineSegmentGroup = L.featureGroup().addTo($scope.map)
 
             // Leaflet.Draw edit handler for custom edit/draw functionality
             let editHandler = new L.EditToolbar.Edit($scope.map, {
@@ -517,81 +108,104 @@ const RoutePlanning = [
                 }
             })
 
-            let updateRouteStats = (routePoints, elevData, terrainData, munterRate) => {
-                const statPoints = getRouteStats(routePoints, elevData, terrainData, munterRate)  // eslint-disable-line max-len
+            const updateRouteStats = (
+              routePoints,
+              elevQueryRes,
+              terrainData,
+              munterRate
+            ) => {
+                // GET BOOLEAN - IF TERRAIN IS COMPLETE, only elevation available
+                const completeTerrain = checkCompleteTerrainData(terrainData)
+                $scope.completeTerrain = completeTerrain
+                // GET FULL ROUTE STATS
+                const routeFoundation = getRouteFoundation(
+                  completeTerrain,
+                  routePoints,
+                  elevQueryRes,
+                  terrainData,
+                  munterRate
+                )
+                // CALC SUMMARY STATS
+                $scope.route.stats = getSegmentStats(completeTerrain, routeFoundation)
 
-                $scope.route.stats = {}
-                $scope.route.points = []
+                // CALC SEGMENT STATS (sidebar)
+                $scope.route.points = [{}, {}]
 
                 let legIndex = 0
                 let prevWaypointIndex = 0
 
-                for (let i = 0; i < _line.editing._markers.length; i++) {
-                    let point = _line.editing._markers[i]
-
-                    // if point is a waypoint, or first or last
-                    if (point.waypoint || i === 0 || i === _line.editing._markers.length - 1) {
-                        let pointDetails = {
-                            lat: point._latlng.lat,
-                            lng: point._latlng.lng,
-                            waypoint: point.waypoint,
-                            pointIndex: point._index,
-                            terrain: {},
-                            leg: {}
-                        }
-
-                        let legPoints = getLegPoints(statPoints, prevWaypointIndex, point._index)
-
-                        pointDetails.leg = getLineSegmentStats(legPoints)
-                        pointDetails.terrain = getElevationProfilePoint(statPoints, point._index)
-                        pointDetails.leg.index = legIndex
-
-                        $scope.route.points.push(pointDetails)
-
-                        if (point.waypoint) {
-                            legIndex++
-                        }
-
-                        prevWaypointIndex = point._index
-                    }
-                }
-
-                $scope.route.stats = getLineSegmentStats(statPoints)
+                // FOR EACH POINT ON ROUTE
+                // for (let i = 0; i < _line.editing._markers.length; i++) {
+                //     const routePoint = _line.editing._markers[i]
+                //
+                //     // if point is a waypoint, or first or last
+                //     if (
+                //       routePoint.waypoint ||
+                //       i === 0 ||
+                //       i === _line.editing._markers.length - 1
+                //     ) {
+                //         // GET SLICE OF ROUTE POINTS FOR SEGMENT
+                //         const segmentPoints = getSegmentPoints(
+                //           routeFoundation,
+                //           prevWaypointIndex,
+                //           routePoint._index
+                //         )
+                //
+                //         let pointDetails = {
+                //             lat: routePoint._latlng.lat,
+                //             lng: routePoint._latlng.lng,
+                //             waypoint: routePoint.waypoint,
+                //             pointIndex: routePoint._index,
+                //             terrain: {},
+                //             leg: getSegmentStats(completeTerrain, segmentPoints, legIndex),
+                //         }
+                //         console.log(pointDetails)
+                //         // pointDetails.terrain = helpers.getElevationProfilePoint(
+                //         //   routeStats,
+                //         //   routePoint._index
+                //         // )
+                //         $scope.route.points.push(pointDetails)
+                //         if (routePoint.waypoint) {
+                //             legIndex++
+                //         }
+                //         prevWaypointIndex = routePoint._index
+                //     }
+                // }
             }
 
-            let updateSegments = () => {
+            const updateSegments = () => {
                 lineSegmentGroup.clearLayers()
 
                 let legIndex = 0
-                let mouseMoveHandler = e => {
+                const mouseMoveHandler = e => {
                     $timeout(() => {
                         $scope.hoverOnLegMap = e.target.segment.legIndex
                     })
                 }
 
-                let mouseOutHandler = e => {
+                const mouseOutHandler = e => {
                     $timeout(() => {
                         $scope.hoverOnLegMap = null
                     })
                 }
 
                 for (let i = 0; i < _line.editing._markers.length - 1; i++) {
-                    let thisPoint = _line.editing._markers[i]
-                    let nextPoint = _line.editing._markers[i + 1]
+                    const thisPoint = _line.editing._markers[i]
+                    const nextPoint = _line.editing._markers[i + 1]
 
                     // if waypoint
                     if (thisPoint.waypoint) {
                         legIndex++
                     }
 
-                    let segmentData = {
+                    const segmentData = {
                         start: thisPoint._latlng,
                         end: nextPoint._latlng,
                         index: i,
                         legIndex: legIndex
                     }
 
-                    let segment = L.polyline([
+                    const segment = L.polyline([
                         thisPoint._latlng,
                         nextPoint._latlng
                     ], {
@@ -610,12 +224,19 @@ const RoutePlanning = [
                 }
             }
 
-            let processUpdate = polyline => {
-                if (typeof polyline === 'undefined' || !polyline._latlngs) return
+            const processUpdate = polyline => {
+                if (
+                  typeof polyline === 'undefined' ||
+                  !polyline._latlngs
+                ) return
 
                 // get line distance
                 const distance = turf.lineDistance(
-                    turf.linestring(polyline._latlngs.map(point => [point.lng, point.lat])),
+                    turf.linestring(
+                      polyline._latlngs.map(
+                        point => [point.lng, point.lat]
+                      )
+                    ),
                     'kilometers'
                 )
 
@@ -638,10 +259,8 @@ const RoutePlanning = [
                 }
 
                 $scope.terrainLayer.latLngsToTerrainData(routePoints).then(terrainData => {
-                    let linestring = ''
-                    for (var i = 0; i < routePoints.length; i++) {
-                        linestring += `${routePoints[i].lat},${routePoints[i].lng} `
-                    }
+                    // get elevation data for route
+                    const linestring = getLinestringQuery(routePoints)
                     fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
                         .then(res => res.json())
                         .then(data => {
@@ -650,9 +269,16 @@ const RoutePlanning = [
                             }
                             return Promise.resolve(data.data)
                         })
-                        .then(elevAPIData => {
-                            elevationProfile(elevAPIData)
-                            updateRouteStats(routePoints, elevAPIData, terrainData, $scope.munterRate)  // eslint-disable-line max-len
+                        .then(elevQueryRes => {
+                            // update graph
+                            elevationGraph(elevQueryRes)
+                            // update sidebar stats
+                            updateRouteStats(
+                              routePoints,
+                              elevQueryRes,
+                              terrainData,
+                              $scope.munterRate
+                            )
                         })
                 })
             }
@@ -662,7 +288,7 @@ const RoutePlanning = [
              *
              * @return {L.Polyline}
              */
-            let createLine = () => {
+            const createLine = () => {
                 const polyline = L.polyline([], { opacity: 0.5 })
 
                 // event when line is edited (after point is dragged or midpoint added)
@@ -681,7 +307,7 @@ const RoutePlanning = [
                 return polyline
             }
 
-            let editingOn = () => {
+            const editingOn = () => {
                 // show all points
                 $('.leaflet-editing-icon')
                     .not('.waypoint-icon')
@@ -699,7 +325,7 @@ const RoutePlanning = [
              *
              * @param  {L.Polyline} polyline
              */
-            let updateWaypointIndexes = polyline => {
+            const updateWaypointIndexes = polyline => {
                 // keep track of waypoint index
                 let waypointCount = 1
 
@@ -716,7 +342,7 @@ const RoutePlanning = [
              *
              * @param  {L.EditingToolbar.Marker} marker
              */
-            let makeRegularPoint = marker => {
+            const makeRegularPoint = marker => {
                 if (marker.waypoint) {
                     delete marker.waypoint
                 }
@@ -728,7 +354,7 @@ const RoutePlanning = [
                 updateWaypointIndexes(_line)
             }
 
-            let deleteWaypoint = marker => {
+            const deleteWaypoint = marker => {
                 makeRegularPoint(marker)
                 updateSegments()
 
@@ -743,7 +369,7 @@ const RoutePlanning = [
              * @param  {L.EditingToolbar.Marker} marker
              * @param  {Obj} waypointData
              */
-            let makeWaypoint = (marker, waypointData) => {
+            const makeWaypoint = (marker, waypointData) => {
                 if (!waypointData) {
                     waypointData = { name: '' }  // eslint-disable-line no-param-reassign
                 }
@@ -764,7 +390,7 @@ const RoutePlanning = [
              * @param  {[type]} marker [description]
              * @return {[type]}        [description]
              */
-            let makePoint = marker => {
+            const makePoint = marker => {
                 // mark as a route planning point
                 marker.isPoint = true
 
@@ -910,7 +536,7 @@ const RoutePlanning = [
                     ]._latlng
 
                     // get distance from last point
-                    let distance = turf.distance(
+                    const distance = turf.distance(
                         turf.point([
                             lastPoint.lng,
                             lastPoint.lat
@@ -978,7 +604,7 @@ const RoutePlanning = [
                 return polyline.editing._markers[index]
             }
 
-            let editingOff = () => {
+            const editingOff = () => {
                 // close popups
                 setTimeout(() => {
                     let popups = $('.leaflet-popup-close-button')
@@ -1054,7 +680,7 @@ const RoutePlanning = [
                 $scope.loading = false
             }
 
-            let mapClick = e => {
+            const mapClick = e => {
                 if (!$scope.routeControl.editing) return
                 if (preventEdit) return
 
@@ -1229,7 +855,7 @@ const RoutePlanning = [
                 let wayPointIndex = 0
 
                 for (let i = 0; i < _line.editing._markers.length; i++) {
-                    let thisPoint = _line.editing._markers[i]
+                    const thisPoint = _line.editing._markers[i]
 
                     if (
                         thisPoint.waypoint ||
@@ -1267,7 +893,7 @@ const RoutePlanning = [
                 wayPointIndex = 0
 
                 for (let i = 0; i < _line.editing._markers.length; i++) {
-                    let thisPoint = _line.editing._markers[i]
+                    const thisPoint = _line.editing._markers[i]
                     gpx += ('    <rtept lat="' +
                         thisPoint._latlng.lat +
                         '" lon="' +
@@ -1301,8 +927,8 @@ const RoutePlanning = [
                 // end GPX
                 gpx += '</gpx>'
 
-                let gpxData = 'data:application/gpx+xml;charset=utf-8,' + encodeURIComponent(gpx)
-                let link = document.createElement('a')
+                const gpxData = 'data:application/gpx+xml;charset=utf-8,' + encodeURIComponent(gpx)
+                const link = document.createElement('a')
 
                 angular.element(link)
                     .attr('href', gpxData)
@@ -1314,11 +940,11 @@ const RoutePlanning = [
             }
 
             $scope.getDeclination = () => {
-                let center = $scope.map.getCenter()
-                let currentYear = new Date().getFullYear() +
+                const center = $scope.map.getCenter()
+                const currentYear = new Date().getFullYear() +
                     ((new Date().getMonth() + 1) / 12.0)
 
-                let declination = new WorldMagneticModel()
+                const declination = new WorldMagneticModel()
                     .declination(
                         0,
                         center.lat,
@@ -1330,21 +956,21 @@ const RoutePlanning = [
             }
 
             $scope.getGridNorth = () => {
-                let center = $scope.map.getCenter()
+                const center = $scope.map.getCenter()
 
                 // get utm at center
-                let utmCenter = UTM.latLonToUTMXY(
+                const utmCenter = UTM.latLonToUTMXY(
                     UTM.degToRad(center.lat),
                     UTM.degToRad(center.lng)
                 )
 
-                let utmTop = UTM.latLonToUTMXY(
+                const utmTop = UTM.latLonToUTMXY(
                     UTM.degToRad($scope.map.getBounds()._northEast.lat),
                     UTM.degToRad(center.lng)
                 )
 
                 // get lat lng of easting at top of map
-                let top = UTM.utmXYToLatLon(
+                const top = UTM.utmXYToLatLon(
                     utmCenter.x,
                     utmTop.y,
                     utmCenter.zone,
@@ -1352,7 +978,7 @@ const RoutePlanning = [
                 )
 
                 // get bearing between center point and top point
-                let bearing = turf.bearing(
+                const bearing = turf.bearing(
                     turf.point([
                         center.lng,
                         center.lat
@@ -1388,10 +1014,10 @@ const RoutePlanning = [
             )
 
             $scope.routeControl.downloadPDF = () => {
-                let pdfRows = []
+                const pdfRows = []
 
                 // PDF columns
-                let columns = [
+                const columns = [
                     { text: '', style: 'tableHeader', width: 24 },
                     { text: 'Name', style: 'tableHeader', width: '*' },
                     { text: 'UTM', style: 'tableHeader', width: 49 },
@@ -1406,7 +1032,7 @@ const RoutePlanning = [
                 pdfRows.push(columns)
 
                 // set colummn widths
-                let columnWidths = columns.map(column => column.width)
+                const columnWidths = columns.map(column => column.width)
 
                 // add rows
                 angular.forEach($scope.route.points, (point, index) => {
@@ -1462,7 +1088,7 @@ const RoutePlanning = [
                 })
 
                 // pdf layout
-                let docDefinition = {
+                const docDefinition = {
                     pageSize: 'letter',
                     content: [
                         { text: $scope.route.name, style: 'subheader' },
@@ -1505,12 +1131,12 @@ const RoutePlanning = [
                     }
                 }
 
-                let arrowCanvas = DrawDeclinationCanvas(  // eslint-disable-line new-cap
+                const arrowCanvas = DrawDeclinationCanvas(  // eslint-disable-line new-cap
                     $scope.getDeclination(),
                     $scope.getGridNorth()
                 )
 
-                let formatMeters = meters => {
+                const formatMeters = meters => {
                     if (meters >= 1000) {
                         let km = parseInt(meters, 10) / 1000
 
@@ -1524,7 +1150,7 @@ const RoutePlanning = [
                     return $filter('number')(meters, 0) + ' m'
                 }
 
-                let formatFeet = feet => {
+                const formatFeet = feet => {
                     if (feet >= 5280) {
                         let miles = parseInt(feet, 10) / 5280
 
@@ -1605,7 +1231,7 @@ const RoutePlanning = [
         }
 
         // wait for map to be ready
-        let mapWatcher = $scope.$watch('map', () => {
+        const mapWatcher = $scope.$watch('map', () => {
             if ($scope.map) {
                 // unregister watch
                 mapWatcher()

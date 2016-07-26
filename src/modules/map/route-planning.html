@@ -1,5 +1,6 @@
 <section ng-controller="RoutePlanningController">
 	<div class="route-box">
+
     <style>
       .sectionHeader {
       	padding-left: 14px;
@@ -30,6 +31,8 @@
       	float:right;
       }
     </style>
+
+    <!-- TOP OF ROUTES RIGHT SIDEBAR -->
     <div class="popupHeader">
       <div class="title">Route</div>
       <div class="buttons">
@@ -48,6 +51,8 @@
         </div>
       </div>
     </div>
+
+    <!-- ROUTE TITLE BAR -->
     <div style="padding:10px;font-weight:700;font-size:16px; background:#ddd;line-height:24px;" ng-hide="loading">
       <input type="text" ng-model="route.name" placeholder="Route Name"/>
       <div style="float: right; font-weight: 500; text-align: right; line-height: 18px; font-size: 15px; position: relative;  bottom: 3px;" ng-show="route && route.points.length > 1">
@@ -55,6 +60,8 @@
 				{{ formatters.formatDuration(route.stats.timeEstimateMinutes) }}
       </div>
     </div>
+
+    <!-- CONTENT FOR BEFORE A ROUTE IS READY TO BUILD A GRAPH & STATS FOR -->
     <div ng-if="loading" class="instruct">Loading Route</div>
     <div ng-if="!loading && !route._id && route.points.length == 0" class="instruct">
       <div ng-show="map.getZoom() >= 13">Click anywhere<br/>on the map to<br/>start your route</div>
@@ -65,7 +72,10 @@
       <div ng-show="map.getZoom() < 13">Zoom in to continue<br/>editing your route</div>
     </div>
 
+    <!-- CONTENT FOR WHEN A ROUTE IS READY FOR A GRAPH & STATS -->
 		<div ng-show="!loading && route && route.points.length > 1">
+
+      <!-- ROUTE PLANNING OPTIONS & EXPORTING -->
 			<div style="padding:9px 0px 8px 4px;border-bottom: 1px solid #ddd;">
 				<div style="padding-left:6px;">
 					<a href="#" ng-click="routeControl.editing = !routeControl.editing"><i class="fa fa{{ routeControl.editing ? '-check' : '' }}-square-o" style="width:13px;"></i> Editing</a>&nbsp;&nbsp;&nbsp;
@@ -74,24 +84,32 @@
 					<a href="#" ng-click="routeControl.downloadPDF()"><i class="fa fa-file-pdf-o"></i>PDF</a>
 				</div>
       </div>
+
+      <!-- ROUTE SUMMARY -->
       <div style="padding:10px;padding-left: 4px;padding-bottom: 5px;">
         <div style="font-size:13px;">
+
           <label>NET ELEV</label> {{ route.stats.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(route.stats.elevationChange) }}
-					<label>VERTICAL</label>
+
+          <label>VERTICAL</label>
           <span style="color:green;">+{{ formatters.formatElevation(route.stats.verticalUp) }}</span> /
           <span style="color:red;">-{{ formatters.formatElevation(route.stats.verticalDown) }}</span><br/>
-          <div ng-if=" bo\8">
+
+          <div ng-if="completeTerrain">
             <label>SLOPE</label>
             AVG: {{ route.stats.slopeAverage.toFixed(0) }}&deg; /
             MAX: {{ route.stats.slopeMax.toFixed(0) }}&deg;<br/>
             <label style="margin-bottom:3px;">ASPECT AVG</label>
             {{ formatters.formatDirection(route.stats.aspectAverage) }}<br/>
           </div>
+
           <label>Munter rate: Up</label>
           <input type="number" ng-model="munterRate.up" style="width: 37px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
+
           <label>Down</label>
           <input type="number" ng-model="munterRate.down" style="width: 37px; display: inline-block; padding: 0; padding-left: 6px; height: 24px !important;" class="form-control input-sm" />
           <button class="info-button" uib-tooltip="The Munter Method was developed by Werner Munter to calculate time estimates for ski touring and mountaineering. A higher rate means faster travel time - traditional rates are 4 for traveling uphill and 10 for downhill. You should adjust these rates according to your personal preferences and abilities, as well as the complexity of the terrain." tooltip-trigger="focus" tooltip-placement="bottom" tooltip-class="customClass"><i class="fa fa-question-circle"></i></button>
+
           <style>
             .info-button {
               margin-left: 4px;
@@ -131,12 +149,18 @@
           </style>
 				</div>
 			</div>
+
+      <!-- LIST OF SEGMENTS -->
       <div class="route-list">
+        <!-- ITEM TO BE REPEATED: a point + line segment + point-->
         <div ng-repeat="routePoint in route.points">
+
+          <!-- POINT -->
           <div class="route-item" style="padding-left:34px;font-size:12px;"
           ng-if="$index != 0"
 					ng-class="{ 'highlight': hoverOnLegMap == routePoint.leg.index }"
 					ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
+            <!-- startLINE -->
             <div class="side-line"></div>
             DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
 						TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
@@ -149,9 +173,14 @@
 						MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;<br/>
 						ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
           </div>
+          <!-- endPOINT -->
+
+          <!-- POINT -->
 					<div class="route-item" style="font-weight:bold"
 						ng-class="{ 'highlight': hoverOnPointMap == routePoint.pointIndex }"
 						ng-mouseover="_hoverOnPoint(routePoint.pointIndex)" ng-mouseout="_hoverOnPoint(null)">
+
+            <!-- POINT INFO -->
 						<div class="side-line" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 						<div class="route-waypoint-icon" ng-class="{ 'end': $index == route.points.length - 1, 'start': $index == 0 }"></div>
 						<span style="font-weight:bold;">{{ route.waypointPrefix() }}{{ $index + 1 }}<span>&nbsp;
@@ -164,9 +193,16 @@
               {{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>
 							{{ formatters.formatDuration(routePoint.terrain.totalTimeEstimateMinutes) }}
             </div>
+            <!-- endPOINT INFO -->
+
 					</div>
+          <!-- endPOINT -->
+
 				</div>
+        <!-- END ITEM TO BE REPEATED -->
 			</div>
+      <!-- END LIST OF SEGMENTS -->
+
 		</div>
 	</div>
 </section>

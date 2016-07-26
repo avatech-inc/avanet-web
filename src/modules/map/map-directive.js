@@ -389,11 +389,6 @@ const Map = [
                         if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution
                         if (layer.subdomains) options.subdomains = layer.subdomains
 
-                        // if (layer.proxy) {
-                        //     var _url = "http://localhost:4000/?url=" +
-                        //         _url.substr(_url.indexOf("://") + 3);
-                        // }
-
                         newBaseLayer = L.tileLayer(layer.template, options)
                     } else if (layer.type === 'WMS') {
                         let options = {

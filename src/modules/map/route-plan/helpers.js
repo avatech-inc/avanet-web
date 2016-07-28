@@ -1,8 +1,30 @@
 
+
 /**
 
 */
-export function checkCompleteTerrainData(terrainData) {
+// export function checkCompleteSegmentTerrain(
+//     terrainData,
+//     segmentPoints
+// ) {
+//     console.log(segmentPoints)
+    // let elevationOnly = false
+    // for (let i = 0; i < terrainData.length; i++) {
+    //     if (
+    //         !terrainData[i].elevation &
+    //         !terrainData[i].aspect &
+    //         !terrainData[i].slope
+    //     ) {
+    //         elevationOnly = true
+    //     }
+    // }
+    // return elevationOnly
+// }
+
+/**
+
+*/
+export function checkCompleteTerrain(terrainData) {
     let elevationOnly = false
     for (let i = 0; i < terrainData.length; i++) {
         if (

@@ -27,11 +27,11 @@ export function getRouteFoundation(
         if (elevData) {
             for (let i = 0; i < elevData.length; i++) {
                 if (!elevData[i]) continue
-
                 let statsPoint = {
                     lat: elevData[i].lat,
                     lng: elevData[i].lng,
                     elevation: elevData[i].elev,
+                    original: elevData[i].original,
                     slope: null,
                     aspect: null
                 }

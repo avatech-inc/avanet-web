@@ -4,13 +4,16 @@ import './route-planning.html'
 import { getRouteFoundation } from './route-plan/foundation'
 import { elevationGraph } from './route-plan/graph'
 import {
-  checkCompleteTerrainData,
-  getLinestringQuery,
-  interpolate
+    checkCompleteTerrain,
+    checkCompleteSegmentTerrain,
+    getLinestringQuery,
+    interpolate
 } from './route-plan/helpers'
 import {
-  getSegmentPoints,
-  getSegmentStats
+    getSegmentPoints,
+    getSegmentStats,
+    getRouteSummary,
+    getSegmentProgress
 } from './route-plan/segments'
 
 
@@ -109,26 +112,24 @@ const RoutePlanning = [
             })
 
             const updateRouteStats = (
-              routePoints,
-              elevQueryRes,
-              terrainData,
-              munterRate
+                routePoints,
+                elevQueryRes,
+                terrainData,
+                munterRate
             ) => {
                 // GET BOOLEAN - IF TERRAIN IS COMPLETE, only elevation available
-                const elevationOnly = checkCompleteTerrainData(terrainData)
+                const elevationOnly = checkCompleteTerrain(terrainData)
                 $scope.elevationOnly = elevationOnly
 
                 // GET FULL ROUTE STATS
                 const routeFoundation = getRouteFoundation(
-                  elevationOnly,
-                  routePoints,
-                  elevQueryRes,
-                  terrainData,
-                  munterRate
+                    elevationOnly,
+                    routePoints,
+                    elevQueryRes,
+                    terrainData,
+                    munterRate
                 )
-
-                // CALC SUMMARY STATS
-                $scope.route.stats = getSegmentStats(elevationOnly, routeFoundation)
+                $scope.route.stats = getRouteSummary(elevationOnly, routeFoundation)
 
                 // CALC SEGMENT STATS (sidebar)
                 $scope.route.points = []
@@ -136,42 +137,123 @@ const RoutePlanning = [
                 let legIndex = 0
                 let prevWaypointIndex = 0
 
-                // FOR EACH POINT ON ROUTE
-                if (_line.editing._markers) {
+                let timeProgress = 0
+                let distanceProgress = 0
+
+                // IF ROUTE HAS MORE THAN 1 POINT
+                if (_line.editing._markers.length > 1) {
+
+                    let numberWaypoints = 0
+                    // GET NUMBER OF WAYPOINTS ON ROUTE
                     for (let i = 0; i < _line.editing._markers.length; i++) {
-                        const routePoint = _line.editing._markers[i]
-
-                        // if point is a waypoint, or first or last
+                        if (_line.editing._markers[i].waypoint) {
+                            numberWaypoints += 1
+                        }
+                    }
+                    // IF ATLEAST 1 WAYPOINT
+                    if (numberWaypoints > 0) {
+                      // IF ONLY 1 WAYPOINT ON ROUTE : WAYPOINT IS STARTPONT
+                      // IF ONLY 2 WAYPOINTS ON ROUTE:
+                      // - user has selected autowaypoint (the current endpoint becomes a waypoint)
                         if (
-                          routePoint.waypoint ||
-                          i === 0 ||
-                          i === _line.editing._markers.length - 1
+                            numberWaypoints === 1 ||
+                            numberWaypoints === 2
                         ) {
-                            // GET SLICE OF ROUTE POINTS FOR SEGMENT
-                            const segmentPoints = getSegmentPoints(
-                              routeFoundation,
-                              prevWaypointIndex,
-                              routePoint._index
-                            )
+                            // FOR EACH MARKER IN THE ROUTE LINE
+                            for (let i = 0; i < _line.editing._markers.length; i++) {
+                              // IF MARKER IS WAYPOINT (STARTPOINT) OR THE ENDPOINT
+                                if (
+                                    _line.editing._markers[i].waypoint ||
+                                    i === _line.editing._markers.length - 1
+                                ) {
+                                    const markerPoint = _line.editing._markers[i]
+                                    const segmentStats = getSegmentStats(
+                                        elevationOnly,
+                                        routeFoundation,
+                                        legIndex
+                                    )
+                                    const pointDetails = {
+                                        lat: markerPoint._latlng.lat,
+                                        lng: markerPoint._latlng.lng,
+                                        waypoint: markerPoint.waypoint,
+                                        pointIndex: markerPoint._index,
+                                        leg: segmentStats,
+                                        progress: {
+                                            time: segmentStats.timeEstimateMinutes,
+                                            distance: segmentStats.distance
+                                        },
+                                        terrain: {},
+                                    }
+                                    // PUSH NEW SIDEBAR POINT TO scope.route.points
+                                    $scope.route.points.push(pointDetails)
+                                    if (markerPoint.waypoint) {
+                                        legIndex++
+                                    }
+                                    prevWaypointIndex = markerPoint._index
+                                }
+                            }
+                        } else {
+                            let currentIdx = 0
 
-                            let pointDetails = {
-                                lat: routePoint._latlng.lat,
-                                lng: routePoint._latlng.lng,
-                                waypoint: routePoint.waypoint,
-                                pointIndex: routePoint._index,
-                                terrain: {},
-                                leg: getSegmentStats(elevationOnly, segmentPoints, legIndex),
+                            // FOR EACH MARKER IN THE ROUTE LINE
+                            for (let i = 0; i < _line.editing._markers.length; i++) {
+                                // IF MARKER IS WAYPOINT (STARTPOINT) OR THE ENDPOINT
+                                if (
+                                    _line.editing._markers[i].waypoint
+                                ) {
+                                    const markerPoint = _line.editing._markers[i]
+                                    // GET INDEX OF LINE-WAYPOINT IN ROUTE FOUNDATION
+                                    // GET INDEX OF PREVIOUS LINE-WAYPOINT IN ROUTE FOUNDATION
+                                    for (let a = 0; a < routeFoundation.length; a++) {
+                                        if (
+                                            i !== 0 &&
+                                            markerPoint._latlng.lat.toFixed(3) === routeFoundation[a].lat.toFixed(3) && // eslint-disable-line max-len
+                                            markerPoint._latlng.lng.toFixed(3) === routeFoundation[a].lng.toFixed(3) // eslint-disable-line max-len
+                                        ) {
+                                            if (i === _line.editing._markers.length - 1) {
+                                                currentIdx = routeFoundation.length
+                                            } else {
+                                                currentIdx = a
+                                            }
+                                        }
+                                    }
+                                    const segmentStats = getSegmentStats(
+                                        elevationOnly,
+                                        routeFoundation.slice(
+                                            prevWaypointIndex,
+                                            currentIdx + 1
+                                        ),
+                                        legIndex
+                                    )
+
+                                    if (segmentStats.timeEstimateMinutes) {
+                                        timeProgress += segmentStats.timeEstimateMinutes
+                                    }
+                                    if (segmentStats.distance) {
+                                        distanceProgress += segmentStats.distance
+                                    }
+
+                                    const pointDetails = {
+                                        lat: markerPoint._latlng.lat,
+                                        lng: markerPoint._latlng.lng,
+                                        waypoint: markerPoint.waypoint,
+                                        pointIndex: markerPoint._index,
+                                        leg: segmentStats,
+                                        progress: {
+                                            time: timeProgress,
+                                            distance: distanceProgress
+                                        },
+                                        terrain: {},
+                                    }
+
+                                    // PUSH NEW SIDEBAR POINT TO scope.route.points
+                                    $scope.route.points.push(pointDetails)
+                                    if (markerPoint.waypoint) {
+                                        legIndex++
+                                    }
+                                    prevWaypointIndex = currentIdx
+                                }
                             }
-                            console.log(pointDetails)
-                            // pointDetails.terrain = helpers.getElevationProfilePoint(
-                            //   routeStats,
-                            //   routePoint._index
-                            // )
-                            $scope.route.points.push(pointDetails)
-                            if (routePoint.waypoint) {
-                                legIndex++
-                            }
-                            prevWaypointIndex = routePoint._index
                         }
                     }
                 }
@@ -230,16 +312,19 @@ const RoutePlanning = [
 
             const processUpdate = polyline => {
                 if (
-                  typeof polyline === 'undefined' ||
-                  !polyline._latlngs
+                    typeof polyline === 'undefined' ||
+                    !polyline._latlngs
                 ) return
 
                 // get line distance
                 const distance = turf.lineDistance(
                     turf.linestring(
-                      polyline._latlngs.map(
-                        point => [point.lng, point.lat]
-                      )
+                        polyline._latlngs.map(
+                            point => [
+                                point.lng,
+                                point.lat
+                            ]
+                        )
                     ),
                     'kilometers'
                 )
@@ -263,8 +348,9 @@ const RoutePlanning = [
                 }
 
                 $scope.terrainLayer.latLngsToTerrainData(routePoints).then(terrainData => {
-                    // get elevation data for route
+                    // get linestring query from route points
                     const linestring = getLinestringQuery(routePoints)
+                    // get elevation data for route
                     fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
                         .then(res => res.json())
                         .then(data => {
@@ -274,14 +360,32 @@ const RoutePlanning = [
                             return Promise.resolve(data.data)
                         })
                         .then(elevQueryRes => {
+                            // update elevQueryRes for original points
+                            const saveRoutePoints = routePoints
+                            // adjust points returned from elevation query for 'original' key
+                            // 'original' key references the start & end points of the route vectors
+                            if (elevQueryRes) {
+                                for (let i = 0; i < elevQueryRes.length; i++) {
+                                    for (let j = 0; j < saveRoutePoints.length; j ++) {
+                                        if (
+                                            saveRoutePoints[j].lat.toFixed(2) === elevQueryRes[i].lat.toFixed(2) && // eslint-disable-line max-len
+                                            saveRoutePoints[j].lng.toFixed(2) === elevQueryRes[i].lng.toFixed(2) // eslint-disable-line max-len
+                                        ) {
+                                            if (saveRoutePoints[j].original) {
+                                                elevQueryRes[i].original = true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             // update graph
                             elevationGraph(elevQueryRes)
                             // update sidebar stats
                             updateRouteStats(
-                              routePoints,
-                              elevQueryRes,
-                              terrainData,
-                              $scope.munterRate
+                                routePoints,
+                                elevQueryRes,
+                                terrainData,
+                                $scope.munterRate
                             )
                         })
                 })
@@ -715,7 +819,6 @@ const RoutePlanning = [
                     elevationWidget.clear()
                     elevationWidget = null
                 }
-
                 if (lineGroup) {
                     lineGroup.removeFrom($scope.map)
                 }

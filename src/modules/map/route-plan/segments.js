@@ -64,6 +64,7 @@ export function getSegmentPoints(
 */
 function getStatObject(
     elevationOnly,
+    indexIn,
     timeEstimate,
     elevationDelta,
     routeDistance,
@@ -115,6 +116,7 @@ function getStatObject(
     }
 
     const summary = {
+        index: indexIn,
         timeEstimateMinutes: timeEstimate,
         distance: routeDistance,
 
@@ -162,6 +164,7 @@ export function getRouteSummary(
 
     return getStatObject(
         elevationOnly,
+        0,
         endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes, // time estimate
         endPoint.elevation - startPoint.elevation, // elevation change
         endPoint.totalDistance - startPoint.totalDistance, // segment distance
@@ -175,7 +178,8 @@ export function getRouteSummary(
 */
 export function getSegmentStats(
     elevationOnly,
-    routeStats
+    routeStats,
+    index
 ) {
     if (
         !routeStats ||
@@ -193,6 +197,7 @@ export function getSegmentStats(
     }
     const summaryRes = getStatObject(
         elevationOnly,
+        index,
         endPoint.totalTimeEstimateMinutes - startPoint.totalTimeEstimateMinutes, // time estimate
         endPoint.elevation - startPoint.elevation, // elevation change
         endPoint.totalDistance - startPoint.totalDistance, // segment distance

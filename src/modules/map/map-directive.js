@@ -151,18 +151,18 @@ const Map = [
                 scope.map.on('load', e => mapLoaded.resolve())
 
                 // setup heatmap
-                // let heatMap
+                let heatMap
 
-                // setTimeout(() => {
-                //     heatMap = L.heatLayer(
-                //         [],
-                //         {
-                //             radius: 1,
-                //             blur: 1,
-                //             maxZoom: 20
-                //         }
-                //     ).addTo(scope.map)
-                // }, 10)
+                setTimeout(() => {
+                    heatMap = L.heatLayer(
+                        [],
+                        {
+                            radius: 1,
+                            blur: 1,
+                            maxZoom: 20
+                        }
+                    ).addTo(scope.map)
+                }, 10)
 
                 // setup clustering
                 let pruneCluster = new PruneCluster.PruneClusterForLeaflet()
@@ -306,7 +306,7 @@ const Map = [
                     if (!scope.obSearch) return
 
                     // reset heatmap
-                    // if (heatMap) heatMap.setLatLngs([])
+                    if (heatMap) heatMap.setLatLngs([])
 
                     // hide all markers
                     angular.forEach(obsOnMap, marker => {
@@ -324,12 +324,12 @@ const Map = [
                             obsOnMap[ob._id].data.filtered = false
 
                             // add to heatmap
-                            // if (heatMap) {
-                            //     heatMap.addLatLng([
-                            //         ob.location[1],
-                            //         ob.location[0]
-                            //     ])
-                            // }
+                            if (heatMap) {
+                                heatMap.addLatLng([
+                                    ob.location[1],
+                                    ob.location[0]
+                                ])
+                            }
                         }
                     })
 
@@ -388,11 +388,6 @@ const Map = [
                         if (layer.retina !== null) options.detectRetina = layer.retina
                         if (layer.maxresolution) options.maxNativeZoom = layer.maxresolution
                         if (layer.subdomains) options.subdomains = layer.subdomains
-
-                        // if (layer.proxy) {
-                        //     var _url = "http://localhost:4000/?url=" +
-                        //         _url.substr(_url.indexOf("://") + 3);
-                        // }
 
                         newBaseLayer = L.tileLayer(layer.template, options)
                     } else if (layer.type === 'WMS') {
@@ -467,13 +462,13 @@ const Map = [
                         pruneCluster.ProcessView() // eslint-disable-line new-cap
 
                         // hide heatmap
-                        // if (heatMap) {
-                        //     heatMap.setOptions({
-                        //         radius: 1,
-                        //         blur: 1,
-                        //         maxZoom: 20
-                        //     })
-                        // }
+                        if (heatMap) {
+                            heatMap.setOptions({
+                                radius: 1,
+                                blur: 1,
+                                maxZoom: 20
+                            })
+                        }
                     } else if (scope.detailMode && zoom < detailedZoomMin) {
                         $log.debug('DETAIL MODE OFF')
                         scope.detailMode = false
@@ -483,13 +478,13 @@ const Map = [
                         pruneCluster.ProcessView() // eslint-disable-line new-cap
 
                         // show heatmap
-                        // if (heatMap) {
-                        //     heatMap.setOptions({
-                        //         radius: 10,
-                        //         blur: 15,
-                        //         maxZoom: zoom // (zoom + (zoom / 4))
-                        //     })
-                        // }
+                        if (heatMap) {
+                            heatMap.setOptions({
+                                radius: 10,
+                                blur: 15,
+                                maxZoom: zoom // (zoom + (zoom / 4))
+                            })
+                        }
 
                         // track zoom on mixpanel (to see which zoom levels are most popular)
                         if (__PROD__) {
@@ -503,7 +498,25 @@ const Map = [
                         scope.mapCursorLocation = e.latlng
 
                         scope.terrainLayer.latlngToTerrainData(e.latlng).then(terrainData => {
-                            scope.mapCursorElevation = terrainData.elevation
+                            if (terrainData.elevation) {
+                                scope.mapCursorElevation = terrainData.elevation
+                            } else {
+                                try {
+                                    fetch(`http://elevation.avatech.com/elevation/point/${scope.mapCursorLocation.lat},${scope.mapCursorLocation.lng}`)
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.elev === 0) {
+                                                return Promise.reject()
+                                            }
+                                            return Promise.resolve(data.elev)
+                                        })
+                                        .then(elevation => {
+                                            scope.mapCursorElevation = elevation
+                                        })
+                                } catch (err) {
+                                    // eslint-disable-line no-empty
+                                }
+                            }
                         })
                     })
                 })
@@ -673,11 +686,10 @@ const Map = [
                     scope.overlayOpacity = 0.5
 
                     let terrainOptions = {
-                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}.png',
-                        // pbfUrl: 'https://vtiles-{s}.avatech.com/{z}/{x}/{y}_ESA.pbf',
-                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v1/{z}/{x}/{y}.pbf',
+                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}_.png',
+                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v2/{z}/{x}/{y}.pbf',
 
-                        protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESAPACK.proto',
+                        protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESA.proto',
 
                         zIndex: 999,
                         opacity: scope.overlayOpacity,
@@ -689,6 +701,7 @@ const Map = [
                         terrainOptions.pbfWorker = '/assets/pbf-worker.js'
                     }
 
+                    TerrainLayer.update(scope.colorMaps)
                     scope.terrainLayer = new TerrainLayer(terrainOptions)
 
                     scope.terrainLayer._zoomAnimated = false;

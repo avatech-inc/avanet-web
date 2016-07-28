@@ -19,7 +19,7 @@ if (PROD) {
 }
 
 var entry = {
-    js: ['babel-polyfill', 'isomorphic-fetch', './src/index.js'],
+    js: ['es6-promise', 'isomorphic-fetch', './src/index.js'],
     css: ['./src/sass.js'],
 
     /**
@@ -193,7 +193,8 @@ module.exports = {
                 loader: 'babel-loader',
                 include: [
                     path.resolve(__dirname, 'src', 'js'),
-                    path.resolve(__dirname, 'src', 'modules')
+                    path.resolve(__dirname, 'src', 'modules'),
+                    path.resolve(__dirname, 'node_modules', 'avatech-public')
                 ]
             },
 

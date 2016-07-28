@@ -4,7 +4,7 @@ import MG from 'metrics-graphics'
 /**
 
 */
-export function elevationGraph(elevationData) {
+export function elevationGraph(updateLocation, clearLocation, elevationData) {
     /**
 
     */
@@ -20,20 +20,22 @@ export function elevationGraph(elevationData) {
             const graphPoint = {
                 lat: elevationData[i].lat,
                 lng: elevationData[i].lng,
-                elevation: elevationData[i].elev,
-                index: i,
-                totalDistance: 0
+                elevation: elevationData[i].elevation,
+                index: elevationData[i].index,
+                bearing: elevationData[i].bearing,
+                totalDistance: elevationData[i].totalDistance,
+                totalTimeEstimateMinutes: elevationData[i].totalTimeEstimateMinutes
             }
             if (i === 0) continue
 
-            totalDistance += turf.lineDistance(
-                turf.linestring([
-                    [elevationData[i - 1].lng, elevationData[i - 1].lat],
-                    [elevationData[i].lng, elevationData[i].lat]
-                ]),
-                'kilometers'
-            )
-            graphPoint.totalDistance = totalDistance
+            // totalDistance += turf.lineDistance(
+            //     turf.linestring([
+            //         [elevationData[i - 1].lng, elevationData[i - 1].lat],
+            //         [elevationData[i].lng, elevationData[i].lat]
+            //     ]),
+            //     'kilometers'
+            // )
+            // graphPoint.totalDistance = totalDistance
             graphPoints.push(graphPoint)
         }
         return graphPoints
@@ -70,31 +72,31 @@ export function elevationGraph(elevationData) {
             top: 20,
             left: 40,
             buffer: 0,
-            show_rollover_text: false,
-            colors: ['blue', 'blue']
-            // mouseover: function(d, i) {
-            //     d3.select(this).append("text")
-            //         .text(d.elevation)
-            //         .attr("x", x(d.x))
-                // console.log(d)
-                // var timeFormat
-                //
-                // if (d.totalTimeEstimateMinutes < 60) {
-                //     timeFormat = d3.time.format("%-M min")
-                // } else {
-                //     timeFormat = d3.time.format("%-H hr %-M min")
-                // }
-                //
-                // document.getElementById('graphrollover').innerHTML = 'Distance: ' +
-                // d3.format('.3f')(d.totalDistance) +
-                // ' km Elevation: ' + d3.format(',d')(d.elevation) +
-                // ' m Slope: ' + d3.format('d')(d.slope) +
-                // '&deg; Aspect: ' + d3.format('d')(d.aspect) +
-                // '&deg; Bearing: ' + d3.format('0f')(d.bearing) +
-                // '&deg; Time: ' + timeFormat(new Date(2015, 0, 1, 0, d.totalTimeEstimateMinutes))
-            // }
+            show_rollover_text: true,
+            colors: ['blue', 'blue'],
+            x_rollover_format: (d) => {
+                const x = 'Distance: ' + d3.format('.3f')(d.totalDistance) + ' km' +
+                    '    Elevation: ' + d3.format('.2f')(d.elevation) +
+                    '    Bearing: ' + d3.format('.0f')(d.bearing) +
+                    '    Time: ' + d3.format('.0f')(d.totalTimeEstimateMinutes) + ' min'
+                return x
+            },
+            y_rollover_format: (d) => { // eslint-disable-line arrow-body-style
+                return ''
+            },
+            mouseover: (d) => {
+                updateLocation(d)
+            },
+            mouseout: (d) => {
+                clearLocation(d)
+            }
         });
-        d3.select(document.querySelector('#elevation-profile .mg-line2')).style('stroke-dasharray', ('3, 3'))  // eslint-disable-line max-len
+        d3.select(
+          document.querySelector('#elevation-profile .mg-line2')
+        ).style(
+          'stroke-dasharray',
+          ('3, 3')
+        )
     } else {
         document.getElementById('elevation-profile').innerHTML = ''  // eslint-disable-line max-len
     }

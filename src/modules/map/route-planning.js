@@ -50,6 +50,8 @@ const RoutePlanning = [
         $scope.formatters = snowpitExport.formatters
         $scope.loading = true
 
+        $scope.cursorLayer = L.featureGroup()
+
         // this ui-router scope inherits parent map scope
         $scope.route = {
             _id: null,
@@ -91,8 +93,27 @@ const RoutePlanning = [
             down: 10
         }
 
+        $scope.getMouseoverLocation = (d) => {
+            $scope.map.removeLayer($scope.cursorLayer)
+            $scope.cursorLayer = L.featureGroup(
+                [
+                    L.circle(
+                        [d.lat, d.lng],
+                        30,
+                        {
+                            fillColor: '#000',
+                            fillOpacity: 0.5
+                        }
+                    )
+                ]
+            ).addTo($scope.map)
+        }
+
+        $scope.clearMouseoverLocation = (d) => {
+            $scope.map.removeLayer($scope.cursorLayer)
+        }
+
         const ready = () => {
-            let elevationWidget
             let _line
             let preventEdit = false
 
@@ -111,26 +132,10 @@ const RoutePlanning = [
                 }
             })
 
-            const updateRouteStats = (
-                routePoints,
-                elevQueryRes,
-                terrainData,
-                munterRate
+            const updateSidebarStats = (
+                elevationOnly,
+                routeFoundation
             ) => {
-                // GET BOOLEAN - IF TERRAIN IS COMPLETE, only elevation available
-                const elevationOnly = checkCompleteTerrain(terrainData)
-                $scope.elevationOnly = elevationOnly
-
-                // GET FULL ROUTE STATS
-                const routeFoundation = getRouteFoundation(
-                    elevationOnly,
-                    routePoints,
-                    elevQueryRes,
-                    terrainData,
-                    munterRate
-                )
-                $scope.route.stats = getRouteSummary(elevationOnly, routeFoundation)
-
                 // CALC SEGMENT STATS (sidebar)
                 $scope.route.points = []
 
@@ -263,7 +268,6 @@ const RoutePlanning = [
 
                 let legIndex = 0
                 const mouseMoveHandler = e => {
-                    console.log(e.target.segment)
                     $timeout(() => {
                         $scope.hoverOnLegMap = e.target.segment.legIndex
                     })
@@ -378,15 +382,28 @@ const RoutePlanning = [
                                     }
                                 }
                             }
-                            // update graph
-                            elevationGraph(elevQueryRes)
-                            // update sidebar stats
-                            updateRouteStats(
+                            // GET BOOLEAN - IF TERRAIN IS COMPLETE, only elevation available
+                            const elevationOnly = checkCompleteTerrain(terrainData)
+                            $scope.elevationOnly = elevationOnly
+
+                            // GET FULL ROUTE STATS
+                            const routeFoundation = getRouteFoundation(
+                                elevationOnly,
                                 routePoints,
                                 elevQueryRes,
                                 terrainData,
                                 $scope.munterRate
                             )
+                            // update graph
+                            elevationGraph(
+                                $scope.getMouseoverLocation,
+                                $scope.clearMouseoverLocation,
+                                routeFoundation
+                            )
+                            // update summary stats
+                            $scope.route.stats = getRouteSummary(elevationOnly, routeFoundation)
+                            // update sidebar stats
+                            updateSidebarStats(elevationOnly, routeFoundation)
                         })
                 })
             }
@@ -516,22 +533,13 @@ const RoutePlanning = [
                 marker.off('mouseover')
                 marker.off('mouseout')
 
-                // elevation widget highlight
                 marker.on('mouseover', e => {
-                    if (elevationWidget) {
-                        elevationWidget.highlight(e.latlng)
-                    }
-
                     $timeout(() => {
                         $scope.hoverOnPointMap = e.target._index
                     })
                 })
 
                 marker.on('mouseout', e => {
-                    if (elevationWidget) {
-                        elevationWidget.highlight()
-                    }
-
                     $timeout(() => {
                         $scope.hoverOnPointMap = null
                     })
@@ -818,10 +826,6 @@ const RoutePlanning = [
                 $scope.map.off('click', mapClick)
                 elevationGraph()
 
-                if (elevationWidget) {
-                    elevationWidget.clear()
-                    elevationWidget = null
-                }
                 if (lineGroup) {
                     lineGroup.removeFrom($scope.map)
                 }

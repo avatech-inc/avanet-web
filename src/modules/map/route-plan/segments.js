@@ -37,8 +37,6 @@ export function getSegmentPoints(
     pointIndexEnd
 ) {
     if (!points) return []
-    console.log(pointIndexStart, pointIndexEnd)
-    console.log(points.length)
     let startIndex = 0
     let endIndex = 0
 

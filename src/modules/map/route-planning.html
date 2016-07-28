@@ -167,16 +167,26 @@
 					ng-mouseover="_hoverOnLeg(routePoint.leg.index)" ng-mouseout="_hoverOnLeg(null)">
             <!-- startLINE -->
             <div class="side-line"></div>
-            DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
-						TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
-						BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
-						NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
-						VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
-						SLOPE:
-						<!--MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /-->
-						AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
-						MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;<br/>
-						ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
+            <div ng-if="!elevationOnly">
+              DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+  						TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
+  						BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
+  						NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
+  						VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
+  						SLOPE:
+  						<!--MIN: {{ routePoint.leg.slopeMin.toFixed(0) }}&deg; /-->
+  						AVG: {{ routePoint.leg.slopeAverage.toFixed(0) }}&deg; /
+  						MAX: {{ routePoint.leg.slopeMax.toFixed(0) }}&deg;<br/>
+  						ASPECT AVG: {{ formatters.formatDirection(routePoint.leg.aspectAverage) }}
+            </div>
+            <div ng-if="elevationOnly">
+              DISTANCE: {{ formatters.formatKmOrMiles(routePoint.leg.distance) }}<br/>
+  						TIME: {{ formatters.formatDuration(routePoint.leg.timeEstimateMinutes) }}<br/>
+  						BEARING: {{ formatters.formatDirection(routePoint.leg.bearing) }}<br/>
+  						NET ELEV: {{ routePoint.leg.elevationChange > 0 ? '+':'' }}{{ formatters.formatElevation(routePoint.leg.elevationChange) }}<br/>
+  						VERTICAL: +{{ formatters.formatElevation(routePoint.leg.verticalUp) }} / -{{ formatters.formatElevation(routePoint.leg.verticalDown) }}<br/>
+                Complete slope & aspect data not currently available
+            </div>
           </div>
           <!-- endPOINT -->
 
@@ -195,8 +205,8 @@
 						<!-- hide elevation for now
 						({{ formatters.formatElevation(routePoint.terrain.elevation) }})-->
             <div style="float: right; font-size: 12px; line-height: 13px; position: relative; bottom: 3px; text-align: right; font-weight: 500;" ng-hide="$index == 0">
-              {{ formatters.formatKmOrMiles(routePoint.terrain.totalDistance) }}<br/>
-							{{ formatters.formatDuration(routePoint.terrain.totalTimeEstimateMinutes) }}
+              {{ formatters.formatKmOrMiles(routePoint.progress.distance) }}<br/>
+							{{ formatters.formatDuration(routePoint.progress.time) }}
             </div>
             <!-- endPOINT INFO -->
 

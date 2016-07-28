@@ -81,7 +81,7 @@ export function elevationGraph(updateLocation, clearLocation, elevationData) {
                     '    Time: ' + d3.format('.0f')(d.totalTimeEstimateMinutes) + ' min'
                 return x
             },
-            y_rollover_format: (d) => { //eslint-disable-line arrow-body-style
+            y_rollover_format: (d) => { // eslint-disable-line arrow-body-style
                 return ''
             },
             mouseover: (d) => {

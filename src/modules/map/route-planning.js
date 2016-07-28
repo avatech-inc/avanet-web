@@ -142,7 +142,6 @@ const RoutePlanning = [
 
                 // IF ROUTE HAS MORE THAN 1 POINT
                 if (_line.editing._markers.length > 1) {
-
                     let numberWaypoints = 0
                     // GET NUMBER OF WAYPOINTS ON ROUTE
                     for (let i = 0; i < _line.editing._markers.length; i++) {

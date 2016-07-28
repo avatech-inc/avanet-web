@@ -264,6 +264,7 @@ const RoutePlanning = [
 
                 let legIndex = 0
                 const mouseMoveHandler = e => {
+                    console.log(e.target.segment)
                     $timeout(() => {
                         $scope.hoverOnLegMap = e.target.segment.legIndex
                     })
@@ -518,7 +519,9 @@ const RoutePlanning = [
 
                 // elevation widget highlight
                 marker.on('mouseover', e => {
-                    // elevationProfile.highlight(e.latlng)
+                    if (elevationWidget) {
+                        elevationWidget.highlight(e.latlng)
+                    }
 
                     $timeout(() => {
                         $scope.hoverOnPointMap = e.target._index
@@ -814,6 +817,7 @@ const RoutePlanning = [
             // remove map path and elevation widget when current state is destroyed
             $scope.$on('$destroy', () => {
                 $scope.map.off('click', mapClick)
+                elevationGraph()
 
                 if (elevationWidget) {
                     elevationWidget.clear()
@@ -1289,12 +1293,15 @@ const RoutePlanning = [
             }, true)
 
             $scope.$watch('hoverOnLeg', () => {
-                angular.forEach(lineSegmentGroup._layers, segment => {
+                console.log('HOVERING')
+                console.log(arguments)
+                angular.forEach(lineSegmentGroup._map._layers, segment => {
                     segment.setStyle({ color: 'transparent' })
-
+                    console.log($scope.hoverOnLeg)
                     if (segment.segment.legIndex === $scope.hoverOnLeg) {
                         // highlight route leg
                         segment.bringToBack()
+                        console.log('setting style')
                         segment.setStyle({ color: 'rgba(255,255,255,1)' })
                         // todo: highlight in elevation profile
                     }

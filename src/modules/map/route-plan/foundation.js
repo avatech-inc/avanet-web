@@ -23,7 +23,6 @@ export function getRouteFoundation(
     let originalIndex = 0
 
     if (elevationOnly) {
-        console.log('ELEVATON ONLY')
         if (elevData) {
             for (let i = 0; i < elevData.length; i++) {
                 if (!elevData[i]) continue

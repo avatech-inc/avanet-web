@@ -1293,19 +1293,17 @@ const RoutePlanning = [
             }, true)
 
             $scope.$watch('hoverOnLeg', () => {
-                console.log('HOVERING')
-                console.log(arguments)
-                angular.forEach(lineSegmentGroup._map._layers, segment => {
-                    segment.setStyle({ color: 'transparent' })
-                    console.log($scope.hoverOnLeg)
-                    if (segment.segment.legIndex === $scope.hoverOnLeg) {
-                        // highlight route leg
-                        segment.bringToBack()
-                        console.log('setting style')
-                        segment.setStyle({ color: 'rgba(255,255,255,1)' })
-                        // todo: highlight in elevation profile
-                    }
-                })
+                // angular.forEach(lineSegmentGroup._map._layers, segment => {
+                //     segment.setStyle({ color: 'transparent' })
+                //     console.log($scope.hoverOnLeg)
+                //     if (segment.segment.legIndex === $scope.hoverOnLeg) {
+                //         // highlight route leg
+                //         segment.bringToBack()
+                //         console.log('setting style')
+                //         segment.setStyle({ color: 'rgba(255,255,255,1)' })
+                //         // todo: highlight in elevation profile
+                //     }
+                // })
             }, true)
 
             $scope.$watch('hoverOnPoint', () => {

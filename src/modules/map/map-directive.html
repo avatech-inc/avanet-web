@@ -15,15 +15,15 @@
 		      		<!--<div class="dropdown-close" close-dropdown-on-click><i class="fa fa-times"></i></div>
 
 		      		<div class="layers-header">{{ 'select_map' | translate }}</div>-->
-		      		
+
 		      		<!--<div style="font-weight:bold;margin-bottom:2px;">{{ 'terrain' | translate}}</div>
-					
+
 					<div ng-repeat="layer in mapLayers.baseLayers.terrain" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
 					ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
 					>{{ layer.name }}</div>
 
 					<div style="font-weight:bold;margin-top:10px;margin-bottom:2px;">{{ 'aerial_imagery' | translate}}</div>
-					
+
 					<div ng-repeat="layer in mapLayers.baseLayers.aerial" ng-click="setBaseLayer(layer, true)" class="layerName {{ selectedBaseLayer == layer ? 'selected' : '' }}"
 					ng-if="global.user.userType.indexOf('pro') > -1 ? true : layer.type == 'MAPBOX'"
 					>{{ layer.name }}</div>-->
@@ -150,7 +150,7 @@
 				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'slope'">Slope</label>
 				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'aspect'">Aspect</label>
 				        <!--<label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'hillshade'">Hillshade</label>-->
-				        <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'custom'">Custom</label>
+				        <!-- <label style="float:none;display:inline-block" class="btn btn-default" uncheckable ng-model="terrainOverlay" uib-btn-radio="'custom'">Custom</label> -->
 				        <label style="float:none;display:inline-block" class="btn btn-default ion-ios-information" uncheckable ng-model="terrainOverlay" uib-btn-radio="'info'"></label>
 				    </div>
 	        	</a>

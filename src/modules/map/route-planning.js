@@ -99,7 +99,7 @@ const RoutePlanning = [
                 [
                     L.circle(
                         [d.lat, d.lng],
-                        30,
+                        50,
                         {
                             fillColor: '#000',
                             fillOpacity: 0.5

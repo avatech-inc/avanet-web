@@ -103,7 +103,7 @@ const Map = [
                 scope.map = L.map(mapElement, {
                     zoomControl: false,
                     minZoom: 3,
-                    maxZoom: 18,
+                    maxZoom: 13,
                     worldCopyJump: true,
                     // context menu
                     contextmenu: true,
@@ -686,8 +686,8 @@ const Map = [
                     scope.overlayOpacity = 0.5
 
                     let terrainOptions = {
-                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}_.png',
-                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v2/{z}/{x}/{y}.pbf',
+                        pngUrl: 'https://tiles-{s}.avatech.com/{z}/{x}/{y}.png',
+                        pbfUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/mh_global_v2/{z}/{x}/{y}_.pbf',
 
                         protoUrl: 'https://s3.amazonaws.com/avatech-pbf-tiles/model/RasterESA.proto',
 

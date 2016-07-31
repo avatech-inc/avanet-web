@@ -390,7 +390,7 @@ const SnowpitExport = [
             }
         }
 
-        let pdfOrJPEG = (profile, _settings, PDForJPEG) => {
+        let pdfOrJPEG = (profile, _settings, PDForJPEG, save) => {
             let columns = [
                 { width: 150 },
                 { width: 27 },
@@ -458,6 +458,7 @@ const SnowpitExport = [
             setTimeout(() => {
                 // canvas for JPEG output
                 let _canvas = document.createElement('canvas')
+                _canvas.setAttribute('id', 'exported')
                 let scale = 2
 
                 _canvas.width = 760 * scale
@@ -781,18 +782,24 @@ const SnowpitExport = [
 
                 $q.all([isLogoLoaded.promise]).then(() => {
                     if (PDForJPEG === 'PDF') {
-                        doc.save('profile.pdf')
+                        if (save) {
+                            doc.save('profile.pdf')
+                        }
                     } else if (PDForJPEG === 'JPEG') {
                         setTimeout(() => {
                             _canvas.toBlob(blob => {
                                 // saveAs doesn't exist anywhere?
-                                saveAs(blob, 'profile.jpg')  // eslint-disable-line no-undef
+                                if (save) {
+                                    saveAs(blob, 'profile.jpg')  // eslint-disable-line no-undef
+                                }
                             }, 'image/jpeg', 1)
 
                             // remove canvas elements from DOM
-                            setTimeout(() => {
-                                if (_canvas) document.body.removeChild(_canvas)
-                            }, 1000)
+                            if (save) {
+                                setTimeout(() => {
+                                    if (_canvas) document.body.removeChild(_canvas)
+                                }, 1000)
+                            }
                         }, 300)
                     }
                 })
@@ -827,11 +834,15 @@ const SnowpitExport = [
                 link.click()
             },
             PDF: (profile, _settings) => {
-                pdfOrJPEG(profile, _settings, 'PDF')
+                pdfOrJPEG(profile, _settings, 'PDF', true)
             },
 
             JPEG: (profile, _settings) => {
-                pdfOrJPEG(profile, _settings, 'JPEG')
+                pdfOrJPEG(profile, _settings, 'JPEG', true)
+            },
+
+            UPLOAD: (profile, _settings) => {
+                pdfOrJPEG(profile, _settings, 'JPEG', false)
             },
 
             PDForJPEG: pdfOrJPEG

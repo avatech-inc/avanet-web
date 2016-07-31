@@ -82,7 +82,6 @@ export const SnowpitEditor = [
             { width: 240 }
         ]
 
-        // canvas options
         $scope.canvasOptions = {
             labelColor: '#222',
             commentLineColor: '#aaa',
@@ -962,9 +961,9 @@ export const SnowpitEditor = [
                 angular.extend($scope.profile, sharing)
 
                 $scope.profile.published = true
-                $scope.update()
 
-                $location.path('/obs/' + $scope.profile._id)
+                // Upload Snowpit and redirect
+                $scope.uploadSnowpitGraph()
             })
         }
 
@@ -1011,6 +1010,62 @@ export const SnowpitEditor = [
 
         $scope.showPhoto = index => {
             Lightbox.openModal($scope.profile.media, index)
+        }
+
+        // SNOWPIT GRAPH UPLOAD
+
+        $scope.uploadSnowpitGraph = () => {
+            snowpitExport.UPLOAD(  // eslint-disable-line new-cap
+                getProfileForExport(),
+                $scope.settings
+            )
+            setTimeout(function () {
+                let canvas = document.getElementById('exported')
+                let image = canvas.toDataURL('image/jpeg', 1.0)
+                let xhr = new XMLHttpRequest()
+                let media = {}
+
+                // Upload to Cloudinary
+                xhr.onreadystatechange = () => {
+                    let status
+
+                    if (xhr.readyState === 4) {
+                        status = xhr.status
+
+                        if (status === 200) {
+                            let data = JSON.parse(xhr.responseText)
+                            media.URL = data.secure_url
+                            media.type = 'graph'
+                            media.caption = 'Snowpit ' + data.public_id
+                            media.cloudinary_format = data.format
+
+                            // Update our ob
+                            if ($scope.profile.media) {
+                                $scope.profile.media.unshift(media)
+                            } else {
+                                $scope.profile.media = []
+                                $scope.profile.media.push(media)
+                            }
+                            $scope.update()
+
+                            // Remove the canvas
+                            document.body.removeChild(canvas)
+
+                            // Redirect
+                            $location.path('/obs/' + $scope.profile._id)
+                        }
+                    }
+                }
+
+                xhr.open('POST', 'https://api.cloudinary.com/v1_1/avatech/upload/', true)
+
+                let formData = new FormData()
+                formData.append('upload_preset', 'mjfp4lpw')
+                formData.append('file', image)
+
+                // Move along
+                xhr.send(formData)
+            }, 400)
         }
 
         // UTILITIES

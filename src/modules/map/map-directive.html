@@ -80,7 +80,10 @@
 				</span>
 		</button>
       	<ul class="dropdown-menu" role="menu" style="margin-bottom:-1px;padding-top:0px;">
-	      	<li>
+          <div ng-show="incompleteTerrain"style="margin:5px;font-size:12px">
+            Terrain data not currently available
+          </div>
+	      	<li ng-show="!incompleteTerrain">
 	      		<a style="background:#fff !important;padding:0px;border-radius: 3px; overflow: hidden;" ng-click="$event.stopPropagation()">
 
 			    	<div ng-show="terrainOverlay == 'custom'">

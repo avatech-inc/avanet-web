@@ -49,7 +49,7 @@ const Map = [
             scope.global = Global
             scope.formatters = snowpitExport.formatters
             scope.mapLayers = mapLayers
-
+            scope.incompleteTerrain = false
             // get color maps for terrain viz legends
             scope.colorMaps = TerrainLayer.ColorMaps
 
@@ -103,7 +103,7 @@ const Map = [
                 scope.map = L.map(mapElement, {
                     zoomControl: false,
                     minZoom: 3,
-                    maxZoom: 13,
+                    maxZoom: 18,
                     worldCopyJump: true,
                     // context menu
                     contextmenu: true,
@@ -452,6 +452,10 @@ const Map = [
 
                 scope.map.on('zoomend', e => {
                     let zoom = scope.map.getZoom()
+                    scope.incompleteTerrain = false
+                    if (zoom === 12 || zoom > 13) {
+                        scope.incompleteTerrain = true
+                    }
 
                     if (!scope.detailMode && zoom >= detailedZoomMin) {
                         $log.debug('DETAIL MODE ON')

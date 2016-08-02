@@ -5,15 +5,12 @@ import { getRouteFoundation } from './route-plan/foundation'
 import { elevationGraph } from './route-plan/graph'
 import {
     checkCompleteTerrain,
-    checkCompleteSegmentTerrain,
     getLinestringQuery,
     interpolate
 } from './route-plan/helpers'
 import {
-    getSegmentPoints,
     getSegmentStats,
-    getRouteSummary,
-    getSegmentProgress
+    getRouteSummary
 } from './route-plan/segments'
 
 

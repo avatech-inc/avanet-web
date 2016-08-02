@@ -140,36 +140,28 @@ export function calculateMunterEstimate(
     currentElev,
     segmentDistance
 ) {
+    const UP = 'up'
+    const DOWN = 'down'
+    const FLAT = 'flat'
     let totalTime = totalTimeEstimate
-    if (currentElev.elev === null) {
-        point.direction = 'flat'
+    const munterRateFlat = (munterRate.up + munterRate.down) / 2
+    const delta = currentElev - previousElev
+
+    // FLAT
+    if (delta === 0) {
+        point.direction = FLAT
         point.munterUnits = segmentDistance
-
-        const munterRateFlat = (munterRate.up + munterRate.down) / 2
-        point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-    } else {
-        point.elevationDifference = currentElev - previousElev
-
-        if (point.elevationDifference > 0) {
-            point.direction = 'up'
-            point.verticalUp = point.elevationDifference
-
-            point.munterUnits = segmentDistance + (point.verticalUp / 100)
-            point.timeEstimateMinutes = (point.munterUnits / munterRate.up) * 60
-        } else if (point.elevationDifference < 0) {
-            point.direction = 'down'
-            point.verticalDown = Math.abs(point.elevationDifference)
-
-            point.munterUnits = segmentDistance + (point.verticalDown / 100)
-            point.timeEstimateMinutes = (point.munterUnits / munterRate.down) * 60
-        } else {
-            point.direction = 'flat'
-            point.munterUnits = segmentDistance
-
-            const munterRateFlat = (munterRate.up + munterRate.down) / 2
-            point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
-        }
+    } else if (delta > 0) {  // ASCENDING
+        point.direction = UP
+        point.verticalUp = delta
+        point.munterUnits = segmentDistance + (delta / 100)
+    } else if (delta < 0) {  // DESCENDING
+        point.direction = DOWN
+        point.verticalDown = Math.abs(delta)
+        point.munterUnits = segmentDistance + (delta / 100)
     }
+    point.elevationDifference = delta
+    point.timeEstimateMinutes = (point.munterUnits / munterRateFlat) * 60
     totalTime += point.timeEstimateMinutes
     point.totalTimeEstimateMinutes = totalTime
     return point

@@ -102,6 +102,7 @@ const Map = [
                  // init leaflet map
                 scope.map = L.map(mapElement, {
                     zoomControl: false,
+                    attributionControl: true,
                     minZoom: 3,
                     maxZoom: 18,
                     worldCopyJump: true,
@@ -137,7 +138,6 @@ const Map = [
 
                 // add zoom control to map
                 new L.Control.Zoom({ position: 'bottomright' }).addTo(scope.map)
-                // L.control.zoomslider({ position: 'bottomright' }).addTo(scope.map);
 
                 // add scale control to map
                 // L.control.scale({
@@ -382,7 +382,8 @@ const Map = [
                             detectRetina: true,
                             errorTileUrl: 'https://s3.amazonaws.com/avatech-static/empty.png',
                             tms: layer.tms === null ? false : layer.tms,
-                            reuseTiles: true, updateInterval: 400
+                            reuseTiles: true, updateInterval: 400,
+                            attribution: layer.copyright,
                         }
 
                         if (layer.retina !== null) options.detectRetina = layer.retina
@@ -398,7 +399,8 @@ const Map = [
                             maxNativeZoom: 16,
                             format: 'image/png',
                             errorTileUrl: 'https://s3.amazonaws.com/avatech-static/empty.png',
-                            reuseTiles: true, updateInterval: 400
+                            reuseTiles: true, updateInterval: 400,
+                            attribution: layer.copyright,
                         }
 
                         if (layer.layers) {
@@ -425,9 +427,9 @@ const Map = [
                             accessToken: 'pk.eyJ1IjoiYW5kcmV3c29obiIsImEiOiJmWVdBa0QwIn0.q_Esm5hrpZLbl1XQERtKpg', // eslint-disable-line max-len
                             layerId: layer.id,
                             retina: L.Browser.retina ? '@2x' : '',
-                            attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>',
                             reuseTiles: true,
-                            updateInterval: 400
+                            updateInterval: 400,
+                            attribution: layer.copyright,
                             // crossOrigin: true
                         })
                     }

@@ -352,7 +352,7 @@ const RoutePlanning = [
                     // get linestring query from route points
                     const linestring = getLinestringQuery(routePoints)
                     // get elevation data for route
-                    fetch(`http://elevation.avatech.com/elevation/linestring/${linestring}`)
+                    fetch(`https://elevation.mountainhub.com/linestring/${linestring}`)
                         .then(res => res.json())
                         .then(data => {
                             if (data.elev === 0) {

@@ -823,7 +823,7 @@ const Map = [
                 }
 
                 scope.clickCoverageLink = () => {
-                    window.open('http://avatech-inc.github.io/terrain-coverage/')
+                    window.open('http://docs.mountainhub.com/')
 
                     return true
                 }

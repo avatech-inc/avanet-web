@@ -29,12 +29,12 @@
         <li uib-dropdown ng-hide="isDemo">
           <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
-            <li><a ng-click="newOb('avalanche')">{{ 'avalanche' | translate }}</a></li>
+            <!-- <li><a ng-click="newOb('avalanche')">{{ 'avalanche' | translate }}</a></li>
             <li><a ng-click="newOb('snowpack')">{{ 'snowpack' | translate }}</a></li>
-            <li><a ng-click="newOb('snowpack-test')">{{ 'snowpack-test' | translate }}</a></li>
+            <li><a ng-click="newOb('snowpack-test')">{{ 'snowpack-test' | translate }}</a></li> -->
             <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
-            <li><a ng-click="newOb('weather')">{{ 'weather' | translate }}</a></li>
-            <li><a ng-click="newOb('wind')">{{ 'wind' | translate }}</a></li>
+            <!-- <li><a ng-click="newOb('weather')">{{ 'weather' | translate }}</a></li>
+            <li><a ng-click="newOb('wind')">{{ 'wind' | translate }}</a></li> -->
             <li class="divider"></li>
             <li><a href="#" ng-click="deviceUpload()">{{ 'usb_upload' | translate }}</a></li>
           </ul>
@@ -48,16 +48,16 @@
           <a style="font-weight:500;color:#fff;" href="/observations">My Observations</a>
         </li>-->
 
-        <li uib-dropdown ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
+        <!-- <li uib-dropdown ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
           <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle>{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}
             <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'education' | translate }}</span></span>
             </a></li>
-            <li ng-if="global.orgs.length > 0" class="divider"></li>
+            <li ng-if="global.orgs.length > 0" class="divider"></li> -->
             <!-- <li ><a href="/orgs/new"><i class="fa fa-plus"></i>{{ 'new_organization' | translate }}</a></li> -->
-          </ul>
-        </li>
+          <!-- </ul>
+        </li> -->
 
         <li uib-dropdown>
 	        <a href="#" uib-dropdown-toggle>

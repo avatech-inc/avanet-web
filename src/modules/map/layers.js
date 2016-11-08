@@ -50,7 +50,7 @@ const Layers = [
             .then(layers => {
                 let lang = window.navigator.userLanguage || window.navigator.language
                 let country = Global.user.country
-                let units = Global.user.settings.elevation
+                let units = Global.user.settings.units || 1
 
                 lang = lang.slice(0, 2)
 

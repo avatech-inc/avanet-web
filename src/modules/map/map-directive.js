@@ -761,7 +761,7 @@ const Map = [
                     })
 
                     // custom terrain visualization
-                    scope.elevationMax = !Global.user.settings.elevation ? 8850 : 8850
+                    scope.elevationMax = 8850
 
                     scope.customTerrain = {
                         color: '#FFFF00',

@@ -76,7 +76,7 @@ export const ObSearchFactory = [
             rec: true
         }
 
-        service.elevationMax = Global.user.settings.elevation === 0 ? 8850 : 8850
+        service.elevationMax = 8850
 
         service.searchQuery = {
             days: 7,
@@ -98,11 +98,6 @@ export const ObSearchFactory = [
         }
 
         service.observationTypes = [
-            'avalanche',
-            'weather',
-            'wind',
-            'snowpack',
-            'snowpack-test',
             'snowpit',
             'sp-profile',
         ]

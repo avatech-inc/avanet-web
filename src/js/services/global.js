@@ -134,10 +134,10 @@ const Global = [
 
                         // tracking
                         let trackingUser = {
-                            name: user.fullName,
+                            name: user.full_name,
                             email: user.email,
-                            createdAt: user.created,
-                            userType: user.userType
+                            created_at: user.created_at,
+                            subscription_type: user.subscription_type
                         }
 
                         if (__STAGE__ || __PROD__) {

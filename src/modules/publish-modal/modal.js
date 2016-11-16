@@ -82,7 +82,7 @@ export const PublishController = [
 
         $scope.publish = () => {
             // if student
-            if ($scope.global.user.userType.indexOf('pro') === -1) {
+            if ($scope.global.user.subscription_type === 1) {
                 $scope.sharing.published = true
                 $scope.sharing.organization = null
                 $scope.sharing.sharingLevel = 'public'

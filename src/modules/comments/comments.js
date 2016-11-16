@@ -36,7 +36,7 @@ const CommentsNew = [
                             .then(response => {
                                 let results = response.map(result => ({
                                     id: result._id,
-                                    name: result.fullName,
+                                    name: result.full_name,
                                     avatar: '',
                                     type: 'user'
                                 }))

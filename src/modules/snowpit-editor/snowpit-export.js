@@ -734,7 +734,7 @@ const SnowpitExport = [
                 drawParam('Location:', formatters.format(profile.locationName), margin, topLine + 9.1, 18)
                 drawParam('Lat/Lng:', formatters.formatLatLng(profile.location), margin, topLine + 16.1, 18)
                 drawParam('Date:', formatters.formatDate(profile.date, profile.time), margin + 80, topLine + 9.1, 19)
-                drawParam('Observer:', formatters.format(profile.user.fullName), margin + 80, topLine + 16.1, 19)
+                drawParam('Observer:', formatters.format(profile.user.full_name), margin + 80, topLine + 16.1, 19)
                 drawParam('Snowpit depth:', formatters.formatCm(profile.depth), margin + 144, topLine + 9.1, 30)
                 drawParam('Snowpack depth:', formatters.formatCm(profile.snowpackHeight), margin + 144, topLine + 16.1, 30)
                 drawParam('Elevation:', formatters.formatElevation(profile.elevation), margin, upperLine + 12 + 8.5, 18)

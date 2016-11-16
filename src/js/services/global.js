@@ -145,7 +145,7 @@ const Global = [
                         }
 
                         if (__PROD__) {
-                            trackingUser.username = user.fullName
+                            trackingUser.username = user.full_name
                             trackingUser.id = user._id
 
                             Raven.setUserContext(trackingUser)

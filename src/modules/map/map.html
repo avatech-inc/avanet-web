@@ -4,7 +4,7 @@
 
 				<div ob-search="obSearch" style="float:left;"
 					orgs="global.orgs"
-					show-publisher="(global.user.userType == 'pro' || global.user.userType == 'pro+') && selectedList == 'published'"
+					show-publisher="global.user.subscription_type === 2 && selectedList == 'published'"
 				></div>
 
 				<!-- Red Flags Count -->
@@ -105,7 +105,7 @@
 	                  		<span bo-show="profile.user.subscription_type === 2" class='pro-badge'>PRO</span>
 						</div>
 
-						<div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div>
+						<!-- <div class='lineItem'><i class="fa fa-group"></i>{{ ::profile.organization.name}}</div> -->
 
 						<div class='lineItem'><i class="fa fa-clock-o"></i>{{ ::profile.date | date:'M/d/yy h:mm a'}}</div>
 

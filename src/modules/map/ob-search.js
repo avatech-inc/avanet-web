@@ -110,8 +110,8 @@ export const ObSearchFactory = [
             // build haystack
             let haystack = []
 
-            if (val.user.fullName) {
-                haystack.push(val.user.fullName.toLowerCase())
+            if (val.user.full_name) {
+                haystack.push(val.user.full_name.toLowerCase())
             }
 
             if (val.metaData && val.metaData.location) {
@@ -175,10 +175,10 @@ export const ObSearchFactory = [
                     val.user &&
                     (
                         (
-                            val.user.userType &&
-                            val.user.userType.indexOf('pro') === -1
+                            val.user.subscription_type &&
+                            val.user.subscription_type === 0
                         ) ||
-                        !val.user.userType
+                        !val.user.subscription_type
                     )
                 ) {
                     // if (val.user && val.user.student) {

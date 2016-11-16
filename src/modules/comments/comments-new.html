@@ -205,8 +205,8 @@ mentio-menu { z-index: 2000 !important; }
 	        </ul>
 	    </script>
 
-		<textarea 
-			onenter="saveComment()" 
+		<textarea
+			onenter="saveComment()"
 
 			test-autosize
 			test-ng-change="adjustHeight()"
@@ -228,11 +228,11 @@ mentio-menu { z-index: 2000 !important; }
 		<div class="photo">
 			{{  }}
 		</div>
-		<span class="name">{{ comment.user.fullName}}</span>
+		<span class="name">{{ comment.user.full_name}}</span>
 		<span class="time"> &#8729;&nbsp;<span am-time-ago="comment.created"></span></span>
 		<br/>
 		<span class="content" ng-bind-html="parseComment(comment.content)"></span>
-		
+
 		<button class="delete" ng-show="comment.user._id == global.user._id" ng-click="deleteComment(comment._id, $index)"><i class="fa fa-times"></i></button>
 	</li>
 </ul>

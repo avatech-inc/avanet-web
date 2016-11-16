@@ -48,9 +48,12 @@ const Layers = [
             .one('maps')
             .get()
             .then(layers => {
-                let lang = window.navigator.userLanguage || window.navigator.language
-                let country = Global.user.country
-                let units = Global.user.settings.units || 1
+                let navigator = window && window.navigator;
+                let lang = navigator.userLanguage || navigator.language;
+
+                let user = Global && Global.user;
+                let country = user && user.country;
+                let units = user && user.settings && user.settings.units || 1
 
                 lang = lang.slice(0, 2)
 

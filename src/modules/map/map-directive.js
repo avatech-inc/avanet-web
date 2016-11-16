@@ -111,23 +111,8 @@ const Map = [
                     contextmenu: true,
                     contextmenuWidth: 140,
                     contextmenuItems: [{
-                        text: 'Avalanche',
-                        callback: e => newOb('avalanche', e.latlng)
-                    }, {
-                        text: 'Snowpack',
-                        callback: e => newOb('snowpack', e.latlng)
-                    }, {
-                        text: 'Snowpack Test',
-                        callback: e => newOb('snowpack-test', e.latlng)
-                    }, {
                         text: 'Snowpit',
                         callback: e => newOb('snowpit', e.latlng)
-                    }, {
-                        text: 'Weather',
-                        callback: e => newOb('weather', e.latlng)
-                    }, {
-                        text: 'Wind',
-                        callback: e => newOb('wind', e.latlng)
                     }]
                 })
 

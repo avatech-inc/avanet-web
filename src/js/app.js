@@ -99,14 +99,14 @@ import { RegisterDevice, RegisterDeviceController } from '../modules/register-de
 import { DeviceUpload, DeviceUploadController, SP1Upload } from '../modules/sp-profile-upload/modal'
 
 // user
-import ForgotPassword from '../modules/user/forgot-password'
+// import ForgotPassword from '../modules/user/forgot-password'
 import Login from '../modules/user/login'
-import Register from '../modules/user/register'
-import ResetPassword from '../modules/user/reset-password'
-import Settings from '../modules/user/settings'
+// import Register from '../modules/user/register'
+// import ResetPassword from '../modules/user/reset-password'
+// import Settings from '../modules/user/settings'
 
 // eslint-disable-next-line import/no-unresolved
-import { Billing } from '../modules/user/billing'
+// import { Billing } from '../modules/user/billing'
 
 import Terrain from '../modules/map/terrain-visualization'
 
@@ -243,12 +243,12 @@ angular.module('avatech', DEPS)
     .controller('RegisterDeviceModalController', RegisterDeviceController)
     .controller('SnowpitController', SnowpitEditor)
     .controller('DeviceUploadModalController', DeviceUploadController)
-    .controller('ForgotPasswordController', ForgotPassword)
+    // .controller('ForgotPasswordController', ForgotPassword)
     .controller('LoginController', Login)
-    .controller('RegisterController', Register)
-    .controller('ResetPasswordController', ResetPassword)
-    .controller('SettingsController', Settings)
-    .controller('Billing', Billing)
+    // .controller('RegisterController', Register)
+    // .controller('ResetPasswordController', ResetPassword)
+    // .controller('SettingsController', Settings)
+    // .controller('Billing', Billing)
 
 // configure console debug
 if (__PROD__) {

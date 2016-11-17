@@ -285,21 +285,7 @@ module.exports = {
      */
     devServer: {
         historyApiFallback: true,
-        contentBase: 'build/',
-        proxy: {
-            '/app': {
-                target: 'http://localhost:8080/',
-                bypass: function (req, res, proxyOptions) {
-                    return '/views/download-app.html';
-                }
-            },
-            '/download-app': {
-                target: 'http://localhost:8080/',
-                bypass: function (req, res, proxyOptions) {
-                    return '/views/download-app.html';
-                }
-            }
-        }
+        contentBase: 'build/'
     },
 
     /**

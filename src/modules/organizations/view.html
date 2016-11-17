@@ -34,7 +34,7 @@ ul.members >li .right >button {
 /* member menu */
 
 .memberMenu ul {
-    width: 224px; 
+    width: 224px;
 }
 
 .memberMenu li a {
@@ -55,7 +55,7 @@ ul.members >li .right >button {
 }
 
 .memberMenu li .desc {
-    font-size: 13px; 
+    font-size: 13px;
     margin-top: 2px; margin-bottom: 2px;
     font-weight: 400;
 }
@@ -96,7 +96,7 @@ ul.results li:hover {
     background: #f5f5f5;
 }
 
-ul.results li .arrow { 
+ul.results li .arrow {
     transition: opacity 150ms;
     opacity: 0;
     float: right;
@@ -136,7 +136,7 @@ ul.results li:hover .arrow{
     vertical-align: middle;
     text-align: right;
 }
-.logoView  img, .logoEdit img { 
+.logoView  img, .logoEdit img {
     max-width: 100%;
     max-height: 100%
 }
@@ -253,7 +253,7 @@ margin-bottom: 6px !important;
             <div class="logoEdit btn-group" uib-dropdown ng-if="org.logoUrl && userIsAdmin()">
 
                   <div uib-dropdown-toggle class="dropdown-toggle">
-                    
+
                     <img ng-src="{{ org.logoUrl }}"/>
 
                     <div class="editLogo">Change</div>
@@ -406,7 +406,7 @@ margin-bottom: 6px !important;
 
                           <div class="col-sm-7">
                             <select class="form-control"
-                                    ng-options="unselectedUser.id as unselectedUser.fullName for unselectedUser in getUnselectedUsers($index)"
+                                    ng-options="unselectedUser.id as unselectedUser.full_name for unselectedUser in getUnselectedUsers($index)"
                                     ng-model="seatUsers[$index]"
                                     ng-change="setSeatUser($index, seatUsers[$index])">
                             </select>
@@ -440,7 +440,7 @@ margin-bottom: 6px !important;
                                    name="name"
                                    class="form-control"
                                    required
-                                   placeholder="{{ 'billing.fullname' | translate }}"
+                                   placeholder="{{ 'billing.full_name' | translate }}"
                                    ng-model="name"
                                    ng-change="changePayment(name, 'name')">
                           </div>
@@ -540,7 +540,7 @@ margin-bottom: 6px !important;
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Add {{ org.type=='Avalanche education' ? 'Instructor' : 'Member' }}
                   </button>
                   <ul class="dropdown-menu pull-right" role="menu" style="width:260px;min-height:100px;"><li><a style="white-space:normal !important;background:transparent !important;padding:0 !important;" ng-click="$event.stopPropagation()">
-                    
+
                     <div style="padding:3px 12px;">
                         <div class="form-group" style="margin-bottom:0;position:relative;">
                           <input focus-on="focusSearch" type="text" class="form-control" placeholder="" ng-model="search.query" ng-change="doSearch()">
@@ -563,7 +563,7 @@ margin-bottom: 6px !important;
 
                     <ul ng-show="search.results.length > 0" class="results">
                         <li ng-repeat="result in search.results" ng-click="addMember(result)" ng-class="{ isMember: result.isMember }" close-dropdown-on-click>
-                            {{ result.fullName }} <span ng-show="result.isMember">(joined)</span>
+                            {{ result.full_name }} <span ng-show="result.isMember">(joined)</span>
 
                             <span class="arrow"><i class="fa fa-plus"></i></span>
                         </li>
@@ -576,9 +576,9 @@ margin-bottom: 6px !important;
             </div>
 
             <ul class="members">
-                <li ng-repeat="member in members" ng-class="{ pending: member.user.pending }"
-                 ng-hide="!userIsAdmin() && member.user.pending">
-                    <div class="name">{{ member.user.fullName }}
+                <li ng-repeat="member in members" ng-class="{ pending: member.user.is_pending }"
+                 ng-hide="!userIsAdmin() && member.user.is_pending">
+                    <div class="name">{{ member.user.full_name }}
                     <span ng-show="member.user._id == global.user._id">(you)</span>
                     </div>
 
@@ -587,7 +587,7 @@ margin-bottom: 6px !important;
                         <div class="btn-group memberMenu" uib-dropdown>
 
                         <div ng-if="!userIsAdmin()" style="line-height:34px;color:#888;">
-                            <span ng-hide="member.user.pending">
+                            <span ng-hide="member.user.is_pending">
                                 {{ member.admin ? "Admin" : (org.type=='Avalanche education' ? 'Instructor' : 'Member') }}
                             </span>
                         </div>
@@ -629,7 +629,7 @@ margin-bottom: 6px !important;
                         <!--<button type="button" class="btn btn-default" ng-click="removeMember(member, $index)"
                         ng-disabled="!allowMemberRemove(member)" style="width:86px;">
                             <i class="fa fa-times"></i>&nbsp;&nbsp;{{ member.user._id == global.user._id ? "Leave" : "Remove" }}
-                            
+
                         </button>-->
 
                     </div>
@@ -651,8 +651,8 @@ margin-bottom: 6px !important;
                 </div>
 
                 <ul class="members">
-                    <li ng-repeat="member in students" ng-class="{ pending: member.user.pending }">
-                        <div class="name">{{ member.user.fullName }}
+                    <li ng-repeat="member in students" ng-class="{ pending: member.user.is_pending }">
+                        <div class="name">{{ member.user.full_name }}
                         </div>
 
                         <div class="right">

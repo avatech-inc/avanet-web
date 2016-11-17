@@ -98,6 +98,11 @@ export const ObSearchFactory = [
         }
 
         service.observationTypes = [
+            'avalanche',
+            'weather',
+            'wind',
+            'snowpack',
+            'snowpack-test',
             'snowpit',
             'sp-profile',
         ]

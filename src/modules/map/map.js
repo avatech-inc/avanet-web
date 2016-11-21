@@ -156,7 +156,7 @@ const MapController = [
 
         $scope.getProfileSelectedIndex = profile => {
             for (let i = 0; i < $scope.selectedProfiles.length; i++) {
-                if ($scope.selectedProfiles[i] === profile._id) {
+                if ($scope.selectedProfiles[i]._id === profile._id) {
                     return i
                 }
             }

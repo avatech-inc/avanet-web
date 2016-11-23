@@ -1,6 +1,6 @@
 <div class="btn-group filter" uib-dropdown>
   <button type="button" class="btn btn-default" uib-dropdown-toggle>
-  	<span style="padding-right:3px;">{{ 'type' | translate }}</span> 
+  	<span style="padding-right:3px;">{{ 'type' | translate }}</span>
 
     <span class="caret" ng-show="obSearch.isDefaultType()"></span>
     <span style="color:#999;" ng-hide="obSearch.isDefaultType()">...</span>
@@ -32,6 +32,7 @@
 	    <span ng-show="obSearch.searchQuery.days == 91">Past 3 Months</span>
 	    <span ng-show="obSearch.searchQuery.days == 183">Past 6 Months</span>
 	    <span ng-show="obSearch.searchQuery.days == 365">Past Year</span>
+	    <span ng-show="obSearch.searchQuery.days == 1000">All Time</span>
     </span>
     <span class="caret"></span>
   </button>
@@ -45,12 +46,13 @@
      <li ng-click="obSearch.searchQuery.days = 91">Past 3 months</li>
      <li ng-click="obSearch.searchQuery.days = 183">Past 6 months</li>
      <li ng-click="obSearch.searchQuery.days = 365">Past year</li>
+     <li ng-click="obSearch.searchQuery.days = 1000">All time</li>
   </ul>
 </div>
 
 <div class="btn-group filter" uib-dropdown ng-show="showPublisher">
   <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
-    <span style="padding-right:3px;">{{ 'publisher' | translate }}</span> 
+    <span style="padding-right:3px;">{{ 'publisher' | translate }}</span>
 
     <span class="caret" ng-show="obSearch.isDefaultPublisher()"></span>
     <span style="color:#999;" ng-hide="obSearch.isDefaultPublisher()">...</span>
@@ -68,13 +70,13 @@
     		ng-click="obSearch.publisher_selectMyOrgs()"
 			ng-dblclick="obSearch.publisher_selectMyOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.orgs == null || (obSearch.searchQuery.publisher.orgs && obSearch.searchQuery.publisher.orgs.length == orgs.length) ? 'fa-check-square' : 'fa-square-o'"></i>My Organizations</a></li>
 
-    	<li ng-repeat="org in orgs" 
+    	<li ng-repeat="org in orgs"
     		ng-click="obSearch.publisher_selectOrg(org._id)"
     		ng-dblclick="obSearch.publisher_selectOrg(org._id, true)"><a><i ng-style="{ 'padding-left': (orgs && orgs.length > 1 ? '26px' :''), 'margin-right': (orgs && orgs.length > 1 ? '20px' :'') }" class="fa" ng-class="obSearch.publisher_isOrgSelected(org._id) ? 'fa-check-square' : 'fa-square-o'"></i>{{ org.name }}</a></li>
 
 		<li ng-click="obSearch.publisher_selectOutsideOrgs()"
 			ng-dblclick="obSearch.publisher_selectOutsideOrgs(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.outsideOrgs || obSearch.searchQuery.publisher.outsideOrgs == null ? 'fa-check-square' : 'fa-square-o'"></i>Outside Organizations</a></li>
-			
+
     	<li ng-click="obSearch.publisher_selectRec()"
     		ng-dblclick="obSearch.publisher_selectRec(true)"><a><i class="fa" ng-class="obSearch.searchQuery.publisher.rec || obSearch.searchQuery.publisher.rec == null ? 'fa-check-square' : 'fa-square-o'"></i>Rec Users</a></li>
     </ul>
@@ -110,7 +112,7 @@
 
 <div class="btn-group filter" uib-dropdown style="">
   <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
-    <span style="padding-right:3px;">{{ 'slope_aspect' | translate }}</span> 
+    <span style="padding-right:3px;">{{ 'slope_aspect' | translate }}</span>
     <span class="caret" ng-show="obSearch.searchQuery.aspect_low == 0 && obSearch.searchQuery.aspect_high == 359"></span>
     <span style="color:#999;" ng-show="(obSearch.searchQuery.aspect_low != 0 || obSearch.searchQuery.aspect_high != 359) && obSearch.searchQuery.aspect_low != obSearch.searchQuery.aspect_high">
     	{{ obSearch.searchQuery.aspect_low }}-{{ obSearch.searchQuery.aspect_high }}&deg;
@@ -128,13 +130,13 @@
 		<input-direction-range input-class="form-control" ng-model="obSearch.searchQuery.aspect_low" angle-low="obSearch.searchQuery.aspect_low" angle-high="obSearch.searchQuery.aspect_high"></input-direction-range>
 
 		<input-direction-range input-class="form-control" ng-model="obSearch.searchQuery.aspect_high" angle-low="obSearch.searchQuery.aspect_low" angle-high="obSearch.searchQuery.aspect_high"></input-direction-range>
-  	
+
     </a></li></ul>
 </div>
 
 <div class="btn-group filter" uib-dropdown style="">
   <button type="button" uib-dropdown-toggle ng-click="$broadcast('refreshSlider')">
-    <span style="padding-right:3px;">{{ 'slope_angle' | translate }}</span> 
+    <span style="padding-right:3px;">{{ 'slope_angle' | translate }}</span>
     <span class="caret" ng-show="obSearch.searchQuery.slope_low == 0 && obSearch.searchQuery.slope_high == 70"></span>
     <span style="color:#999;" ng-show="(obSearch.searchQuery.slope_low != 0 || obSearch.searchQuery.slope_high != 70) && obSearch.searchQuery.slope_low != obSearch.searchQuery.slope_high">
     	{{ obSearch.searchQuery.slope_low }}-{{ obSearch.searchQuery.slope_high }}&deg;

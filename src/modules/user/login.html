@@ -8,6 +8,7 @@
 			<div ng-switch-when="badEntry">{{ 'login.invalid_entry' | translate }}</div>
 			<div ng-switch-when="invalid">{{ 'login.invalid_login' | translate }}</div>
 			<div ng-switch-when="disabled">{{ 'login.account_disabled' | translate }}</div>
+      <div ng-switch-when="subscription">Oops. Avanet is only available for <a href="http://mountainhub.com" target="_blank">Mountain Hub</a> Premium and Professional members. Please upgrade your <a href="http://mountainhub.com" target="_blank">Mountain Hub</a> account to get access to Avanet.</div>
 			<div ng-switch-default>{{ 'generic_error' | translate }}</div>
 		</div>
 
@@ -26,7 +27,7 @@
 						<!--<label for="password" class="control-label">Password</label>-->
 						<div class="controls">
 							<input id="password" ng-model="password" class="form-control" type="password" name="password" placeholder="{{ 'settings.password' | translate }}" required>
-							<a href="/forgot-password" class="forgot-password">{{ 'login.forgot' | translate }}</a>
+							<a href="https://app.mountainhub.com/" target="_blank" class="forgot-password">{{ 'login.forgot' | translate }}</a>
 						</div>
 					</div>
 					<div style="padding-top:2px;">
@@ -34,7 +35,7 @@
 					</div>
 				</div>
 				<div style="padding:20px;border-top:1px solid rgba(0,0,0,.2);">
-					<a href="/signup" class="signup" style="display: inline-block;font-size: 20px;color: #222;font-weight: 500;">{{ 'login.signup' | translate }}</a>
+					<a href="https://app.mountainhub.com/explore?signup=true" class="signup" style="display: inline-block;font-size: 20px;color: #222;font-weight: 500;">{{ 'login.signup' | translate }}</a>
 				</div>
 			</div>
 		</form>
@@ -48,5 +49,5 @@
 	<!--<div class="login-footer" style="max-width:660px;width:95%;margin:auto;padding-top:20px;margin-bottom:20px;text-align:center;font-size:14px;color:#999;font-weight:100;" ng-style="{ opacity: busy ? 0 : 1 }">
 	&copy; 2015 Avatech, Inc.
 	</div>-->
-	
+
 </section>

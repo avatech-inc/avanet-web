@@ -58,7 +58,7 @@ const NewObservation = [
                 location: ob.location,
                 date: new Date(),
                 media: [],
-                user: { fullName: $scope.global.user.fullName, _id: $scope.global.user._id }
+                user: { full_name: $scope.global.user.full_name, _id: $scope.global.user._id }
             }
         }
 

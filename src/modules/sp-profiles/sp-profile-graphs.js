@@ -125,7 +125,6 @@ export const GraphBig = () => ({
 
             // pixel value at zero
             let valueAtZero = Math.round(graphLogFunction(0, graphWidth));
-
             // graph tick lines
 
             // calculate tick mark locations
@@ -142,14 +141,11 @@ export const GraphBig = () => ({
             // draw tick marks
             context.beginPath()
 
+            let pressureLabels = [35, 82, 142, 226, 368, 1000]
+
             for (let i = 0; i < tickMarks.length; i++) {
                 let tickMark = tickMarks[i]
-                let tickMarkPosition = (
-                    paddingLeft +
-                    graphLogFunction(tickMark, graphWidth + valueAtZero) -
-                    valueAtZero +
-                    1 // - 1;
-                )
+                let tickMarkPosition = tickMark + paddingLeft - valueAtZero;
 
                 context.moveTo(tickMarkPosition, paddingTop) // change to 0?
                 context.lineTo(tickMarkPosition, graphHeight + paddingTop)
@@ -158,9 +154,9 @@ export const GraphBig = () => ({
                 context.fillStyle = '#444'
                 context.font = "22.5px 'roboto condensed'"
                 context.fillText(
-                    tickMark,
-                    tickMarkPosition - context.measureText(tickMark).width,
-                    22
+                  pressureLabels[i],
+                  tickMarkPosition - context.measureText(pressureLabels[i]).width,
+                  22
                 )
             }
 

@@ -16,25 +16,25 @@
     </div>
 
     <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-      <a href="/" style="text-decoration:none !important;"><div style="display: inline-block;float: left;color: #fff;font-size: 30px;font-weight: 500;padding-top: 6px;line-height:36px;letter-spacing: -.02em;">Avanet<span style="font-weight:100;color:#ccc;margin-left:5px;text-transform:uppercase;color:#ffcc00;font-size:.75em;">{{ global.user.userType == 'rec+' ? 'Tour' : '' }}{{ global.user.userType == 'pro' ? 'Pro' : '' }}{{ global.user.userType == 'pro+' ? 'Pro+' : '' }}</span>
+      <a href="/" style="text-decoration:none !important;"><div style="display: inline-block;float: left;color: #fff;font-size: 30px;font-weight: 500;padding-top: 6px;line-height:36px;letter-spacing: -.02em;">Avanet<span style="font-weight:100;color:#ccc;margin-left:5px;text-transform:uppercase;color:#ffcc00;font-size:.75em;">{{ global.user.subscription_type === 1 ? 'Premium' : '' }}{{ global.user.subscription_type === 2 ? 'Pro' : '' }}</span>
       <!--<span ng-show="global.user.student === true" style='color:#ddd;font-weight:100;'>Education</span>-->
       </div>&nbsp;
       <!--<span style="font-size: 8px; text-transform: uppercase; color: rgba(255,255,255,.6); position: relative; top: 6px; left: -4px; font-weight: 100;">TM</span>-->
       <!--<span style='font-size:13px;text-transform:uppercase;color:#bbb;position:relative;top:14px;left:1px;font-weight:100;'>BETA</span>--></a>
-   
+
 
       <ul class="nav navbar-nav navbar-right" ng-if="global.user">
- 
+
 
         <li uib-dropdown ng-hide="isDemo">
           <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle><i class="fa fa-plus"></i>&nbsp;&nbsp;{{ 'new_observation' | translate }}</a>
           <ul class="dropdown-menu">
-            <li><a ng-click="newOb('avalanche')">{{ 'avalanche' | translate }}</a></li>
+            <!-- <li><a ng-click="newOb('avalanche')">{{ 'avalanche' | translate }}</a></li>
             <li><a ng-click="newOb('snowpack')">{{ 'snowpack' | translate }}</a></li>
-            <li><a ng-click="newOb('snowpack-test')">{{ 'snowpack-test' | translate }}</a></li>
+            <li><a ng-click="newOb('snowpack-test')">{{ 'snowpack-test' | translate }}</a></li> -->
             <li><a href="/profiles/new">{{ 'snowpit' | translate }}</a></li>
-            <li><a ng-click="newOb('weather')">{{ 'weather' | translate }}</a></li>
-            <li><a ng-click="newOb('wind')">{{ 'wind' | translate }}</a></li>
+            <!-- <li><a ng-click="newOb('weather')">{{ 'weather' | translate }}</a></li>
+            <li><a ng-click="newOb('wind')">{{ 'wind' | translate }}</a></li> -->
             <li class="divider"></li>
             <li><a href="#" ng-click="deviceUpload()">{{ 'usb_upload' | translate }}</a></li>
           </ul>
@@ -48,34 +48,33 @@
           <a style="font-weight:500;color:#fff;" href="/observations">My Observations</a>
         </li>-->
 
-        <li uib-dropdown ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
+        <!-- <li uib-dropdown ng-hide="global.user.student === true || global.user.userType == 'rec' || global.user.userType == 'rec+' || isDemo">
           <a style="font-weight:500;color:#fff;" href="#" uib-dropdown-toggle>{{ 'organizations' | translate }}<b style="margin-left:8px;" class="caret"></b></a>
           <ul class="dropdown-menu">
             <li ng-repeat="org in global.orgs" ><a href="/orgs/{{ org._id }}">{{ org.name }}
             <span ng-show="org.type=='Avalanche education'" style="color: #888;">&nbsp;&nbsp;<i class="fa fa-graduation-cap"></i>&nbsp;<span style='font-size:8px;position: relative;bottom:1px;'>{{ 'education' | translate }}</span></span>
             </a></li>
-            <li ng-if="global.orgs.length > 0" class="divider"></li>
-            <li ><a href="/orgs/new"><i class="fa fa-plus"></i>{{ 'new_organization' | translate }}</a></li>
-          </ul>
-        </li>
+            <li ng-if="global.orgs.length > 0" class="divider"></li> -->
+            <!-- <li ><a href="/orgs/new"><i class="fa fa-plus"></i>{{ 'new_organization' | translate }}</a></li> -->
+          <!-- </ul>
+        </li> -->
 
         <li uib-dropdown>
 	        <a href="#" uib-dropdown-toggle>
-            <div class="headshot" ng-style="{ 'background-image':'url(' + (observation.user.profilePhotoURL ? global.user.profilePhotoURL : '/img/nophoto.jpg' ) + ')' }"></div>&nbsp;{{global.user.fullName}}<b style="margin-left:8px;" class="caret"></b></a>
+            <div class="headshot" ng-style="{ 'background-image':'url(' + (global.user.profile.photo ? 'https://storage.mountainhub.com/media/' + global.user.profile.photo : '/img/nophoto.jpg' ) + ')' }"></div>&nbsp;{{global.user.full_name}}<b style="margin-left:8px;" class="caret"></b></a>
 	        <ul class="dropdown-menu">
 
-            <li><a href="/settings">{{ 'user_settings' | translate }}</a></li>
-            <li><a href="/billing">{{ 'user_billing' | translate }}</a></li>
+            <li><a href="https://app.mountainhub.com" target="_blank">{{ 'user_settings' | translate }}</a></li>
+            <li><a href="https://app.mountainhub.com" target="_blank">{{ 'user_billing' | translate }}</a></li>
             <li ng-hide="isDemo" class="divider"></li>
 
             <li ng-hide="isDemo"><a href="/support" target="_blank">{{ 'support' | translate }}</a></li>
             <li ng-hide="isDemo"><a href="#" ng-click="registerSP1()">{{ 'register_device' | translate }}</a></li>
-            <li ng-hide="isDemo"><a href="/app" target="_blank">{{ 'download_app' | translate }}</a></li>
             <li ng-hide="isDemo"><a href="/SPupdate" target="_blank">{{ 'firmware_update' | translate }}</a></li>
             <li ng-hide="isDemo" class="divider"></li>
 
-	          <li ng-hide="isDemo" ng-if="global.user.admin" ><a href="/admin">Admin</a></li>
-	          <li ng-hide="isDemo" ng-if="global.user.admin" class="divider"></li>
+	          <!-- <li ng-hide="isDemo" ng-if="global.user.admin" ><a href="/admin">Admin</a></li>
+	          <li ng-hide="isDemo" ng-if="global.user.admin" class="divider"></li> -->
 
 	          <li><a href="/logout">{{ 'logout' | translate }}</a></li>
 	        </ul>

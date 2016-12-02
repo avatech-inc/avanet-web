@@ -149,7 +149,7 @@ if (__PROD__) {
     window.apiBaseUrl = 'https://api.avatech.com/v2/'
     window.payBaseUrl = 'https://secure.avatech.com/'
 
-    DEPS.unshift('ngRaven')
+    // DEPS.unshift('ngRaven')
 }
 
 angular.module('schemaForm').config(Schema)

@@ -98,7 +98,7 @@ const Global = [
                 delete $http.defaults.headers.common['Auth-Token']
 
                 if (__PROD__) {
-                    Raven.setUserContext()
+                    // Raven.setUserContext()
                     analytics.track('logout')
                 }
 
@@ -110,7 +110,7 @@ const Global = [
                 service.orgs = []
 
                 if (__PROD__) {
-                    Raven.setUserContext()
+                    // Raven.setUserContext()
                 }
 
                 delete $http.defaults.headers.common['Auth-Token']
@@ -148,7 +148,7 @@ const Global = [
                             trackingUser.username = user.full_name
                             trackingUser.id = user._id
 
-                            Raven.setUserContext(trackingUser)
+                            // Raven.setUserContext(trackingUser)
                         }
 
        //              },

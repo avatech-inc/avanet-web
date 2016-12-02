@@ -65,25 +65,25 @@ const Routes = [
         })
 
         // organizations
-        .state('index.orgNew', {
-            url: 'orgs/new',
-            views: { content: { templateUrl: '/modules/organizations/new.html' } },
-            data: {
-                title: 'New Organization / Avanet',
-                requireLogin: true,
-                fullScreen: true
-            }
-        })
-
-        .state('index.org', {
-            url: 'orgs/:orgId',
-            views: { content: { templateUrl: '/modules/organizations/view.html' } },
-            data: {
-                title: 'Organization / Avanet',
-                requireLogin: true,
-                fullScreen: true
-            }
-        })
+        // .state('index.orgNew', {
+        //     url: 'orgs/new',
+        //     views: { content: { templateUrl: '/modules/organizations/new.html' } },
+        //     data: {
+        //         title: 'New Organization / Avanet',
+        //         requireLogin: true,
+        //         fullScreen: true
+        //     }
+        // })
+        //
+        // .state('index.org', {
+        //     url: 'orgs/:orgId',
+        //     views: { content: { templateUrl: '/modules/organizations/view.html' } },
+        //     data: {
+        //         title: 'Organization / Avanet',
+        //         requireLogin: true,
+        //         fullScreen: true
+        //     }
+        // })
 
         .state('index.admin', {
             url: 'admin',
@@ -97,27 +97,27 @@ const Routes = [
             }
         })
 
-        .state('index.settings', {
-            url: 'settings',
-            views: { content: { templateUrl: '/modules/user/settings.html' } },
-            data: {
-                title: 'Settings / Avanet',
-                requireLogin: true,
-                bodyCssClass: 'profiles',
-                fullScreen: true
-            }
-        })
+        // .state('index.settings', {
+        //     url: 'settings',
+        //     views: { content: { templateUrl: '/modules/user/settings.html' } },
+        //     data: {
+        //         title: 'Settings / Avanet',
+        //         requireLogin: true,
+        //         bodyCssClass: 'profiles',
+        //         fullScreen: true
+        //     }
+        // })
 
-        .state('index.billing', {
-            url: 'billing',
-            views: { content: { templateUrl: '/modules/user/billing.html' } },
-            data: {
-                title: 'Billing / Avanet',
-                requireLogin: true,
-                bodyCssClass: 'profiles',
-                fullScreen: true
-            }
-        })
+        // .state('index.billing', {
+        //     url: 'billing',
+        //     views: { content: { templateUrl: '/modules/user/billing.html' } },
+        //     data: {
+        //         title: 'Billing / Avanet',
+        //         requireLogin: true,
+        //         bodyCssClass: 'profiles',
+        //         fullScreen: true
+        //     }
+        // })
 
         .state('index.SP1update2', {
             url: 'sp1update',
@@ -198,25 +198,25 @@ const Routes = [
             }
         })
 
-        .state('register', {
-            url: '/register',
-            templateUrl: '/modules/user/register-new.html',
-            data: {
-                title: 'Sign up / Avanet',
-                redirectIfLoggedIn: true,
-                bodyCssClass: 'login'
-            }
-        })
+        // .state('register', {
+        //     url: '/register',
+        //     templateUrl: '/modules/user/register-new.html',
+        //     data: {
+        //         title: 'Sign up / Avanet',
+        //         redirectIfLoggedIn: true,
+        //         bodyCssClass: 'login'
+        //     }
+        // })
 
-        .state('signup', {
-            url: '/signup',
-            templateUrl: '/modules/user/register-new.html',
-            data: {
-                title: 'Sign up / Avanet',
-                redirectIfLoggedIn: true,
-                bodyCssClass: 'login'
-            }
-        })
+        // .state('signup', {
+        //     url: '/signup',
+        //     templateUrl: '/modules/user/register-new.html',
+        //     data: {
+        //         title: 'Sign up / Avanet',
+        //         redirectIfLoggedIn: true,
+        //         bodyCssClass: 'login'
+        //     }
+        // })
 
         .state('registerPending', {
             url: '/register/:userHashId',

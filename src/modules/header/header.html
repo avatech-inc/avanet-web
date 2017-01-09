@@ -66,6 +66,9 @@
 
             <li><a href="https://app.mountainhub.com" target="_blank">{{ 'user_settings' | translate }}</a></li>
             <li><a href="https://app.mountainhub.com" target="_blank">{{ 'user_billing' | translate }}</a></li>
+
+            <li ng-hide="isDemo" class="divider"></li>
+            <li ng-if="global.user.permissions.bulkDownload"><a href="#" ng-click="downloadData()">{{ 'settings.bulk_download' | translate }}</a></li>
             <li ng-hide="isDemo" class="divider"></li>
 
             <li ng-hide="isDemo"><a href="/support" target="_blank">{{ 'support' | translate }}</a></li>

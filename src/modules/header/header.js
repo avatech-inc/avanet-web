@@ -7,6 +7,7 @@ const HeaderController = [
     'RegisterDeviceModal',
     'DeviceUploadModal',
     'Global',
+    '$http',
     '$uibModal',
 
     (
@@ -15,6 +16,7 @@ const HeaderController = [
         RegisterDeviceModal,
         DeviceUploadModal,
         Global,
+        $http,
         $uibModal
     ) => {
         $scope.global = Global
@@ -30,6 +32,20 @@ const HeaderController = [
             windowClass: 'width-480',
             resolve: { ob: () => ({ type: type }) }
         }).result.finally(() => {})
+
+        $scope.downloadData = () => {
+            $scope.downloading = true
+
+            $http
+                .get(window.apiBaseUrl + 'sp/bulkDownload')
+                .success(data => {
+                    window.location.href = data.url
+                    $scope.downloading = false
+                })
+                .error(() => {
+                    $scope.downloading = false
+                })
+        }
     }
 ]
 
